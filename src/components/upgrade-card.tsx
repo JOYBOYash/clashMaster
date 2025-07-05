@@ -5,16 +5,19 @@ import { useState, useEffect } from 'react';
 import type { Building } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Hammer, Clock } from 'lucide-react';
+import { Hammer, Clock, CheckCircle } from 'lucide-react';
 import { differenceInSeconds, formatDuration, intervalToDuration } from 'date-fns';
+import { Button } from './ui/button';
 
 interface UpgradeCardProps {
   building: Building;
+  onComplete: () => void;
 }
 
-export function UpgradeCard({ building }: UpgradeCardProps) {
+export function UpgradeCard({ building, onComplete }: UpgradeCardProps) {
   const [timeLeft, setTimeLeft] = useState('Calculating...');
   const [progress, setProgress] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     if (!building.isUpgrading || !building.upgradeEndTime || !building.upgradeTime) {
@@ -31,6 +34,7 @@ export function UpgradeCard({ building }: UpgradeCardProps) {
         if (secondsRemaining <= 0) {
             setTimeLeft('Completed!');
             setProgress(100);
+            setIsCompleted(true);
             return true; // completed
         }
         
@@ -42,9 +46,8 @@ export function UpgradeCard({ building }: UpgradeCardProps) {
         return false; // not completed
     };
 
-    // Initial state calculation
     if (calculateState()) {
-      return; // If already completed, do nothing more
+      return; 
     }
     
     const intervalId = setInterval(() => {
@@ -59,14 +62,14 @@ export function UpgradeCard({ building }: UpgradeCardProps) {
   if (!building.isUpgrading) return null;
 
   return (
-    <Card className="bg-card/80 shadow-md hover:shadow-lg transition-shadow duration-300">
+    <Card className="bg-card/80 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center text-lg font-headline">
           <Hammer className="w-5 h-5 mr-3 text-primary" />
           {building.name} to Level {building.level + 1}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow flex flex-col justify-between">
         <div className="space-y-3">
           <div className="flex items-center text-accent-foreground">
             <Clock className="w-4 h-4 mr-2 text-accent" />
@@ -74,6 +77,12 @@ export function UpgradeCard({ building }: UpgradeCardProps) {
           </div>
           <Progress value={progress} className="h-3 [&>div]:bg-accent" />
         </div>
+        {isCompleted && (
+          <Button onClick={onComplete} className="mt-4 w-full" size="sm">
+            <CheckCircle className="mr-2" />
+            Finish Upgrade
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

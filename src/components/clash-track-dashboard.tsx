@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VillageView } from '@/components/village-view';
 import { AccountSettings } from '@/components/account-settings';
+import { TroopGuide } from '@/components/troop-guide';
 import { type VillageState } from '@/lib/constants';
 import { PlayerTagForm } from './player-tag-form';
 
@@ -54,16 +55,20 @@ export function ClashTrackDashboard() {
   return (
     <>
       <Tabs defaultValue="home" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+        <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto">
           <TabsTrigger value="home">Home Village</TabsTrigger>
           <TabsTrigger value="builder">Builder Base</TabsTrigger>
+          <TabsTrigger value="troops">Troops</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="home" className="mt-6">
-          <VillageView base="home" villageState={villageState} />
+          <VillageView base="home" villageState={villageState} onUpdate={handleUpdate} />
         </TabsContent>
         <TabsContent value="builder" className="mt-6">
-          <VillageView base="builder" villageState={villageState} />
+          <VillageView base="builder" villageState={villageState} onUpdate={handleUpdate} />
+        </TabsContent>
+         <TabsContent value="troops" className="mt-6">
+          <TroopGuide villageState={villageState} />
         </TabsContent>
         <TabsContent value="settings" className="mt-6">
           <AccountSettings villageState={villageState} onUpdate={handleUpdate} onReset={handleReset} />

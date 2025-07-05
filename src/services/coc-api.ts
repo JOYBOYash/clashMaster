@@ -9,12 +9,20 @@ type ApiBuilding = {
   village: 'home' | 'builderBase';
 };
 
+type ApiTroop = {
+  name: string;
+  level: number;
+  maxLevel: number;
+  village: 'home' | 'builderBase';
+};
+
 export type PlayerApiResponse = {
   tag: string;
   name:string;
   townHallLevel: number;
   builderHallLevel?: number;
   buildings: ApiBuilding[];
+  troops: ApiTroop[];
 };
 
 export async function getPlayerInfo(playerTag: string): Promise<PlayerApiResponse> {
@@ -26,8 +34,6 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
   }
 
   // NOTE: This uses the official API directly.
-  // This will fail in a dynamic cloud environment but will work on a local machine
-  // with a whitelisted IP address.
   const baseUrl = 'https://api.clashofclans.com/v1';
   const encodedTag = encodeURIComponent(playerTag);
   const url = `${baseUrl}/players/${encodedTag}`;

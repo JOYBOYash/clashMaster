@@ -21,6 +21,17 @@ export const BuildingSchema = zod.object({
 
 export type Building = z.infer<typeof BuildingSchema>;
 
+export const TroopSchema = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  level: zod.number().min(0),
+  maxLevel: zod.number().min(1),
+  village: zod.enum(['home', 'builderBase']),
+  elixirType: zod.enum(['regular', 'dark', 'none']),
+});
+export type Troop = z.infer<typeof TroopSchema>;
+
+
 export const ResourcesSchema = zod.object({
   gold: zod.number().min(0),
   elixir: zod.number().min(0),
@@ -34,6 +45,7 @@ export const VillageStateSchema = zod.object({
   builderHallLevel: zod.number().min(1).max(10),
   resources: ResourcesSchema,
   buildings: zod.array(BuildingSchema),
+  troops: zod.array(TroopSchema),
 });
 
 export type VillageState = z.infer<typeof VillageStateSchema>;
@@ -89,6 +101,49 @@ export const ALL_BUILDINGS_CONFIG = [
   { name: 'Star Laboratory', maxLevel: 10, type: 'army', base: 'builder' },
 ];
 
+export const ALL_TROOPS_CONFIG = [
+    // Home Village - Elixir
+    { name: 'Barbarian', elixirType: 'regular' },
+    { name: 'Archer', elixirType: 'regular' },
+    { name: 'Goblin', elixirType: 'regular' },
+    { name: 'Giant', elixirType: 'regular' },
+    { name: 'Wall Breaker', elixirType: 'regular' },
+    { name: 'Balloon', elixirType: 'regular' },
+    { name: 'Wizard', elixirType: 'regular' },
+    { name: 'Healer', elixirType: 'regular' },
+    { name: 'Dragon', elixirType: 'regular' },
+    { name: 'P.E.K.K.A', elixirType: 'regular' },
+    { name: 'Baby Dragon', elixirType: 'regular' },
+    { name: 'Miner', elixirType: 'regular' },
+    { name: 'Electro Dragon', elixirType: 'regular' },
+    { name: 'Yeti', elixirType: 'regular' },
+    { name: 'Root Rider', elixirType: 'regular' },
+    // Home Village - Dark Elixir
+    { name: 'Minion', elixirType: 'dark' },
+    { name: 'Hog Rider', elixirType: 'dark' },
+    { name: 'Valkyrie', elixirType: 'dark' },
+    { name: 'Golem', elixirType: 'dark' },
+    { name: 'Witch', elixirType: 'dark' },
+    { name: 'Lava Hound', elixirType: 'dark' },
+    { name: 'Bowler', elixirType: 'dark' },
+    { name: 'Ice Golem', elixirType: 'dark' },
+    { name: 'Headhunter', elixirType: 'dark' },
+    { name: 'Apprentice Warden', elixirType: 'dark' },
+    // Builder Base
+    { name: 'Raged Barbarian', elixirType: 'none' },
+    { name: 'Sneaky Archer', elixirType: 'none' },
+    { name: 'Boxer Giant', elixirType: 'none' },
+    { name: 'Beta Minion', elixirType: 'none' },
+    { name: 'Bomber', elixirType: 'none' },
+    { name: 'Baby Dragon', elixirType: 'none' },
+    { name: 'Cannon Cart', elixirType: 'none' },
+    { name: 'Night Witch', elixirType: 'none' },
+    { name: 'Drop Ship', elixirType: 'none' },
+    { name: 'Power P.E.K.K.A', elixirType: 'none' },
+    { name: 'Hog Glider', elixirType: 'none' },
+    { name: 'Electrofire Wizard', elixirType: 'none' },
+];
+
 
 // This is no longer used for initial data but can be useful for type inference.
 export const initialVillageState: VillageState = {
@@ -100,4 +155,5 @@ export const initialVillageState: VillageState = {
     darkElixir: 0,
   },
   buildings: [],
+  troops: [],
 };

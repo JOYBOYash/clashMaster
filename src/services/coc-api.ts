@@ -55,10 +55,10 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
       throw new Error("Player Not Found (404). Please check the player tag and try again.");
     }
     if (response.status === 400) {
-        throw new Error("Bad Request (400). The player tag might be malformed, or your API token is invalid.");
+        throw new Error("Bad Request (400). The player tag might be malformed.");
     }
     if (response.status === 403) {
-      throw new Error("Invalid API token. Please check the token in your .env file and try again.");
+      throw new Error("Invalid API Token (403 Forbidden). This almost always means the token in your .env file is incorrect. Please carefully copy the token from the developer portal and paste it into the COC_API_TOKEN field in the .env file, ensuring there are no extra characters or spaces.");
     }
     
     let reason = 'An unknown error occurred';

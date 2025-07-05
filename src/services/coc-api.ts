@@ -26,10 +26,10 @@ export type PlayerApiResponse = {
 };
 
 export async function getPlayerInfo(playerTag: string): Promise<PlayerApiResponse> {
-  const token = process.env.NEXT_PUBLIC_COC_API_TOKEN;
+  const token = process.env.COC_API_TOKEN;
 
   if (!token || token.trim() === '') {
-    console.error('NEXT_PUBLIC_COC_API_TOKEN is not set or is empty in the environment variables.');
+    console.error('COC_API_TOKEN is not set or is empty in the environment variables.');
     throw new Error('Server configuration error: The Clash of Clans API token is missing. Please add your token to the .env file.');
   }
 
@@ -65,8 +65,8 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     if (response.status === 400) {
         throw new Error("Bad Request (400). The player tag might be malformed.");
     }
-    if (response.status === 403) {
-      throw new Error("Access Denied (403 Forbidden). This means your API token is correct, but the server's IP is not whitelisted in your CoC Developer account. This is expected in the cloud. To fix this for local development, run the app on a machine with a whitelisted IP.");
+     if (response.status === 403) {
+      throw new Error("Access Denied (403 Forbidden). This means your API token is correct, but the request came from an IP address that is not whitelisted in your CoC Developer account. To fix this for local development, run the app on a machine with a whitelisted IP.");
     }
     
     let reason = 'An unknown error occurred';

@@ -7,7 +7,7 @@ export function MainHeader() {
         <div className="mr-4 flex items-center">
           <Castle className="h-8 w-8 mr-2 text-primary" />
           <h1 className="text-2xl font-bold text-primary font-headline">
-            ClashTrack
+            Clash Master
           </h1>
         </div>
       </div>

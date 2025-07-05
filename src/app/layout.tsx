@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'ClashTrack',
-  description: 'Track your Clash of Clans upgrade progress and get AI-powered suggestions.',
+  title: 'Clash Master',
+  description: 'Master your Clash of Clans village with AI-powered upgrade suggestions.',
 };
 
 export default function RootLayout({

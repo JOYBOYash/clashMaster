@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -28,8 +29,8 @@ const SuggestOptimalUpgradeInputSchema = z.object({
       gold: z.number().optional().describe('The gold cost to upgrade, if applicable.'),
       elixir: z.number().optional().describe('The elixir cost to upgrade, if applicable.'),
       darkElixir: z.number().optional().describe('The dark elixir cost to upgrade, if applicable.'),
-    }).describe('The cost to upgrade the building to the next level.'),
-    upgradeTime: z.number().describe('The time in hours to upgrade the building to the next level.'),
+    }).optional().describe('The cost to upgrade the building to the next level.'),
+    upgradeTime: z.number().optional().describe('The time in hours to upgrade the building to the next level.'),
     type: z.string().describe('The type of the building like offensive, defensive, resource or other'),
   })).describe('A list of all buildings and their current levels and upgrade costs, and types.'),
 });
@@ -55,7 +56,7 @@ const prompt = ai.definePrompt({
   output: {schema: SuggestOptimalUpgradeOutputSchema},
   prompt: `You are an expert Clash of Clans strategist. Given the current state of the base,
 you will suggest the best next upgrades to optimize progress. Consider resource availability,
-upgrade times, and the impact of the upgrade on the base\'s overall strength. Do not suggest
+and the impact of the upgrade on the base\'s overall strength. Do not suggest
 upgrades for buildings that are already under upgrade.
 
 Town Hall Level: {{{townHallLevel}}}
@@ -63,7 +64,8 @@ Builder Hall Level: {{{builderHallLevel}}}
 Available Resources: Gold: {{{availableResources.gold}}}, Elixir: {{{availableResources.elixir}}}, Dark Elixir: {{{availableResources.darkElixir}}}
 Buildings Under Upgrade: {{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}
 
-All Buildings: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Upgrade Cost: Gold: {{{this.upgradeCost.gold}}}, Elixir: {{{this.upgradeCost.elixir}}}, Dark Elixir: {{{this.upgradeCost.darkElixir}}}, Upgrade Time: {{{this.upgradeTime}}} hours, Type: {{{this.type}}}. {{/each}}
+All Buildings: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Type: {{{this.type}}}. {{/each}}
+Base your suggestions on general game knowledge for upgrade priorities, as specific costs and times may not be provided.
 
 Suggest the best next upgrades:
 `,
@@ -80,4 +82,3 @@ const suggestOptimalUpgradeFlow = ai.defineFlow(
     return output!;
   }
 );
-

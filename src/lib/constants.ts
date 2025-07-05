@@ -1,3 +1,4 @@
+
 import type { z } from 'zod';
 import { z as zod } from 'zod';
 
@@ -40,43 +41,64 @@ export type VillageState = z.infer<typeof VillageStateSchema>;
 export const ALL_BUILDINGS_CONFIG = [
   // Home Village
   { name: 'Town Hall', maxLevel: 16, type: 'other', base: 'home' },
+  { name: 'Clan Castle', maxLevel: 12, type: 'army', base: 'home' },
   { name: 'Cannon', maxLevel: 21, type: 'defensive', base: 'home' },
   { name: 'Archer Tower', maxLevel: 21, type: 'defensive', base: 'home' },
   { name: 'Mortar', maxLevel: 15, type: 'defensive', base: 'home' },
   { name: 'Air Defense', maxLevel: 13, type: 'defensive', base: 'home' },
   { name: 'Wizard Tower', maxLevel: 15, type: 'defensive', base: 'home' },
+  { name: 'Air Sweeper', maxLevel: 8, type: 'defensive', base: 'home' },
+  { name: 'Hidden Tesla', maxLevel: 13, type: 'defensive', base: 'home' },
+  { name: 'Bomb Tower', maxLevel: 10, type: 'defensive', base: 'home' },
   { name: 'X-Bow', maxLevel: 10, type: 'defensive', base: 'home' },
   { name: 'Inferno Tower', maxLevel: 9, type: 'defensive', base: 'home' },
   { name: 'Eagle Artillery', maxLevel: 6, type: 'defensive', base: 'home' },
+  { name: 'Scattershot', maxLevel: 4, type: 'defensive', base: 'home' },
+  { name: 'Spell Tower', maxLevel: 3, type: 'defensive', base: 'home' },
+  { name: 'Monolith', maxLevel: 2, type: 'defensive', base: 'home' },
   { name: 'Gold Storage', maxLevel: 15, type: 'resource', base: 'home' },
   { name: 'Elixir Storage', maxLevel: 15, type: 'resource', base: 'home' },
   { name: 'Dark Elixir Storage', maxLevel: 10, type: 'resource', base: 'home' },
+  { name: 'Gold Mine', maxLevel: 15, type: 'resource', base: 'home' },
+  { name: 'Elixir Collector', maxLevel: 15, type: 'resource', base: 'home' },
+  { name: 'Dark Elixir Drill', maxLevel: 9, type: 'resource', base: 'home' },
   { name: 'Barracks', maxLevel: 16, type: 'army', base: 'home' },
+  { name: 'Dark Barracks', maxLevel: 10, type: 'army', base: 'home' },
   { name: 'Army Camp', maxLevel: 12, type: 'army', base: 'home' },
+  { name: 'Laboratory', maxLevel: 14, type: 'army', base: 'home' },
+  { name: 'Spell Factory', maxLevel: 7, type: 'army', base: 'home' },
+  { name: 'Dark Spell Factory', maxLevel: 6, type: 'army', base: 'home' },
+  { name: 'Workshop', maxLevel: 7, type: 'army', base: 'home' },
+  { name: 'Pet House', maxLevel: 9, type: 'army', base: 'home' },
   // Builder Base
   { name: 'Builder Hall', maxLevel: 10, type: 'other', base: 'builder' },
   { name: 'Cannon Cart', maxLevel: 20, type: 'offensive', base: 'builder' },
   { name: 'Double Cannon', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Archer Tower', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Hidden Tesla', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Mega Tesla', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Giant Cannon', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Firecrackers', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Air Bombs', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Roaster', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Multi Mortar', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Crusher', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Push Trap', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Gem Mine', maxLevel: 10, type: 'resource', base: 'builder' },
+  { name: 'Clock Tower', maxLevel: 10, type: 'other', base: 'builder' },
+  { name: 'Builder\'s Barracks', maxLevel: 10, type: 'army', base: 'builder' },
+  { name: 'Star Laboratory', maxLevel: 10, type: 'army', base: 'builder' },
 ];
 
 
+// This is no longer used for initial data but can be useful for type inference.
 export const initialVillageState: VillageState = {
-  townHallLevel: 12,
-  builderHallLevel: 9,
+  townHallLevel: 1,
+  builderHallLevel: 1,
   resources: {
-    gold: 5000000,
-    elixir: 6000000,
-    darkElixir: 100000,
+    gold: 0,
+    elixir: 0,
+    darkElixir: 0,
   },
-  buildings: [
-    { id: 'th', name: 'Town Hall', level: 12, maxLevel: 16, type: 'other', base: 'home', isUpgrading: false, upgradeCost: { gold: 12000000 }, upgradeTime: 288 },
-    { id: 'bh', name: 'Builder Hall', level: 9, maxLevel: 10, type: 'other', base: 'builder', isUpgrading: false, upgradeCost: { gold: 4800000 }, upgradeTime: 192 },
-    { id: 'cannon1', name: 'Cannon', level: 15, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: true, upgradeTime: 120, upgradeCost: { gold: 7500000 }, upgradeEndTime: new Date(Date.now() + 120 * 60 * 60 * 1000).toISOString() },
-    { id: 'archer1', name: 'Archer Tower', level: 15, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: false, upgradeTime: 144, upgradeCost: { gold: 8000000 } },
-    { id: 'gs1', name: 'Gold Storage', level: 13, maxLevel: 15, type: 'resource', base: 'home', isUpgrading: false, upgradeTime: 96, upgradeCost: { elixir: 2000000 } },
-    { id: 'es1', name: 'Elixir Storage', level: 13, maxLevel: 15, type: 'resource', base: 'home', isUpgrading: false, upgradeTime: 96, upgradeCost: { gold: 2000000 } },
-    { id: 'dc1', name: 'Double Cannon', level: 8, maxLevel: 10, type: 'defensive', base: 'builder', isUpgrading: true, upgradeTime: 72, upgradeCost: { gold: 3000000 }, upgradeEndTime: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString() },
-  ],
+  buildings: [],
 };

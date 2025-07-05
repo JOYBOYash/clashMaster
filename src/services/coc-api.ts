@@ -18,7 +18,8 @@ export type PlayerApiResponse = {
 
 export async function getPlayerInfo(playerTag: string): Promise<PlayerApiResponse> {
   const token = process.env.COC_API_TOKEN;
-  const baseUrl = process.env.COC_API_BASE_URL || 'https://api.clashofclans.com/v1';
+  // Use a proxy to avoid IP whitelisting issues in cloud environments.
+  const baseUrl = process.env.COC_API_BASE_URL || 'https://cocproxy.royaleapi.dev/v1';
 
   if (!token) {
     console.error('COC_API_TOKEN is not set in the environment variables.');
@@ -49,7 +50,8 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     const errorData = await response.json().catch(() => ({ reason: 'unknown' }));
     console.error(`CoC API request failed with status ${response.status}:`, errorData);
     if (response.status === 403) {
-      throw new Error("Invalid API token or IP not whitelisted. Check your token in the .env file and ensure your server's IP is authorized in the CoC developer portal.");
+      // Now that we use a proxy, this error is most likely due to an invalid token.
+      throw new Error("Invalid API token. Please check the token in your .env file and try again.");
     }
     if (response.status === 404) {
       throw new Error("Player not found. Please check the tag and try again.");

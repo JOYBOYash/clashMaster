@@ -18,10 +18,10 @@ export type PlayerApiResponse = {
 };
 
 export async function getPlayerInfo(playerTag: string): Promise<PlayerApiResponse> {
-  const token = process.env.COC_API_TOKEN;
+  const token = process.env.NEXT_PUBLIC_COC_API_TOKEN;
 
   if (!token || token.trim() === '') {
-    console.error('COC_API_TOKEN is not set or is empty in the environment variables.');
+    console.error('NEXT_PUBLIC_COC_API_TOKEN is not set or is empty in the environment variables.');
     throw new Error('Server configuration error: The Clash of Clans API token is missing. Please add your token to the .env file.');
   }
 

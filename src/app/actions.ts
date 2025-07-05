@@ -16,7 +16,7 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
     try {
         const player: PlayerApiResponse = await getPlayerInfo(parsedTag.data);
 
-        const buildings: Building[] = player.buildings
+        const buildings: Building[] = (player.buildings || [])
             .map((apiBuilding, index) => {
                 // Ensure the village type is one we expect
                 if (apiBuilding.village !== 'home' && apiBuilding.village !== 'builderBase') {

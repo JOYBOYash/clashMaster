@@ -49,7 +49,7 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     const errorData = await response.json().catch(() => ({ reason: 'unknown' }));
     console.error(`CoC API request failed with status ${response.status}:`, errorData);
     if (response.status === 403) {
-      throw new Error("Invalid API token. Server configuration error.");
+      throw new Error("Invalid API token or IP not whitelisted. Check your token in the .env file and ensure your server's IP is authorized in the CoC developer portal.");
     }
     if (response.status === 404) {
       throw new Error("Player not found. Please check the tag and try again.");

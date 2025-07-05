@@ -25,8 +25,8 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     throw new Error('Server configuration error: The Clash of Clans API token is missing. Please add your token to the .env file.');
   }
 
-  // Using the official API URL as requested.
-  const baseUrl = 'https://api.clashofclans.com/v1';
+  // Using a proxy to bypass the IP whitelisting requirement for dynamic server IPs.
+  const baseUrl = 'https://cocproxy.royaleapi.dev/v1';
   const encodedTag = encodeURIComponent(playerTag);
   const url = `${baseUrl}/players/${encodedTag}`;
 
@@ -58,7 +58,7 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
         throw new Error("Bad Request (400). The player tag might be malformed.");
     }
     if (response.status === 403) {
-      throw new Error("Access Denied (403 Forbidden). This error means your API token is correct, but the request came from an IP address that is not whitelisted in your CoC Developer account. This is expected, as this app runs on a server with a dynamic IP. The standard solution is to use a proxy.");
+      throw new Error("Access Denied (403 Forbidden). The proxy may be blocking your request or there is an issue with your API token. Please double check your token in the .env file.");
     }
     
     let reason = 'An unknown error occurred';

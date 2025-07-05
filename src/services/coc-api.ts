@@ -25,7 +25,7 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     throw new Error('Server configuration error: The Clash of Clans API token is missing. Please add your token to the .env file.');
   }
 
-  const baseUrl = 'https://cocproxy.royaleapi.dev/v1';
+  const baseUrl = 'https://api.clashofclans.com/v1';
   const encodedTag = encodeURIComponent(playerTag);
   const url = `${baseUrl}/players/${encodedTag}`;
 
@@ -41,8 +41,8 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
       next: { revalidate: 3600 } // Cache for 1 hour
     });
   } catch (error) {
-    console.error("Network error fetching from CoC API proxy:", error);
-    throw new Error("Could not connect to the Clash of Clans API proxy. The service might be temporarily down.");
+    console.error("Network error fetching from CoC API:", error);
+    throw new Error("Could not connect to the Clash of Clans API. The service might be temporarily down.");
   }
 
 
@@ -51,13 +51,13 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     console.error(`CoC API request failed with status ${response.status}:`, errorBody);
     
     if (response.status === 403) {
-      throw new Error("Access Denied (403): The API token is invalid. Please double-check that the token in your .env file is correct, has not expired, and has no extra spaces or characters around it.");
+      throw new Error("Access Denied (403): This is likely due to an IP address issue. The official Clash of Clans API requires you to whitelist the IP address of the server making the request. Please ensure the IP address of this development environment is added to the allowed list for your API token in the CoC Developer Portal.");
     }
     if (response.status === 404) {
       throw new Error("Player Not Found (404). Please check the player tag and try again.");
     }
     if (response.status === 400) {
-        throw new Error("Bad Request (400). The player tag might be malformed.");
+        throw new Error("Bad Request (400). The player tag might be malformed. Ensure it starts with a '#'.");
     }
     
     let reason = 'An unknown error occurred';

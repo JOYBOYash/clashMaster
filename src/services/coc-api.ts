@@ -1,4 +1,3 @@
-
 'use server';
 
 // A simplified version of the Clash of Clans Player API response

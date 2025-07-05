@@ -18,6 +18,11 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
 
         const buildings: Building[] = player.buildings
             .map((apiBuilding, index) => {
+                // Ensure the village type is one we expect
+                if (apiBuilding.village !== 'home' && apiBuilding.village !== 'builderBase') {
+                    return null;
+                }
+                
                 const config = ALL_BUILDINGS_CONFIG.find(b => b.name === apiBuilding.name);
                 if (!config) return null; // Filter out buildings not in our config
 

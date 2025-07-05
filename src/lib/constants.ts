@@ -72,7 +72,6 @@ export const ALL_BUILDINGS_CONFIG = [
   { name: 'Pet House', maxLevel: 9, type: 'army', base: 'home' },
   // Builder Base
   { name: 'Builder Hall', maxLevel: 10, type: 'other', base: 'builder' },
-  { name: 'Cannon Cart', maxLevel: 20, type: 'offensive', base: 'builder' },
   { name: 'Double Cannon', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Archer Tower', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Hidden Tesla', maxLevel: 10, type: 'defensive', base: 'builder' },

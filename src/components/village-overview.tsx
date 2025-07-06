@@ -18,7 +18,9 @@ export function VillageOverview({ base, level, resources }: VillageOverviewProps
   const formatNumber = (num: number) => new Intl.NumberFormat().format(num);
   const BaseIcon = base === 'home' ? Home : Hammer;
   const title = base === 'home' ? 'Town Hall' : 'Builder Hall';
-  const imageHint = base === 'home' ? 'clash of clans townhall' : 'clash of clans builder hall';
+  const imageUrl = base === 'home' 
+    ? 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16.png'
+    : 'https://static.wikia.nocookie.net/clashofclans/images/a/a4/Builder_Hall10.png';
 
   return (
     <Card>
@@ -31,12 +33,11 @@ export function VillageOverview({ base, level, resources }: VillageOverviewProps
       <CardContent className="space-y-4">
         <div className="flex flex-col sm:flex-row items-center gap-6">
             <Image 
-                src="https://placehold.co/128x128.png" 
+                src={imageUrl} 
                 alt={title} 
                 width={128} 
                 height={128} 
-                data-ai-hint={imageHint}
-                className="rounded-lg shadow-md aspect-square object-cover" 
+                className="rounded-lg shadow-md aspect-square object-contain" 
             />
             <div className="flex-grow space-y-4 w-full">
                 <p className="text-3xl text-center sm:text-left font-headline tracking-wider">

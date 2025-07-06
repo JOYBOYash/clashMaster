@@ -147,6 +147,47 @@ export const ALL_TROOPS_CONFIG = [
 ];
 
 
+export const DEMO_VILLAGE_STATE: VillageState = {
+  townHallLevel: 12,
+  builderHallLevel: 9,
+  buildings: [
+    { id: 'TownHall-1', name: 'Town Hall', level: 12, maxLevel: 16, type: 'other', base: 'home', isUpgrading: false },
+    { id: 'ClanCastle-1', name: 'Clan Castle', level: 8, maxLevel: 12, type: 'army', base: 'home', isUpgrading: false },
+    { id: 'Laboratory-1', name: 'Laboratory', level: 10, maxLevel: 14, type: 'army', base: 'home', isUpgrading: false },
+    { id: 'ArmyCamp-1', name: 'Army Camp', level: 10, maxLevel: 12, type: 'army', base: 'home', isUpgrading: false },
+    { id: 'ArmyCamp-2', name: 'Army Camp', level: 10, maxLevel: 12, type: 'army', base: 'home', isUpgrading: false },
+    { id: 'ArmyCamp-3', name: 'Army Camp', level: 10, maxLevel: 12, type: 'army', base: 'home', isUpgrading: false },
+    { id: 'ArmyCamp-4', name: 'Army Camp', level: 9, maxLevel: 12, type: 'army', base: 'home', isUpgrading: true, upgradeEndTime: new Date(Date.now() + 86400000).toISOString() },
+    { id: 'Cannon-1', name: 'Cannon', level: 16, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'Cannon-2', name: 'Cannon', level: 16, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'Cannon-3', name: 'Cannon', level: 15, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'ArcherTower-1', name: 'Archer Tower', level: 16, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'ArcherTower-2', name: 'Archer Tower', level: 15, maxLevel: 21, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'WizardTower-1', name: 'Wizard Tower', level: 11, maxLevel: 15, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'AirDefense-1', name: 'Air Defense', level: 10, maxLevel: 13, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'X-Bow-1', name: 'X-Bow', level: 6, maxLevel: 10, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'InfernoTower-1', name: 'Inferno Tower', level: 6, maxLevel: 9, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'EagleArtillery-1', name: 'Eagle Artillery', level: 3, maxLevel: 6, type: 'defensive', base: 'home', isUpgrading: false },
+    { id: 'GoldStorage-1', name: 'Gold Storage', level: 13, maxLevel: 15, type: 'resource', base: 'home', isUpgrading: false },
+    { id: 'ElixirStorage-1', name: 'Elixir Storage', level: 13, maxLevel: 15, type: 'resource', base: 'home', isUpgrading: false },
+    // Builder Base
+    { id: 'BuilderHall-1', name: 'Builder Hall', level: 9, maxLevel: 10, type: 'other', base: 'builder', isUpgrading: false },
+    { id: 'Roaster-1', name: 'Roaster', level: 9, maxLevel: 10, type: 'defensive', base: 'builder', isUpgrading: false },
+    { id: 'GiantCannon-1', name: 'Giant Cannon', level: 9, maxLevel: 10, type: 'defensive', base: 'builder', isUpgrading: false },
+    { id: 'MultiMortar-1', name: 'Multi Mortar', level: 8, maxLevel: 10, type: 'defensive', base: 'builder', isUpgrading: false },
+    { id: 'BattleMachine-1', name: 'Battle Machine', level: 30, maxLevel: 45, type: 'army', base: 'builder', isUpgrading: false },
+    { id: 'StarLaboratory-1', name: 'Star Laboratory', level: 9, maxLevel: 10, type: 'army', base: 'builder', isUpgrading: false },
+  ],
+  troops: [
+    { id: 'Barbarian-1', name: 'Barbarian', level: 8, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { id: 'Archer-1', name: 'Archer', level: 8, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { id: 'Dragon-1', name: 'Dragon', level: 7, maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { id: 'HogRider-1', name: 'Hog Rider', level: 8, maxLevel: 12, village: 'home', elixirType: 'dark' },
+    { id: 'BoxerGiant-1', name: 'Boxer Giant', level: 18, maxLevel: 20, village: 'builderBase', elixirType: 'none' },
+    { id: 'CannonCart-1', name: 'Cannon Cart', level: 18, maxLevel: 20, village: 'builderBase', elixirType: 'none' },
+  ],
+};
+
 // This is no longer used for initial data but can be useful for type inference.
 export const initialVillageState: VillageState = {
   townHallLevel: 1,

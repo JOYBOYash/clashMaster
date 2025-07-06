@@ -7,10 +7,17 @@ import { z } from 'zod';
 
 const PlayerTagSchema = z.string().startsWith('#').min(4);
 
-export async function fetchAndProcessVillageData(playerTag: string): Promise<{ success: boolean; data?: VillageState; error?: string }> {
+type FetchResult = {
+    success: boolean;
+    data?: VillageState;
+    error?: string;
+    errorCode?: 'API_FORBIDDEN' | 'NOT_FOUND' | 'GENERIC_ERROR';
+};
+
+export async function fetchAndProcessVillageData(playerTag: string): Promise<FetchResult> {
     const parsedTag = PlayerTagSchema.safeParse(playerTag);
     if (!parsedTag.success) {
-        return { success: false, error: 'Invalid Player Tag. It must start with a #.' };
+        return { success: false, error: 'Invalid Player Tag. It must start with a #.', errorCode: 'GENERIC_ERROR' };
     }
 
     try {
@@ -18,7 +25,6 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
 
         const buildings: Building[] = (player.buildings || [])
             .map((apiBuilding, index) => {
-                // The API returns buildings for a "clanCapital" village, which we want to ignore.
                 if (apiBuilding.village !== 'home' && apiBuilding.village !== 'builderBase') {
                     return null;
                 }
@@ -46,7 +52,7 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
                     return null;
                 }
                 const config = ALL_TROOPS_CONFIG.find(t => t.name === apiTroop.name);
-                if (!config) return null; // We only care about troops in our config
+                if (!config) return null;
 
                 return {
                     id: `${apiTroop.name.replace(/\s/g, '')}-${index}`,
@@ -69,12 +75,18 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
         const validation = VillageStateSchema.safeParse(villageState);
         if (!validation.success) {
             console.error("Data validation failed:", validation.error.flatten());
-            return { success: false, error: 'Failed to process village data from API.' };
+            return { success: false, error: 'Failed to process village data from API.', errorCode: 'GENERIC_ERROR' };
         }
 
         return { success: true, data: validation.data };
 
     } catch (error: any) {
-        return { success: false, error: error.message || 'An unknown error occurred.' };
+        if (error.message && error.message.includes('403')) {
+            return { success: false, error: error.message, errorCode: 'API_FORBIDDEN' };
+        }
+         if (error.message && error.message.includes('404')) {
+            return { success: false, error: error.message, errorCode: 'NOT_FOUND' };
+        }
+        return { success: false, error: error.message || 'An unknown error occurred.', errorCode: 'GENERIC_ERROR' };
     }
 }

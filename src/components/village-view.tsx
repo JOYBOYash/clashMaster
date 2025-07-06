@@ -14,7 +14,7 @@ interface VillageViewProps {
 
 export function VillageView({ base, villageState, onUpdate }: VillageViewProps) {
   const level = base === 'home' ? villageState.townHallLevel : villageState.builderHallLevel;
-  const buildingsForBase = villageState.buildings.filter(b => b.base === base);
+  const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
 
   return (
     <div className="space-y-8">

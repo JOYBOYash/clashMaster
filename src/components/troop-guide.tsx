@@ -20,7 +20,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
     const [suggestion, setSuggestion] = useState<SuggestArmyOutput | null>(null);
     const { toast } = useToast();
 
-    const homeTroops = villageState.troops.filter(t => t.village === 'home');
+    const homeTroops = (villageState.troops || []).filter(t => t.village === 'home');
 
     const handleSuggestArmy = async () => {
         setIsLoading(true);

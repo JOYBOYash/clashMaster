@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -21,14 +22,15 @@ export function AiSuggester({ villageState }: AiSuggesterProps) {
     setIsLoading(true);
     setSuggestions(null);
     try {
+      const buildings = villageState.buildings || [];
       const input: SuggestUpgradesInput = {
         townHallLevel: villageState.townHallLevel,
         builderHallLevel: villageState.builderHallLevel,
         availableResources: villageState.resources,
-        buildingsUnderUpgrade: villageState.buildings
+        buildingsUnderUpgrade: buildings
           .filter(b => b.isUpgrading)
           .map(b => b.name),
-        allBuildings: villageState.buildings.map(b => ({
+        allBuildings: buildings.map(b => ({
           name: b.name,
           level: b.level,
           type: b.type,

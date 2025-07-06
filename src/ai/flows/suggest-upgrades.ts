@@ -41,7 +41,7 @@ const SuggestUpgradesOutputSchema = z.object({
   suggestedUpgrades: z.array(z.object({
     buildingName: z.string().describe('The name of the building to upgrade.'),
     reason: z.string().describe('The reason why this upgrade is suggested.'),
-  })).describe('A list of suggested upgrades, with reasons.'),
+  })).max(3).describe('A list of exactly three suggested upgrades, with reasons.'),
 });
 
 export type SuggestUpgradesOutput = z.infer<typeof SuggestUpgradesOutputSchema>;
@@ -54,21 +54,21 @@ const prompt = ai.definePrompt({
   name: 'suggestUpgradesPrompt',
   input: {schema: SuggestUpgradesInputSchema},
   output: {schema: SuggestUpgradesOutputSchema},
-  prompt: `You are an expert Clash of Clans strategist. Given the current state of the player's {{base}} base, 
-you will suggest the best next upgrades to optimize progress. 
-Your suggestions MUST be for the {{base}} base only.
-Consider resource availability, and the impact of the upgrade on the base's overall strength. 
-Do not suggest upgrades for buildings that are already under upgrade.
+  prompt: `You are an expert Clash of Clans strategist. Your task is to provide exactly three highly personalized upgrade suggestions for the player's {{base}} base.
 
-Town Hall Level: {{{townHallLevel}}}
-Builder Hall Level: {{{builderHallLevel}}}
-Available Resources: Gold: {{{availableResources.gold}}}, Elixir: {{{availableResources.elixir}}}, Dark Elixir: {{{availableResources.darkElixir}}}
-Buildings Under Upgrade: {{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}
+Player's State:
+- Town Hall Level: {{{townHallLevel}}}
+- Builder Hall Level: {{{builderHallLevel}}}
+- Available Buildings for {{base}} base: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Type: {{{this.type}}}. {{/each}}
+- Buildings currently upgrading: {{#if buildingsUnderUpgrade}}{{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}{{else}}None{{/if}}
 
-Available Buildings for {{base}} base: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Type: {{{this.type}}}. {{/each}}
-Base your suggestions on general game knowledge for upgrade priorities.
+Your analysis process:
+1.  **Infer Playstyle:** Analyze the relative levels of the player's buildings. Do they prioritize 'defensive' structures, 'army' buildings for offense, or 'resource' collectors? Note which types are high-level and which are neglected.
+2.  **Identify Priorities:** Based on their playstyle and general game knowledge (e.g., offense is key for progression), identify the most impactful upgrades.
+3.  **Select Top 3:** From your analysis, select the top three most strategic upgrades. Do not suggest buildings that are already upgrading or maxed out.
+4.  **Provide Reasons:** For each suggestion, provide a concise, compelling reason that explains *why* it's a smart move for *this specific player*.
 
-Suggest the best next upgrades for the {{base}} base:
+Provide exactly three suggestions in your response.
 `,
 });
 

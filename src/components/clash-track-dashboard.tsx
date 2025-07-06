@@ -47,7 +47,7 @@ export function ClashTrackDashboard() {
           <TroopGuide villageState={villageState} />
         </TabsContent>
         <TabsContent value="settings" className="mt-6">
-          <AccountSettings villageState={villageState} onUpdate={handleUpdate} onReset={handleReset} />
+          <AccountSettings onReset={handleReset} />
         </TabsContent>
       </Tabs>
     </>

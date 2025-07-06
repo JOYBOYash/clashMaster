@@ -61,7 +61,6 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
         const villageState: VillageState = {
             townHallLevel: player.townHallLevel,
             builderHallLevel: player.builderHallLevel ?? 0,
-            resources: { gold: 0, elixir: 0, darkElixir: 0 },
             buildings: buildings,
             troops: troops,
         };

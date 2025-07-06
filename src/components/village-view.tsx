@@ -19,7 +19,7 @@ export function VillageView({ base, villageState, onUpdate }: VillageViewProps) 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2 space-y-8">
-        <VillageOverview base={base} level={level} resources={villageState.resources} />
+        <VillageOverview base={base} level={level} />
         <CurrentUpgrades buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
       </div>
       <div className="lg:col-span-1 space-y-8">

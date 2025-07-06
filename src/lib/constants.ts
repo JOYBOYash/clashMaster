@@ -43,7 +43,6 @@ export type Resources = z.infer<typeof ResourcesSchema>;
 export const VillageStateSchema = zod.object({
   townHallLevel: zod.number().min(1).max(16),
   builderHallLevel: zod.number().min(1).max(10),
-  resources: ResourcesSchema,
   buildings: zod.array(BuildingSchema),
   troops: zod.array(TroopSchema),
 });
@@ -149,11 +148,6 @@ export const ALL_TROOPS_CONFIG = [
 export const initialVillageState: VillageState = {
   townHallLevel: 1,
   builderHallLevel: 1,
-  resources: {
-    gold: 0,
-    elixir: 0,
-    darkElixir: 0,
-  },
   buildings: [],
   troops: [],
 };

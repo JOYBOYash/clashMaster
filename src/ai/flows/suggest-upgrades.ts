@@ -16,21 +16,11 @@ const SuggestUpgradesInputSchema = z.object({
   base: z.enum(['home', 'builder']).describe('The base to suggest upgrades for (home or builder).'),
   townHallLevel: z.number().describe('The current level of the Town Hall.'),
   builderHallLevel: z.number().describe('The current level of the Builder Hall.'),
-  availableResources: z.object({
-    gold: z.number().describe('The amount of gold available.'),
-    elixir: z.number().describe('The amount of elixir available.'),
-    darkElixir: z.number().describe('The amount of dark elixir available.'),
-  }).describe('The available resources in the village.'),
   buildingsUnderUpgrade: z.array(z.string()).describe('A list of buildings currently under upgrade.'),
   allBuildings: z.array(z.object({
     name: z.string().describe('The name of the building.'),
     level: z.number().describe('The current level of the building.'),
-    upgradeCost: z.object({
-      gold: z.number().optional().describe('The gold cost to upgrade, if applicable.'),
-      elixir: z.number().optional().describe('The elixir cost to upgrade, if applicable.'),
-      darkElixir: z.number().optional().describe('The dark elixir cost to upgrade, if applicable.'),
-    }).optional().describe('The cost to upgrade the building to the next level.'),
-    upgradeTime: z.number().optional().describe('The time in hours to upgrade the building to the next level.'),
+    maxLevel: z.number().describe('The absolute maximum level for this building in the game.'),
     type: z.string().describe('The type of the building like offensive, defensive, resource or other'),
   })).describe('A list of all buildings for the specified base and their current levels and upgrade costs, and types.'),
 });
@@ -54,21 +44,19 @@ const prompt = ai.definePrompt({
   name: 'suggestUpgradesPrompt',
   input: {schema: SuggestUpgradesInputSchema},
   output: {schema: SuggestUpgradesOutputSchema},
-  prompt: `You are an expert Clash of Clans strategist. Your task is to provide exactly three highly personalized upgrade suggestions for the player's {{base}} base.
+  prompt: `You are an expert Clash of Clans strategist with deep knowledge of upgrade paths and priorities for every Town Hall level. Your task is to provide exactly three highly personalized upgrade suggestions for the player's {{base}} base.
 
 Player's State:
 - Town Hall Level: {{{townHallLevel}}}
 - Builder Hall Level: {{{builderHallLevel}}}
-- Available Buildings for {{base}} base: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Type: {{{this.type}}}. {{/each}}
+- Available Buildings for {{base}} base: {{#each allBuildings}}Name: {{{this.name}}}, Current Level: {{{this.level}}}, Max Possible Level in Game: {{{this.maxLevel}}}, Type: {{{this.type}}}. {{/each}}
 - Buildings currently upgrading: {{#if buildingsUnderUpgrade}}{{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}{{else}}None{{/if}}
 
-Your analysis process:
-1.  **Infer Playstyle:** Analyze the relative levels of the player's buildings. Do they prioritize 'defensive' structures, 'army' buildings for offense, or 'resource' collectors? Note which types are high-level and which are neglected.
-2.  **Identify Priorities:** Based on their playstyle and general game knowledge (e.g., offense is key for progression), identify the most impactful upgrades.
-3.  **Select Top 3:** From your analysis, select the top three most strategic upgrades. Do not suggest buildings that are already upgrading or maxed out.
-4.  **Provide Reasons:** For each suggestion, provide a concise, compelling reason that explains *why* it's a smart move for *this specific player*.
-
-Provide exactly three suggestions in your response.
+**CRITICAL INSTRUCTIONS:**
+1.  **Town Hall Limits are KEY:** You MUST use your expert knowledge of the game to determine if a building can actually be upgraded at the player's current Town Hall level. The 'Max Possible Level in Game' is the absolute maximum and often irrelevant. For example, you know a Laboratory cannot be upgraded past level 10 at Town Hall 12. **NEVER suggest an upgrade for a building that is already maxed out for the player's Town Hall level.**
+2.  **Infer Playstyle:** Analyze the relative levels of the player's buildings. Does this player neglect 'defensive' structures while maxing 'army' buildings? Do they focus on one type of resource collector? This is their playstyle.
+3.  **Personalize Your Reasons:** For each of your three suggestions, provide a compelling reason that directly references your playstyle analysis. Don't just say "it's a good upgrade." Say "Since you've focused heavily on your air troops, upgrading your Air Defenses is crucial to protect against the mirror attacks you likely face in war."
+4.  **Select Top 3:** Based on your analysis, select the top three most strategic upgrades. Do not suggest buildings that are already upgrading. Provide exactly three suggestions.
 `,
 });
 

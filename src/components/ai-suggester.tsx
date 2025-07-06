@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Lightbulb, Loader2, Shield, Sword, Coins, SlidersHorizontal, Building } from 'lucide-react';
+import { Lightbulb, Loader2, Shield, Sword, Coins, Building } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
@@ -44,16 +44,14 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
           base: base,
           townHallLevel: villageState.townHallLevel,
           builderHallLevel: villageState.builderHallLevel,
-          availableResources: villageState.resources,
           buildingsUnderUpgrade: buildingsForBase
             .filter(b => b.isUpgrading)
             .map(b => b.name),
           allBuildings: buildingsForBase.map(b => ({
             name: b.name,
             level: b.level,
+            maxLevel: b.maxLevel,
             type: b.type,
-            upgradeCost: b.upgradeCost || {},
-            upgradeTime: b.upgradeTime || 0,
           })),
         };
 
@@ -73,7 +71,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
     };
 
     handleSuggestUpgrades();
-  }, [villageState.townHallLevel, villageState.builderHallLevel, villageState.resources, base, toast]);
+  }, [villageState.townHallLevel, villageState.builderHallLevel, base, toast]);
 
   const renderSkeleton = () => (
     <div className="space-y-4">

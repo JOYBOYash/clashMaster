@@ -59,6 +59,10 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
     return groups;
   }, [buildings]);
 
+  const defaultOpenCategories = useMemo(() => {
+    return Object.keys(groupedBuildings).filter(type => groupedBuildings[type].length > 0);
+  }, [groupedBuildings]);
+
   const typeIcons: Record<string, React.ElementType> = {
     defensive: Shield,
     army: Sword,
@@ -71,10 +75,10 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">Village Buildings</CardTitle>
-          <CardDescription>View all your buildings and start new upgrades manually.</CardDescription>
+          <CardDescription>A complete list of all your buildings and their current levels. You can also start new upgrades manually here.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="multiple" className="w-full">
+          <Accordion type="multiple" defaultValue={defaultOpenCategories} className="w-full">
             {Object.entries(groupedBuildings).map(([type, buildingsOfType]) => {
               if (buildingsOfType.length === 0) return null;
               const Icon = typeIcons[type];

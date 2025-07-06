@@ -44,19 +44,22 @@ const prompt = ai.definePrompt({
   name: 'suggestUpgradesPrompt',
   input: {schema: SuggestUpgradesInputSchema},
   output: {schema: SuggestUpgradesOutputSchema},
-  prompt: `You are an expert Clash of Clans strategist with deep knowledge of upgrade paths and priorities for every Town Hall level. Your task is to provide exactly three highly personalized upgrade suggestions for the player's {{base}} base.
+  prompt: `You are a world-class Clash of Clans data analyst. Your ONLY job is to analyze the provided list of buildings and suggest the top three most impactful upgrades.
 
-Player's State:
-- Town Hall Level: {{{townHallLevel}}}
-- Builder Hall Level: {{{builderHallLevel}}}
-- Available Buildings for {{base}} base: {{#each allBuildings}}Name: {{{this.name}}}, Current Level: {{{this.level}}}, Max Possible Level in Game: {{{this.maxLevel}}}, Type: {{{this.type}}}. {{/each}}
-- Buildings currently upgrading: {{#if buildingsUnderUpgrade}}{{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}{{else}}None{{/if}}
+**SOURCE OF TRUTH (Use ONLY this data for your analysis):**
+- Player's Town Hall Level: {{{townHallLevel}}}
+- Player's Buildings for the {{base}} base:
+{{#each allBuildings}}
+- {{{this.name}}}: Level {{{this.level}}}
+{{/each}}
+- Buildings currently being upgraded: {{#if buildingsUnderUpgrade}}{{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}{{else}}None{{/if}}
 
-**CRITICAL INSTRUCTIONS:**
-1.  **Town Hall Limits are KEY:** You MUST use your expert knowledge of the game to determine if a building can actually be upgraded at the player's current Town Hall level. The 'Max Possible Level in Game' is the absolute maximum and often irrelevant. For example, you know a Laboratory cannot be upgraded past level 10 at Town Hall 12. **NEVER suggest an upgrade for a building that is already maxed out for the player's Town Hall level.**
-2.  **Infer Playstyle:** Analyze the relative levels of the player's buildings. Does this player neglect 'defensive' structures while maxing 'army' buildings? Do they focus on one type of resource collector? This is their playstyle.
-3.  **Personalize Your Reasons:** For each of your three suggestions, provide a compelling reason that directly references your playstyle analysis. Don't just say "it's a good upgrade." Say "Since you've focused heavily on your air troops, upgrading your Air Defenses is crucial to protect against the mirror attacks you likely face in war."
-4.  **Select Top 3:** Based on your analysis, select the top three most strategic upgrades. Do not suggest buildings that are already upgrading. Provide exactly three suggestions.
+**CRITICAL RULES YOU MUST FOLLOW:**
+1.  **NO INVALID UPGRADES:** You have expert knowledge of Town Hall level caps. For example, you know a Laboratory at Town Hall 12 cannot be upgraded past level 10. **NEVER suggest an upgrade for a building that is already at its maximum possible level for the player's Town Hall.** Check this for every building. A suggestion is invalid if the building's level is already max for the Town Hall.
+2.  **NO GUESSING - USE DATA:** Your reasoning must be based on the specific building levels provided above. Do not say "you seem to focus on offense." Instead, say "I see your Cannons are level 12 but your Archer Towers are only level 10, suggesting a gap in your air defense."
+3.  **EXACTLY THREE SUGGESTIONS:** You must provide exactly three unique and valid suggestions. Do not suggest anything that is listed as currently being upgraded.
+
+Based on these strict rules and the data provided, generate your three upgrade suggestions.
 `,
 });
 

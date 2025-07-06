@@ -46,8 +46,8 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      // Use Next.js revalidation to cache the response
-      next: { revalidate: 3600 } // Cache for 1 hour
+      // Ensure data is always fresh by not caching the response.
+      cache: 'no-store',
     });
   } catch (error) {
     console.error("Network error fetching from CoC API:", error);

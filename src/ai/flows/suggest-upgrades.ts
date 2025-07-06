@@ -13,6 +13,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SuggestUpgradesInputSchema = z.object({
+  base: z.enum(['home', 'builder']).describe('The base to suggest upgrades for (home or builder).'),
   townHallLevel: z.number().describe('The current level of the Town Hall.'),
   builderHallLevel: z.number().describe('The current level of the Builder Hall.'),
   availableResources: z.object({
@@ -31,7 +32,7 @@ const SuggestUpgradesInputSchema = z.object({
     }).optional().describe('The cost to upgrade the building to the next level.'),
     upgradeTime: z.number().optional().describe('The time in hours to upgrade the building to the next level.'),
     type: z.string().describe('The type of the building like offensive, defensive, resource or other'),
-  })).describe('A list of all buildings and their current levels and upgrade costs, and types.'),
+  })).describe('A list of all buildings for the specified base and their current levels and upgrade costs, and types.'),
 });
 
 export type SuggestUpgradesInput = z.infer<typeof SuggestUpgradesInputSchema>;
@@ -53,21 +54,22 @@ const prompt = ai.definePrompt({
   name: 'suggestUpgradesPrompt',
   input: {schema: SuggestUpgradesInputSchema},
   output: {schema: SuggestUpgradesOutputSchema},
-  prompt: `You are an expert Clash of Clans strategist. Given the current state of the base, 
-you will suggest the best next upgrades to optimize progress. Consider resource availability, 
-and the impact of the upgrade on the base's overall strength. Do not suggest
-upgrades for buildings that are already under upgrade.
+  prompt: `You are an expert Clash of Clans strategist. Given the current state of the player's {{base}} base, 
+you will suggest the best next upgrades to optimize progress. 
+Your suggestions MUST be for the {{base}} base only.
+Consider resource availability, and the impact of the upgrade on the base's overall strength. 
+Do not suggest upgrades for buildings that are already under upgrade.
 
 Town Hall Level: {{{townHallLevel}}}
 Builder Hall Level: {{{builderHallLevel}}}
 Available Resources: Gold: {{{availableResources.gold}}}, Elixir: {{{availableResources.elixir}}}, Dark Elixir: {{{availableResources.darkElixir}}}
 Buildings Under Upgrade: {{#each buildingsUnderUpgrade}}{{{this}}}, {{/each}}
 
-All Buildings: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Type: {{{this.type}}}. {{/each}}
-Base your suggestions on general game knowledge for upgrade priorities, as specific costs and times may not be provided.
+Available Buildings for {{base}} base: {{#each allBuildings}}Name: {{{this.name}}}, Level: {{{this.level}}}, Type: {{{this.type}}}. {{/each}}
+Base your suggestions on general game knowledge for upgrade priorities.
 
-Suggest the best next upgrades:
-`, // eslint-disable-line max-len
+Suggest the best next upgrades for the {{base}} base:
+`,
 });
 
 const suggestUpgradesFlow = ai.defineFlow(

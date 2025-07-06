@@ -1,96 +1,110 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lightbulb, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
 import type { VillageState } from '@/lib/constants';
+import { Skeleton } from './ui/skeleton';
 
 interface AiSuggesterProps {
   villageState: VillageState;
+  base: 'home' | 'builder';
 }
 
-export function AiSuggester({ villageState }: AiSuggesterProps) {
+export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const handleSuggestUpgrades = async () => {
-    setIsLoading(true);
-    setSuggestions(null);
-    try {
-      const buildings = villageState.buildings || [];
-      const input: SuggestUpgradesInput = {
-        townHallLevel: villageState.townHallLevel,
-        builderHallLevel: villageState.builderHallLevel,
-        availableResources: villageState.resources,
-        buildingsUnderUpgrade: buildings
-          .filter(b => b.isUpgrading)
-          .map(b => b.name),
-        allBuildings: buildings.map(b => ({
-          name: b.name,
-          level: b.level,
-          type: b.type,
-          upgradeCost: b.upgradeCost || {},
-          upgradeTime: b.upgradeTime || 0,
-        })),
-      };
+  useEffect(() => {
+    const handleSuggestUpgrades = async () => {
+      if (!villageState) return;
+      setIsLoading(true);
+      setSuggestions(null);
+      try {
+        const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
 
-      const result = await suggestUpgrades(input);
-      setSuggestions(result);
-    } catch (error) {
-      console.error('Failed to get suggestions:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not fetch upgrade suggestions. Please try again.',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        const input: SuggestUpgradesInput = {
+          base: base,
+          townHallLevel: villageState.townHallLevel,
+          builderHallLevel: villageState.builderHallLevel,
+          availableResources: villageState.resources,
+          buildingsUnderUpgrade: buildingsForBase
+            .filter(b => b.isUpgrading)
+            .map(b => b.name),
+          allBuildings: buildingsForBase.map(b => ({
+            name: b.name,
+            level: b.level,
+            type: b.type,
+            upgradeCost: b.upgradeCost || {},
+            upgradeTime: b.upgradeTime || 0,
+          })),
+        };
+
+        const result = await suggestUpgrades(input);
+        setSuggestions(result);
+      } catch (error) {
+        console.error('Failed to get suggestions:', error);
+        toast({
+          variant: 'destructive',
+          title: 'AI Advisor Error',
+          description: 'Could not fetch upgrade suggestions. Please try again later.',
+        });
+        // Set an empty state on error to avoid infinite loading
+        setSuggestions({ suggestedUpgrades: [] });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    handleSuggestUpgrades();
+  }, [villageState, base, toast]);
 
   return (
-    <Card className="mt-8">
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center font-headline">
           <Lightbulb className="mr-2 h-6 w-6 text-accent" />
           AI Upgrade Advisor
         </CardTitle>
         <CardDescription>
-          Get intelligent upgrade recommendations based on your current village progress.
+          Top upgrade recommendations for your {base === 'home' ? 'Home Village' : 'Builder Base'}.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button onClick={handleSuggestUpgrades} disabled={isLoading} className="w-full md:w-auto">
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            'Suggest Upgrades'
-          )}
-        </Button>
-
-        {suggestions && suggestions.suggestedUpgrades.length > 0 && (
-          <div className="mt-6 space-y-4">
-            <h3 className="font-semibold text-lg font-headline">Top Recommendations:</h3>
-            <ul className="list-disc pl-5 space-y-2 text-foreground/90">
-              {suggestions.suggestedUpgrades.map((s, index) => (
-                <li key={index}>
-                  <strong className="text-primary">{s.buildingName}:</strong> {s.reason}
-                </li>
-              ))}
-            </ul>
+        {isLoading && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-full" />
+            </div>
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-4 w-4/5" />
+            </div>
+             <div className="space-y-2">
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-3/4" />
+            </div>
           </div>
         )}
 
-        {suggestions && suggestions.suggestedUpgrades.length === 0 && (
-            <p className="mt-6 text-muted-foreground">No suggestions available at the moment. Your builders might be busy!</p>
+        {!isLoading && suggestions && suggestions.suggestedUpgrades.length > 0 && (
+          <ul className="space-y-3 text-foreground/90">
+            {suggestions.suggestedUpgrades.map((s, index) => (
+              <li key={index} className="text-sm">
+                <strong className="text-primary font-semibold">{s.buildingName}:</strong>
+                <p className="text-muted-foreground pl-1">{s.reason}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {!isLoading && (!suggestions || suggestions.suggestedUpgrades.length === 0) && (
+          <p className="text-sm text-muted-foreground">No suggestions available at the moment. Your builders might be busy or you're already maxed out!</p>
         )}
       </CardContent>
     </Card>

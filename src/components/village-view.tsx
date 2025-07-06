@@ -17,12 +17,18 @@ export function VillageView({ base, villageState, onUpdate }: VillageViewProps) 
   const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
 
   return (
-    <div className="space-y-8">
-      <VillageOverview base={base} level={level} resources={villageState.resources} />
-      <ProgressDashboard buildings={buildingsForBase} />
-      <CurrentUpgrades buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
-      <AiSuggester villageState={villageState} />
-      <BuildingList buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 space-y-8">
+        <VillageOverview base={base} level={level} resources={villageState.resources} />
+        <CurrentUpgrades buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
+      </div>
+      <div className="lg:col-span-1 space-y-8">
+        <ProgressDashboard buildings={buildingsForBase} />
+        <AiSuggester villageState={villageState} base={base} />
+      </div>
+      <div className="lg:col-span-3">
+        <BuildingList buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
+      </div>
     </div>
   );
 }

@@ -19,7 +19,6 @@ const iconMap: Record<BuildingType['type'], React.ElementType> = {
   army: Sword,
   resource: Coins,
   other: Building,
-  offensive: Sword, // Fallback for offensive type
 };
 
 export function AiSuggester({ villageState, base }: AiSuggesterProps) {
@@ -71,17 +70,18 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
     };
 
     handleSuggestUpgrades();
-  }, [villageState.townHallLevel, villageState.builderHallLevel, base, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [villageState.townHallLevel, villageState.builderHallLevel, base]);
 
   const renderSkeleton = () => (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="flex items-start gap-4 p-3 rounded-lg border bg-background/50">
-          <Skeleton className="w-10 h-10 rounded-md" />
-          <div className="flex-grow space-y-2">
-            <Skeleton className="h-5 w-1/2" />
+        <div key={i} className="flex flex-col gap-4 p-4 rounded-lg border bg-background/50">
+          <Skeleton className="w-12 h-12 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-3/4" />
             <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-5/6" />
           </div>
         </div>
       ))}
@@ -89,32 +89,32 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   );
 
   return (
-    <Card>
+    <Card className="bg-gradient-to-br from-card to-muted/20 border-primary/20">
       <CardHeader>
-        <CardTitle className="flex items-center font-headline">
-          <Lightbulb className="mr-2 h-6 w-6 text-accent" />
+        <CardTitle className="flex items-center font-headline text-2xl">
+          <Lightbulb className="mr-3 h-8 w-8 text-accent" />
           AI Upgrade Advisor
         </CardTitle>
         <CardDescription>
-          Top 3 personalized recommendations for your {base === 'home' ? 'Home Village' : 'Builder Base'}.
+          Your top 3 personalized recommendations for the {base === 'home' ? 'Home Village' : 'Builder Base'}.
         </CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading && renderSkeleton()}
 
         {!isLoading && suggestions && suggestions.suggestedUpgrades.length > 0 && (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {suggestions.suggestedUpgrades.map((s, index) => {
               const buildingType = getBuildingType(s.buildingName);
               const Icon = iconMap[buildingType] || Building;
               return (
-                 <div key={index} className="flex items-start gap-4 p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
-                  <div className="p-2 bg-primary/10 rounded-md mt-1">
-                    <Icon className="w-6 h-6 text-primary" />
+                 <div key={index} className="flex flex-col gap-4 p-4 rounded-xl border bg-card/80 hover:bg-muted/50 transition-colors hover:shadow-lg hover:-translate-y-1">
+                  <div className="p-3 bg-primary/10 rounded-lg w-fit">
+                    <Icon className="w-8 h-8 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-card-foreground">{s.buildingName}</p>
-                    <p className="text-sm text-muted-foreground">{s.reason}</p>
+                    <p className="font-bold text-lg text-card-foreground font-headline tracking-wide">{s.buildingName}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{s.reason}</p>
                   </div>
                 </div>
               )
@@ -123,7 +123,11 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
         )}
 
         {!isLoading && (!suggestions || suggestions.suggestedUpgrades.length === 0) && (
-          <p className="text-sm text-muted-foreground text-center py-4">No suggestions available. Your builders might be busy or you're already a maxed-out legend!</p>
+          <div className="text-center py-8">
+            <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <p className="mt-4 text-muted-foreground">No suggestions available right now.</p>
+            <p className="text-sm text-muted-foreground/80">Your builders might be busy or you're already a maxed-out legend!</p>
+          </div>
         )}
       </CardContent>
     </Card>

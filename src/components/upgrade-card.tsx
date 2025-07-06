@@ -39,7 +39,8 @@ export function UpgradeCard({ building, onComplete }: UpgradeCardProps) {
         }
         
         const duration = intervalToDuration({ start: 0, end: secondsRemaining * 1000 });
-        setTimeLeft(formatDuration(duration, { format: ['days', 'hours', 'minutes', 'seconds'] }));
+        const formattedDuration = formatDuration(duration, { format: ['days', 'hours', 'minutes', 'seconds'] });
+        setTimeLeft(formattedDuration.length > 0 ? formattedDuration : "Less than a second");
 
         const elapsed = totalDuration - secondsRemaining;
         setProgress(Math.min(100, (elapsed / totalDuration) * 100));
@@ -62,7 +63,7 @@ export function UpgradeCard({ building, onComplete }: UpgradeCardProps) {
   if (!building.isUpgrading) return null;
 
   return (
-    <Card className="bg-card/80 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col">
+    <Card className="bg-gradient-to-br from-card to-muted/20 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col border-primary/20">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center text-lg font-headline">
           <Hammer className="w-5 h-5 mr-3 text-primary" />
@@ -75,10 +76,10 @@ export function UpgradeCard({ building, onComplete }: UpgradeCardProps) {
             <Clock className="w-4 h-4 mr-2 text-accent" />
             <span className="font-mono text-sm font-semibold tracking-wider">{timeLeft}</span>
           </div>
-          <Progress value={progress} className="h-3 [&>div]:bg-accent" />
+          <Progress value={progress} className="h-3 [&>div]:bg-gradient-to-r [&>div]:from-accent [&>div]:to-yellow-400" />
         </div>
         {isCompleted && (
-          <Button onClick={onComplete} className="mt-4 w-full" size="sm">
+          <Button onClick={onComplete} className="mt-4 w-full bg-green-600 hover:bg-green-700" size="sm">
             <CheckCircle className="mr-2" />
             Finish Upgrade
           </Button>

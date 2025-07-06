@@ -2,9 +2,9 @@
 "use client";
 
 import type { Building } from '@/lib/constants';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Target, Shield, Coins, Sword } from 'lucide-react';
+import { Target, Shield, Coins, Sword, SlidersHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
 
 interface ProgressDashboardProps {
@@ -26,7 +26,7 @@ export function ProgressDashboard({ buildings }: ProgressDashboardProps) {
       defensive: Shield,
       army: Sword,
       resource: Coins,
-      other: Target,
+      other: SlidersHorizontal,
     };
 
     const overall = buildings.reduce(
@@ -39,7 +39,7 @@ export function ProgressDashboard({ buildings }: ProgressDashboardProps) {
     );
 
     const byType = buildingTypes.map(type => {
-      const filtered = buildings.filter(b => b.type === type);
+      const filtered = (buildings || []).filter(b => b.type === type);
       if (filtered.length === 0) return null;
 
       const levels = filtered.reduce(
@@ -61,7 +61,7 @@ export function ProgressDashboard({ buildings }: ProgressDashboardProps) {
     }).filter((s): s is ProgressStats => s !== null);
     
     const overallStat: ProgressStats = {
-      label: 'Overall Base',
+      label: 'Overall Progress',
       icon: Target,
       current: overall.current,
       total: overall.total,
@@ -77,13 +77,14 @@ export function ProgressDashboard({ buildings }: ProgressDashboardProps) {
       <CardHeader>
         <CardTitle className="font-headline flex items-center">
             <Target className="mr-2 h-6 w-6 text-primary" />
-            Base Maxing Progress
+            Base Progress
         </CardTitle>
+        <CardDescription>Your path to max level!</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-2">
         {stats.map(({ label, icon: Icon, current, total, percentage }) => (
             <div key={label}>
-                <div className="flex justify-between items-center mb-1">
+                <div className="flex justify-between items-center mb-1.5">
                     <span className="text-sm font-medium text-foreground/90 flex items-center">
                         <Icon className="w-4 h-4 mr-2 text-muted-foreground" />
                         {label}
@@ -92,7 +93,7 @@ export function ProgressDashboard({ buildings }: ProgressDashboardProps) {
                         {Math.round(percentage)}%
                     </span>
                 </div>
-                <Progress value={percentage} aria-label={`${label} progress`} />
+                <Progress value={percentage} className="h-2.5" aria-label={`${label} progress`} />
             </div>
         ))}
       </CardContent>

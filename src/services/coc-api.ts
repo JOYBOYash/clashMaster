@@ -66,7 +66,7 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
         throw new Error("Bad Request (400). The player tag might be malformed.");
     }
      if (response.status === 403) {
-      throw new Error("Access Denied (403 Forbidden). This means your API token is correct, but the request came from an IP address that is not whitelisted in your CoC Developer account. To fix this for local development, run the app on a machine with a whitelisted IP.");
+      throw new Error("Access Denied (403 Forbidden). Your API token is correct, but the server's IP address is not on the allowed list in your Clash of Clans developer account. Since this app runs in the cloud, its IP address may change. For development, you can temporarily add '0.0.0.0/0' to your allowed IP list in the CoC developer portal to allow access from any IP. Remember to replace this with a specific IP for production.");
     }
     
     let reason = 'An unknown error occurred';

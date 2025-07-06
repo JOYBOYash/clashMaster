@@ -18,6 +18,7 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<{ s
 
         const buildings: Building[] = (player.buildings || [])
             .map((apiBuilding, index) => {
+                // The API returns buildings for a "clanCapital" village, which we want to ignore.
                 if (apiBuilding.village !== 'home' && apiBuilding.village !== 'builderBase') {
                     return null;
                 }

@@ -57,7 +57,7 @@ export function UpgradeCard({ building, onComplete }: UpgradeCardProps) {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [building]);
+  }, [building, building.isUpgrading, building.upgradeEndTime, building.upgradeTime, onComplete]);
 
   if (!building.isUpgrading) return null;
 

@@ -7,7 +7,7 @@ export const BuildingSchema = zod.object({
   name: zod.string(),
   level: zod.number().min(0),
   maxLevel: zod.number().min(1),
-  type: zod.enum(['defensive', 'offensive', 'resource', 'army', 'other']),
+  type: zod.enum(['defensive', 'army', 'resource', 'other']),
   base: zod.enum(['home', 'builder']),
   isUpgrading: zod.boolean(),
   upgradeTime: zod.number().optional(), // in hours
@@ -92,12 +92,15 @@ export const ALL_BUILDINGS_CONFIG = [
   { name: 'Air Bombs', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Roaster', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Multi Mortar', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Crusher', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Crusher', maxLevel: 10, type: 'defensive', 'base': 'builder' },
+  { name: 'Guard Post', maxLevel: 10, type: 'defensive', 'base': 'builder' },
   { name: 'Push Trap', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Gem Mine', maxLevel: 10, type: 'resource', base: 'builder' },
   { name: 'Clock Tower', maxLevel: 10, type: 'other', base: 'builder' },
   { name: 'Builder\'s Barracks', maxLevel: 10, type: 'army', base: 'builder' },
   { name: 'Star Laboratory', maxLevel: 10, type: 'army', base: 'builder' },
+  { name: 'Battle Copter', maxLevel: 45, type: 'army', base: 'builder' },
+  { name: 'Battle Machine', maxLevel: 45, type: 'army', base: 'builder' },
 ];
 
 export const ALL_TROOPS_CONFIG = [

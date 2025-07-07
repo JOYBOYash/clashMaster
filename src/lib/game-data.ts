@@ -10,7 +10,6 @@ export const gameData = {
         "upgrade_time": "0s",
         "hitpoints": 1500,
         "buildings": {
-          "total_buildings": 7,
           "cannon": {"count": 1, "max_level": 1},
           "gold_mine": {"count": 1, "max_level": 1},
           "elixir_collector": {"count": 1, "max_level": 1},
@@ -32,10 +31,7 @@ export const gameData = {
           "spell_factory": {"count": 0, "max_level": 0},
           "spells": {}
         },
-        "heroes": {},
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        "heroes": {}
       },
       "TH2": {
         "level": 2,
@@ -43,7 +39,6 @@ export const gameData = {
         "upgrade_time": "15m",
         "hitpoints": 1600,
         "buildings": {
-          "total_buildings": 15,
           "cannon": {"count": 1, "max_level": 2},
           "archer_tower": {"count": 1, "max_level": 2},
           "gold_mine": {"count": 1, "max_level": 2},
@@ -67,10 +62,7 @@ export const gameData = {
           "spell_factory": {"count": 0, "max_level": 0},
           "spells": {}
         },
-        "heroes": {},
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        "heroes": {}
       },
       "TH3": {
         "level": 3,
@@ -78,7 +70,6 @@ export const gameData = {
         "upgrade_time": "1h",
         "hitpoints": 1800,
         "buildings": {
-          "total_buildings": 25,
           "cannon": {"count": 2, "max_level": 3},
           "archer_tower": {"count": 1, "max_level": 3},
           "gold_mine": {"count": 2, "max_level": 3},
@@ -104,10 +95,7 @@ export const gameData = {
           "spell_factory": {"count": 0, "max_level": 0},
           "spells": {}
         },
-        "heroes": {},
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        "heroes": {}
       },
       "TH4": {
         "level": 4,
@@ -115,7 +103,6 @@ export const gameData = {
         "upgrade_time": "4h",
         "hitpoints": 2100,
         "buildings": {
-          "total_buildings": 35,
           "cannon": {"count": 2, "max_level": 4},
           "archer_tower": {"count": 2, "max_level": 4},
           "mortar": {"count": 1, "max_level": 2},
@@ -147,10 +134,7 @@ export const gameData = {
             "lightning_spell": {"max_level": 3, "housing_space": 1}
           }
         },
-        "heroes": {},
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        "heroes": {}
       },
       "TH5": {
         "level": 5,
@@ -158,7 +142,6 @@ export const gameData = {
         "upgrade_time": "12h",
         "hitpoints": 2400,
         "buildings": {
-          "total_buildings": 45,
           "cannon": {"count": 3, "max_level": 5},
           "archer_tower": {"count": 2, "max_level": 5},
           "mortar": {"count": 1, "max_level": 3},
@@ -193,10 +176,7 @@ export const gameData = {
             "healing_spell": {"max_level": 3, "housing_space": 1}
           }
         },
-        "heroes": {},
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        "heroes": {}
       },
       "TH6": {
         "level": 6,
@@ -204,7 +184,6 @@ export const gameData = {
         "upgrade_time": "1d",
         "hitpoints": 2800,
         "buildings": {
-          "total_buildings": 55,
           "cannon": {"count": 3, "max_level": 6},
           "archer_tower": {"count": 3, "max_level": 6},
           "mortar": {"count": 2, "max_level": 4},
@@ -240,10 +219,7 @@ export const gameData = {
             "healing_spell": {"max_level": 4, "housing_space": 1}
           }
         },
-        "heroes": {},
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        "heroes": {}
       },
       "TH7": {
         "level": 7,
@@ -251,7 +227,6 @@ export const gameData = {
         "upgrade_time": "2d",
         "hitpoints": 3200,
         "buildings": {
-          "total_buildings": 65,
           "cannon": {"count": 4, "max_level": 7},
           "archer_tower": {"count": 4, "max_level": 7},
           "mortar": {"count": 2, "max_level": 5},
@@ -297,10 +272,7 @@ export const gameData = {
         },
         "heroes": {
           "barbarian_king": {"max_level": 5, "unlock_level": 1}
-        },
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        }
       },
       "TH8": {
         "level": 8,
@@ -308,7 +280,6 @@ export const gameData = {
         "upgrade_time": "3d",
         "hitpoints": 3500,
         "buildings": {
-          "total_buildings": 75,
           "cannon": {"count": 5, "max_level": 8},
           "archer_tower": {"count": 4, "max_level": 8},
           "mortar": {"count": 3, "max_level": 6},
@@ -328,7 +299,7 @@ export const gameData = {
           "builder_hut": {"count": 5, "max_level": 1},
           "walls": {"count": 175, "max_level": 8},
           "clan_castle": {"count": 1, "max_level": 4},
-          "hero_hall": {"count": 1, "max_level": 1}
+          "blacksmith": {"count": 1, "max_level": 1}
         },
         "army": {
           "army_camps_capacity": 200,
@@ -357,10 +328,7 @@ export const gameData = {
         },
         "heroes": {
           "barbarian_king": {"max_level": 10, "unlock_level": 1}
-        },
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        }
       },
       "TH9": {
         "level": 9,
@@ -368,7 +336,6 @@ export const gameData = {
         "upgrade_time": "5d",
         "hitpoints": 4200,
         "buildings": {
-          "total_buildings": 85,
           "cannon": {"count": 5, "max_level": 10},
           "archer_tower": {"count": 5, "max_level": 10},
           "mortar": {"count": 4, "max_level": 7},
@@ -391,7 +358,7 @@ export const gameData = {
           "builder_hut": {"count": 5, "max_level": 1},
           "walls": {"count": 250, "max_level": 10},
           "clan_castle": {"count": 1, "max_level": 6},
-          "hero_hall": {"count": 1, "max_level": 2}
+          "blacksmith": {"count": 1, "max_level": 2}
         },
         "army": {
           "army_camps_capacity": 220,
@@ -428,10 +395,7 @@ export const gameData = {
         "heroes": {
           "barbarian_king": {"max_level": 30, "unlock_level": 1},
           "archer_queen": {"max_level": 30, "unlock_level": 1}
-        },
-        "pets": {},
-        "siege_machines": {},
-        "super_troops": {}
+        }
       },
    "TH10": {
     "level": 10,
@@ -439,7 +403,6 @@ export const gameData = {
     "upgrade_time": "8d",
     "hitpoints": 6200,
     "buildings": {
-      "total_buildings": 115,
       "cannon": {"count": 7, "max_level": 13},
       "archer_tower": {"count": 8, "max_level": 13},
       "mortar": {"count": 4, "max_level": 8},
@@ -464,7 +427,8 @@ export const gameData = {
       "dark_spell_factory": {"count": 1, "max_level": 4},
       "clan_castle": {"count": 1, "max_level": 5},
       "walls": {"count": 275, "max_level": 11},
-      "builder_hut": {"count": 5, "max_level": 1}
+      "builder_hut": {"count": 5, "max_level": 1},
+      "blacksmith": {"count": 1, "max_level": 3}
     },
     "army": {
       "army_camps_capacity": 240,
@@ -503,10 +467,7 @@ export const gameData = {
     "heroes": {
       "barbarian_king": {"max_level": 40, "unlock_level": 1},
       "archer_queen": {"max_level": 40, "unlock_level": 1}
-    },
-    "pets": {},
-    "siege_machines": {},
-    "super_troops": {}
+    }
   },
   "TH11": {
     "level": 11,
@@ -514,7 +475,6 @@ export const gameData = {
     "upgrade_time": "14d",
     "hitpoints": 6800,
     "buildings": {
-      "total_buildings": 119,
       "cannon": {"count": 7, "max_level": 13},
       "archer_tower": {"count": 8, "max_level": 13},
       "mortar": {"count": 4, "max_level": 8},
@@ -541,7 +501,7 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 275, "max_level": 11},
       "clan_castle": {"count": 1, "max_level": 6},
-      "hero_hall": {"count": 1, "max_level": 5}
+      "blacksmith": {"count": 1, "max_level": 4}
     },
     "army": {
       "army_camps_capacity": 260,
@@ -573,10 +533,7 @@ export const gameData = {
     "heroes": {
       "barbarian_king": {"max_level": 30, "unlock_level": 1},
       "archer_queen": {"max_level": 30, "unlock_level": 1}
-    },
-    "pets": {},
-    "siege_machines": {},
-    "super_troops": {}
+    }
   },
   "TH12": {
     "level": 12,
@@ -584,7 +541,6 @@ export const gameData = {
     "upgrade_time": "6d",
     "hitpoints": 7500,
     "buildings": {
-      "total_buildings": 127,
       "cannon": {"count": 6, "max_level": 15},
       "archer_tower": {"count": 6, "max_level": 15},
       "mortar": {"count": 4, "max_level": 10},
@@ -596,7 +552,7 @@ export const gameData = {
       "x_bow": {"count": 4, "max_level": 5},
       "inferno_tower": {"count": 2, "max_level": 5},
       "eagle_artillery": {"count": 1, "max_level": 3},
-      "siege_workshop": {"count": 1, "max_level": 3},
+      "workshop": {"count": 1, "max_level": 3},
       "gold_mine": {"count": 7, "max_level": 15},
       "elixir_collector": {"count": 7, "max_level": 15},
       "dark_elixir_drill": {"count": 4, "max_level": 9},
@@ -612,7 +568,7 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 300, "max_level": 12},
       "clan_castle": {"count": 1, "max_level": 8},
-      "hero_hall": {"count": 1, "max_level": 6}
+      "blacksmith": {"count": 1, "max_level": 5}
     },
     "army": {
       "army_camps_capacity": 260,
@@ -654,14 +610,7 @@ export const gameData = {
       "barbarian_king": {"max_level": 65, "unlock_level": 1},
       "archer_queen": {"max_level": 65, "unlock_level": 1},
       "grand_warden": {"max_level": 40, "unlock_level": 7}
-    },
-    "pets": {},
-    "siege_machines": {
-      "wall_wrecker": {"max_level": 2},
-      "battle_blimp": {"max_level": 2},
-      "stone_slammer": {"max_level": 2}
-    },
-    "super_troops": {}
+    }
   },
   "TH13": {
     "level": 13,
@@ -669,7 +618,6 @@ export const gameData = {
     "upgrade_time": "10d",
     "hitpoints": 9200,
     "buildings": {
-      "total_buildings": 138,
       "cannon": {"count": 6, "max_level": 19},
       "archer_tower": {"count": 6, "max_level": 19},
       "mortar": {"count": 4, "max_level": 13},
@@ -682,7 +630,7 @@ export const gameData = {
       "inferno_tower": {"count": 2, "max_level": 7},
       "eagle_artillery": {"count": 1, "max_level": 4},
       "scattershot": {"count": 2, "max_level": 2},
-      "siege_workshop": {"count": 1, "max_level": 5},
+      "workshop": {"count": 1, "max_level": 5},
       "gold_mine": {"count": 7, "max_level": 18},
       "elixir_collector": {"count": 7, "max_level": 18},
       "dark_elixir_drill": {"count": 4, "max_level": 10},
@@ -698,7 +646,7 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 325, "max_level": 13},
       "clan_castle": {"count": 1, "max_level": 9},
-      "hero_hall": {"count": 1, "max_level": 7}
+      "blacksmith": {"count": 1, "max_level": 6}
     },
     "army": {
       "army_camps_capacity": 280,
@@ -746,16 +694,7 @@ export const gameData = {
       "archer_queen": {"max_level": 75, "unlock_level": 1},
       "grand_warden": {"max_level": 50, "unlock_level": 9},
       "royal_champion": {"max_level": 25, "unlock_level": 13}
-    },
-    "pets": {},
-    "siege_machines": {
-      "wall_wrecker": {"max_level": 4},
-      "battle_blimp": {"max_level": 4},
-      "stone_slammer": {"max_level": 4},
-      "siege_barracks": {"max_level": 4},
-      "log_launcher": {"max_level": 4}
-    },
-    "super_troops": {}
+    }
   },
   "TH14": {
     "level": 14,
@@ -763,7 +702,6 @@ export const gameData = {
     "upgrade_time": "12d",
     "hitpoints": 10400,
     "buildings": {
-      "total_buildings": 145,
       "cannon": {"count": 6, "max_level": 20},
       "archer_tower": {"count": 6, "max_level": 20},
       "mortar": {"count": 4, "max_level": 14},
@@ -777,7 +715,7 @@ export const gameData = {
       "eagle_artillery": {"count": 1, "max_level": 4},
       "scattershot": {"count": 2, "max_level": 2},
       "monolith": {"count": 3, "max_level": 3},
-      "siege_workshop": {"count": 1, "max_level": 6},
+      "workshop": {"count": 1, "max_level": 6},
       "gold_mine": {"count": 7, "max_level": 19},
       "elixir_collector": {"count": 7, "max_level": 19},
       "dark_elixir_drill": {"count": 4, "max_level": 10},
@@ -793,7 +731,8 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 350, "max_level": 14},
       "clan_castle": {"count": 1, "max_level": 10},
-      "hero_hall": {"count": 1, "max_level": 8}
+      "pet_house": {"count": 1, "max_level": 4},
+      "blacksmith": {"count": 1, "max_level": 7}
     },
     "army": {
       "army_camps_capacity": 300,
@@ -842,18 +781,7 @@ export const gameData = {
       "archer_queen": {"max_level": 85, "unlock_level": 1},
       "grand_warden": {"max_level": 55, "unlock_level": 9},
       "royal_champion": {"max_level": 25, "unlock_level": 13}
-    },
-    "pets": {},
-    "siege_machines": {
-      "wall_wrecker": {"max_level": 5},
-      "battle_blimp": {"max_level": 5},
-      "stone_slammer": {"max_level": 5},
-      "siege_barracks": {"max_level": 5},
-      "log_launcher": {"max_level": 5},
-      "flame_flinger": {"max_level": 5},
-      "tornado_tower": {"max_level": 3}
-    },
-    "super_troops": {}
+    }
   },
   "TH15": {
     "level": 15,
@@ -861,7 +789,6 @@ export const gameData = {
     "upgrade_time": "14d",
     "hitpoints": 12200,
     "buildings": {
-      "total_buildings": 155,
       "cannon": {"count": 7, "max_level": 22},
       "archer_tower": {"count": 7, "max_level": 22},
       "mortar": {"count": 4, "max_level": 15},
@@ -875,7 +802,7 @@ export const gameData = {
       "eagle_artillery": {"count": 1, "max_level": 5},
       "scattershot": {"count": 2, "max_level": 4},
       "monolith": {"count": 4, "max_level": 3},
-      "siege_workshop": {"count": 1, "max_level": 7},
+      "workshop": {"count": 1, "max_level": 7},
       "gold_mine": {"count": 7, "max_level": 20},
       "elixir_collector": {"count": 7, "max_level": 20},
       "dark_elixir_drill": {"count": 4, "max_level": 11},
@@ -891,7 +818,8 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 400, "max_level": 15},
       "clan_castle": {"count": 1, "max_level": 11},
-      "hero_hall": {"count": 1, "max_level": 9}
+      "pet_house": {"count": 1, "max_level": 8},
+      "blacksmith": {"count": 1, "max_level": 8}
     },
     "army": {
       "army_camps_capacity": 320,
@@ -941,18 +869,7 @@ export const gameData = {
       "archer_queen": {"max_level": 90, "unlock_level": 1},
       "grand_warden": {"max_level": 55, "unlock_level": 9},
       "royal_champion": {"max_level": 35, "unlock_level": 13}
-    },
-    "pets": {},
-    "siege_machines": {
-      "wall_wrecker": {"max_level": 5},
-      "battle_blimp": {"max_level": 5},
-      "stone_slammer": {"max_level": 5},
-      "siege_barracks": {"max_level": 5},
-      "log_launcher": {"max_level": 5},
-      "flame_flinger": {"max_level": 5},
-      "tornado_tower": {"max_level": 5}
-    },
-    "super_troops": {}
+    }
   },
   "TH16": {
     "level": 16,
@@ -960,7 +877,6 @@ export const gameData = {
     "upgrade_time": "15d",
     "hitpoints": 13800,
     "buildings": {
-      "total_buildings": 160,
       "cannon": {"count": 7, "max_level": 22},
       "archer_tower": {"count": 7, "max_level": 22},
       "mortar": {"count": 4, "max_level": 15},
@@ -974,7 +890,7 @@ export const gameData = {
       "eagle_artillery": {"count": 1, "max_level": 5},
       "scattershot": {"count": 2, "max_level": 4},
       "monolith": {"count": 4, "max_level": 4},
-      "siege_workshop": {"count": 1, "max_level": 7},
+      "workshop": {"count": 1, "max_level": 7},
       "gold_mine": {"count": 7, "max_level": 21},
       "elixir_collector": {"count": 7, "max_level": 21},
       "dark_elixir_drill": {"count": 4, "max_level": 12},
@@ -990,7 +906,8 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 450, "max_level": 16},
       "clan_castle": {"count": 1, "max_level": 12},
-      "hero_hall": {"count": 1, "max_level": 10}
+      "pet_house": {"count": 1, "max_level": 9},
+      "blacksmith": {"count": 1, "max_level": 9}
     },
     "army": {
       "army_camps_capacity": 330,
@@ -1039,18 +956,7 @@ export const gameData = {
       "archer_queen": {"max_level": 100, "unlock_level": 1},
       "grand_warden": {"max_level": 60, "unlock_level": 9},
       "royal_champion": {"max_level": 40, "unlock_level": 13}
-    },
-    "pets": {},
-    "siege_machines": {
-      "wall_wrecker": {"max_level": 5},
-      "battle_blimp": {"max_level": 5},
-      "stone_slammer": {"max_level": 5},
-      "siege_barracks": {"max_level": 5},
-      "log_launcher": {"max_level": 5},
-      "flame_flinger": {"max_level": 5},
-      "tornado_tower": {"max_level": 5}
-    },
-    "super_troops": {}
+    }
   },
   "TH17": {
     "level": 17,
@@ -1058,7 +964,6 @@ export const gameData = {
     "upgrade_time": "18d",
     "hitpoints": 15400,
     "buildings": {
-      "total_buildings": 165,
       "cannon": {"count": 7, "max_level": 22},
       "archer_tower": {"count": 7, "max_level": 22},
       "mortar": {"count": 4, "max_level": 15},
@@ -1072,7 +977,7 @@ export const gameData = {
       "eagle_artillery": {"count": 1, "max_level": 5},
       "scattershot": {"count": 2, "max_level": 4},
       "monolith": {"count": 4, "max_level": 4},
-      "siege_workshop": {"count": 1, "max_level": 7},
+      "workshop": {"count": 1, "max_level": 7},
       "gold_mine": {"count": 7, "max_level": 21},
       "elixir_collector": {"count": 7, "max_level": 21},
       "dark_elixir_drill": {"count": 4, "max_level": 12},
@@ -1088,7 +993,8 @@ export const gameData = {
       "builder_hut": {"count": 5, "max_level": 1},
       "walls": {"count": 500, "max_level": 17},
       "clan_castle": {"count": 1, "max_level": 13},
-      "hero_hall": {"count": 1, "max_level": 12}
+      "pet_house": {"count": 1, "max_level": 10},
+      "blacksmith": {"count": 1, "max_level": 9}
     },
     "army": {
       "army_camps_capacity": 350,
@@ -1137,18 +1043,7 @@ export const gameData = {
       "archer_queen": {"max_level": 100, "unlock_level": 1},
       "grand_warden": {"max_level": 65, "unlock_level": 9},
       "royal_champion": {"max_level": 50, "unlock_level": 13}
-    },
-    "pets": {},
-    "siege_machines": {
-      "wall_wrecker": {"max_level": 5},
-      "battle_blimp": {"max_level": 5},
-      "stone_slammer": {"max_level": 5},
-      "siege_barracks": {"max_level": 5},
-      "log_launcher": {"max_level": 5},
-      "flame_flinger": {"max_level": 5},
-      "tornado_tower": {"max_level": 5}
-    },
-    "super_troops": {}
+    }
   }
 }
 }

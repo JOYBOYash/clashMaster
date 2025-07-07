@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useMemo } from 'react';
-import { Home, Hammer, Shield, Sword, Coins, Building as BuildingIcon, Users } from 'lucide-react';
+import { Home, Hammer, Shield, Sword, Coins, Building as BuildingIcon } from 'lucide-react';
 
 interface ManualVillageEditorProps {
   villageState: VillageState;
@@ -31,10 +31,11 @@ export function ManualVillageEditor({ villageState, onUpdate }: ManualVillageEdi
   };
   
   const handleHallLevelChange = (hall: 'townHall' | 'builderHall', newLevel: number) => {
+      const safeLevel = isNaN(newLevel) ? 1 : newLevel;
       if (hall === 'townHall') {
-          onUpdate({...villageState, townHallLevel: isNaN(newLevel) ? 1 : newLevel });
+          onUpdate({...villageState, townHallLevel: Math.max(1, Math.min(16, safeLevel)) });
       } else {
-          onUpdate({...villageState, builderHallLevel: isNaN(newLevel) ? 1 : newLevel});
+          onUpdate({...villageState, builderHallLevel: Math.max(1, Math.min(10, safeLevel))});
       }
   }
 
@@ -117,7 +118,7 @@ export function ManualVillageEditor({ villageState, onUpdate }: ManualVillageEdi
       </CardHeader>
       <CardContent className="space-y-8">
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 border rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 border rounded-lg bg-muted/30">
              <div className="space-y-1.5">
               <Label htmlFor="townHallLevel" className="text-base font-semibold flex items-center"><Home className="w-5 h-5 mr-2" />Town Hall Level</Label>
               <Input 
@@ -144,55 +145,55 @@ export function ManualVillageEditor({ villageState, onUpdate }: ManualVillageEdi
             </div>
         </div>
 
-        <Accordion type="multiple" defaultValue={['home-buildings']} className="w-full space-y-4">
-            <AccordionItem value="home-buildings" className="border rounded-lg">
-                <AccordionTrigger className="text-xl font-headline flex items-center p-4"><Home className="w-6 h-6 mr-3 text-primary" />Home Village</AccordionTrigger>
+        <Accordion type="multiple" defaultValue={['home-village']} className="w-full space-y-4">
+            <AccordionItem value="home-village" className="border rounded-lg">
+                <AccordionTrigger className="text-xl font-headline flex items-center p-4 hover:no-underline"><Home className="w-6 h-6 mr-3 text-primary" />Home Village</AccordionTrigger>
                 <AccordionContent className="p-4 pt-0">
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <h4 className="font-semibold mb-4">Buildings</h4>
-                             <Accordion type="multiple" defaultValue={['defensive', 'army', 'resource', 'other']}>
+                            <h4 className="font-semibold text-lg mb-4 border-b pb-2">Buildings</h4>
+                             <Accordion type="multiple" defaultValue={['defensive']} className="w-full space-y-1">
                                 {Object.entries(groupedBuildings.home).map(([type, buildings]) => {
                                      if (buildings.length === 0) return null;
                                      const Icon = buildingTypeIcons[type];
                                      return (
                                         <AccordionItem value={type} key={`home-${type}`}>
-                                            <AccordionTrigger className="capitalize text-base"><Icon className="w-4 h-4 mr-2" />{type}</AccordionTrigger>
-                                            <AccordionContent className="pt-4">{renderBuildingInputs(buildings)}</AccordionContent>
+                                            <AccordionTrigger className="capitalize text-base py-2"><Icon className="w-4 h-4 mr-2 text-muted-foreground" />{type}</AccordionTrigger>
+                                            <AccordionContent className="pt-4 border-l ml-2 pl-4">{renderBuildingInputs(buildings)}</AccordionContent>
                                         </AccordionItem>
                                      )
                                 })}
                             </Accordion>
                         </div>
                          <div>
-                            <h4 className="font-semibold mb-4">Troops</h4>
+                            <h4 className="font-semibold text-lg mb-4 border-b pb-2">Troops</h4>
                              {renderTroopInputs(homeTroops)}
                         </div>
                     </div>
                 </AccordionContent>
             </AccordionItem>
             
-            <AccordionItem value="builder-buildings" className="border rounded-lg">
-                <AccordionTrigger className="text-xl font-headline flex items-center p-4"><Hammer className="w-6 h-6 mr-3 text-primary" />Builder Base</AccordionTrigger>
+            <AccordionItem value="builder-base" className="border rounded-lg">
+                <AccordionTrigger className="text-xl font-headline flex items-center p-4 hover:no-underline"><Hammer className="w-6 h-6 mr-3 text-primary" />Builder Base</AccordionTrigger>
                 <AccordionContent className="p-4 pt-0">
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <h4 className="font-semibold mb-4">Buildings</h4>
-                             <Accordion type="multiple" defaultValue={['defensive', 'army', 'resource', 'other']}>
+                            <h4 className="font-semibold text-lg mb-4 border-b pb-2">Buildings</h4>
+                             <Accordion type="multiple" defaultValue={['defensive']} className="w-full space-y-1">
                                 {Object.entries(groupedBuildings.builder).map(([type, buildings]) => {
                                      if (buildings.length === 0) return null;
                                      const Icon = buildingTypeIcons[type];
                                      return (
                                         <AccordionItem value={type} key={`builder-${type}`}>
-                                            <AccordionTrigger className="capitalize text-base"><Icon className="w-4 h-4 mr-2" />{type}</AccordionTrigger>
-                                            <AccordionContent className="pt-4">{renderBuildingInputs(buildings)}</AccordionContent>
+                                            <AccordionTrigger className="capitalize text-base py-2"><Icon className="w-4 h-4 mr-2 text-muted-foreground" />{type}</AccordionTrigger>
+                                            <AccordionContent className="pt-4 border-l ml-2 pl-4">{renderBuildingInputs(buildings)}</AccordionContent>
                                         </AccordionItem>
                                      )
                                 })}
                             </Accordion>
                         </div>
                          <div>
-                            <h4 className="font-semibold mb-4">Troops</h4>
+                            <h4 className="font-semibold text-lg mb-4 border-b pb-2">Troops</h4>
                              {renderTroopInputs(builderTroops)}
                         </div>
                     </div>

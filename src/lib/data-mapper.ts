@@ -52,23 +52,30 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
 
             if (config.name === 'Town Hall') townHallLevel = item.lvl;
             if (config.name === 'Builder Hall') builderHallLevel = item.lvl;
+
+            // This is the fix: The JSON from the game export has faulty `cnt` values for army buildings.
+            // This heuristic treats each entry for an army building as a single instance and ignores `cnt`.
+            // For other buildings, `cnt` is respected as the number of buildings at that level.
+            let count = item.cnt || 1;
+            if (config.type === 'army') {
+                count = 1;
+            }
             
-            const counterKey = `${config.name}-${base}`;
-            if (buildingCounters[counterKey] === undefined) {
-                buildingCounters[counterKey] = 0;
+            const buildingKey = config.name.replace(/\s/g, '') + '-' + config.base;
+            if (buildingCounters[buildingKey] === undefined) {
+                buildingCounters[buildingKey] = 0;
             }
 
-            const count = item.cnt || 1;
             for (let i = 0; i < count; i++) {
-                const instanceIndex = buildingCounters[counterKey]++;
+                const instanceIndex = buildingCounters[buildingKey]++;
                 buildings.push({
-                    id: `${config.name.replace(/\s/g, '')}-${config.base}-${instanceIndex}`,
+                    id: `${buildingKey}-${instanceIndex}`,
                     name: config.name,
                     level: item.lvl,
                     maxLevel: config.maxLevel,
                     type: config.type,
                     base: config.base,
-                    isUpgrading: false, // JSON export doesn't clearly provide this per-item
+                    isUpgrading: item.hasOwnProperty('timer'),
                 });
             }
         });

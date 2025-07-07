@@ -54,12 +54,14 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<Fet
                 const config = ALL_TROOPS_CONFIG.find(t => t.name === apiTroop.name);
                 if (!config) return null;
 
+                const village = apiTroop.village === 'home' ? 'home' : 'builder';
+
                 return {
                     id: `${apiTroop.name.replace(/\s/g, '')}-${index}`,
                     name: apiTroop.name,
                     level: apiTroop.level,
                     maxLevel: apiTroop.maxLevel,
-                    village: apiTroop.village,
+                    village: village,
                     elixirType: config.elixirType,
                 }
             })

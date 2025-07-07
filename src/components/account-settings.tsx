@@ -3,15 +3,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ManualVillageEditor } from "./manual-village-editor";
+import type { VillageState } from "@/lib/constants";
 
 interface AccountSettingsProps {
+  villageState: VillageState;
+  onUpdate: (newState: VillageState) => void;
   onReset: () => void;
 }
 
 
-export function AccountSettings({ onReset }: AccountSettingsProps) {
+export function AccountSettings({ villageState, onUpdate, onReset }: AccountSettingsProps) {
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="space-y-8">
+      <ManualVillageEditor villageState={villageState} onUpdate={onUpdate} />
+      
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">Load a Different Village</CardTitle>

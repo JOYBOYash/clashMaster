@@ -26,7 +26,7 @@ export const TroopSchema = zod.object({
   name: zod.string(),
   level: zod.number().min(0),
   maxLevel: zod.number().min(1),
-  village: zod.enum(['home', 'builderBase']),
+  village: zod.enum(['home', 'builder']),
   elixirType: zod.enum(['regular', 'dark', 'none']),
 });
 export type Troop = z.infer<typeof TroopSchema>;
@@ -49,7 +49,7 @@ export const VillageStateSchema = zod.object({
 
 export type VillageState = z.infer<typeof VillageStateSchema>;
 
-export const ALL_BUILDINGS_CONFIG = [
+export const ALL_BUILDINGS_CONFIG: Omit<Building, 'id' | 'level' | 'isUpgrading'>[] = [
   // Home Village
   { name: 'Town Hall', maxLevel: 16, type: 'other', base: 'home' },
   { name: 'Clan Castle', maxLevel: 12, type: 'army', base: 'home' },
@@ -92,8 +92,8 @@ export const ALL_BUILDINGS_CONFIG = [
   { name: 'Air Bombs', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Roaster', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Multi Mortar', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Crusher', maxLevel: 10, type: 'defensive', 'base': 'builder' },
-  { name: 'Guard Post', maxLevel: 10, type: 'defensive', 'base': 'builder' },
+  { name: 'Crusher', maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Guard Post', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Push Trap', maxLevel: 10, type: 'defensive', base: 'builder' },
   { name: 'Gem Mine', maxLevel: 10, type: 'resource', base: 'builder' },
   { name: 'Clock Tower', maxLevel: 10, type: 'other', base: 'builder' },
@@ -103,47 +103,47 @@ export const ALL_BUILDINGS_CONFIG = [
   { name: 'Battle Machine', maxLevel: 45, type: 'army', base: 'builder' },
 ];
 
-export const ALL_TROOPS_CONFIG = [
+export const ALL_TROOPS_CONFIG: Omit<Troop, 'id' | 'level'>[] = [
     // Home Village - Elixir
-    { name: 'Barbarian', elixirType: 'regular' },
-    { name: 'Archer', elixirType: 'regular' },
-    { name: 'Goblin', elixirType: 'regular' },
-    { name: 'Giant', elixirType: 'regular' },
-    { name: 'Wall Breaker', elixirType: 'regular' },
-    { name: 'Balloon', elixirType: 'regular' },
-    { name: 'Wizard', elixirType: 'regular' },
-    { name: 'Healer', elixirType: 'regular' },
-    { name: 'Dragon', elixirType: 'regular' },
-    { name: 'P.E.K.K.A', elixirType: 'regular' },
-    { name: 'Baby Dragon', elixirType: 'regular' },
-    { name: 'Miner', elixirType: 'regular' },
-    { name: 'Electro Dragon', elixirType: 'regular' },
-    { name: 'Yeti', elixirType: 'regular' },
-    { name: 'Root Rider', elixirType: 'regular' },
+    { name: 'Barbarian', maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Archer', maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Goblin', maxLevel: 8, village: 'home', elixirType: 'regular' },
+    { name: 'Giant', maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Wall Breaker', maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Balloon', maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { name: 'Wizard', maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Healer', maxLevel: 8, village: 'home', elixirType: 'regular' },
+    { name: 'Dragon', maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { name: 'P.E.K.K.A', maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { name: 'Baby Dragon', maxLevel: 9, village: 'home', elixirType: 'regular' },
+    { name: 'Miner', maxLevel: 9, village: 'home', elixirType: 'regular' },
+    { name: 'Electro Dragon', maxLevel: 6, village: 'home', elixirType: 'regular' },
+    { name: 'Yeti', maxLevel: 5, village: 'home', elixirType: 'regular' },
+    { name: 'Root Rider', maxLevel: 3, village: 'home', elixirType: 'regular' },
     // Home Village - Dark Elixir
-    { name: 'Minion', elixirType: 'dark' },
-    { name: 'Hog Rider', elixirType: 'dark' },
-    { name: 'Valkyrie', elixirType: 'dark' },
-    { name: 'Golem', elixirType: 'dark' },
-    { name: 'Witch', elixirType: 'dark' },
-    { name: 'Lava Hound', elixirType: 'dark' },
-    { name: 'Bowler', elixirType: 'dark' },
-    { name: 'Ice Golem', elixirType: 'dark' },
-    { name: 'Headhunter', elixirType: 'dark' },
-    { name: 'Apprentice Warden', elixirType: 'dark' },
+    { name: 'Minion', maxLevel: 11, village: 'home', elixirType: 'dark' },
+    { name: 'Hog Rider', maxLevel: 12, village: 'home', elixirType: 'dark' },
+    { name: 'Valkyrie', maxLevel: 10, village: 'home', elixirType: 'dark' },
+    { name: 'Golem', maxLevel: 12, village: 'home', elixirType: 'dark' },
+    { name: 'Witch', maxLevel: 6, village: 'home', elixirType: 'dark' },
+    { name: 'Lava Hound', maxLevel: 7, village: 'home', elixirType: 'dark' },
+    { name: 'Bowler', maxLevel: 7, village: 'home', elixirType: 'dark' },
+    { name: 'Ice Golem', maxLevel: 7, village: 'home', elixirType: 'dark' },
+    { name: 'Headhunter', maxLevel: 4, village: 'home', elixirType: 'dark' },
+    { name: 'Apprentice Warden', maxLevel: 4, village: 'home', elixirType: 'dark' },
     // Builder Base
-    { name: 'Raged Barbarian', elixirType: 'none' },
-    { name: 'Sneaky Archer', elixirType: 'none' },
-    { name: 'Boxer Giant', elixirType: 'none' },
-    { name: 'Beta Minion', elixirType: 'none' },
-    { name: 'Bomber', elixirType: 'none' },
-    { name: 'Baby Dragon', elixirType: 'none' },
-    { name: 'Cannon Cart', elixirType: 'none' },
-    { name: 'Night Witch', elixirType: 'none' },
-    { name: 'Drop Ship', elixirType: 'none' },
-    { name: 'Power P.E.K.K.A', elixirType: 'none' },
-    { name: 'Hog Glider', elixirType: 'none' },
-    { name: 'Electrofire Wizard', elixirType: 'none' },
+    { name: 'Raged Barbarian', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Sneaky Archer', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Boxer Giant', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Beta Minion', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Bomber', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Baby Dragon', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Cannon Cart', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Night Witch', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Drop Ship', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Power P.E.K.K.A', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Hog Glider', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Electrofire Wizard', maxLevel: 20, village: 'builder', elixirType: 'none' },
 ];
 
 
@@ -183,8 +183,8 @@ export const DEMO_VILLAGE_STATE: VillageState = {
     { id: 'Archer-1', name: 'Archer', level: 8, maxLevel: 11, village: 'home', elixirType: 'regular' },
     { id: 'Dragon-1', name: 'Dragon', level: 7, maxLevel: 10, village: 'home', elixirType: 'regular' },
     { id: 'HogRider-1', name: 'Hog Rider', level: 8, maxLevel: 12, village: 'home', elixirType: 'dark' },
-    { id: 'BoxerGiant-1', name: 'Boxer Giant', level: 18, maxLevel: 20, village: 'builderBase', elixirType: 'none' },
-    { id: 'CannonCart-1', name: 'Cannon Cart', level: 18, maxLevel: 20, village: 'builderBase', elixirType: 'none' },
+    { id: 'BoxerGiant-1', name: 'Boxer Giant', level: 18, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { id: 'CannonCart-1', name: 'Cannon Cart', level: 18, maxLevel: 20, village: 'builder', elixirType: 'none' },
   ],
 };
 

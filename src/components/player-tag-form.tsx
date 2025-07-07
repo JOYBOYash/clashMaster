@@ -12,17 +12,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Loader2, Search, TestTube2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import type { VillageState } from '@/lib/constants';
-import { DEMO_VILLAGE_STATE } from '@/lib/constants';
 
 interface PlayerTagFormProps {
   onDataFetched: (data: VillageState) => void;
+  onLoadDemo: () => void;
 }
 
 const FormSchema = z.object({
   playerTag: z.string().trim().startsWith('#', { message: 'Player Tag must start with #' }).min(4, 'Player Tag is too short.'),
 });
 
-export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
+export function PlayerTagForm({ onDataFetched, onLoadDemo }: PlayerTagFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,7 +48,7 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
   };
   
   const handleLoadDemo = () => {
-    onDataFetched(DEMO_VILLAGE_STATE);
+    onLoadDemo();
   };
 
   return (
@@ -107,7 +107,7 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
             <TestTube2 className="h-4 w-4" />
             <AlertTitle>Using a Cloud IDE?</AlertTitle>
             <AlertDescription>
-            If the live API is blocked (403 Error), use the sample village to explore all features without an API key.
+            If the live API is blocked (403 Error), use the sample village to explore all features without an API key. You can edit all levels manually in the settings tab.
             </AlertDescription>
         </Alert>
 

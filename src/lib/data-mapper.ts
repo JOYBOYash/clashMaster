@@ -122,7 +122,6 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
     const pets: Pet[] = [];
     const equipment: Equipment[] = [];
     
-    // 1. Get Town Hall Level first. This is the source of truth.
     const townHallEntry = jsonData.buildings.find((b: JsonItem) => b.data === 1000001);
     if (!townHallEntry) {
         throw new Error("Could not determine Town Hall level from JSON data.");
@@ -150,10 +149,36 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
             const config = BUILDING_ID_MAP.get(dataId);
             if (!config || config.base !== base) continue;
             
+            let maxCount = 0; 
+            let maxLevel = 1;
+
+            if (thData && config.base === 'home') {
+                const buildingDataKey = config.name.replace(/ /g, '_').replace(/'/g, '').toLowerCase() as keyof typeof thData.buildings;
+                const buildingInfo = thData.buildings[buildingDataKey] as { count: number; max_level: number };
+                if (buildingInfo) {
+                    maxCount = buildingInfo.count;
+                    maxLevel = buildingInfo.max_level;
+                } else {
+                    // Building might not exist at this TH level, skip it
+                    continue;
+                }
+            } else if (config.base === 'builder') {
+                // Cannot validate builder base against TH data currently.
+                // So, we just take what's in the JSON.
+                maxCount = itemList.reduce((sum, item) => sum + (item.cnt || 1), 0);
+                maxLevel = itemList.reduce((max, item) => Math.max(max, item.lvl), 1);
+            }
+            
+            if (['Barracks', 'Dark Barracks', 'Workshop', 'Pet House', 'Blacksmith', 'Laboratory', 'Spell Factory', 'Dark Spell Factory'].includes(config.name)) {
+                maxCount = 1;
+            }
+
             const buildingInstances: {level: number, isUpgrading: boolean, upgradeEndTime?: string, upgradeTime?: number}[] = [];
             
-            // Collect all instances from the JSON data, expanding the `cnt` field
             itemList.forEach(item => {
+                if (config.base === 'home' && item.lvl > maxLevel) {
+                    return; 
+                }
                 const count = item.cnt || 1;
                 for (let i = 0; i < count; i++) {
                      buildingInstances.push({
@@ -165,40 +190,13 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
                 }
             });
 
-            // Use the game data config to get the true max count for this TH level
-            let maxCount = buildingInstances.length; // Default to what's in JSON
-            if (thData) {
-                const buildingDataKey = config.name.replace(/ /g, '_').replace(/'/g, '').toLowerCase() as keyof typeof thData.buildings;
-                const buildingInfo = thData.buildings[buildingDataKey] as { count: number; max_level: number };
-                if (buildingInfo) {
-                    maxCount = buildingInfo.count;
-                }
-            }
-             // For single-instance buildings that have merged (like Barracks), force the count to 1
-             if (['Barracks', 'Dark Barracks', 'Workshop', 'Pet House', 'Blacksmith', 'Laboratory', 'Spell Factory', 'Dark Spell Factory'].includes(config.name)) {
-                maxCount = 1;
-            }
-
-            // Take the highest level instances up to the max count allowed by game rules
             const finalInstances = buildingInstances
                 .sort((a, b) => b.level - a.level)
                 .slice(0, maxCount);
             
-            // Get max level from the new game data based on TH level
-            let maxLevel = 1; 
-            if (thData) {
-                const buildingDataKey = config.name.replace(/ /g, '_').replace(/'/g, '').toLowerCase() as keyof typeof thData.buildings;
-                const buildingInfo = thData.buildings[buildingDataKey] as { count: number; max_level: number };
-                if (buildingInfo) {
-                    maxLevel = buildingInfo.max_level;
-                }
-            }
-
-
-            // Assign unique IDs and push the final, validated list of buildings
             finalInstances.forEach((instance, index) => {
                 buildings.push({
-                    id: `${config.name}-${config.base}-${index}`,
+                    id: `${config.gameId}-${index}`,
                     name: config.name,
                     level: instance.level,
                     maxLevel: maxLevel,
@@ -220,7 +218,7 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
         jsonList.forEach(item => {
             const config = configMap.get(item.data);
             if (config) {
-                 let maxLevel = 10; // Placeholder default
+                 let maxLevel = 10; 
                 if (thData) {
                      if (type === 'hero' && thData.heroes) {
                         const heroKey = Object.keys(thData.heroes).find(k => k.replace(/_/g, ' ').toLowerCase() === config.name.toLowerCase());

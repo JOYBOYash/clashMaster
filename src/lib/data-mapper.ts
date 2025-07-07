@@ -40,11 +40,27 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
     const equipment: Equipment[] = [];
     let townHallLevel = 0;
     let builderHallLevel = 0;
-    const buildingCounters: Record<string, number> = {}; // Keep track of building counts to generate unique IDs
+    const buildingCounters: Record<string, number> = {};
 
-    // Helper to process building/trap arrays
+    const specialOneOffBuildings = new Set(['Barracks', 'Dark Barracks', 'Laboratory', 'Spell Factory', 'Dark Spell Factory', 'Workshop', 'Blacksmith', 'Pet House']);
+
+    // Find the highest level for one-off buildings as the JSON can contain multiple legacy entries.
+    const oneOffBuildingLevels: Record<string, {level: number, timer?: number}> = {};
+    const allBuildingData = [...(jsonData.buildings || []), ...(jsonData.buildings2 || [])];
+
+    allBuildingData.forEach(item => {
+        const config = BUILDING_ID_MAP.get(item.data);
+        if (config && specialOneOffBuildings.has(config.name)) {
+            if (!oneOffBuildingLevels[config.name] || item.lvl > oneOffBuildingLevels[config.name].level) {
+                oneOffBuildingLevels[config.name] = { level: item.lvl, timer: item.timer };
+            }
+        }
+    });
+
     const processBuildingArray = (items: JsonItem[], base: 'home' | 'builder') => {
         if (!Array.isArray(items)) return;
+        
+        const processedOneOffs = new Set<string>();
 
         items.forEach(item => {
             const config = BUILDING_ID_MAP.get(item.data);
@@ -52,16 +68,36 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
 
             if (config.name === 'Town Hall') townHallLevel = item.lvl;
             if (config.name === 'Builder Hall') builderHallLevel = item.lvl;
+            
+            // Handle one-off buildings by taking the highest level found.
+            if (specialOneOffBuildings.has(config.name)) {
+                if(processedOneOffs.has(config.name)) return;
 
-            // This is the fix: The JSON from the game export has faulty `cnt` values for army buildings.
-            // This heuristic treats each entry for an army building as a single instance and ignores `cnt`.
-            // For other buildings, `cnt` is respected as the number of buildings at that level.
-            let count = item.cnt || 1;
-            if (config.type === 'army') {
-                count = 1;
+                const highestLevelData = oneOffBuildingLevels[config.name];
+                if(highestLevelData) {
+                    const buildingKey = config.name.replace(/\s/g, '') + '-' + config.base;
+                    buildings.push({
+                        id: `${buildingKey}-0`,
+                        name: config.name,
+                        level: highestLevelData.level,
+                        maxLevel: config.maxLevel,
+                        type: config.type,
+                        base: config.base,
+                        isUpgrading: highestLevelData.hasOwnProperty('timer'),
+                    });
+                    processedOneOffs.add(config.name);
+                }
+                return;
+            }
+
+            // Explicitly ignore Army Camp entries with invalid levels.
+            if (config.name === 'Army Camp' && item.lvl > config.maxLevel) {
+                return;
             }
             
+            const count = item.cnt || 1;
             const buildingKey = config.name.replace(/\s/g, '') + '-' + config.base;
+            
             if (buildingCounters[buildingKey] === undefined) {
                 buildingCounters[buildingKey] = 0;
             }

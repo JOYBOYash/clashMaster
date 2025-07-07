@@ -21,6 +21,16 @@ export const BuildingSchema = zod.object({
 
 export type Building = z.infer<typeof BuildingSchema>;
 
+// New config structure to handle unlocks and counts
+export interface BuildingConfig {
+  name: string;
+  maxLevel: number;
+  type: Building['type'];
+  base: Building['base'];
+  unlockedAt: number; // TH or BH level
+  count?: Record<number, number>; // TH/BH level -> count
+}
+
 export const TroopSchema = zod.object({
   id: zod.string(),
   name: zod.string(),
@@ -77,68 +87,67 @@ export const VillageStateSchema = zod.object({
 
 export type VillageState = z.infer<typeof VillageStateSchema>;
 
-export const ALL_BUILDINGS_CONFIG: Omit<Building, 'id' | 'level' | 'isUpgrading'>[] = [
+export const ALL_BUILDINGS_CONFIG: BuildingConfig[] = [
   // Home Village - General
-  { name: 'Town Hall', maxLevel: 16, type: 'other', base: 'home' },
-  { name: 'Clan Castle', maxLevel: 12, type: 'army', base: 'home' },
-  { name: 'Blacksmith', maxLevel: 9, type: 'army', base: 'home' },
-  { name: 'Pet House', maxLevel: 9, type: 'army', base: 'home' },
+  { name: 'Town Hall', maxLevel: 16, type: 'other', base: 'home', unlockedAt: 1, count: {1:1} },
+  { name: 'Clan Castle', maxLevel: 12, type: 'army', base: 'home', unlockedAt: 3, count: {3:1} },
+  { name: 'Blacksmith', maxLevel: 9, type: 'army', base: 'home', unlockedAt: 8, count: {8:1}},
+  { name: 'Pet House', maxLevel: 9, type: 'army', base: 'home', unlockedAt: 14, count: {14:1}},
   // Home Village - Defenses
-  { name: 'Cannon', maxLevel: 21, type: 'defensive', base: 'home' },
-  { name: 'Archer Tower', maxLevel: 21, type: 'defensive', base: 'home' },
-  { name: 'Mortar', maxLevel: 15, type: 'defensive', base: 'home' },
-  { name: 'Air Defense', maxLevel: 13, type: 'defensive', base: 'home' },
-  { name: 'Wizard Tower', maxLevel: 15, type: 'defensive', base: 'home' },
-  { name: 'Air Sweeper', maxLevel: 8, type: 'defensive', base: 'home' },
-  { name: 'Hidden Tesla', maxLevel: 13, type: 'defensive', base: 'home' },
-  { name: 'Bomb Tower', maxLevel: 10, type: 'defensive', base: 'home' },
-  { name: 'X-Bow', maxLevel: 10, type: 'defensive', base: 'home' },
-  { name: 'Inferno Tower', maxLevel: 9, type: 'defensive', base: 'home' },
-  { name: 'Eagle Artillery', maxLevel: 6, type: 'defensive', base: 'home' },
-  { name: 'Scattershot', maxLevel: 4, type: 'defensive', base: 'home' },
-  { name: 'Spell Tower', maxLevel: 3, type: 'defensive', base: 'home' },
-  { name: 'Monolith', maxLevel: 2, type: 'defensive', base: 'home' },
+  { name: 'Cannon', maxLevel: 21, type: 'defensive', base: 'home', unlockedAt: 1, count: { 1: 2, 6: 3, 7: 4, 8: 5, 10: 6, 14: 7 } },
+  { name: 'Archer Tower', maxLevel: 21, type: 'defensive', base: 'home', unlockedAt: 2, count: { 2: 1, 4: 2, 5: 3, 7: 4, 8: 5, 9: 6, 10: 7, 12: 8 } },
+  { name: 'Mortar', maxLevel: 15, type: 'defensive', base: 'home', unlockedAt: 5, count: { 5: 1, 6: 2, 8: 3, 9: 4 } },
+  { name: 'Air Defense', maxLevel: 13, type: 'defensive', base: 'home', unlockedAt: 4, count: { 4: 1, 6: 2, 7: 3, 9: 4 } },
+  { name: 'Wizard Tower', maxLevel: 15, type: 'defensive', base: 'home', unlockedAt: 5, count: { 5: 1, 7: 2, 8: 3, 9: 4, 11: 5 } },
+  { name: 'Air Sweeper', maxLevel: 8, type: 'defensive', base: 'home', unlockedAt: 6, count: { 6: 1, 9: 2 } },
+  { name: 'Hidden Tesla', maxLevel: 13, type: 'defensive', base: 'home', unlockedAt: 7, count: { 7: 2, 8: 3, 9: 4, 11: 5 } },
+  { name: 'Bomb Tower', maxLevel: 10, type: 'defensive', base: 'home', unlockedAt: 8, count: { 8: 1, 10: 2 } },
+  { name: 'X-Bow', maxLevel: 10, type: 'defensive', base: 'home', unlockedAt: 9, count: { 9: 2, 10: 3, 11: 4 } },
+  { name: 'Inferno Tower', maxLevel: 9, type: 'defensive', base: 'home', unlockedAt: 10, count: { 10: 2, 12: 3 } },
+  { name: 'Eagle Artillery', maxLevel: 6, type: 'defensive', base: 'home', unlockedAt: 11, count: { 11: 1 } },
+  { name: 'Scattershot', maxLevel: 4, type: 'defensive', base: 'home', unlockedAt: 13, count: { 13: 2 } },
+  { name: 'Spell Tower', maxLevel: 3, type: 'defensive', base: 'home', unlockedAt: 15, count: { 15: 2 } },
+  { name: 'Monolith', maxLevel: 2, type: 'defensive', base: 'home', unlockedAt: 15, count: { 15: 1 } },
   // Home Village - Resources
-  { name: 'Gold Storage', maxLevel: 15, type: 'resource', base: 'home' },
-  { name: 'Elixir Storage', maxLevel: 15, type: 'resource', base: 'home' },
-  { name: 'Dark Elixir Storage', maxLevel: 10, type: 'resource', base: 'home' },
-  { name: 'Gold Mine', maxLevel: 15, type: 'resource', base: 'home' },
-  { name: 'Elixir Collector', maxLevel: 15, type: 'resource', base: 'home' },
-  { name: 'Dark Elixir Drill', maxLevel: 9, type: 'resource', base: 'home' },
+  { name: 'Gold Storage', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 3: 2, 7: 3, 8: 4 } },
+  { name: 'Elixir Storage', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 3: 2, 7: 3, 8: 4 } },
+  { name: 'Dark Elixir Storage', maxLevel: 10, type: 'resource', base: 'home', unlockedAt: 7, count: { 7: 1 } },
+  { name: 'Gold Mine', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6, 9: 7 } },
+  { name: 'Elixir Collector', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6, 9: 7 } },
+  { name: 'Dark Elixir Drill', maxLevel: 9, type: 'resource', base: 'home', unlockedAt: 8, count: { 8: 1, 9: 2, 10: 3 } },
   // Home Village - Army
-  { name: 'Barracks', maxLevel: 16, type: 'army', base: 'home' },
-  { name: 'Dark Barracks', maxLevel: 10, type: 'army', base: 'home' },
-  { name: 'Army Camp', maxLevel: 12, type: 'army', base: 'home' },
-  { name: 'Laboratory', maxLevel: 14, type: 'army', base: 'home' },
-  { name: 'Spell Factory', maxLevel: 7, type: 'army', base: 'home' },
-  { name: 'Dark Spell Factory', maxLevel: 6, type: 'army', base: 'home' },
-  { name: 'Workshop', maxLevel: 7, type: 'army', base: 'home' },
+  { name: 'Barracks', maxLevel: 16, type: 'army', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 3: 3, 4: 4 } },
+  { name: 'Dark Barracks', maxLevel: 10, type: 'army', base: 'home', unlockedAt: 7, count: { 7: 1, 8: 2 } },
+  { name: 'Army Camp', maxLevel: 12, type: 'army', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 5: 3, 7: 4 } },
+  { name: 'Laboratory', maxLevel: 14, type: 'army', base: 'home', unlockedAt: 3, count: { 3: 1 } },
+  { name: 'Spell Factory', maxLevel: 7, type: 'army', base: 'home', unlockedAt: 5, count: { 5: 1 } },
+  { name: 'Dark Spell Factory', maxLevel: 6, type: 'army', base: 'home', unlockedAt: 8, count: { 8: 1 } },
+  { name: 'Workshop', maxLevel: 7, type: 'army', base: 'home', unlockedAt: 12, count: { 12: 1 } },
   // Home Village - Hero Altars
-  { name: 'Barbarian King Altar', maxLevel: 1, type: 'hero', base: 'home' },
-  { name: 'Archer Queen Altar', maxLevel: 1, type: 'hero', base: 'home' },
-  { name: 'Grand Warden Altar', maxLevel: 1, type: 'hero', base: 'home' },
-  { name: 'Royal Champion Altar', maxLevel: 1, type: 'hero', base: 'home' },
+  { name: 'Barbarian King Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 7, count: {7:1} },
+  { name: 'Archer Queen Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 9, count: {9:1} },
+  { name: 'Grand Warden Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 11, count: {11:1} },
+  { name: 'Royal Champion Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 13, count: {13:1} },
   // Builder Base
-  { name: 'Builder Hall', maxLevel: 10, type: 'other', base: 'builder' },
-  { name: 'Double Cannon', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Archer Tower', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Hidden Tesla', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Mega Tesla', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Giant Cannon', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Firecrackers', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Air Bombs', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Roaster', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Multi Mortar', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Crusher', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Guard Post', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Push Trap', maxLevel: 10, type: 'defensive', base: 'builder' },
-  { name: 'Gem Mine', maxLevel: 10, type: 'resource', base: 'builder' },
-  { name: 'Clock Tower', maxLevel: 10, type: 'other', base: 'builder' },
-  { name: 'Builder\'s Barracks', maxLevel: 10, type: 'army', base: 'builder' },
-  { name: 'Star Laboratory', maxLevel: 10, type: 'army', base: 'builder' },
-  { name: 'Reinforcement Camp', maxLevel: 10, type: 'army', base: 'builder' },
-  { name: 'Healing Hut', maxLevel: 10, type: 'army', base: 'builder' },
-  { name: 'O.T.T.O Post', maxLevel: 10, type: 'other', base: 'builder' },
+  { name: 'Builder Hall', maxLevel: 10, type: 'other', base: 'builder', unlockedAt: 1, count: { 1: 1 } },
+  { name: 'Double Cannon', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 1, count: {1:1} },
+  { name: 'Archer Tower', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 2, count: {2:1, 3:2} },
+  { name: 'Hidden Tesla', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 4, count: {4:2, 5:3, 8:4} },
+  { name: 'Mega Tesla', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 8, count: {8:1} },
+  { name: 'Giant Cannon', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 6, count: {6:1} },
+  { name: 'Firecrackers', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 4, count: {4:2, 6:3} },
+  { name: 'Air Bombs', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 5, count: {5:1} },
+  { name: 'Roaster', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 6, count: {6:1} },
+  { name: 'Multi Mortar', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 5, count: {5:1} },
+  { name: 'Crusher', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 3, count: {3:1, 5:2} },
+  { name: 'Guard Post', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 4, count: {4:1} },
+  { name: 'Gem Mine', maxLevel: 10, type: 'resource', base: 'builder', unlockedAt: 3, count: {3:1} },
+  { name: 'Clock Tower', maxLevel: 10, type: 'other', base: 'builder', unlockedAt: 4, count: {4:1} },
+  { name: 'Builder\'s Barracks', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 2, count: {2:1, 6:2} },
+  { name: 'Star Laboratory', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 4, count: {4:1} },
+  { name: 'Reinforcement Camp', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 6, count: {6:2} },
+  { name: 'Healing Hut', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 6, count: {6:1} },
+  { name: 'O.T.T.O Post', maxLevel: 10, type: 'other', base: 'builder', unlockedAt: 6, count: {6:1} },
 ];
 
 export const ALL_TROOPS_CONFIG: Omit<Troop, 'id' | 'level'>[] = [
@@ -278,5 +287,3 @@ export const initialVillageState: VillageState = {
   pets: [],
   equipment: [],
 };
-
-    

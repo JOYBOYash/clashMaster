@@ -7,14 +7,29 @@ import { VillageView } from '@/components/village-view';
 import { AccountSettings } from '@/components/account-settings';
 import { TroopGuide } from '@/components/troop-guide';
 import { 
-    type VillageState, DEMO_VILLAGE_STATE, 
+    type VillageState, 
     ALL_BUILDINGS_CONFIG, type Building, 
     ALL_TROOPS_CONFIG, type Troop,
     ALL_HEROES_CONFIG, type Hero,
     ALL_PETS_CONFIG, type Pet,
-    ALL_EQUIPMENT_CONFIG, type Equipment
+    ALL_EQUIPMENT_CONFIG, type Equipment,
+    type BuildingConfig
 } from '@/lib/constants';
 import { PlayerTagForm } from './player-tag-form';
+
+function getBuildingCountForLevel(config: BuildingConfig, level: number): number {
+    if (!config.count) {
+        return 0;
+    }
+    const availableLevels = Object.keys(config.count)
+                                .map(Number)
+                                .filter(thLevel => thLevel <= level);
+    if (availableLevels.length === 0) {
+        return 0;
+    }
+    const highestThLevel = Math.max(...availableLevels);
+    return config.count[highestThLevel] || 0;
+}
 
 export function ClashTrackDashboard() {
   const [villageState, setVillageState] = useState<VillageState | null>(null);
@@ -32,67 +47,66 @@ export function ClashTrackDashboard() {
   };
   
   const handleLoadDemo = () => {
-    // Construct a comprehensive state object so the editor is fully populated.
-    const fullBuildings: Building[] = ALL_BUILDINGS_CONFIG.map((config, index) => {
-      const existing = DEMO_VILLAGE_STATE.buildings.find(b => b.name === config.name && b.base === config.base);
-      return {
-        id: `${config.name.replace(/\s/g, '')}-${config.base}-${index}`,
-        name: config.name,
-        level: existing?.level ?? (config.name === 'Town Hall' ? DEMO_VILLAGE_STATE.townHallLevel : (config.name === 'Builder Hall' ? DEMO_VILLAGE_STATE.builderHallLevel : 1)),
-        maxLevel: config.maxLevel,
-        type: config.type,
-        base: config.base,
-        isUpgrading: existing?.isUpgrading ?? false,
-        upgradeEndTime: existing?.upgradeEndTime,
-      };
+    const demoThLevel = 12;
+    const demoBhLevel = 9;
+
+    const fullBuildings: Building[] = [];
+    ALL_BUILDINGS_CONFIG.forEach(config => {
+      const isHomeBase = config.base === 'home';
+      const relevantLevel = isHomeBase ? demoThLevel : demoBhLevel;
+      if (config.unlockedAt > relevantLevel) {
+        return;
+      }
+      
+      const count = getBuildingCountForLevel(config, relevantLevel);
+
+      for (let i = 0; i < count; i++) {
+        fullBuildings.push({
+          id: `${config.name.replace(/\s/g, '')}-${i}`,
+          name: config.name,
+          level: config.name === 'Town Hall' ? demoThLevel : (config.name === 'Builder Hall' ? demoBhLevel : 1),
+          maxLevel: config.maxLevel,
+          type: config.type,
+          base: config.base,
+          isUpgrading: false,
+        });
+      }
     });
 
-    const fullTroops: Troop[] = ALL_TROOPS_CONFIG.map((config, index) => {
-      const existing = DEMO_VILLAGE_STATE.troops.find(t => t.name === config.name && t.village === config.village);
-      return {
+    const fullTroops: Troop[] = ALL_TROOPS_CONFIG.map((config, index) => ({
         id: `${config.name.replace(/\s/g, '')}-${config.village}-${index}`,
         name: config.name,
-        level: existing?.level ?? 0,
+        level: 0,
         maxLevel: config.maxLevel,
         village: config.village,
         elixirType: config.elixirType,
-      };
-    });
+    }));
     
-    const fullHeroes: Hero[] = ALL_HEROES_CONFIG.map((config, index) => {
-        const existing = DEMO_VILLAGE_STATE.heroes.find(h => h.name === config.name && h.village === config.village);
-        return {
-            id: `${config.name.replace(/\s/g, '')}-${config.village}-${index}`,
-            name: config.name,
-            level: existing?.level ?? 0,
-            maxLevel: config.maxLevel,
-            village: config.village,
-        };
-    });
+    const fullHeroes: Hero[] = ALL_HEROES_CONFIG.map((config, index) => ({
+        id: `${config.name.replace(/\s/g, '')}-${config.village}-${index}`,
+        name: config.name,
+        level: 0,
+        maxLevel: config.maxLevel,
+        village: config.village,
+    }));
     
-    const fullPets: Pet[] = ALL_PETS_CONFIG.map((config, index) => {
-        const existing = DEMO_VILLAGE_STATE.pets.find(p => p.name === config.name);
-        return {
-            id: `${config.name.replace(/\s/g, '')}-${index}`,
-            name: config.name,
-            level: existing?.level ?? 0,
-            maxLevel: config.maxLevel,
-        };
-    });
+    const fullPets: Pet[] = ALL_PETS_CONFIG.map((config, index) => ({
+        id: `${config.name.replace(/\s/g, '')}-${index}`,
+        name: config.name,
+        level: 0,
+        maxLevel: config.maxLevel,
+    }));
 
-    const fullEquipment: Equipment[] = ALL_EQUIPMENT_CONFIG.map((config, index) => {
-        const existing = DEMO_VILLAGE_STATE.equipment.find(e => e.name === config.name);
-        return {
-            id: `${config.name.replace(/\s/g, '')}-${index}`,
-            name: config.name,
-            level: existing?.level ?? 0,
-            maxLevel: config.maxLevel,
-        };
-    });
+    const fullEquipment: Equipment[] = ALL_EQUIPMENT_CONFIG.map((config, index) => ({
+        id: `${config.name.replace(/\s/g, '')}-${index}`,
+        name: config.name,
+        level: 0,
+        maxLevel: config.maxLevel,
+    }));
 
     const manualState: VillageState = {
-      townHallLevel: DEMO_VILLAGE_STATE.townHallLevel,
-      builderHallLevel: DEMO_VILLAGE_STATE.builderHallLevel,
+      townHallLevel: demoThLevel,
+      builderHallLevel: demoBhLevel,
       buildings: fullBuildings,
       troops: fullTroops,
       heroes: fullHeroes,
@@ -136,5 +150,3 @@ export function ClashTrackDashboard() {
     </>
   );
 }
-
-    

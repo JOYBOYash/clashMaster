@@ -39,81 +39,90 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
     
     const { fetchAndProcessVillageData } = await import('@/app/actions');
     const result = await fetchAndProcessVillageData(values.playerTag);
+    
+    setIsLoading(false);
 
     if (result.success && result.data) {
       onDataFetched(result.data);
     } else {
       if (result.errorCode === 'API_FORBIDDEN') {
         setIsApiBlocked(true);
+      } else {
+        setError(result.error || 'An unexpected error occurred.');
       }
-      setError(result.error || 'An unexpected error occurred.');
     }
-    setIsLoading(false);
   };
   
   const handleLoadDemo = () => {
     onDataFetched(DEMO_VILLAGE_STATE);
   };
 
+  if (isApiBlocked) {
+     return (
+        <Card className="max-w-lg mx-auto mt-8">
+            <CardHeader>
+                <CardTitle className="font-headline">API Connection Failed</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4 text-center">
+                    <Alert variant="destructive">
+                        <AlertTitle>API Access Denied</AlertTitle>
+                        <AlertDescription>
+                        We couldn't connect to the Clash of Clans API. This is a known issue with cloud environments where the server's IP is not whitelisted.
+                        </AlertDescription>
+                    </Alert>
+                    <p className="text-sm text-muted-foreground">You can explore the app's features with a pre-loaded sample village instead.</p>
+                    <Button onClick={handleLoadDemo} className="w-full">
+                        <TestTube2 className="mr-2" />
+                        Load Sample Village
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+     )
+  }
+
   return (
     <Card className="max-w-lg mx-auto mt-8">
       <CardHeader>
-        <CardTitle className="font-headline">{isApiBlocked ? 'API Connection Failed' : 'Load Your Village'}</CardTitle>
-        {!isApiBlocked && (
-          <CardDescription>
-            Enter your Clash of Clans Player Tag to load your village data automatically.
-            You can find your tag in your in-game profile.
-          </CardDescription>
-        )}
+        <CardTitle className="font-headline">Load Your Village</CardTitle>
+        <CardDescription>
+          Enter your Clash of Clans Player Tag to load your village data automatically.
+          You can find your tag in your in-game profile.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        {isApiBlocked ? (
-           <div className="space-y-4 text-center">
-             <Alert variant="destructive">
-                <AlertTitle>API Access Denied</AlertTitle>
-                <AlertDescription>
-                   We couldn't connect to the Clash of Clans API. This usually happens because of an IP whitelisting issue that can be tricky to solve in a cloud environment.
-                </AlertDescription>
-            </Alert>
-            <p className="text-sm text-muted-foreground">You can try again later, or explore the app's features with a sample village.</p>
-            <Button onClick={handleLoadDemo} className="w-full">
-                <TestTube2 className="mr-2" />
-                Load Sample Village
-            </Button>
-           </div>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="playerTag"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Player Tag</FormLabel>
-                    <FormControl>
-                      <Input placeholder="#2P8R28LQU" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {error && !isApiBlocked && (
-                <Alert variant="destructive">
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="playerTag"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Player Tag</FormLabel>
+                  <FormControl>
+                    <Input placeholder="#2P8R28LQU" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading ? (
-                  <Loader2 className="mr-2 animate-spin" />
-                ) : (
-                  <Search className="mr-2" />
-                )}
-                Load Village
-              </Button>
-            </form>
-          </Form>
-        )}
+            />
+            {error && (
+              <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? (
+                <Loader2 className="mr-2 animate-spin" />
+              ) : (
+                <Search className="mr-2" />
+              )}
+              Load Village
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

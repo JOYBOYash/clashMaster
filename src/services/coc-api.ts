@@ -66,7 +66,7 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
         throw new Error("Bad Request (400). The player tag might be malformed.");
     }
      if (response.status === 403) {
-      throw new Error("API Access Denied (Error 403). The server's IP is not authorized. FIX: Go to your CoC Developer account and add '0.0.0.0/0' to the allowed IP list for your API key. This is a required step for cloud development.");
+      throw new Error("API Access Denied (Error 403). The server's IP is not authorized. This is a known issue with cloud environments, and whitelisting the IP is unreliable. Please use the 'Load Sample Village' option on the previous screen to continue.");
     }
     
     let reason = 'An unknown error occurred';

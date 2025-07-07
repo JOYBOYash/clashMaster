@@ -1,21 +1,30 @@
 "use client";
 
-import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VillageView } from '@/components/village-view';
 import { TroopGuide } from '@/components/troop-guide';
-import type { VillageState } from '@/lib/constants';
 import { VillageSurvey } from './village-survey';
+import { useAuth } from "@/context/auth-context";
+import { LoginPage } from "./login-page";
+import { Loader2 } from "lucide-react";
 
 export function ClashTrackDashboard() {
-  const [villageState, setVillageState] = useState<VillageState | null>(null);
+  const { user, loading, villageState, saveVillageState } = useAuth();
 
-  const handleDataLoaded = (newState: VillageState) => {
-    setVillageState(newState);
-  };
-  
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
+
   if (!villageState) {
-    return <VillageSurvey onDataLoaded={handleDataLoaded} />;
+    return <VillageSurvey onSurveyComplete={saveVillageState} />;
   }
 
   return (

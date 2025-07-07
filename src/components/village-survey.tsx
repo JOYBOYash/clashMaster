@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useAuth } from '@/context/auth-context';
 import { gameData } from '@/lib/game-data';
 import { type VillageState, type Building, type Troop, buildingNameToType, type Hero } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
@@ -8,35 +9,40 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from './ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft } from 'lucide-react';
-import { titleCase } from '@/lib/utils';
+import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse } from 'lucide-react';
 
 interface VillageSurveyProps {
-  onDataLoaded: (data: VillageState) => void;
+  onSurveyComplete: (data: VillageState) => void;
 }
 
 const snakeToTitleCase = (str: string) => str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
+// Define categories for splitting the survey
 const keyBuildings = ['laboratory', 'barracks', 'dark_barracks', 'spell_factory', 'dark_spell_factory', 'clan_castle', 'workshop', 'pet_house', 'blacksmith'];
-const armyBuildings = ['army_camp'];
-const resourceBuildings = ['gold_storage', 'elixir_storage', 'dark_elixir_storage', 'gold_mine', 'elixir_collector', 'dark_elixir_drill'];
+const armyCamps = ['army_camp'];
+const storageBuildings = ['gold_storage', 'elixir_storage', 'dark_elixir_storage'];
+const collectorBuildings = ['gold_mine', 'elixir_collector', 'dark_elixir_drill'];
 const defensiveBuildings = [
   'cannon', 'archer_tower', 'mortar', 'air_defense', 'wizard_tower', 'air_sweeper',
   'hidden_tesla', 'bomb_tower', 'x_bow', 'inferno_tower', 'eagle_artillery',
   'scattershot', 'spell_tower', 'monolith'
 ];
+const regularTroops = ["barbarian", "archer", "giant", "goblin", "wall_breaker", "balloon", "wizard", "healer", "dragon", "pekka", "baby_dragon", "miner", "electro_titan", "root_rider"];
+const darkTroops = ["minion", "hog_rider", "valkyrie", "golem", "witch", "lava_hound", "bowler", "ice_golem", "headhunter", "apprentice_warden"];
+const regularSpells = ["lightning_spell", "healing_spell", "rage_spell", "jump_spell", "freeze_spell", "clone_spell", "invisibility_spell", "recall_spell"];
+const darkSpells = ["poison_spell", "earthquake_spell", "haste_spell", "skeleton_spell", "bat_spell"];
+const heroes = ['barbarian_king', 'archer_queen', 'grand_warden', 'royal_champion'];
 
-const categoryIcons: Record<string, React.ElementType> = {
-  key: Library,
-  army: Swords,
-  defenses: Shield,
-  resources: Coins,
-  troops: Dna,
-  heroes: Gem,
-};
+const singleInstanceBuildings = [
+    'laboratory', 'spell_factory', 'dark_spell_factory', 'clan_castle', 
+    'workshop', 'pet_house', 'blacksmith', 'barracks', 'dark_barracks'
+];
 
-export function VillageSurvey({ onDataLoaded }: VillageSurveyProps) {
+
+export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
+  const { user } = useAuth();
   const [townHallLevel, setTownHallLevel] = useState<number | null>(null);
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [currentStep, setCurrentStep] = useState(0);
@@ -52,30 +58,55 @@ export function VillageSurvey({ onDataLoaded }: VillageSurveyProps) {
     }
   };
 
+  const setMaxLevel = (key: string, maxLevel: number) => {
+    setLevels(prev => ({ ...prev, [key]: maxLevel }));
+  };
+
   const renderBuildingInputs = (buildingKey: string) => {
     if (!thData) return null;
-    const buildingInfo = (thData.buildings as any)[buildingKey] as { count: number, max_level: number } | undefined;
+    
+    let buildingInfo;
+    if (singleInstanceBuildings.includes(buildingKey)) {
+        // Find the single instance building info (e.g., from barracks array if needed)
+        const bKey = Object.keys(thData.buildings).find(k => k.startsWith(buildingKey));
+        if (!bKey) return null;
+        buildingInfo = (thData.buildings as any)[bKey] as { count: number, max_level: number };
+        buildingInfo.count = 1; // Enforce single instance
+    } else {
+        buildingInfo = (thData.buildings as any)[buildingKey] as { count: number, max_level: number };
+    }
+
     if (!buildingInfo) return null;
 
     return (
       <div key={buildingKey} className="space-y-4">
         <h4 className="font-semibold text-foreground text-lg">{snakeToTitleCase(buildingKey)}</h4>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {Array.from({ length: buildingInfo.count }).map((_, i) => {
             const inputKey = `${buildingKey}-${i}`;
             return (
-              <div key={inputKey} className="space-y-1.5">
-                <Label htmlFor={inputKey} className="text-xs text-muted-foreground">#{i + 1}</Label>
-                <Input
-                  id={inputKey}
-                  type="number"
-                  min="0"
-                  max={buildingInfo.max_level}
-                  value={levels[inputKey] || ''}
-                  onChange={(e) => handleLevelChange(inputKey, e.target.value, buildingInfo.max_level)}
-                  placeholder="Level"
-                  className="w-full"
-                />
+              <div key={inputKey} className="space-y-2 p-3 border rounded-lg bg-background/50">
+                <Label htmlFor={inputKey} className="text-sm font-semibold">#{i + 1}</Label>
+                <div className="flex items-center gap-2">
+                    <Input
+                      id={inputKey}
+                      type="number"
+                      min="0"
+                      max={buildingInfo.max_level}
+                      value={levels[inputKey] ?? ''}
+                      onChange={(e) => handleLevelChange(inputKey, e.target.value, buildingInfo.max_level)}
+                      placeholder="Lvl"
+                      className="w-full"
+                    />
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`${inputKey}-max`}
+                          onCheckedChange={(checked) => { if (checked) setMaxLevel(inputKey, buildingInfo.max_level) }}
+                          checked={levels[inputKey] === buildingInfo.max_level}
+                        />
+                        <Label htmlFor={`${inputKey}-max`} className="text-xs">Max</Label>
+                    </div>
+                </div>
               </div>
             );
           })}
@@ -84,207 +115,143 @@ export function VillageSurvey({ onDataLoaded }: VillageSurveyProps) {
     );
   };
   
-  const renderSingleBuildingInput = (buildingKey: string) => {
-     if (!thData) return null;
-     const buildingInfo = (thData.buildings as any)[buildingKey] as { count: number, max_level: number } | undefined;
-     if (!buildingInfo || buildingInfo.count === 0) return null;
-     
-     const inputKey = `${buildingKey}-0`;
-
+  const renderSingleItemInput = (itemKey: string, type: 'building' | 'troop' | 'spell' | 'hero', info: { max_level: number }) => {
+     const inputKey = `${type}-${itemKey}`;
      return(
-        <div key={buildingKey} className="flex items-center justify-between p-2 rounded-md">
-            <Label htmlFor={inputKey} className="text-base">{snakeToTitleCase(buildingKey)}</Label>
-            <Input
-              id={inputKey}
-              type="number"
-              min="0"
-              max={buildingInfo.max_level}
-              value={levels[inputKey] || ''}
-              onChange={(e) => handleLevelChange(inputKey, e.target.value, buildingInfo.max_level)}
-              placeholder="Lvl"
-              className="w-24"
-            />
+        <div key={inputKey} className="flex items-center justify-between p-2.5 rounded-lg border bg-background/50">
+            <Label htmlFor={inputKey} className="text-base">{snakeToTitleCase(itemKey)}</Label>
+            <div className="flex items-center gap-3">
+                <Input
+                  id={inputKey}
+                  type="number"
+                  min="0"
+                  max={info.max_level}
+                  value={levels[inputKey] ?? ''}
+                  onChange={(e) => handleLevelChange(inputKey, e.target.value, info.max_level)}
+                  placeholder="Lvl"
+                  className="w-24"
+                />
+                <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`${inputKey}-max`}
+                      onCheckedChange={(checked) => { if (checked) setMaxLevel(inputKey, info.max_level) }}
+                      checked={levels[inputKey] === info.max_level}
+                    />
+                    <Label htmlFor={`${inputKey}-max`} className="text-xs">Max</Label>
+                </div>
+            </div>
         </div>
      )
   };
 
-  const renderTroopLikeInputs = (items: Record<string, { max_level: number }>, type: 'troop' | 'hero' | 'spell') => {
-    if (!items || Object.keys(items).length === 0) return <p className="text-sm text-muted-foreground p-2">None available at this Town Hall level.</p>;
+  const renderItemGroup = (title: string, itemKeys: string[], type: 'troop' | 'spell' | 'hero') => {
+    if (!thData) return null;
+    
+    const sourceMap = type === 'troop' ? thData.army.troops : type === 'spell' ? thData.spells.spells : thData.heroes;
+    
+    const availableItems = itemKeys.filter(key => (sourceMap as any)?.[key]);
+
+    if (availableItems.length === 0) return null;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            {Object.entries(items).map(([key, itemInfo]) => {
-                const inputKey = `${type}-${key}`;
-                return(
-                    <div key={inputKey} className="flex items-center justify-between p-1.5 rounded-md">
-                        <Label htmlFor={inputKey} className="text-base">{snakeToTitleCase(key)}</Label>
-                        <Input
-                          id={inputKey}
-                          type="number"
-                          min="0"
-                          max={itemInfo.max_level}
-                          value={levels[inputKey] || ''}
-                          onChange={(e) => handleLevelChange(inputKey, e.target.value, itemInfo.max_level)}
-                          placeholder="Lvl"
-                          className="w-24"
-                        />
-                    </div>
-                )
-            })}
+        <div className='space-y-4'>
+            {title && <h3 className="text-xl font-headline mb-2">{title}</h3>}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                {availableItems.map(key => {
+                     const itemInfo = (sourceMap as any)[key];
+                     return renderSingleItemInput(key, type, itemInfo);
+                })}
+            </div>
         </div>
-    )
+    );
   };
-
+  
   const surveySteps = [
-    {
-      id: 'townHall',
-      title: 'Town Hall Level',
-      description: "Start by selecting your Town Hall level.",
-      icon: Home,
-      content: () => (
-        <Select onValueChange={(value) => setTownHallLevel(parseInt(value, 10))}>
-          <SelectTrigger className="w-full mt-2 text-base py-6">
-            <SelectValue placeholder="Select your Town Hall level..." />
-          </SelectTrigger>
-          <SelectContent>
-            {Array.from({ length: 17 }, (_, i) => i + 1).map(level => (
-              <SelectItem key={level} value={String(level)}>Town Hall {level}</SelectItem>
-            ))}
-          </SelectContent>
+    { id: 'townHall', title: 'Town Hall Level', icon: Home, content: () => (
+        <Select onValueChange={(v) => {setTownHallLevel(parseInt(v)); setLevels({});}}>
+          <SelectTrigger className="w-full mt-2 text-base py-6"><SelectValue placeholder="Select your Town Hall level..." /></SelectTrigger>
+          <SelectContent>{Array.from({ length: 16 }, (_, i) => i + 1).map(l => <SelectItem key={l} value={String(l)}>Town Hall {l}</SelectItem>)}</SelectContent>
         </Select>
-      )
-    },
-    {
-      id: 'keyBuildings',
-      title: 'Key Buildings',
-      description: "Enter the levels for your main buildings.",
-      icon: Library,
-      content: () => <div className="space-y-2">{keyBuildings.map(renderSingleBuildingInput)}</div>
-    },
-    {
-      id: 'army',
-      title: 'Army Camps',
-      description: 'Enter the levels for each of your Army Camps.',
-      icon: Swords,
-      content: () => <div className="space-y-6">{armyBuildings.map(renderBuildingInputs)}</div>
-    },
-    {
-      id: 'defenses',
-      title: 'Defenses',
-      description: 'Enter the levels for each of your defensive buildings.',
-      icon: Shield,
-      content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div>
-    },
-    {
-      id: 'resources',
-      title: 'Resource Buildings',
-      description: 'Enter the levels for your storages and collectors.',
-      icon: Coins,
-      content: () => <div className="space-y-6">{resourceBuildings.map(renderBuildingInputs)}</div>
-    },
-    {
-      id: 'troops',
-      title: 'Troops & Spells',
-      description: 'Enter the levels for all your troops and spells.',
-      icon: Dna,
-      content: () => (
-        <div className="space-y-8">
-            <div>
-                <h3 className="text-lg font-semibold mb-2">Troops</h3>
-                {renderTroopLikeInputs(thData?.army.troops || {}, 'troop')}
-            </div>
-            <div>
-                <h3 className="text-lg font-semibold mb-2">Spells</h3>
-                {renderTroopLikeInputs(thData?.spells.spells || {}, 'spell')}
-            </div>
-        </div>
-      )
-    },
-    {
-      id: 'heroes',
-      title: 'Heroes',
-      description: "Finally, enter your hero levels.",
-      icon: Gem,
-      content: () => renderTroopLikeInputs(thData?.heroes || {}, 'hero')
-    },
+    )},
+    { id: 'keyBuildings', title: 'Key Buildings', icon: Library, content: () => <div className="space-y-3">{keyBuildings.map(b => (thData?.buildings as any)[b] ? renderSingleItemInput(b, 'building', (thData.buildings as any)[b]) : null)}</div> },
+    { id: 'armyCamps', title: 'Army Camps', icon: Swords, content: () => armyCamps.map(renderBuildingInputs) },
+    { id: 'storages', title: 'Resource Storages', icon: Warehouse, content: () => storageBuildings.map(renderBuildingInputs) },
+    { id: 'collectors', title: 'Resource Collectors', icon: Coins, content: () => collectorBuildings.map(renderBuildingInputs) },
+    { id: 'defenses', title: 'Defenses', icon: Shield, content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div> },
+    { id: 'regularTroops', title: 'Regular Troops', icon: Dna, content: () => renderItemGroup("Elixir Troops", regularTroops, 'troop')},
+    { id: 'darkTroops', title: 'Dark Troops', icon: Dna, content: () => renderItemGroup("Dark Elixir Troops", darkTroops, 'troop')},
+    { id: 'regularSpells', title: 'Regular Spells', icon: FlaskConical, content: () => renderItemGroup("Elixir Spells", regularSpells, 'spell')},
+    { id: 'darkSpells', title: 'Dark Spells', icon: FlaskConical, content: () => renderItemGroup("Dark Elixir Spells", darkSpells, 'spell')},
+    { id: 'heroes', title: 'Heroes', icon: Gem, content: () => renderItemGroup("Your Heroes", heroes, 'hero') },
   ];
-
+  
   const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, surveySteps.length - 1));
   const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
 
-  const handleSubmit = () => {
-    if (!townHallLevel) return;
+  const handleSubmit = async () => {
+    if (!townHallLevel || !thData || !user) return;
 
     const buildings: Building[] = [];
     const troops: Troop[] = [];
-    const heroes: Hero[] = [];
+    const heroesList: Hero[] = [];
     
-    // Process buildings
-    Object.entries(thData?.buildings || {}).forEach(([key, value]) => {
-      if (typeof value !== 'object' || !('count' in value) || key === 'total_buildings') return;
-      
-      const buildingInfo = value as { count: number; max_level: number };
-      const buildingName = snakeToTitleCase(key);
+    const buildingData = thData.buildings as Record<string, { count: number; max_level: number }>;
 
-      for (let i = 0; i < buildingInfo.count; i++) {
-        const inputKey = `${key}-${i}`;
-        const level = levels[inputKey] || 1;
-        
-        buildings.push({
-          id: inputKey,
-          name: buildingName,
-          level: level,
-          maxLevel: buildingInfo.max_level,
-          type: buildingNameToType[buildingName] || 'other',
-          base: 'home',
-          isUpgrading: false,
-        });
-      }
+    Object.keys(buildingData).forEach((buildingKey) => {
+        if (buildingKey === 'total_buildings') return;
+        const buildingInfo = buildingData[buildingKey];
+        const isSingle = singleInstanceBuildings.includes(buildingKey);
+        const count = isSingle ? 1 : buildingInfo.count;
+
+        for (let i = 0; i < count; i++) {
+            const inputKey = isSingle ? `building-${buildingKey}` : `${buildingKey}-${i}`;
+            const level = levels[inputKey] || 1;
+            const buildingName = snakeToTitleCase(buildingKey);
+            buildings.push({
+                id: `${buildingName}-${i}`, // Ensure unique ID
+                name: buildingName,
+                level,
+                maxLevel: buildingInfo.max_level,
+                type: buildingNameToType[buildingName] || 'other',
+                base: 'home',
+                isUpgrading: false
+            });
+        }
     });
 
-    const processUnit = (unitData: any, type: 'troop' | 'spell' | 'hero') => {
-      Object.entries(unitData || {}).forEach(([key, value]) => {
-          const unitInfo = value as { max_level: number };
-          const unitName = snakeToTitleCase(key);
-          const inputKey = `${type}-${key}`;
-          const level = levels[inputKey] || 0;
-          
-          if (type === 'hero') {
-            heroes.push({ id: inputKey, name: unitName, level, maxLevel: unitInfo.max_level, village: 'home' });
-          } else {
-            troops.push({
-                id: inputKey,
-                name: unitName,
-                level,
-                maxLevel: unitInfo.max_level,
-                village: 'home',
-                elixirType: key.includes('dark_') ? 'dark' : 'regular'
-            });
-          }
-      });
-    }
+    const processItems = (itemMap: Record<string, any>, itemType: 'troop' | 'spell' | 'hero') => {
+        Object.keys(itemMap).forEach(key => {
+            const itemInfo = itemMap[key];
+            const inputKey = `${itemType}-${key}`;
+            const level = levels[inputKey] || 0;
+            const name = snakeToTitleCase(key);
 
-    processUnit(thData?.army.troops, 'troop');
-    processUnit(thData?.spells.spells, 'spell');
-    processUnit(thData?.heroes, 'hero');
+            if (itemType === 'troop') {
+                troops.push({ id: inputKey, name, level, maxLevel: itemInfo.max_level, village: 'home', elixirType: regularTroops.includes(key) ? 'regular' : 'dark' });
+            } else if (itemType === 'spell') {
+                troops.push({ id: inputKey, name, level, maxLevel: itemInfo.max_level, village: 'home', elixirType: regularSpells.includes(key) ? 'regular' : 'dark' });
+            } else if (itemType === 'hero') {
+                heroesList.push({ id: inputKey, name, level, maxLevel: itemInfo.max_level, village: 'home' });
+            }
+        });
+    };
+
+    processItems(thData.army.troops, 'troop');
+    processItems(thData.spells.spells, 'spell');
+    processItems(thData.heroes, 'hero');
 
     const villageState: VillageState = {
-      townHallLevel,
-      builderHallLevel: 1, // Focusing on home village
-      buildings,
-      troops,
-      heroes,
-      pets: [],
-      equipment: [],
+      townHallLevel, builderHallLevel: 1, buildings, troops, heroes: heroesList, pets: [], equipment: [],
     };
-    onDataLoaded(villageState);
+    
+    onSurveyComplete(villageState);
   };
 
   const currentSurveyStep = surveySteps[currentStep];
   const Icon = currentSurveyStep.icon;
 
   return (
-    <Card className="max-w-3xl mx-auto mt-8 w-full">
+    <Card className="max-w-4xl mx-auto mt-8 w-full">
       <CardHeader>
         <div className="w-full space-y-2 mb-4">
             <div className="flex justify-between text-sm text-muted-foreground">
@@ -299,11 +266,13 @@ export function VillageSurvey({ onDataLoaded }: VillageSurveyProps) {
             </div>
             <div>
                 <CardTitle className="font-headline text-3xl">{currentSurveyStep.title}</CardTitle>
-                <CardDescription>{currentSurveyStep.description}</CardDescription>
+                <CardDescription>
+                  {currentStep === 0 ? "Select your Town Hall level to begin." : "Enter the levels for the items below."}
+                </CardDescription>
             </div>
         </div>
       </CardHeader>
-      <CardContent className="min-h-[250px]">
+      <CardContent className="min-h-[300px] max-h-[60vh] overflow-y-auto p-6">
         {(!townHallLevel && currentStep > 0) ? (
             <div className='text-center text-muted-foreground pt-12'>Please select your Town Hall level first.</div>
         ) : currentSurveyStep.content()}
@@ -325,5 +294,3 @@ export function VillageSurvey({ onDataLoaded }: VillageSurveyProps) {
     </Card>
   );
 }
-
-    

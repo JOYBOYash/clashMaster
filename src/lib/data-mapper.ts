@@ -40,6 +40,7 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
     const equipment: Equipment[] = [];
     let townHallLevel = 0;
     let builderHallLevel = 0;
+    const buildingCounters: Record<string, number> = {}; // Keep track of building counts to generate unique IDs
 
     // Helper to process building/trap arrays
     const processBuildingArray = (items: JsonItem[], base: 'home' | 'builder') => {
@@ -51,11 +52,17 @@ export function mapJsonToVillageState(jsonData: any): VillageState {
 
             if (config.name === 'Town Hall') townHallLevel = item.lvl;
             if (config.name === 'Builder Hall') builderHallLevel = item.lvl;
+            
+            const counterKey = `${config.name}-${base}`;
+            if (buildingCounters[counterKey] === undefined) {
+                buildingCounters[counterKey] = 0;
+            }
 
             const count = item.cnt || 1;
             for (let i = 0; i < count; i++) {
+                const instanceIndex = buildingCounters[counterKey]++;
                 buildings.push({
-                    id: `${config.name.replace(/\s/g, '')}-${config.base}-${i}`,
+                    id: `${config.name.replace(/\s/g, '')}-${config.base}-${instanceIndex}`,
                     name: config.name,
                     level: item.lvl,
                     maxLevel: config.maxLevel,

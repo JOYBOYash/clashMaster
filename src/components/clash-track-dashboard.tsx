@@ -8,7 +8,7 @@ import { TroopGuide } from '@/components/troop-guide';
 import type { VillageState } from '@/lib/constants';
 import { JsonImporter } from './json-importer';
 import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 
 export function ClashTrackDashboard() {
   const [villageState, setVillageState] = useState<VillageState | null>(null);
@@ -47,11 +47,12 @@ export function ClashTrackDashboard() {
       <div className="mt-12 max-w-lg mx-auto">
         <Card>
             <CardHeader>
-                <CardTitle className="font-headline">Load New Data</CardTitle>
+                <CardTitle className="font-headline">Data Source</CardTitle>
+                <CardDescription>You are currently viewing data imported from your JSON file.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Button variant="outline" onClick={handleReset} className="w-full">
-                    Import a different Village JSON
+                    Import a different Village JSON file
                 </Button>
             </CardContent>
         </Card>

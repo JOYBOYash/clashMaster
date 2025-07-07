@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type { Building } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Shield, Coins, Sword, SlidersHorizontal, Settings2 } from 'lucide-react';
+import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Home, Hammer } from 'lucide-react';
 
 interface BuildingListProps {
   buildings: Building[];
@@ -20,6 +20,7 @@ export function BuildingList({ buildings }: BuildingListProps) {
       resource: [],
       other: [],
       trap: [],
+      hero: [],
     };
     buildings.forEach(b => {
       if(groups[b.type]) {
@@ -38,8 +39,13 @@ export function BuildingList({ buildings }: BuildingListProps) {
     army: Sword,
     resource: Coins,
     other: SlidersHorizontal,
-    trap: Settings2
+    trap: Settings2,
+    hero: Hammer
   };
+
+  const getBaseIcon = (base: 'home' | 'builder') => {
+    return base === 'home' ? <Home className="w-4 h-4 text-muted-foreground" /> : <Hammer className="w-4 h-4 text-muted-foreground" />;
+  }
 
   return (
     <>
@@ -55,22 +61,28 @@ export function BuildingList({ buildings }: BuildingListProps) {
               const Icon = typeIcons[type];
               return (
                 <AccordionItem value={type} key={type}>
-                  <AccordionTrigger className="text-lg font-semibold capitalize">
-                    <div className="flex items-center">
-                      <Icon className="w-5 h-5 mr-3 text-primary" />
-                      {type}
+                  <AccordionTrigger className="text-lg font-semibold capitalize hover:no-underline">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                        <Icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className='text-xl font-headline tracking-wide'>{type}</span>
+                       <span className="text-sm font-normal text-muted-foreground">({buildingsOfType.length})</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-2">
                       {buildingsOfType
                         .sort((a,b) => a.name.localeCompare(b.name))
                         .map(b => (
-                        <div key={b.id} className="p-3 rounded-md border bg-muted/20">
-                            <p className="font-medium">{b.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Level {b.level}
-                            </p>
+                        <div key={b.id} className="p-3 rounded-lg border bg-card hover:shadow-md transition-shadow">
+                            <p className="font-semibold text-card-foreground">{b.name}</p>
+                            <div className="flex justify-between items-center mt-1">
+                               <p className="text-sm text-muted-foreground">
+                                Level {b.level}
+                              </p>
+                              {getBaseIcon(b.base)}
+                            </div>
                         </div>
                       ))}
                     </div>

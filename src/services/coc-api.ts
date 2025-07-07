@@ -16,6 +16,21 @@ type ApiTroop = {
   village: 'home' | 'builderBase';
 };
 
+type ApiHeroEquipment = {
+  name: string;
+  level: number;
+  maxLevel: number;
+}
+
+type ApiHero = {
+  name: string;
+  level: number;
+  maxLevel: number;
+  village: 'home' | 'builderBase';
+  equipment?: ApiHeroEquipment[];
+};
+
+
 export type PlayerApiResponse = {
   tag: string;
   name:string;
@@ -23,6 +38,7 @@ export type PlayerApiResponse = {
   builderHallLevel?: number;
   buildings: ApiBuilding[];
   troops: ApiTroop[];
+  heroes: ApiHero[];
 };
 
 export async function getPlayerInfo(playerTag: string): Promise<PlayerApiResponse> {
@@ -33,7 +49,6 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
     throw new Error('Server configuration error: The Clash of Clans API token is missing. Please add your token to the .env file.');
   }
 
-  // NOTE: This uses the official API directly.
   const baseUrl = 'https://api.clashofclans.com/v1';
   const encodedTag = encodeURIComponent(playerTag);
   const url = `${baseUrl}/players/${encodedTag}`;
@@ -46,7 +61,6 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      // Ensure data is always fresh by not caching the response.
       cache: 'no-store',
     });
   } catch (error) {
@@ -66,7 +80,7 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
         throw new Error("Bad Request (400). The player tag might be malformed.");
     }
      if (response.status === 403) {
-      throw new Error("API Access Denied (Error 403). The server's IP is not authorized. This is a known issue with cloud environments, and whitelisting the IP is unreliable. Please use the 'Load Sample Village' option on the previous screen to continue.");
+      throw new Error("API Access Denied (Error 403). Your API token is correct, but the server's IP address is not on the allowed list in your Clash of Clans developer account. Since this app runs in the cloud, its IP address may change. For development, you can use the 'Load Sample Village' button to explore all features.");
     }
     
     let reason = 'An unknown error occurred';
@@ -81,3 +95,5 @@ export async function getPlayerInfo(playerTag: string): Promise<PlayerApiRespons
 
   return await response.json() as PlayerApiResponse;
 }
+
+    

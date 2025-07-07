@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Lightbulb, Loader2, Shield, Sword, Coins, Building } from 'lucide-react';
+import { Lightbulb, Loader2, Shield, Sword, Coins, Building, Heart } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
@@ -14,11 +14,13 @@ interface AiSuggesterProps {
   base: 'home' | 'builder';
 }
 
-const iconMap: Record<BuildingType['type'], React.ElementType> = {
+const iconMap: Record<string, React.ElementType> = {
   defensive: Shield,
   army: Sword,
   resource: Coins,
   other: Building,
+  hero: Heart,
+  default: Lightbulb
 };
 
 export function AiSuggester({ villageState, base }: AiSuggesterProps) {
@@ -27,10 +29,14 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const { toast } = useToast();
 
   const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
+  const heroesForBase = (villageState.heroes || []).filter(h => h.village === base);
 
-  const getBuildingType = (name: string): BuildingType['type'] => {
-    const building = buildingsForBase.find(b => b.name === name);
-    return building?.type || 'other';
+  const getSuggestionType = (name: string): string => {
+    if (villageState.buildings.find(b => b.name === name)) return villageState.buildings.find(b => b.name === name)!.type;
+    if (villageState.heroes.find(h => h.name === name)) return 'hero';
+    if (villageState.pets.find(p => p.name === name)) return 'hero'; // Represent pets with heart icon for simplicity
+    if (villageState.equipment.find(e => e.name === name)) return 'army'; // Represent equipment with sword icon
+    return 'default';
   };
 
   useEffect(() => {
@@ -52,6 +58,9 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
             maxLevel: b.maxLevel,
             type: b.type,
           })),
+          allHeroes: base === 'home' ? villageState.heroes.map(h => ({ name: h.name, level: h.level })) : [],
+          allPets: base === 'home' ? villageState.pets.map(p => ({ name: p.name, level: p.level })) : [],
+          allEquipment: base === 'home' ? villageState.equipment.map(e => ({ name: e.name, level: e.level })) : [],
         };
 
         const result = await suggestUpgrades(input);
@@ -71,7 +80,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
 
     handleSuggestUpgrades();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [villageState.townHallLevel, villageState.builderHallLevel, base]);
+  }, [villageState, base]);
 
   const renderSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -105,8 +114,8 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
         {!isLoading && suggestions && suggestions.suggestedUpgrades.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {suggestions.suggestedUpgrades.map((s, index) => {
-              const buildingType = getBuildingType(s.buildingName);
-              const Icon = iconMap[buildingType] || Building;
+              const suggestionType = getSuggestionType(s.buildingName);
+              const Icon = iconMap[suggestionType] || iconMap['default'];
               return (
                  <div key={index} className="flex flex-col gap-4 p-4 rounded-xl border bg-card/80 hover:bg-muted/50 transition-colors hover:shadow-lg hover:-translate-y-1">
                   <div className="p-3 bg-primary/10 rounded-lg w-fit">
@@ -133,3 +142,5 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
     </Card>
   );
 }
+
+    

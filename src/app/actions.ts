@@ -2,7 +2,14 @@
 'use server';
 
 import { getPlayerInfo, type PlayerApiResponse } from '@/services/coc-api';
-import { VillageStateSchema, type VillageState, ALL_BUILDINGS_CONFIG, type Building, ALL_TROOPS_CONFIG, type Troop } from '@/lib/constants';
+import { 
+    VillageStateSchema, type VillageState, 
+    ALL_BUILDINGS_CONFIG, type Building, 
+    ALL_TROOPS_CONFIG, type Troop,
+    ALL_HEROES_CONFIG, type Hero,
+    ALL_PETS_CONFIG, type Pet,
+    ALL_EQUIPMENT_CONFIG, type Equipment,
+} from '@/lib/constants';
 import { z } from 'zod';
 
 const PlayerTagSchema = z.string().startsWith('#').min(4);
@@ -13,6 +20,9 @@ type FetchResult = {
     error?: string;
     errorCode?: 'API_FORBIDDEN' | 'NOT_FOUND' | 'GENERIC_ERROR';
 };
+
+// Helper to filter out pets from the API's 'heroes' array
+const PET_NAMES = new Set(ALL_PETS_CONFIG.map(p => p.name));
 
 export async function fetchAndProcessVillageData(playerTag: string): Promise<FetchResult> {
     const parsedTag = PlayerTagSchema.safeParse(playerTag);
@@ -28,7 +38,6 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<Fet
                 if (apiBuilding.village !== 'home' && apiBuilding.village !== 'builderBase') {
                     return null;
                 }
-                
                 const config = ALL_BUILDINGS_CONFIG.find(b => b.name === apiBuilding.name);
                 if (!config) return null;
 
@@ -53,9 +62,7 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<Fet
                 }
                 const config = ALL_TROOPS_CONFIG.find(t => t.name === apiTroop.name);
                 if (!config) return null;
-
                 const village = apiTroop.village === 'home' ? 'home' : 'builder';
-
                 return {
                     id: `${apiTroop.name.replace(/\s/g, '')}-${index}`,
                     name: apiTroop.name,
@@ -66,12 +73,62 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<Fet
                 }
             })
             .filter((t): t is Troop => t !== null);
+        
+        const heroes: Hero[] = [];
+        const pets: Pet[] = [];
+        const equipment: Equipment[] = [];
+
+        (player.heroes || []).forEach((apiHero, index) => {
+            // Separate pets from heroes
+            if (PET_NAMES.has(apiHero.name)) {
+                const config = ALL_PETS_CONFIG.find(p => p.name === apiHero.name);
+                if (config) {
+                    pets.push({
+                        id: `${apiHero.name.replace(/\s/g, '')}-${index}`,
+                        name: apiHero.name,
+                        level: apiHero.level,
+                        maxLevel: apiHero.maxLevel,
+                    });
+                }
+                return; // Continue to next item in forEach
+            }
+
+            // Process heroes
+            const heroConfig = ALL_HEROES_CONFIG.find(h => h.name === apiHero.name);
+            if (heroConfig) {
+                 const village = apiHero.village === 'home' ? 'home' : 'builder';
+                 heroes.push({
+                    id: `${apiHero.name.replace(/\s/g, '')}-${index}`,
+                    name: apiHero.name,
+                    level: apiHero.level,
+                    maxLevel: apiHero.maxLevel,
+                    village: village,
+                 });
+            }
+
+            // Process equipment for the hero
+            (apiHero.equipment || []).forEach((apiEquip, equipIndex) => {
+                const equipConfig = ALL_EQUIPMENT_CONFIG.find(e => e.name === apiEquip.name);
+                if (equipConfig) {
+                    equipment.push({
+                        id: `${apiEquip.name.replace(/\s/g, '')}-${equipIndex}`,
+                        name: apiEquip.name,
+                        level: apiEquip.level,
+                        maxLevel: apiEquip.maxLevel,
+                    });
+                }
+            });
+        });
+
 
         const villageState: VillageState = {
             townHallLevel: player.townHallLevel,
             builderHallLevel: player.builderHallLevel ?? 0,
             buildings: buildings,
             troops: troops,
+            heroes: heroes,
+            pets: pets,
+            equipment: equipment,
         };
 
         const validation = VillageStateSchema.safeParse(villageState);
@@ -92,3 +149,5 @@ export async function fetchAndProcessVillageData(playerTag: string): Promise<Fet
         return { success: false, error: error.message || 'An unknown error occurred.', errorCode: 'GENERIC_ERROR' };
     }
 }
+
+    

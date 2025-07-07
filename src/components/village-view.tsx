@@ -1,7 +1,6 @@
 
 import type { VillageState } from '@/lib/constants';
 import { VillageOverview } from './village-overview';
-import { CurrentUpgrades } from './current-upgrades';
 import { AiSuggester } from './ai-suggester';
 import { BuildingList } from './building-list';
 import { ProgressDashboard } from './progress-dashboard';
@@ -9,10 +8,9 @@ import { ProgressDashboard } from './progress-dashboard';
 interface VillageViewProps {
   base: 'home' | 'builder';
   villageState: VillageState;
-  onUpdate: (newState: VillageState) => void;
 }
 
-export function VillageView({ base, villageState, onUpdate }: VillageViewProps) {
+export function VillageView({ base, villageState }: VillageViewProps) {
   const level = base === 'home' ? villageState.townHallLevel : villageState.builderHallLevel;
   const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
 
@@ -29,10 +27,8 @@ export function VillageView({ base, villageState, onUpdate }: VillageViewProps) 
       
       <AiSuggester villageState={villageState} base={base} />
 
-      <CurrentUpgrades buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
-
       <div className="lg:col-span-3">
-        <BuildingList buildings={buildingsForBase} onUpdate={onUpdate} villageState={villageState} />
+        <BuildingList buildings={buildingsForBase} />
       </div>
     </div>
   );

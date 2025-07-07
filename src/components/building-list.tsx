@@ -1,48 +1,17 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
-import type { Building, VillageState } from '@/lib/constants';
+import { useMemo } from 'react';
+import type { Building } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Shield, Coins, Sword, SlidersHorizontal, ArrowUpCircle } from 'lucide-react';
-import { StartUpgradeDialog } from './start-upgrade-dialog';
+import { Shield, Coins, Sword, SlidersHorizontal, Settings2 } from 'lucide-react';
 
 interface BuildingListProps {
   buildings: Building[];
-  villageState: VillageState;
-  onUpdate: (newState: VillageState) => void;
 }
 
-export function BuildingList({ buildings, villageState, onUpdate }: BuildingListProps) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
-
-  const handleStartUpgradeClick = (building: Building) => {
-    setSelectedBuilding(building);
-    setDialogOpen(true);
-  };
-  
-  const handleStartUpgrade = (buildingId: string, durationDays: number, durationHours: number, durationMinutes: number) => {
-    const totalHours = (durationDays * 24) + durationHours + (durationMinutes / 60);
-    const upgradeEndTime = new Date(Date.now() + totalHours * 60 * 60 * 1000).toISOString();
-    
-    const updatedBuildings = villageState.buildings.map(b => 
-      b.id === buildingId 
-        ? {
-            ...b,
-            isUpgrading: true,
-            upgradeEndTime: upgradeEndTime,
-            upgradeTime: totalHours,
-          }
-        : b
-    );
-
-    onUpdate({ ...villageState, buildings: updatedBuildings });
-    setDialogOpen(false);
-    setSelectedBuilding(null);
-  };
+export function BuildingList({ buildings }: BuildingListProps) {
 
   const groupedBuildings = useMemo(() => {
     const groups: Record<string, Building[]> = {
@@ -50,6 +19,7 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
       army: [],
       resource: [],
       other: [],
+      trap: [],
     };
     buildings.forEach(b => {
       if(groups[b.type]) {
@@ -68,14 +38,15 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
     army: Sword,
     resource: Coins,
     other: SlidersHorizontal,
+    trap: Settings2
   };
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Village Buildings</CardTitle>
-          <CardDescription>A complete list of all your buildings and their current levels. You can also start new upgrades manually here.</CardDescription>
+          <CardTitle className="font-headline">Village Buildings & Traps</CardTitle>
+          <CardDescription>A complete list of all your buildings and their current levels, based on your imported data.</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="multiple" defaultValue={defaultOpenCategories} className="w-full">
@@ -87,37 +58,19 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
                   <AccordionTrigger className="text-lg font-semibold capitalize">
                     <div className="flex items-center">
                       <Icon className="w-5 h-5 mr-3 text-primary" />
-                      {type} Buildings
+                      {type}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {buildingsOfType
                         .sort((a,b) => a.name.localeCompare(b.name))
                         .map(b => (
-                        <div key={b.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
-                          <div>
+                        <div key={b.id} className="p-3 rounded-md border bg-muted/20">
                             <p className="font-medium">{b.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              Level {b.level} / {b.maxLevel}
+                              Level {b.level}
                             </p>
-                          </div>
-                          {b.level < b.maxLevel && !b.isUpgrading && (
-                            <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={() => handleStartUpgradeClick(b)}
-                            >
-                                <ArrowUpCircle className="mr-2" />
-                                Start Upgrade
-                            </Button>
-                          )}
-                          {b.isUpgrading && (
-                              <span className="text-sm text-accent font-semibold">Upgrading...</span>
-                          )}
-                           {b.level >= b.maxLevel && (
-                              <span className="text-sm text-green-600 font-semibold">Max Level</span>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -128,14 +81,6 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
           </Accordion>
         </CardContent>
       </Card>
-      {selectedBuilding && (
-        <StartUpgradeDialog
-          isOpen={dialogOpen}
-          onOpenChange={setDialogOpen}
-          building={selectedBuilding}
-          onStartUpgrade={handleStartUpgrade}
-        />
-      )}
     </>
   );
 }

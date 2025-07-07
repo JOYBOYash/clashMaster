@@ -7,9 +7,9 @@ export const BuildingSchema = zod.object({
   name: zod.string(),
   level: zod.number().min(0),
   maxLevel: zod.number().min(1),
-  type: zod.enum(['defensive', 'army', 'resource', 'other', 'hero']),
+  type: zod.enum(['defensive', 'army', 'resource', 'other', 'hero', 'trap']),
   base: zod.enum(['home', 'builder']),
-  isUpgrading: zod.boolean(),
+  isUpgrading: zod.boolean().default(false),
   upgradeTime: zod.number().optional(), // in hours
   upgradeCost: zod.object({
     gold: zod.number().optional(),
@@ -21,14 +21,12 @@ export const BuildingSchema = zod.object({
 
 export type Building = z.infer<typeof BuildingSchema>;
 
-// New config structure to handle unlocks and counts
 export interface BuildingConfig {
   name: string;
+  gameId: number;
   maxLevel: number;
   type: Building['type'];
   base: Building['base'];
-  unlockedAt: number; // TH or BH level
-  count?: Record<number, number>; // TH/BH level -> count
 }
 
 export const TroopSchema = zod.object({
@@ -41,6 +39,14 @@ export const TroopSchema = zod.object({
 });
 export type Troop = z.infer<typeof TroopSchema>;
 
+export interface TroopConfig {
+    name: string;
+    gameId: number;
+    maxLevel: number;
+    village: Troop['village'];
+    elixirType: Troop['elixirType'];
+}
+
 export const HeroSchema = zod.object({
   id: zod.string(),
   name: zod.string(),
@@ -49,6 +55,14 @@ export const HeroSchema = zod.object({
   village: zod.enum(['home', 'builder']),
 });
 export type Hero = z.infer<typeof HeroSchema>;
+
+export interface HeroConfig {
+    name: string;
+    gameId: number;
+    maxLevel: number;
+    village: Hero['village'];
+}
+
 
 export const PetSchema = zod.object({
   id: zod.string(),
@@ -66,14 +80,12 @@ export const EquipmentSchema = zod.object({
 });
 export type Equipment = z.infer<typeof EquipmentSchema>;
 
+export interface EquipmentConfig {
+    name: string;
+    gameId: number;
+    maxLevel: number;
+}
 
-export const ResourcesSchema = zod.object({
-  gold: zod.number().min(0),
-  elixir: zod.number().min(0),
-  darkElixir: zod.number().min(0),
-});
-
-export type Resources = z.infer<typeof ResourcesSchema>;
 
 export const VillageStateSchema = zod.object({
   townHallLevel: zod.number().min(1).max(16),
@@ -89,201 +101,197 @@ export type VillageState = z.infer<typeof VillageStateSchema>;
 
 export const ALL_BUILDINGS_CONFIG: BuildingConfig[] = [
   // Home Village - General
-  { name: 'Town Hall', maxLevel: 16, type: 'other', base: 'home', unlockedAt: 1, count: {1:1} },
-  { name: 'Clan Castle', maxLevel: 12, type: 'army', base: 'home', unlockedAt: 3, count: {3:1} },
-  { name: 'Blacksmith', maxLevel: 9, type: 'army', base: 'home', unlockedAt: 8, count: {8:1}},
-  { name: 'Pet House', maxLevel: 9, type: 'army', base: 'home', unlockedAt: 14, count: {14:1}},
+  { name: 'Town Hall', gameId: 1000001, maxLevel: 16, type: 'other', base: 'home' },
+  { name: 'Clan Castle', gameId: 1000000, maxLevel: 12, type: 'army', base: 'home' },
+  { name: 'Blacksmith', gameId: 1000071, maxLevel: 9, type: 'army', base: 'home' },
+  { name: 'Pet House', gameId: 1000070, maxLevel: 9, type: 'army', base: 'home' },
   // Home Village - Defenses
-  { name: 'Cannon', maxLevel: 21, type: 'defensive', base: 'home', unlockedAt: 1, count: { 1: 2, 6: 3, 7: 4, 8: 5, 10: 6, 14: 7 } },
-  { name: 'Archer Tower', maxLevel: 21, type: 'defensive', base: 'home', unlockedAt: 2, count: { 2: 1, 4: 2, 5: 3, 7: 4, 8: 5, 9: 6, 10: 7, 12: 8 } },
-  { name: 'Mortar', maxLevel: 15, type: 'defensive', base: 'home', unlockedAt: 5, count: { 5: 1, 6: 2, 8: 3, 9: 4 } },
-  { name: 'Air Defense', maxLevel: 13, type: 'defensive', base: 'home', unlockedAt: 4, count: { 4: 1, 6: 2, 7: 3, 9: 4 } },
-  { name: 'Wizard Tower', maxLevel: 15, type: 'defensive', base: 'home', unlockedAt: 5, count: { 5: 1, 7: 2, 8: 3, 9: 4, 11: 5 } },
-  { name: 'Air Sweeper', maxLevel: 8, type: 'defensive', base: 'home', unlockedAt: 6, count: { 6: 1, 9: 2 } },
-  { name: 'Hidden Tesla', maxLevel: 13, type: 'defensive', base: 'home', unlockedAt: 7, count: { 7: 2, 8: 3, 9: 4, 11: 5 } },
-  { name: 'Bomb Tower', maxLevel: 10, type: 'defensive', base: 'home', unlockedAt: 8, count: { 8: 1, 10: 2 } },
-  { name: 'X-Bow', maxLevel: 10, type: 'defensive', base: 'home', unlockedAt: 9, count: { 9: 2, 10: 3, 11: 4 } },
-  { name: 'Inferno Tower', maxLevel: 9, type: 'defensive', base: 'home', unlockedAt: 10, count: { 10: 2, 12: 3 } },
-  { name: 'Eagle Artillery', maxLevel: 6, type: 'defensive', base: 'home', unlockedAt: 11, count: { 11: 1 } },
-  { name: 'Scattershot', maxLevel: 4, type: 'defensive', base: 'home', unlockedAt: 13, count: { 13: 2 } },
-  { name: 'Spell Tower', maxLevel: 3, type: 'defensive', base: 'home', unlockedAt: 15, count: { 15: 2 } },
-  { name: 'Monolith', maxLevel: 2, type: 'defensive', base: 'home', unlockedAt: 15, count: { 15: 1 } },
+  { name: 'Cannon', gameId: 1000008, maxLevel: 21, type: 'defensive', base: 'home' },
+  { name: 'Archer Tower', gameId: 1000009, maxLevel: 21, type: 'defensive', base: 'home' },
+  { name: 'Mortar', gameId: 1000013, maxLevel: 15, type: 'defensive', base: 'home' },
+  { name: 'Air Defense', gameId: 1000012, maxLevel: 13, type: 'defensive', base: 'home' },
+  { name: 'Wizard Tower', gameId: 1000019, maxLevel: 15, type: 'defensive', base: 'home' },
+  { name: 'Air Sweeper', gameId: 1000028, maxLevel: 8, type: 'defensive', base: 'home' },
+  { name: 'Hidden Tesla', gameId: 1000021, maxLevel: 13, type: 'defensive', base: 'home' },
+  { name: 'Bomb Tower', gameId: 1000029, maxLevel: 10, type: 'defensive', base: 'home' },
+  { name: 'X-Bow', gameId: 1000027, maxLevel: 10, type: 'defensive', base: 'home' },
+  { name: 'Inferno Tower', gameId: 1000032, maxLevel: 9, type: 'defensive', base: 'home' },
+  { name: 'Eagle Artillery', gameId: 1000059, maxLevel: 6, type: 'defensive', base: 'home' },
+  { name: 'Scattershot', gameId: 1000068, maxLevel: 4, type: 'defensive', base: 'home' },
+  { name: 'Spell Tower', gameId: 1000075, maxLevel: 3, type: 'defensive', base: 'home' },
+  { name: 'Monolith', gameId: 1000076, maxLevel: 2, type: 'defensive', base: 'home' },
+  // Home Village - Traps
+  { name: 'Bomb', gameId: 12000000, maxLevel: 11, type: 'trap', base: 'home' },
+  { name: 'Spring Trap', gameId: 12000001, maxLevel: 5, type: 'trap', base: 'home' },
+  { name: 'Air Bomb', gameId: 12000002, maxLevel: 10, type: 'trap', base: 'home' },
+  { name: 'Giant Bomb', gameId: 12000005, maxLevel: 9, type: 'trap', base: 'home' },
+  { name: 'Seeking Air Mine', gameId: 12000006, maxLevel: 5, type: 'trap', base: 'home' },
+  { name: 'Skeleton Trap', gameId: 12000008, maxLevel: 5, type: 'trap', base: 'home' },
+  { name: 'Tornado Trap', gameId: 12000016, maxLevel: 3, type: 'trap', base: 'home' },
   // Home Village - Resources
-  { name: 'Gold Storage', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 3: 2, 7: 3, 8: 4 } },
-  { name: 'Elixir Storage', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 3: 2, 7: 3, 8: 4 } },
-  { name: 'Dark Elixir Storage', maxLevel: 10, type: 'resource', base: 'home', unlockedAt: 7, count: { 7: 1 } },
-  { name: 'Gold Mine', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6, 9: 7 } },
-  { name: 'Elixir Collector', maxLevel: 15, type: 'resource', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6, 9: 7 } },
-  { name: 'Dark Elixir Drill', maxLevel: 9, type: 'resource', base: 'home', unlockedAt: 8, count: { 8: 1, 9: 2, 10: 3 } },
+  { name: 'Gold Storage', gameId: 1000003, maxLevel: 15, type: 'resource', base: 'home' },
+  { name: 'Elixir Storage', gameId: 1000004, maxLevel: 15, type: 'resource', base: 'home' },
+  { name: 'Dark Elixir Storage', gameId: 1000005, maxLevel: 10, type: 'resource', base: 'home' },
+  { name: 'Gold Mine', gameId: 1000006, maxLevel: 15, type: 'resource', base: 'home' },
+  { name: 'Elixir Collector', gameId: 1000007, maxLevel: 15, type: 'resource', base: 'home' },
+  { name: 'Dark Elixir Drill', gameId: 1000023, maxLevel: 9, type: 'resource', base: 'home' },
   // Home Village - Army
-  { name: 'Barracks', maxLevel: 16, type: 'army', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 3: 3, 4: 4 } },
-  { name: 'Dark Barracks', maxLevel: 10, type: 'army', base: 'home', unlockedAt: 7, count: { 7: 1, 8: 2 } },
-  { name: 'Army Camp', maxLevel: 12, type: 'army', base: 'home', unlockedAt: 1, count: { 1: 1, 2: 2, 5: 3, 7: 4 } },
-  { name: 'Laboratory', maxLevel: 14, type: 'army', base: 'home', unlockedAt: 3, count: { 3: 1 } },
-  { name: 'Spell Factory', maxLevel: 7, type: 'army', base: 'home', unlockedAt: 5, count: { 5: 1 } },
-  { name: 'Dark Spell Factory', maxLevel: 6, type: 'army', base: 'home', unlockedAt: 8, count: { 8: 1 } },
-  { name: 'Workshop', maxLevel: 7, type: 'army', base: 'home', unlockedAt: 12, count: { 12: 1 } },
+  { name: 'Barracks', gameId: 1000010, maxLevel: 16, type: 'army', base: 'home' },
+  { name: 'Dark Barracks', gameId: 1000020, maxLevel: 10, type: 'army', base: 'home' },
+  { name: 'Army Camp', gameId: 1000002, maxLevel: 12, type: 'army', base: 'home' },
+  { name: 'Laboratory', gameId: 1000014, maxLevel: 14, type: 'army', base: 'home' },
+  { name: 'Spell Factory', gameId: 1000015, maxLevel: 7, type: 'army', base: 'home' },
+  { name: 'Dark Spell Factory', gameId: 1000024, maxLevel: 6, type: 'army', base: 'home' },
+  { name: 'Workshop', gameId: 1000062, maxLevel: 7, type: 'army', base: 'home' },
   // Home Village - Hero Altars
-  { name: 'Barbarian King Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 7, count: {7:1} },
-  { name: 'Archer Queen Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 9, count: {9:1} },
-  { name: 'Grand Warden Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 11, count: {11:1} },
-  { name: 'Royal Champion Altar', maxLevel: 1, type: 'hero', base: 'home', unlockedAt: 13, count: {13:1} },
+  { name: 'Barbarian King Altar', gameId: 1000022, maxLevel: 1, type: 'hero', base: 'home' },
+  { name: 'Archer Queen Altar', gameId: 1000025, maxLevel: 1, type: 'hero', base: 'home' },
+  { name: 'Grand Warden Altar', gameId: 1000060, maxLevel: 1, type: 'hero', base: 'home' },
+  { name: 'Royal Champion Altar', gameId: 1000069, maxLevel: 1, type: 'hero', base: 'home' },
   // Builder Base
-  { name: 'Builder Hall', maxLevel: 10, type: 'other', base: 'builder', unlockedAt: 1, count: { 1: 1 } },
-  { name: 'Double Cannon', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 1, count: {1:1} },
-  { name: 'Archer Tower', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 2, count: {2:1, 3:2} },
-  { name: 'Hidden Tesla', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 4, count: {4:2, 5:3, 8:4} },
-  { name: 'Mega Tesla', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 8, count: {8:1} },
-  { name: 'Giant Cannon', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 6, count: {6:1} },
-  { name: 'Firecrackers', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 4, count: {4:2, 6:3} },
-  { name: 'Air Bombs', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 5, count: {5:1} },
-  { name: 'Roaster', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 6, count: {6:1} },
-  { name: 'Multi Mortar', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 5, count: {5:1} },
-  { name: 'Crusher', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 3, count: {3:1, 5:2} },
-  { name: 'Guard Post', maxLevel: 10, type: 'defensive', base: 'builder', unlockedAt: 4, count: {4:1} },
-  { name: 'Gem Mine', maxLevel: 10, type: 'resource', base: 'builder', unlockedAt: 3, count: {3:1} },
-  { name: 'Clock Tower', maxLevel: 10, type: 'other', base: 'builder', unlockedAt: 4, count: {4:1} },
-  { name: 'Builder\'s Barracks', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 2, count: {2:1, 6:2} },
-  { name: 'Star Laboratory', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 4, count: {4:1} },
-  { name: 'Reinforcement Camp', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 6, count: {6:2} },
-  { name: 'Healing Hut', maxLevel: 10, type: 'army', base: 'builder', unlockedAt: 6, count: {6:1} },
-  { name: 'O.T.T.O Post', maxLevel: 10, type: 'other', base: 'builder', unlockedAt: 6, count: {6:1} },
+  { name: 'Builder Hall', gameId: 1000034, maxLevel: 10, type: 'other', base: 'builder' },
+  { name: 'Double Cannon', gameId: 1000041, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Archer Tower', gameId: 1000035, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Hidden Tesla', gameId: 1000043, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Mega Tesla', gameId: 1000054, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Giant Cannon', gameId: 1000051, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Firecrackers', gameId: 1000045, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Air Bombs', gameId: 1000048, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Roaster', gameId: 1000052, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Multi Mortar', gameId: 1000046, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Crusher', gameId: 1000038, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Guard Post', gameId: 1000042, maxLevel: 10, type: 'defensive', base: 'builder' },
+  { name: 'Gem Mine', gameId: 1000039, maxLevel: 10, type: 'resource', base: 'builder' },
+  { name: 'Clock Tower', gameId: 1000040, maxLevel: 10, type: 'other', base: 'builder' },
+  { name: 'Builder\'s Barracks', gameId: 1000036, maxLevel: 10, type: 'army', base: 'builder' },
+  { name: 'Star Laboratory', gameId: 1000044, maxLevel: 10, type: 'army', base: 'builder' },
+  { name: 'Reinforcement Camp', gameId: 1000050, maxLevel: 10, type: 'army', base: 'builder' },
+  { name: 'Healing Hut', gameId: 1000057, maxLevel: 10, type: 'army', base: 'builder' },
+  { name: 'O.T.T.O Post', gameId: 1000049, maxLevel: 10, type: 'other', base: 'builder' },
+  { name: 'Battle Copter Post', gameId: 1000080, maxLevel: 1, type: 'hero', base: 'builder' },
+  { name: 'Battle Machine Post', gameId: 1000055, maxLevel: 1, type: 'hero', base: 'builder' },
+  { name: 'Gold Storage', gameId: 1000033, maxLevel: 10, type: 'resource', base: 'builder' },
+  { name: 'Elixir Storage', gameId: 1000037, maxLevel: 10, type: 'resource', base: 'builder' },
+  // Builder Traps
+  { name: 'Push Trap', gameId: 12000010, maxLevel: 10, type: 'trap', base: 'builder' },
+  { name: 'Mine', gameId: 12000011, maxLevel: 10, type: 'trap', base: 'builder' },
+  { name: 'Mega Mine', gameId: 12000013, maxLevel: 10, type: 'trap', base: 'builder' },
+  { name: 'Spring Trap', gameId: 12000014, maxLevel: 5, type: 'trap', base: 'builder' },
 ];
 
-export const ALL_TROOPS_CONFIG: Omit<Troop, 'id' | 'level'>[] = [
+export const ALL_TROOPS_CONFIG: TroopConfig[] = [
     // Home Village - Elixir
-    { name: 'Barbarian', maxLevel: 11, village: 'home', elixirType: 'regular' },
-    { name: 'Archer', maxLevel: 11, village: 'home', elixirType: 'regular' },
-    { name: 'Goblin', maxLevel: 8, village: 'home', elixirType: 'regular' },
-    { name: 'Giant', maxLevel: 11, village: 'home', elixirType: 'regular' },
-    { name: 'Wall Breaker', maxLevel: 11, village: 'home', elixirType: 'regular' },
-    { name: 'Balloon', maxLevel: 10, village: 'home', elixirType: 'regular' },
-    { name: 'Wizard', maxLevel: 11, village: 'home', elixirType: 'regular' },
-    { name: 'Healer', maxLevel: 8, village: 'home', elixirType: 'regular' },
-    { name: 'Dragon', maxLevel: 10, village: 'home', elixirType: 'regular' },
-    { name: 'P.E.K.K.A', maxLevel: 10, village: 'home', elixirType: 'regular' },
-    { name: 'Baby Dragon', maxLevel: 9, village: 'home', elixirType: 'regular' },
-    { name: 'Miner', maxLevel: 9, village: 'home', elixirType: 'regular' },
-    { name: 'Electro Dragon', maxLevel: 6, village: 'home', elixirType: 'regular' },
-    { name: 'Yeti', maxLevel: 5, village: 'home', elixirType: 'regular' },
-    { name: 'Dragon Rider', maxLevel: 4, village: 'home', elixirType: 'regular' },
-    { name: 'Electro Titan', maxLevel: 4, village: 'home', elixirType: 'regular' },
-    { name: 'Root Rider', maxLevel: 3, village: 'home', elixirType: 'regular' },
+    { name: 'Barbarian', gameId: 4000000, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Archer', gameId: 4000001, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Giant', gameId: 4000003, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Goblin', gameId: 4000002, maxLevel: 8, village: 'home', elixirType: 'regular' },
+    { name: 'Wall Breaker', gameId: 4000004, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Balloon', gameId: 4000005, maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { name: 'Wizard', gameId: 4000006, maxLevel: 11, village: 'home', elixirType: 'regular' },
+    { name: 'Healer', gameId: 4000007, maxLevel: 8, village: 'home', elixirType: 'regular' },
+    { name: 'Dragon', gameId: 4000008, maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { name: 'P.E.K.K.A', gameId: 4000009, maxLevel: 10, village: 'home', elixirType: 'regular' },
+    { name: 'Baby Dragon', gameId: 4000023, maxLevel: 9, village: 'home', elixirType: 'regular' },
+    { name: 'Miner', gameId: 4000024, maxLevel: 9, village: 'home', elixirType: 'regular' },
+    { name: 'Electro Dragon', gameId: 4000039, maxLevel: 6, village: 'home', elixirType: 'regular' },
+    { name: 'Yeti', gameId: 4000047, maxLevel: 5, village: 'home', elixirType: 'regular' },
+    { name: 'Dragon Rider', gameId: 4000054, maxLevel: 4, village: 'home', elixirType: 'regular' },
+    { name: 'Electro Titan', gameId: 4000059, maxLevel: 4, village: 'home', elixirType: 'regular' },
+    { name: 'Root Rider', gameId: 4000065, maxLevel: 3, village: 'home', elixirType: 'regular' },
     // Home Village - Dark Elixir
-    { name: 'Minion', maxLevel: 11, village: 'home', elixirType: 'dark' },
-    { name: 'Hog Rider', maxLevel: 12, village: 'home', elixirType: 'dark' },
-    { name: 'Valkyrie', maxLevel: 10, village: 'home', elixirType: 'dark' },
-    { name: 'Golem', maxLevel: 12, village: 'home', elixirType: 'dark' },
-    { name: 'Witch', maxLevel: 6, village: 'home', elixirType: 'dark' },
-    { name: 'Lava Hound', maxLevel: 7, village: 'home', elixirType: 'dark' },
-    { name: 'Bowler', maxLevel: 7, village: 'home', elixirType: 'dark' },
-    { name: 'Ice Golem', maxLevel: 7, village: 'home', elixirType: 'dark' },
-    { name: 'Headhunter', maxLevel: 4, village: 'home', elixirType: 'dark' },
-    { name: 'Apprentice Warden', maxLevel: 4, village: 'home', elixirType: 'dark' },
+    { name: 'Minion', gameId: 4000010, maxLevel: 11, village: 'home', elixirType: 'dark' },
+    { name: 'Hog Rider', gameId: 4000011, maxLevel: 12, village: 'home', elixirType: 'dark' },
+    { name: 'Valkyrie', gameId: 4000012, maxLevel: 10, village: 'home', elixirType: 'dark' },
+    { name: 'Golem', gameId: 4000013, maxLevel: 12, village: 'home', elixirType: 'dark' },
+    { name: 'Witch', gameId: 4000015, maxLevel: 6, village: 'home', elixirType: 'dark' },
+    { name: 'Lava Hound', gameId: 4000017, maxLevel: 7, village: 'home', elixirType: 'dark' },
+    { name: 'Bowler', gameId: 4000028, maxLevel: 7, village: 'home', elixirType: 'dark' },
+    { name: 'Ice Golem', gameId: 4000043, maxLevel: 7, village: 'home', elixirType: 'dark' },
+    { name: 'Headhunter', gameId: 4000050, maxLevel: 4, village: 'home', elixirType: 'dark' },
+    { name: 'Apprentice Warden', gameId: 4000062, maxLevel: 4, village: 'home', elixirType: 'dark' },
+    // Home Village - Spells
+    { name: 'Lightning Spell', gameId: 26000000, maxLevel: 10, village: 'home', elixirType: 'regular'},
+    { name: 'Healing Spell', gameId: 26000001, maxLevel: 8, village: 'home', elixirType: 'regular'},
+    { name: 'Rage Spell', gameId: 26000002, maxLevel: 7, village: 'home', elixirType: 'regular'},
+    { name: 'Jump Spell', gameId: 26000003, maxLevel: 4, village: 'home', elixirType: 'regular'},
+    { name: 'Freeze Spell', gameId: 26000005, maxLevel: 8, village: 'home', elixirType: 'regular'},
+    { name: 'Clone Spell', gameId: 26000016, maxLevel: 8, village: 'home', elixirType: 'regular'},
+    { name: 'Invisibility Spell', gameId: 26000027, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Recall Spell', gameId: 26000035, maxLevel: 4, village: 'home', elixirType: 'regular'},
+    // Home Village - Dark Spells
+    { name: 'Poison Spell', gameId: 26000009, maxLevel: 10, village: 'home', elixirType: 'dark'},
+    { name: 'Earthquake Spell', gameId: 26000010, maxLevel: 5, village: 'home', elixirType: 'dark'},
+    { name: 'Haste Spell', gameId: 26000011, maxLevel: 5, village: 'home', elixirType: 'dark'},
+    { name: 'Skeleton Spell', gameId: 26000013, maxLevel: 8, village: 'home', elixirType: 'dark'},
+    { name: 'Bat Spell', gameId: 26000020, maxLevel: 6, village: 'home', elixirType: 'dark'},
+    // Home Village - Siege Machines
+    { name: 'Wall Wrecker', gameId: 4000040, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Battle Blimp', gameId: 4000041, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Stone Slammer', gameId: 4000044, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Siege Barracks', gameId: 4000048, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Log Launcher', gameId: 4000051, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Flame Flinger', gameId: 4000052, maxLevel: 5, village: 'home', elixirType: 'regular'},
+    { name: 'Battle Drill', gameId: 4000060, maxLevel: 5, village: 'home', elixirType: 'regular'},
     // Builder Base
-    { name: 'Raged Barbarian', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Sneaky Archer', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Boxer Giant', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Beta Minion', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Bomber', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Baby Dragon', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Cannon Cart', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Night Witch', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Drop Ship', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Power P.E.K.K.A', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Hog Glider', maxLevel: 20, village: 'builder', elixirType: 'none' },
-    { name: 'Electrofire Wizard', maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Raged Barbarian', gameId: 4000018, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Sneaky Archer', gameId: 4000019, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Boxer Giant', gameId: 4000021, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Beta Minion', gameId: 4000020, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Bomber', gameId: 4000022, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Baby Dragon', gameId: 4000026, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Cannon Cart', gameId: 4000029, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Night Witch', gameId: 4000030, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Drop Ship', gameId: 4000031, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Power P.E.K.K.A', gameId: 4000032, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Hog Glider', gameId: 4000034, maxLevel: 20, village: 'builder', elixirType: 'none' },
+    { name: 'Electrofire Wizard', gameId: 4000042, maxLevel: 20, village: 'builder', elixirType: 'none' },
 ];
 
-export const ALL_HEROES_CONFIG: Omit<Hero, 'id' | 'level'>[] = [
-    { name: 'Barbarian King', maxLevel: 95, village: 'home' },
-    { name: 'Archer Queen', maxLevel: 95, village: 'home' },
-    { name: 'Grand Warden', maxLevel: 70, village: 'home' },
-    { name: 'Royal Champion', maxLevel: 45, village: 'home' },
-    { name: 'Battle Machine', maxLevel: 45, village: 'builder' },
-    { name: 'Battle Copter', maxLevel: 45, village: 'builder' },
+export const ALL_HEROES_CONFIG: HeroConfig[] = [
+    { name: 'Barbarian King', gameId: 28000000, maxLevel: 95, village: 'home' },
+    { name: 'Archer Queen', gameId: 28000001, maxLevel: 95, village: 'home' },
+    { name: 'Grand Warden', gameId: 28000002, maxLevel: 70, village: 'home' },
+    { name: 'Royal Champion', gameId: 28000006, maxLevel: 45, village: 'home' },
+    { name: 'Battle Machine', gameId: 28000003, maxLevel: 45, village: 'builder' },
+    { name: 'Battle Copter', gameId: 28000005, maxLevel: 45, village: 'builder' },
 ];
 
-export const ALL_PETS_CONFIG: Omit<Pet, 'id' | 'level'>[] = [
-    { name: 'L.A.S.S.I', maxLevel: 15 },
-    { name: 'Electro Owl', maxLevel: 15 },
-    { name: 'Mighty Yak', maxLevel: 15 },
-    { name: 'Unicorn', maxLevel: 15 },
-    { name: 'Frosty', maxLevel: 15 },
-    { name: 'Diggy', maxLevel: 15 },
-    { name: 'Poison Lizard', maxLevel: 15 },
-    { name: 'Phoenix', maxLevel: 15 },
-    { name: 'Spirit Fox', maxLevel: 15 },
-    { name: 'Angry Jelly', maxLevel: 15 },
+export const ALL_PETS_CONFIG: {name: string, gameId: number, maxLevel: number}[] = [
+    { name: 'L.A.S.S.I', gameId: 28000007, maxLevel: 15 },
+    { name: 'Electro Owl', gameId: 28000008, maxLevel: 15 },
+    { name: 'Mighty Yak', gameId: 28000009, maxLevel: 15 },
+    { name: 'Unicorn', gameId: 28000010, maxLevel: 15 },
+    { name: 'Frosty', gameId: 28000011, maxLevel: 15 },
+    { name: 'Diggy', gameId: 28000012, maxLevel: 15 },
+    { name: 'Poison Lizard', gameId: 28000013, maxLevel: 15 },
+    { name: 'Phoenix', gameId: 28000014, maxLevel: 15 },
+    { name: 'Spirit Fox', gameId: 28000015, maxLevel: 15 },
+    { name: 'Angry Jelly', gameId: 28000016, maxLevel: 15 },
 ];
 
-export const ALL_EQUIPMENT_CONFIG: Omit<Equipment, 'id' | 'level'>[] = [
+export const ALL_EQUIPMENT_CONFIG: EquipmentConfig[] = [
     // Barbarian King
-    { name: 'Barbarian Puppet', maxLevel: 18 },
-    { name: 'Rage Vial', maxLevel: 18 },
-    { name: 'Archer Puppet', maxLevel: 18 },
-    { name: 'Hog Rider Puppet', maxLevel: 18 },
-    { name: 'Earthquake Boots', maxLevel: 18 },
-    { name: 'Vampstache', maxLevel: 27 },
-    { name: 'Giant Gauntlet', maxLevel: 27 },
+    { name: 'Barbarian Puppet', gameId: 90000000, maxLevel: 18 },
+    { name: 'Rage Vial', gameId: 90000001, maxLevel: 18 },
+    { name: 'Earthquake Boots', gameId: 90000002, maxLevel: 18 },
+    { name: 'Vampstache', gameId: 90000003, maxLevel: 27 },
+    { name: 'Hog Rider Puppet', gameId: 90000020, maxLevel: 18 },
+    { name: 'Giant Gauntlet', gameId: 90000023, maxLevel: 27 },
     // Archer Queen
-    { name: 'Archer Puppet', maxLevel: 18 },
-    { name: 'Invisibility Vial', maxLevel: 18 },
-    { name: 'Healer Puppet', maxLevel: 18 },
-    { name: 'Giant Arrow', maxLevel: 18 },
-    { name: 'Frozen Arrow', maxLevel: 27 },
+    { name: 'Archer Puppet', gameId: 90000004, maxLevel: 18 },
+    { name: 'Invisibility Vial', gameId: 90000005, maxLevel: 18 },
+    { name: 'Giant Arrow', gameId: 90000006, maxLevel: 18 },
+    { name: 'Healer Puppet', gameId: 90000007, maxLevel: 18 },
+    { name: 'Frozen Arrow', gameId: 90000022, maxLevel: 27 },
     // Grand Warden
-    { name: 'Eternal Tome', maxLevel: 18 },
-    { name: 'Life Gem', maxLevel: 18 },
-    { name: 'Rage Gem', maxLevel: 18 },
-    { name: 'Healing Tome', maxLevel: 18 },
-    { name: 'Fireball', maxLevel: 27 },
+    { name: 'Eternal Tome', gameId: 90000008, maxLevel: 18 },
+    { name: 'Life Gem', gameId: 90000009, maxLevel: 18 },
+    { name: 'Rage Gem', gameId: 90000010, maxLevel: 18 },
+    { name: 'Healing Tome', gameId: 90000011, maxLevel: 18 },
+    { name: 'Fireball', gameId: 90000024, maxLevel: 27 },
     // Royal Champion
-    { name: 'Seeking Shield', maxLevel: 18 },
-    { name: 'Royal Gem', maxLevel: 18 },
-    { name: 'Haste Vial', maxLevel: 18 },
-    { name: 'Hog Rider Puppet', maxLevel: 18 },
+    { name: 'Seeking Shield', gameId: 90000012, maxLevel: 18 },
+    { name: 'Haste Vial', gameId: 90000013, maxLevel: 18 },
+    { name: 'Royal Gem', gameId: 90000014, maxLevel: 18 },
+    { name: 'Hog Rider Puppet', gameId: 90000015, maxLevel: 18 },
 ];
-
-
-export const DEMO_VILLAGE_STATE: VillageState = {
-  townHallLevel: 12,
-  builderHallLevel: 9,
-  buildings: [
-    { id: 'TownHall-1', name: 'Town Hall', level: 12, maxLevel: 16, type: 'other', base: 'home', isUpgrading: false },
-    { id: 'ClanCastle-1', name: 'Clan Castle', level: 8, maxLevel: 12, type: 'army', base: 'home', isUpgrading: false },
-    { id: 'Laboratory-1', name: 'Laboratory', level: 10, maxLevel: 14, type: 'army', base: 'home', isUpgrading: false },
-    { id: 'Blacksmith-1', name: 'Blacksmith', level: 5, maxLevel: 9, type: 'army', base: 'home', isUpgrading: false },
-    { id: 'ArmyCamp-4', name: 'Army Camp', level: 9, maxLevel: 12, type: 'army', base: 'home', isUpgrading: true, upgradeEndTime: new Date(Date.now() + 86400000).toISOString() },
-    { id: 'EagleArtillery-1', name: 'Eagle Artillery', level: 3, maxLevel: 6, type: 'defensive', base: 'home', isUpgrading: false },
-    { id: 'BuilderHall-1', name: 'Builder Hall', level: 9, maxLevel: 10, type: 'other', base: 'builder', isUpgrading: false },
-  ],
-  troops: [
-    { id: 'Dragon-1', name: 'Dragon', level: 7, maxLevel: 10, village: 'home', elixirType: 'regular' },
-    { id: 'HogRider-1', name: 'Hog Rider', level: 8, maxLevel: 12, village: 'home', elixirType: 'dark' },
-    { id: 'CannonCart-1', name: 'Cannon Cart', level: 18, maxLevel: 20, village: 'builder', elixirType: 'none' },
-  ],
-  heroes: [
-    { id: 'BarbarianKing-1', name: 'Barbarian King', level: 65, maxLevel: 95, village: 'home' },
-    { id: 'ArcherQueen-1', name: 'Archer Queen', level: 65, maxLevel: 95, village: 'home' },
-    { id: 'GrandWarden-1', name: 'Grand Warden', level: 40, maxLevel: 70, village: 'home' },
-    { id: 'BattleMachine-1', name: 'Battle Machine', level: 30, maxLevel: 45, village: 'builder' },
-  ],
-  pets: [],
-  equipment: [
-      { id: 'BarbarianPuppet-1', name: 'Barbarian Puppet', level: 12, maxLevel: 18 },
-      { id: 'RageVial-1', name: 'Rage Vial', level: 12, maxLevel: 18 },
-      { id: 'InvisibilityVial-1', name: 'Invisibility Vial', level: 12, maxLevel: 18 },
-  ],
-};
-
-// This is no longer used for initial data but can be useful for type inference.
-export const initialVillageState: VillageState = {
-  townHallLevel: 1,
-  builderHallLevel: 1,
-  buildings: [],
-  troops: [],
-  heroes: [],
-  pets: [],
-  equipment: [],
-};

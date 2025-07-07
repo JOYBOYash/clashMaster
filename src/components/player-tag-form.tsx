@@ -25,7 +25,6 @@ const FormSchema = z.object({
 export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isApiBlocked, setIsApiBlocked] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -35,7 +34,6 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     setIsLoading(true);
     setError(null);
-    setIsApiBlocked(false);
     
     const { fetchAndProcessVillageData } = await import('@/app/actions');
     const result = await fetchAndProcessVillageData(values.playerTag);
@@ -45,11 +43,7 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
     if (result.success && result.data) {
       onDataFetched(result.data);
     } else {
-      if (result.errorCode === 'API_FORBIDDEN') {
-        setIsApiBlocked(true);
-      } else {
-        setError(result.error || 'An unexpected error occurred.');
-      }
+      setError(result.error || 'An unexpected error occurred.');
     }
   };
   
@@ -57,38 +51,12 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
     onDataFetched(DEMO_VILLAGE_STATE);
   };
 
-  if (isApiBlocked) {
-     return (
-        <Card className="max-w-lg mx-auto mt-8">
-            <CardHeader>
-                <CardTitle className="font-headline">API Connection Failed</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4 text-center">
-                    <Alert variant="destructive">
-                        <AlertTitle>API Access Denied</AlertTitle>
-                        <AlertDescription>
-                        We couldn't connect to the Clash of Clans API. This is a known issue with cloud environments where the server's IP is not whitelisted.
-                        </AlertDescription>
-                    </Alert>
-                    <p className="text-sm text-muted-foreground">You can explore the app's features with a pre-loaded sample village instead.</p>
-                    <Button onClick={handleLoadDemo} className="w-full">
-                        <TestTube2 className="mr-2" />
-                        Load Sample Village
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
-     )
-  }
-
   return (
     <Card className="max-w-lg mx-auto mt-8">
       <CardHeader>
         <CardTitle className="font-headline">Load Your Village</CardTitle>
         <CardDescription>
-          Enter your Clash of Clans Player Tag to load your village data automatically.
-          You can find your tag in your in-game profile.
+          Enter your Clash of Clans Player Tag to load your village data.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -109,7 +77,7 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
             />
             {error && (
               <Alert variant="destructive">
-                <AlertTitle>Error</AlertTitle>
+                <AlertTitle>Error Loading Village</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -123,6 +91,30 @@ export function PlayerTagForm({ onDataFetched }: PlayerTagFormProps) {
             </Button>
           </form>
         </Form>
+        
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">
+              Or
+            </span>
+          </div>
+        </div>
+
+        <Alert className="mb-4">
+            <TestTube2 className="h-4 w-4" />
+            <AlertTitle>Using a Cloud IDE?</AlertTitle>
+            <AlertDescription>
+            If the live API is blocked (403 Error), use the sample village to explore all features without an API key.
+            </AlertDescription>
+        </Alert>
+
+        <Button variant="secondary" onClick={handleLoadDemo} className="w-full">
+            <TestTube2 className="mr-2" />
+            Load Sample Village
+        </Button>
       </CardContent>
     </Card>
   );

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -46,6 +47,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const [townHallLevel, setTownHallLevel] = useState<number | null>(null);
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [currentStep, setCurrentStep] = useState(0);
+  const [isMaxAllChecked, setIsMaxAllChecked] = useState(false);
 
   const thData = townHallLevel ? gameData.clash_of_clans_data.town_halls[`TH${townHallLevel}` as keyof typeof gameData.clash_of_clans_data.town_halls] : null;
 
@@ -61,13 +63,87 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const setMaxLevel = (key: string, maxLevel: number) => {
     setLevels(prev => ({ ...prev, [key]: maxLevel }));
   };
+  
+  const surveySteps = [
+    { id: 'townHall', title: 'Town Hall Level', icon: Home, content: () => (
+        <Select onValueChange={(v) => {setTownHallLevel(parseInt(v)); setLevels({});}}>
+          <SelectTrigger className="w-full mt-2 text-base py-6"><SelectValue placeholder="Select your Town Hall level..." /></SelectTrigger>
+          <SelectContent>{Array.from({ length: 16 }, (_, i) => i + 1).map(l => <SelectItem key={l} value={String(l)}>Town Hall {l}</SelectItem>)}</SelectContent>
+        </Select>
+    )},
+    { id: 'keyBuildings', title: 'Key Buildings', icon: Library, content: () => <div className="space-y-3">{keyBuildings.map(b => (thData?.buildings as any)[b] ? renderSingleItemInput(b, 'building', (thData.buildings as any)[b]) : null)}</div> },
+    { id: 'armyCamps', title: 'Army Camps', icon: Swords, content: () => armyCamps.map(renderBuildingInputs) },
+    { id: 'storages', title: 'Resource Storages', icon: Warehouse, content: () => storageBuildings.map(renderBuildingInputs) },
+    { id: 'collectors', title: 'Resource Collectors', icon: Coins, content: () => collectorBuildings.map(renderBuildingInputs) },
+    { id: 'defenses', title: 'Defenses', icon: Shield, content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div> },
+    { id: 'regularTroops', title: 'Regular Troops', icon: Dna, content: () => renderItemGroup("Elixir Troops", regularTroops, 'troop')},
+    { id: 'darkTroops', title: 'Dark Troops', icon: Dna, content: () => renderItemGroup("Dark Elixir Troops", darkTroops, 'troop')},
+    { id: 'regularSpells', title: 'Regular Spells', icon: FlaskConical, content: () => renderItemGroup("Elixir Spells", regularSpells, 'spell')},
+    { id: 'darkSpells', title: 'Dark Spells', icon: FlaskConical, content: () => renderItemGroup("Dark Elixir Spells", darkSpells, 'spell')},
+    { id: 'heroes', title: 'Heroes', icon: Gem, content: () => renderItemGroup("Your Heroes", heroes, 'hero') },
+  ];
+
+  const handleMaxAllForStep = (checked: boolean | 'indeterminate') => {
+    setIsMaxAllChecked(checked === true);
+
+    if (checked !== true || !thData) {
+      return;
+    }
+
+    const currentStepConfig = surveySteps[currentStep];
+    const newLevelsUpdate: Record<string, number> = {};
+
+    const buildingData = thData.buildings as Record<string, { count: number; max_level: number }>;
+    const armyData = thData.army.troops as Record<string, { max_level: number }>;
+    const spellData = thData.spells.spells as Record<string, { max_level: number }>;
+    const heroData = thData.heroes as Record<string, { max_level: number }>;
+
+    const processBuildingKeys = (keys: string[], isSingle: boolean) => {
+      keys.forEach(key => {
+        const info = buildingData[key];
+        if (info) {
+          if (isSingle) {
+            newLevelsUpdate[`building-${key}`] = info.max_level;
+          } else {
+            for (let i = 0; i < info.count; i++) {
+              newLevelsUpdate[`${key}-${i}`] = info.max_level;
+            }
+          }
+        }
+      });
+    };
+    
+    const processItemKeys = (keys: string[], type: 'troop' | 'spell' | 'hero') => {
+      const sourceMap = type === 'troop' ? armyData : type === 'spell' ? spellData : heroData;
+      keys.forEach(key => {
+        const info = (sourceMap as any)?.[key];
+        if (info) {
+          newLevelsUpdate[`${type}-${key}`] = info.max_level;
+        }
+      });
+    };
+
+    switch (currentStepConfig.id) {
+      case 'keyBuildings': processBuildingKeys(keyBuildings, true); break;
+      case 'armyCamps': processBuildingKeys(armyCamps, false); break;
+      case 'storages': processBuildingKeys(storageBuildings, false); break;
+      case 'collectors': processBuildingKeys(collectorBuildings, false); break;
+      case 'defenses': processBuildingKeys(defensiveBuildings, false); break;
+      case 'regularTroops': processItemKeys(regularTroops, 'troop'); break;
+      case 'darkTroops': processItemKeys(darkTroops, 'troop'); break;
+      case 'regularSpells': processItemKeys(regularSpells, 'spell'); break;
+      case 'darkSpells': processItemKeys(darkSpells, 'spell'); break;
+      case 'heroes': processItemKeys(heroes, 'hero'); break;
+    }
+    
+    setLevels(prev => ({ ...prev, ...newLevelsUpdate }));
+  };
 
   const renderBuildingInputs = (buildingKey: string) => {
     if (!thData) return null;
     
     let buildingInfo;
     if (singleInstanceBuildings.includes(buildingKey)) {
-        // Find the single instance building info (e.g., from barracks array if needed)
         const bKey = Object.keys(thData.buildings).find(k => k.startsWith(buildingKey));
         if (!bKey) return null;
         buildingInfo = (thData.buildings as any)[bKey] as { count: number, max_level: number };
@@ -166,27 +242,14 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     );
   };
   
-  const surveySteps = [
-    { id: 'townHall', title: 'Town Hall Level', icon: Home, content: () => (
-        <Select onValueChange={(v) => {setTownHallLevel(parseInt(v)); setLevels({});}}>
-          <SelectTrigger className="w-full mt-2 text-base py-6"><SelectValue placeholder="Select your Town Hall level..." /></SelectTrigger>
-          <SelectContent>{Array.from({ length: 16 }, (_, i) => i + 1).map(l => <SelectItem key={l} value={String(l)}>Town Hall {l}</SelectItem>)}</SelectContent>
-        </Select>
-    )},
-    { id: 'keyBuildings', title: 'Key Buildings', icon: Library, content: () => <div className="space-y-3">{keyBuildings.map(b => (thData?.buildings as any)[b] ? renderSingleItemInput(b, 'building', (thData.buildings as any)[b]) : null)}</div> },
-    { id: 'armyCamps', title: 'Army Camps', icon: Swords, content: () => armyCamps.map(renderBuildingInputs) },
-    { id: 'storages', title: 'Resource Storages', icon: Warehouse, content: () => storageBuildings.map(renderBuildingInputs) },
-    { id: 'collectors', title: 'Resource Collectors', icon: Coins, content: () => collectorBuildings.map(renderBuildingInputs) },
-    { id: 'defenses', title: 'Defenses', icon: Shield, content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div> },
-    { id: 'regularTroops', title: 'Regular Troops', icon: Dna, content: () => renderItemGroup("Elixir Troops", regularTroops, 'troop')},
-    { id: 'darkTroops', title: 'Dark Troops', icon: Dna, content: () => renderItemGroup("Dark Elixir Troops", darkTroops, 'troop')},
-    { id: 'regularSpells', title: 'Regular Spells', icon: FlaskConical, content: () => renderItemGroup("Elixir Spells", regularSpells, 'spell')},
-    { id: 'darkSpells', title: 'Dark Spells', icon: FlaskConical, content: () => renderItemGroup("Dark Elixir Spells", darkSpells, 'spell')},
-    { id: 'heroes', title: 'Heroes', icon: Gem, content: () => renderItemGroup("Your Heroes", heroes, 'hero') },
-  ];
-  
-  const handleNext = () => setCurrentStep(prev => Math.min(prev + 1, surveySteps.length - 1));
-  const handleBack = () => setCurrentStep(prev => Math.max(prev - 1, 0));
+  const handleNext = () => {
+    setIsMaxAllChecked(false);
+    setCurrentStep(prev => Math.min(prev + 1, surveySteps.length - 1));
+  }
+  const handleBack = () => {
+    setIsMaxAllChecked(false);
+    setCurrentStep(prev => Math.max(prev - 1, 0));
+  }
 
   const handleSubmit = async () => {
     if (!townHallLevel || !thData || !user) return;
@@ -273,6 +336,18 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
       </CardHeader>
       <CardContent className="min-h-[300px] max-h-[60vh] overflow-y-auto p-6">
+        {currentStep > 0 && thData && (
+          <div className="flex items-center space-x-2 mb-6 p-3 rounded-md bg-muted sticky top-0 z-10">
+            <Checkbox
+              id="max-all-step"
+              checked={isMaxAllChecked}
+              onCheckedChange={handleMaxAllForStep}
+            />
+            <Label htmlFor="max-all-step" className="font-semibold text-base cursor-pointer">
+              Max All for this Step
+            </Label>
+          </div>
+        )}
         {(!townHallLevel && currentStep > 0) ? (
             <div className='text-center text-muted-foreground pt-12'>Please select your Town Hall level first.</div>
         ) : currentSurveyStep.content()}
@@ -294,3 +369,5 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </Card>
   );
 }
+
+    

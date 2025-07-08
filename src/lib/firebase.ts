@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
@@ -21,3 +22,6 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 export { app, auth, db, googleProvider };
+=======
+// This file is no longer in use as Firebase has been removed from the project.
+>>>>>>> a16c741 (FirebaseError: Firebase: Error (auth/unauthorized-domain)., I'm just tir)

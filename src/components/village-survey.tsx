@@ -43,7 +43,6 @@ const singleInstanceBuildings = [
 
 
 export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
-  const { user } = useAuth();
   const [townHallLevel, setTownHallLevel] = useState<number | null>(null);
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [currentStep, setCurrentStep] = useState(0);
@@ -252,7 +251,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   }
 
   const handleSubmit = async () => {
-    if (!townHallLevel || !thData || !user) return;
+    if (!townHallLevel || !thData) return;
 
     const buildings: Building[] = [];
     const troops: Troop[] = [];
@@ -369,5 +368,3 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </Card>
   );
 }
-
-    

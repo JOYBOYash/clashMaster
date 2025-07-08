@@ -1,80 +1,94 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  type User
+} from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 import type { VillageState } from '@/lib/constants';
 
-// This is a mock user type. In a real auth system, this would be more complex.
-interface MockUser {
-  uid: string;
-  displayName: string;
-  email: string;
-  photoURL?: string;
-}
-
 interface AuthContextType {
-  user: MockUser | null; // We'll keep a mock user for UI consistency
+  user: User | null;
   loading: boolean;
   villageState: VillageState | null;
   saveVillageState: (state: VillageState) => Promise<void>;
-  clearVillageState: () => void;
-  signInWithGoogle?: () => Promise<void>; // Make these optional
-  signOut?: () => Promise<void>;
+  clearVillageState: () => Promise<void>;
+  signUp: (email: string, password: string) => Promise<any>;
+  signIn: (email: string, password: string) => Promise<any>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const VILLAGE_STATE_KEY = 'clashMasterVillageState';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<MockUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [villageState, setVillageState] = useState<VillageState | null>(null);
 
   useEffect(() => {
-    try {
-      const savedState = localStorage.getItem(VILLAGE_STATE_KEY);
-      if (savedState) {
-        const parsedState = JSON.parse(savedState);
-        setVillageState(parsedState);
-        // Create a mock user if data exists, for UI consistency
-        setUser({
-            uid: 'local-user',
-            displayName: 'Clash Master',
-            email: 'local@user.com'
-        });
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
+      if (user) {
+        setUser(user);
+        // User is signed in, see if they have data.
+        const userDocRef = doc(db, 'villages', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setVillageState(userDoc.data() as VillageState);
+        } else {
+          setVillageState(null);
+        }
+      } else {
+        // User is signed out
+        setUser(null);
+        setVillageState(null);
       }
-    } catch (error) {
-      console.error("Failed to load village state from localStorage", error);
-      setVillageState(null);
-    }
-    setLoading(false);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
+  const signUp = async (email: string, password: string) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const signIn = async (email: string, password: string) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const signOut = async () => {
+    return firebaseSignOut(auth);
+  };
+
   const saveVillageState = async (state: VillageState) => {
+    if (!user) throw new Error("User not authenticated to save data.");
     try {
-      const stateString = JSON.stringify(state);
-      localStorage.setItem(VILLAGE_STATE_KEY, stateString);
+      const userDocRef = doc(db, 'villages', user.uid);
+      await setDoc(userDocRef, state);
       setVillageState(state);
-       // Create a mock user when data is saved
-      setUser({
-            uid: 'local-user',
-            displayName: 'Clash Master',
-            email: 'local@user.com'
-      });
     } catch (error) {
-      console.error("Error saving village state to localStorage: ", error);
+      console.error("Error saving village state to Firestore: ", error);
+      throw error;
     }
   };
 
-  const clearVillageState = () => {
+  const clearVillageState = async () => {
+     if (!user) throw new Error("User not authenticated to clear data.");
     try {
-      localStorage.removeItem(VILLAGE_STATE_KEY);
+      const userDocRef = doc(db, 'villages', user.uid);
+      await deleteDoc(userDocRef);
       setVillageState(null);
-      setUser(null);
-      // Reload to ensure survey is shown
+      // Optional: reload to ensure survey is shown, or rely on state management
       window.location.reload();
     } catch (error) {
-      console.error("Error clearing village state from localStorage: ", error);
+      console.error("Error clearing village state from Firestore: ", error);
     }
   }
 
@@ -82,6 +96,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     villageState,
+    signUp,
+    signIn,
+    signOut,
     saveVillageState,
     clearVillageState
   };

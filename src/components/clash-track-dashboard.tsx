@@ -6,9 +6,10 @@ import { TroopGuide } from '@/components/troop-guide';
 import { VillageSurvey } from './village-survey';
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from "lucide-react";
+import { AuthPage } from "./auth-page";
 
 export function ClashTrackDashboard() {
-  const { loading, villageState, saveVillageState } = useAuth();
+  const { user, loading, villageState, saveVillageState } = useAuth();
 
   if (loading) {
     return (
@@ -18,7 +19,10 @@ export function ClashTrackDashboard() {
     );
   }
   
-  // The login page is removed. We show the survey if there's no local data.
+  if (!user) {
+    return <AuthPage />;
+  }
+
   if (!villageState) {
     return <VillageSurvey onSurveyComplete={saveVillageState} />;
   }

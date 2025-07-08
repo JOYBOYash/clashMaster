@@ -1,7 +1,5 @@
-"use client";
-
-// This component is no longer in use as authentication has been removed.
-// The app now uses localStorage and directs users to the survey if no data is found.
+// This component is obsolete and has been replaced by AuthPage.tsx
+// It can be safely deleted.
 export function LoginPage() {
     return null;
 }

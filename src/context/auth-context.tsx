@@ -1,83 +1,89 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, User } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db, googleProvider } from '@/lib/firebase';
 import type { VillageState } from '@/lib/constants';
 
+// This is a mock user type. In a real auth system, this would be more complex.
+interface MockUser {
+  uid: string;
+  displayName: string;
+  email: string;
+  photoURL?: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: MockUser | null; // We'll keep a mock user for UI consistency
   loading: boolean;
   villageState: VillageState | null;
   saveVillageState: (state: VillageState) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
+  clearVillageState: () => void;
+  signInWithGoogle?: () => Promise<void>; // Make these optional
+  signOut?: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const VILLAGE_STATE_KEY = 'clashMasterVillageState';
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<MockUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [villageState, setVillageState] = useState<VillageState | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        setLoading(true);
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setVillageState(docSnap.data().villageState as VillageState);
-        } else {
-          setVillageState(null);
-        }
-      } else {
-        setVillageState(null);
+    try {
+      const savedState = localStorage.getItem(VILLAGE_STATE_KEY);
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        setVillageState(parsedState);
+        // Create a mock user if data exists, for UI consistency
+        setUser({
+            uid: 'local-user',
+            displayName: 'Clash Master',
+            email: 'local@user.com'
+        });
       }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    } catch (error) {
+      console.error("Failed to load village state from localStorage", error);
+      setVillageState(null);
+    }
+    setLoading(false);
   }, []);
 
-  const signInWithGoogle = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Error signing in with Google: ", error);
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      await firebaseSignOut(auth);
-    } catch (error)
-    {
-      console.error("Error signing out: ", error);
-    }
-  };
-
   const saveVillageState = async (state: VillageState) => {
-    if (user) {
-      try {
-        await setDoc(doc(db, "users", user.uid), { villageState: state });
-        setVillageState(state);
-      } catch (error) {
-        console.error("Error saving village state: ", error);
-      }
+    try {
+      const stateString = JSON.stringify(state);
+      localStorage.setItem(VILLAGE_STATE_KEY, stateString);
+      setVillageState(state);
+       // Create a mock user when data is saved
+      setUser({
+            uid: 'local-user',
+            displayName: 'Clash Master',
+            email: 'local@user.com'
+      });
+    } catch (error) {
+      console.error("Error saving village state to localStorage: ", error);
     }
   };
+
+  const clearVillageState = () => {
+    try {
+      localStorage.removeItem(VILLAGE_STATE_KEY);
+      setVillageState(null);
+      setUser(null);
+      // Reload to ensure survey is shown
+      window.location.reload();
+    } catch (error) {
+      console.error("Error clearing village state from localStorage: ", error);
+    }
+  }
 
   const value = {
     user,
     loading,
     villageState,
     saveVillageState,
-    signInWithGoogle,
-    signOut,
+    clearVillageState
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

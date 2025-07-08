@@ -1,6 +1,6 @@
 "use client";
 
-import { Castle, RefreshCw } from 'lucide-react';
+import { Castle, RefreshCw, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from './ui/button';
 import {
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 export function MainHeader() {
-  const { villageState, clearVillageState } = useAuth();
+  const { user, signOut, clearVillageState } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,30 +27,39 @@ export function MainHeader() {
             Clash Master
           </h1>
         </div>
-        <div className="flex flex-1 items-center justify-end">
-          {villageState && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost">
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Start Over
+        <div className="flex flex-1 items-center justify-end space-x-4">
+          {user && (
+            <>
+              <span className='text-sm text-muted-foreground hidden sm:inline'>
+                {user.email}
+              </span>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Start Over
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete your village data from your account. You will need to complete the survey again.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={clearVillageState} className='bg-destructive text-destructive-foreground hover:bg-destructive/90'>
+                      Yes, delete data and start over
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+               <Button variant="ghost" size="sm" onClick={signOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete your saved village data from this browser and you will need to complete the survey again.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={clearVillageState} className='bg-destructive text-destructive-foreground hover:bg-destructive/90'>
-                    Yes, start over
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            </>
           )}
         </div>
       </div>

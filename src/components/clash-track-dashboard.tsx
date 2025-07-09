@@ -7,6 +7,7 @@ import { VillageSurvey } from './village-survey';
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from "lucide-react";
 import { AuthPage } from "./auth-page";
+import { UpgradesPage } from "./upgrades-page";
 
 export function ClashTrackDashboard() {
   const { user, loading, villageState, saveVillageState } = useAuth();
@@ -30,12 +31,16 @@ export function ClashTrackDashboard() {
   return (
     <>
       <Tabs defaultValue="home" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-          <TabsTrigger value="home">Home Village</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+          <TabsTrigger value="home">Home</TabsTrigger>
+          <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
           <TabsTrigger value="troops">Army Guide</TabsTrigger>
         </TabsList>
         <TabsContent value="home" className="mt-6">
           <VillageView base="home" villageState={villageState} />
+        </TabsContent>
+        <TabsContent value="upgrades" className="mt-6">
+          <UpgradesPage villageState={villageState} />
         </TabsContent>
          <TabsContent value="troops" className="mt-6">
           <TroopGuide villageState={villageState} />

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { gameData } from '@/lib/game-data';
 import { type VillageState, type Building, type Troop, buildingNameToType, type Hero } from '@/lib/constants';
@@ -12,7 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from './ui/checkbox';
 import { SurveyProgress } from './survey-progress';
-import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse } from 'lucide-react';
+import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Terminal } from 'lucide-react';
 
 interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
@@ -55,7 +57,11 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if (!isNaN(numericValue) && numericValue >= 0 && numericValue <= maxLevel) {
       setLevels(prev => ({ ...prev, [key]: numericValue }));
     } else if (value === '') {
-      setLevels(prev => ({ ...prev, [key]: 0 }));
+       setLevels(prev => {
+        const newLevels = { ...prev };
+        delete newLevels[key];
+        return newLevels;
+      });
     }
   };
 
@@ -75,6 +81,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     { id: 'storages', title: 'Resource Storages', icon: Warehouse, content: () => storageBuildings.map(renderBuildingInputs) },
     { id: 'collectors', title: 'Resource Collectors', icon: Coins, content: () => collectorBuildings.map(renderBuildingInputs) },
     { id: 'defenses', title: 'Defenses', icon: Shield, content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div> },
+    { id: 'walls', title: 'Walls', icon: BrickWall, content: () => renderWallInputs() },
     { id: 'regularTroops', title: 'Regular Troops', icon: Dna, content: () => renderItemGroup("Elixir Troops", regularTroops, 'troop')},
     { id: 'darkTroops', title: 'Dark Troops', icon: Dna, content: () => renderItemGroup("Dark Elixir Troops", darkTroops, 'troop')},
     { id: 'regularSpells', title: 'Regular Spells', icon: FlaskConical, content: () => renderItemGroup("Elixir Spells", regularSpells, 'spell')},
@@ -242,6 +249,54 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
     );
   };
+
+  const renderWallInputs = () => {
+    if (!thData || !thData.walls) return null;
+    const wallInfo = thData.walls;
+    const maxLevel = wallInfo.max_level;
+    const totalCount = wallInfo.count;
+
+    const assignedCount = useMemo(() => {
+        return Object.keys(levels)
+            .filter(key => key.startsWith('wall-'))
+            .reduce((sum, key) => sum + (levels[key] || 0), 0);
+    }, [levels]);
+
+    const isError = assignedCount > totalCount;
+
+    return (
+        <div className="space-y-4">
+            <Alert variant={isError ? 'destructive' : 'default'}>
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Wall Assignment</AlertTitle>
+                <AlertDescription>
+                    Assigned: <span className="font-bold">{assignedCount}</span> / <span className="font-bold">{totalCount}</span>
+                    {isError && <span className="font-bold text-destructive-foreground ml-4">You have assigned more walls than available!</span>}
+                </AlertDescription>
+            </Alert>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => {
+                    const inputKey = `wall-${level}`;
+                    return (
+                        <div key={inputKey} className="flex items-center justify-between p-2.5 rounded-lg border bg-background/50">
+                            <Label htmlFor={inputKey} className="text-base">Level {level} Walls</Label>
+                            <Input
+                                id={inputKey}
+                                type="number"
+                                min="0"
+                                max={totalCount}
+                                value={levels[inputKey] ?? ''}
+                                onChange={(e) => handleLevelChange(inputKey, e.target.value, totalCount)}
+                                placeholder="Count"
+                                className="w-28"
+                            />
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    )
+  }
   
   const handleNext = () => {
     setIsMaxAllChecked(false);
@@ -262,7 +317,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const buildingData = thData.buildings as Record<string, { count: number; max_level: number }>;
 
     Object.keys(buildingData).forEach((buildingKey) => {
-        if (buildingKey === 'total_buildings') return;
+        if (buildingKey === 'total_buildings' || buildingKey === 'walls') return;
         const buildingInfo = buildingData[buildingKey];
         const isSingle = singleInstanceBuildings.includes(buildingKey);
         const count = isSingle ? 1 : buildingInfo.count;
@@ -280,6 +335,28 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                 base: 'home',
                 isUpgrading: false
             });
+        }
+    });
+
+    // Handle Walls
+    const maxWallLevelForTH = thData.walls.max_level;
+    Object.keys(levels).forEach(key => {
+        if (key.startsWith('wall-')) {
+            const level = parseInt(key.split('-')[1], 10);
+            const count = levels[key] || 0;
+            if (count > 0) {
+                for (let i = 0; i < count; i++) {
+                    buildings.push({
+                        id: `Wall-${level}-${i}`,
+                        name: 'Wall',
+                        level: level,
+                        maxLevel: maxWallLevelForTH,
+                        type: 'other',
+                        base: 'home',
+                        isUpgrading: false
+                    });
+                }
+            }
         }
     });
 
@@ -333,7 +410,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
       </CardHeader>
       <CardContent className="min-h-[300px] max-h-[60vh] overflow-y-auto p-6">
-        {currentStep > 0 && thData && (
+        {currentStep > 0 && thData && currentSurveyStep.id !== 'walls' && (
           <div className="flex items-center space-x-2 mb-6 p-3 rounded-md bg-muted sticky top-0 z-10">
             <Checkbox
               id="max-all-step"

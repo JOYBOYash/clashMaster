@@ -85,19 +85,19 @@ export default {
             height: '0',
           },
         },
-        'progress-glow': {
-          '0%, 100%': {
-            boxShadow: '0 0 2px hsl(var(--primary)), 0 0 4px hsl(var(--primary)), 0 0 6px hsl(var(--accent))',
+        'liquid-rotate': {
+          '0%': {
+            transform: 'rotate(0deg)',
           },
-          '50%': {
-            boxShadow: '0 0 6px hsl(var(--primary)), 0 0 10px hsl(var(--primary)), 0 0 14px hsl(var(--accent))',
+          '100%': {
+            transform: 'rotate(360deg)',
           },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'progress-glow': 'progress-glow 2.5s ease-in-out infinite',
+        'liquid-rotate': 'liquid-rotate 5s linear infinite',
       },
     },
   },

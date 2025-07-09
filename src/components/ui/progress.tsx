@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -19,30 +18,9 @@ const Progress = React.forwardRef<
     {...props}
   >
     <ProgressPrimitive.Indicator
-      className="relative h-full w-full flex-1 bg-gradient-to-r from-accent to-primary/80 transition-transform duration-500 ease-out"
+      className="h-full w-full flex-1 bg-primary transition-transform duration-500 ease-out animate-shimmer bg-[linear-gradient(110deg,hsl(var(--primary))_45%,hsl(var(--accent))_55%,hsl(var(--primary)))] bg-[length:200%_100%]"
       style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-    >
-      {/* The two divs below create the "sloshing liquid" effect */}
-      <div className="absolute w-[200%] h-[200%] -top-1/2 -left-1/2 animate-liquid-rotate">
-        <div 
-          className="w-full h-full bg-primary/20"
-          style={{
-            borderRadius: '45%',
-            animation: 'liquid-rotate 7s linear infinite',
-            animationDelay: '-1s'
-          }}
-        />
-      </div>
-      <div className="absolute w-[200%] h-[200%] -top-1/2 -left-1/2 animate-liquid-rotate">
-        <div
-          className="w-full h-full bg-accent/20"
-          style={{
-            borderRadius: '40%',
-            animation: 'liquid-rotate 10s linear infinite reverse',
-          }}
-        />
-      </div>
-    </ProgressPrimitive.Indicator>
+    />
   </ProgressPrimitive.Root>
 ))
 Progress.displayName = ProgressPrimitive.Root.displayName

@@ -19,49 +19,49 @@ interface TroopGuideProps {
 
 const troopImageMap: Record<string, string> = {
     // Elixir Troops
-    'Barbarian': 'https://static.wikia.nocookie.net/clashofclans/images/0/05/Barbarian-avatar.png/revision/latest',
-    'Archer': 'https://static.wikia.nocookie.net/clashofclans/images/c/c5/Archer-avatar.png/revision/latest',
-    'Giant': 'https://static.wikia.nocookie.net/clashofclans/images/2/2b/Giant-avatar.png/revision/latest',
-    'Goblin': 'https://static.wikia.nocookie.net/clashofclans/images/e/ea/Goblin-avatar.png/revision/latest',
-    'Wall Breaker': 'https://static.wikia.nocookie.net/clashofclans/images/1/19/Wall_Breaker-avatar.png/revision/latest',
-    'Balloon': 'https://static.wikia.nocookie.net/clashofclans/images/7/79/Balloon-avatar.png/revision/latest',
-    'Wizard': 'https://static.wikia.nocookie.net/clashofclans/images/d/d2/Wizard-avatar.png/revision/latest',
-    'Healer': 'https://static.wikia.nocookie.net/clashofclans/images/c/c3/Healer-avatar.png/revision/latest',
-    'Dragon': 'https://static.wikia.nocookie.net/clashofclans/images/a/a4/Dragon-avatar.png/revision/latest',
-    'Pekka': 'https://static.wikia.nocookie.net/clashofclans/images/e/e2/P.E.K.K.A-avatar.png/revision/latest',
-    'Baby Dragon': 'https://static.wikia.nocookie.net/clashofclans/images/5/52/Baby_Dragon-avatar.png/revision/latest',
-    'Miner': 'https://static.wikia.nocookie.net/clashofclans/images/a/a7/Miner-avatar.png/revision/latest',
-    'Electro Titan': 'https://static.wikia.nocookie.net/clashofclans/images/a/ab/Electro_Titan_info.png/revision/latest',
-    'Root Rider': 'https://static.wikia.nocookie.net/clashofclans/images/a/ac/Root_Rider_info.png/revision/latest',
+    'Barbarian': '/images/troops/barbarian.png',
+    'Archer': '/images/troops/archer.png',
+    'Giant': '/images/troops/giant.png',
+    'Goblin': '/images/troops/goblin.png',
+    'Wall Breaker': '/images/troops/wall_breaker.png',
+    'Balloon': '/images/troops/balloon.png',
+    'Wizard': '/images/troops/wizard.png',
+    'Healer': '/images/troops/healer.png',
+    'Dragon': '/images/troops/dragon.png',
+    'Pekka': '/images/troops/pekka.png',
+    'Baby Dragon': '/images/troops/baby_dragon.png',
+    'Miner': '/images/troops/miner.png',
+    'Electro Titan': '/images/troops/electro_titan.png',
+    'Root Rider': '/images/troops/root_rider.png',
     
     // Dark Elixir Troops
-    'Minion': 'https://static.wikia.nocookie.net/clashofclans/images/9/91/Minion-avatar.png/revision/latest',
-    'Hog Rider': 'https://static.wikia.nocookie.net/clashofclans/images/9/9d/Hog_Rider-avatar.png/revision/latest',
-    'Valkyrie': 'https://static.wikia.nocookie.net/clashofclans/images/0/0e/Valkyrie-avatar.png/revision/latest',
-    'Golem': 'https://static.wikia.nocookie.net/clashofclans/images/4/47/Golem-avatar.png/revision/latest',
-    'Witch': 'https://static.wikia.nocookie.net/clashofclans/images/6/60/Witch-avatar.png/revision/latest',
-    'Lava Hound': 'https://static.wikia.nocookie.net/clashofclans/images/6/63/Lava_Hound-avatar.png/revision/latest',
-    'Bowler': 'https://static.wikia.nocookie.net/clashofclans/images/d/d1/Bowler-avatar.png/revision/latest',
-    'Ice Golem': 'https://static.wikia.nocookie.net/clashofclans/images/c/c9/Ice_Golem-avatar.png/revision/latest',
-    'Headhunter': 'https://static.wikia.nocookie.net/clashofclans/images/f/ff/Headhunter_info.png/revision/latest',
-    'Apprentice Warden': 'https://static.wikia.nocookie.net/clashofclans/images/c/c5/Apprentice_Warden_info.png/revision/latest',
+    'Minion': '/images/troops/minion.png',
+    'Hog Rider': '/images/troops/hog_rider.png',
+    'Valkyrie': '/images/troops/valkyrie.png',
+    'Golem': '/images/troops/golem.png',
+    'Witch': '/images/troops/witch.png',
+    'Lava Hound': '/images/troops/lava_hound.png',
+    'Bowler': '/images/troops/bowler.png',
+    'Ice Golem': '/images/troops/ice_golem.png',
+    'Headhunter': '/images/troops/headhunter.png',
+    'Apprentice Warden': '/images/troops/apprentice_warden.png',
     
     // Elixir Spells
-    'Lightning Spell': 'https://static.wikia.nocookie.net/clashofclans/images/3/3f/Lightning_Spell_info.png/revision/latest',
-    'Healing Spell': 'https://static.wikia.nocookie.net/clashofclans/images/7/77/Healing_Spell_info.png/revision/latest',
-    'Rage Spell': 'https://static.wikia.nocookie.net/clashofclans/images/3/3a/Rage_Spell_info.png/revision/latest',
-    'Jump Spell': 'https://static.wikia.nocookie.net/clashofclans/images/d/d4/Jump_Spell_info.png/revision/latest',
-    'Freeze Spell': 'https://static.wikia.nocookie.net/clashofclans/images/5/5e/Freeze_Spell_info.png/revision/latest',
-    'Clone Spell': 'https://static.wikia.nocookie.net/clashofclans/images/6/6a/Clone_Spell_info.png/revision/latest',
-    'Invisibility Spell': 'https://static.wikia.nocookie.net/clashofclans/images/b/b8/Invisibility_Spell_info.png/revision/latest',
-    'Recall Spell': 'https://static.wikia.nocookie.net/clashofclans/images/e/e4/Recall_Spell_info.png/revision/latest',
+    'Lightning Spell': '/images/troops/lightning_spell.png',
+    'Healing Spell': '/images/troops/healing_spell.png',
+    'Rage Spell': '/images/troops/rage_spell.png',
+    'Jump Spell': '/images/troops/jump_spell.png',
+    'Freeze Spell': '/images/troops/freeze_spell.png',
+    'Clone Spell': '/images/troops/clone_spell.png',
+    'Invisibility Spell': '/images/troops/invisibility_spell.png',
+    'Recall Spell': '/images/troops/recall_spell.png',
     
     // Dark Elixir Spells
-    'Poison Spell': 'https://static.wikia.nocookie.net/clashofclans/images/5/56/Poison_Spell_info.png/revision/latest',
-    'Earthquake Spell': 'https://static.wikia.nocookie.net/clashofclans/images/a/a7/Earthquake_Spell_info.png/revision/latest',
-    'Haste Spell': 'https://static.wikia.nocookie.net/clashofclans/images/c/c8/Haste_Spell_info.png/revision/latest',
-    'Skeleton Spell': 'https://static.wikia.nocookie.net/clashofclans/images/a/a1/Skeleton_Spell_info.png/revision/latest',
-    'Bat Spell': 'https://static.wikia.nocookie.net/clashofclans/images/3/38/Bat_Spell_info.png/revision/latest',
+    'Poison Spell': '/images/troops/poison_spell.png',
+    'Earthquake Spell': '/images/troops/earthquake_spell.png',
+    'Haste Spell': '/images/troops/haste_spell.png',
+    'Skeleton Spell': '/images/troops/skeleton_spell.png',
+    'Bat Spell': '/images/troops/bat_spell.png',
 };
 
 export function TroopGuide({ villageState }: TroopGuideProps) {
@@ -162,11 +162,12 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                                         {data.map(item => (
                                             <div key={item.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                                                 <Image
-                                                    src={troopImageMap[item.name] || 'https://placehold.co/128x128.png'}
+                                                    src={troopImageMap[item.name] || '/images/troops/default.png'}
                                                     alt={item.name}
                                                     width={128}
                                                     height={128}
                                                     className="rounded-md self-center aspect-square object-contain bg-muted/20"
+                                                    unoptimized
                                                 />
                                                 <div className="text-center mt-1">
                                                     <p className="font-bold text-card-foreground">{item.name}</p>

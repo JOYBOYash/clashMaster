@@ -1,11 +1,10 @@
 
 import type { VillageState } from '@/lib/constants';
 import { VillageOverview } from './village-overview';
-import { AiSuggester } from './ai-suggester';
 import { BuildingList } from './building-list';
 import { ProgressDashboard } from './progress-dashboard';
-import { UpgradeStatus } from './upgrade-status';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ExploreSection } from './explore-section';
 
 interface VillageViewProps {
   base: 'home' | 'builder';
@@ -23,15 +22,16 @@ export function VillageView({ base, villageState }: VillageViewProps) {
         <TabsTrigger value="buildings">Buildings</TabsTrigger>
       </TabsList>
       <TabsContent value="dashboard" className="mt-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
+        <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
                 <VillageOverview base={base} level={level} />
-                <AiSuggester villageState={villageState} base={base} />
+              </div>
+              <div className="lg:col-span-1">
+                 <ProgressDashboard buildings={buildingsForBase} />
+              </div>
             </div>
-            <div className="lg:col-span-1 space-y-8">
-                <ProgressDashboard buildings={buildingsForBase} />
-                <UpgradeStatus buildings={buildingsForBase} />
-            </div>
+            <ExploreSection />
         </div>
       </TabsContent>
       <TabsContent value="buildings" className="mt-6">

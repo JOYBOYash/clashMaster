@@ -85,7 +85,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const handleMaxAllForStep = (checked: boolean | 'indeterminate') => {
     setIsMaxAllChecked(checked === true);
 
-    if (checked !== true || !thData) {
+    if (!thData) {
       return;
     }
 
@@ -101,11 +101,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       keys.forEach(key => {
         const info = buildingData[key];
         if (info) {
+          const level = checked === true ? info.max_level : 0;
           if (isSingle) {
-            newLevelsUpdate[`building-${key}`] = info.max_level;
+            newLevelsUpdate[`building-${key}`] = level;
           } else {
             for (let i = 0; i < info.count; i++) {
-              newLevelsUpdate[`${key}-${i}`] = info.max_level;
+              newLevelsUpdate[`${key}-${i}`] = level;
             }
           }
         }
@@ -117,7 +118,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       keys.forEach(key => {
         const info = (sourceMap as any)?.[key];
         if (info) {
-          newLevelsUpdate[`${type}-${key}`] = info.max_level;
+          const level = checked === true ? info.max_level : 0;
+          newLevelsUpdate[`${type}-${key}`] = level;
         }
       });
     };

@@ -83,6 +83,7 @@ export const buildingNameToType: Record<string, Building['type']> = {
     'Spell Tower': 'defensive',
     'Monolith': 'defensive',
     'Town Hall': 'other',
+    'Wall': 'other',
     'Builder\'s Hut': 'other',
     'Clan Castle': 'army',
     'Blacksmith': 'army',

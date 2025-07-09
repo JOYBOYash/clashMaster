@@ -50,6 +50,7 @@ const buildingImageMap: Record<string, string> = {
     // Other
     'Town Hall': '/images/halls/town_hall_1.png', // Default, will be updated by level
     "Builder's Hut": "/images/buildings/builders_hut.png",
+    "Wall": "/images/buildings/wall.png",
     // Traps
     'Bomb': '/images/buildings/bomb.png',
     'Spring Trap': '/images/buildings/spring_trap.png',

@@ -9,44 +9,44 @@ interface VillageOverviewProps {
 }
 
 const townHallImageMap: Record<number, string> = {
-  1: 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Town_Hall1.png/revision/latest',
-  2: 'https://static.wikia.nocookie.net/clashofclans/images/3/33/Town_Hall2.png/revision/latest',
-  3: 'https://static.wikia.nocookie.net/clashofclans/images/4/4b/Town_Hall3.png/revision/latest',
-  4: 'https://static.wikia.nocookie.net/clashofclans/images/5/52/Town_Hall4.png/revision/latest',
-  5: 'https://static.wikia.nocookie.net/clashofclans/images/9/96/Town_Hall5.png/revision/latest',
-  6: 'https://static.wikia.nocookie.net/clashofclans/images/0/06/Town_Hall6.png/revision/latest',
-  7: 'https://static.wikia.nocookie.net/clashofclans/images/3/3b/Town_Hall7.png/revision/latest',
-  8: 'https://static.wikia.nocookie.net/clashofclans/images/1/13/Town_Hall8.png/revision/latest',
-  9: 'https://static.wikia.nocookie.net/clashofclans/images/3/33/Town_Hall9.png/revision/latest',
-  10: 'https://static.wikia.nocookie.net/clashofclans/images/a/a3/Town_Hall10.png/revision/latest',
-  11: 'https://static.wikia.nocookie.net/clashofclans/images/8/8d/Town_Hall11.png/revision/latest',
-  12: 'https://static.wikia.nocookie.net/clashofclans/images/a/a7/Town_Hall12-1.png/revision/latest',
-  13: 'https://static.wikia.nocookie.net/clashofclans/images/f/f7/Town_Hall13-1.png/revision/latest',
-  14: 'https://static.wikia.nocookie.net/clashofclans/images/3/3b/Town_Hall14-1.png/revision/latest',
-  15: 'https://static.wikia.nocookie.net/clashofclans/images/5/5c/Town_Hall15-1.png/revision/latest',
-  16: 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16-1.png/revision/latest',
-  17: 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16-1.png/revision/latest', // Placeholder for TH17
+  1: '/images/halls/town_hall_1.png',
+  2: '/images/halls/town_hall_2.png',
+  3: '/images/halls/town_hall_3.png',
+  4: '/images/halls/town_hall_4.png',
+  5: '/images/halls/town_hall_5.png',
+  6: '/images/halls/town_hall_6.png',
+  7: '/images/halls/town_hall_7.png',
+  8: '/images/halls/town_hall_8.png',
+  9: '/images/halls/town_hall_9.png',
+  10: '/images/halls/town_hall_10.png',
+  11: '/images/halls/town_hall_11.png',
+  12: '/images/halls/town_hall_12.png',
+  13: '/images/halls/town_hall_13.png',
+  14: '/images/halls/town_hall_14.png',
+  15: '/images/halls/town_hall_15.png',
+  16: '/images/halls/town_hall_16.png',
+  17: '/images/halls/town_hall_17.png',
 };
 
 const builderHallImageMap: Record<number, string> = {
-    1: 'https://static.wikia.nocookie.net/clashofclans/images/8/80/Builder_Hall1.png/revision/latest',
-    2: 'https://static.wikia.nocookie.net/clashofclans/images/2/29/Builder_Hall2.png/revision/latest',
-    3: 'https://static.wikia.nocookie.net/clashofclans/images/f/f4/Builder_Hall3.png/revision/latest',
-    4: 'https://static.wikia.nocookie.net/clashofclans/images/c/c7/Builder_Hall4.png/revision/latest',
-    5: 'https://static.wikia.nocookie.net/clashofclans/images/1/11/Builder_Hall5.png/revision/latest',
-    6: 'https://static.wikia.nocookie.net/clashofclans/images/f/fa/Builder_Hall6.png/revision/latest',
-    7: 'https://static.wikia.nocookie.net/clashofclans/images/4/4c/Builder_Hall7.png/revision/latest',
-    8: 'https://static.wikia.nocookie.net/clashofclans/images/3/36/Builder_Hall8.png/revision/latest',
-    9: 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Builder_Hall9.png/revision/latest',
-    10: 'https://static.wikia.nocookie.net/clashofclans/images/d/d7/Builder_Hall10.png/revision/latest'
+    1: '/images/halls/builder_hall_1.png',
+    2: '/images/halls/builder_hall_2.png',
+    3: '/images/halls/builder_hall_3.png',
+    4: '/images/halls/builder_hall_4.png',
+    5: '/images/halls/builder_hall_5.png',
+    6: '/images/halls/builder_hall_6.png',
+    7: '/images/halls/builder_hall_7.png',
+    8: '/images/halls/builder_hall_8.png',
+    9: '/images/halls/builder_hall_9.png',
+    10: '/images/halls/builder_hall_10.png'
 };
 
 export function VillageOverview({ base, level }: VillageOverviewProps) {
   const BaseIcon = base === 'home' ? Home : Hammer;
   const title = base === 'home' ? 'Town Hall' : 'Builder Hall';
   const imageUrl = base === 'home' 
-    ? townHallImageMap[level] || 'https://placehold.co/160x160.png'
-    : builderHallImageMap[level] || 'https://placehold.co/160x160.png';
+    ? townHallImageMap[level] || '/images/halls/town_hall_1.png'
+    : builderHallImageMap[level] || '/images/halls/builder_hall_1.png';
 
   return (
     <Card>
@@ -64,6 +64,7 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
                 width={160} 
                 height={160} 
                 className="rounded-lg shadow-lg aspect-square object-contain bg-muted/30 p-2" 
+                unoptimized
             />
             <div className="flex-grow space-y-2">
                 <p className="text-muted-foreground">Current Level</p>

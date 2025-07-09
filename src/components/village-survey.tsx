@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from './ui/checkbox';
-import { Progress } from '@/components/ui/progress';
+import { SurveyProgress } from './survey-progress';
 import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse } from 'lucide-react';
 
 interface VillageSurveyProps {
@@ -64,22 +64,22 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   };
   
   const surveySteps = [
-    { id: 'townHall', title: 'Town Hall Level', icon: Home, trivia: "The Town Hall is the heart of your village. Upgrading it unlocks new buildings, troops, and defenses.", content: () => (
+    { id: 'townHall', title: 'Town Hall Level', icon: Home, content: () => (
         <Select onValueChange={(v) => {setTownHallLevel(parseInt(v)); setLevels({});}}>
           <SelectTrigger className="w-full mt-2 text-base py-6"><SelectValue placeholder="Select your Town Hall level..." /></SelectTrigger>
           <SelectContent>{Array.from({ length: 16 }, (_, i) => i + 1).map(l => <SelectItem key={l} value={String(l)}>Town Hall {l}</SelectItem>)}</SelectContent>
         </Select>
     )},
-    { id: 'keyBuildings', title: 'Key Buildings', icon: Library, trivia: "The Laboratory is crucial! Keep it busy to make your troops and spells more powerful.", content: () => <div className="space-y-3">{keyBuildings.map(b => (thData?.buildings as any)[b] ? renderSingleItemInput(b, 'building', (thData.buildings as any)[b]) : null)}</div> },
-    { id: 'armyCamps', title: 'Army Camps', icon: Swords, trivia: "More Army Camp space means a bigger army. It's one of the most important offensive upgrades!", content: () => armyCamps.map(renderBuildingInputs) },
-    { id: 'storages', title: 'Resource Storages', icon: Warehouse, trivia: "Maxed storages are essential for affording those expensive late-game upgrades.", content: () => storageBuildings.map(renderBuildingInputs) },
-    { id: 'collectors', title: 'Resource Collectors', icon: Coins, trivia: "Passive income! Upgrading collectors helps you gather resources even when you're not raiding.", content: () => collectorBuildings.map(renderBuildingInputs) },
-    { id: 'defenses', title: 'Defenses', icon: Shield, trivia: "A good defense is the best offense... when you're offline. Prioritize splash damage like Wizard Towers!", content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div> },
-    { id: 'regularTroops', title: 'Regular Troops', icon: Dna, trivia: "Barbarians and Archers are the backbone of many early-game armies and farming strategies.", content: () => renderItemGroup("Elixir Troops", regularTroops, 'troop')},
-    { id: 'darkTroops', title: 'Dark Troops', icon: Dna, trivia: "Hog Riders are famous for ignoring walls and targeting defenses directly. A nightmare for unprepared bases!", content: () => renderItemGroup("Dark Elixir Troops", darkTroops, 'troop')},
-    { id: 'regularSpells', title: 'Regular Spells', icon: FlaskConical, trivia: "A well-placed Rage Spell can turn the tide of any battle, boosting speed and damage.", content: () => renderItemGroup("Elixir Spells", regularSpells, 'spell')},
-    { id: 'darkSpells', title: 'Dark Spells', icon: FlaskConical, trivia: "The Poison Spell is perfect for slowing down and damaging enemy Clan Castle troops.", content: () => renderItemGroup("Dark Elixir Spells", darkSpells, 'spell')},
-    { id: 'heroes', title: 'Heroes', icon: Gem, trivia: "Heroes are immortal! They only need to recover after a battle; they never truly die.", content: () => renderItemGroup("Your Heroes", heroes, 'hero') },
+    { id: 'keyBuildings', title: 'Key Buildings', icon: Library, content: () => <div className="space-y-3">{keyBuildings.map(b => (thData?.buildings as any)[b] ? renderSingleItemInput(b, 'building', (thData.buildings as any)[b]) : null)}</div> },
+    { id: 'armyCamps', title: 'Army Camps', icon: Swords, content: () => armyCamps.map(renderBuildingInputs) },
+    { id: 'storages', title: 'Resource Storages', icon: Warehouse, content: () => storageBuildings.map(renderBuildingInputs) },
+    { id: 'collectors', title: 'Resource Collectors', icon: Coins, content: () => collectorBuildings.map(renderBuildingInputs) },
+    { id: 'defenses', title: 'Defenses', icon: Shield, content: () => <div className="space-y-6">{defensiveBuildings.map(renderBuildingInputs)}</div> },
+    { id: 'regularTroops', title: 'Regular Troops', icon: Dna, content: () => renderItemGroup("Elixir Troops", regularTroops, 'troop')},
+    { id: 'darkTroops', title: 'Dark Troops', icon: Dna, content: () => renderItemGroup("Dark Elixir Troops", darkTroops, 'troop')},
+    { id: 'regularSpells', title: 'Regular Spells', icon: FlaskConical, content: () => renderItemGroup("Elixir Spells", regularSpells, 'spell')},
+    { id: 'darkSpells', title: 'Dark Spells', icon: FlaskConical, content: () => renderItemGroup("Dark Elixir Spells", darkSpells, 'spell')},
+    { id: 'heroes', title: 'Heroes', icon: Gem, content: () => renderItemGroup("Your Heroes", heroes, 'hero') },
   ];
 
   const handleMaxAllForStep = (checked: boolean | 'indeterminate') => {
@@ -317,15 +317,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   return (
     <Card className="max-w-4xl mx-auto mt-8 w-full">
       <CardHeader>
-        <div className="w-full space-y-2 mb-4">
-            <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Step {currentStep + 1} of {surveySteps.length}</span>
-                <span>{currentSurveyStep.title}</span>
-            </div>
-            <Progress value={((currentStep + 1) / surveySteps.length) * 100} />
-            <p className="text-xs text-center text-muted-foreground pt-1 italic">
-              {currentSurveyStep.trivia}
-            </p>
+        <div className="w-full mb-4">
+          <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />
         </div>
         <div className='flex items-center gap-4'>
              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 shrink-0">

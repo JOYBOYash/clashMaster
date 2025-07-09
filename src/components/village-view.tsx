@@ -4,7 +4,6 @@ import { VillageOverview } from './village-overview';
 import { BuildingList } from './building-list';
 import { ProgressDashboard } from './progress-dashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExploreSection } from './explore-section';
 
 interface VillageViewProps {
   base: 'home' | 'builder';
@@ -31,7 +30,6 @@ export function VillageView({ base, villageState }: VillageViewProps) {
                  <ProgressDashboard buildings={buildingsForBase} />
               </div>
             </div>
-            <ExploreSection />
         </div>
       </TabsContent>
       <TabsContent value="buildings" className="mt-6">

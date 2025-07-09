@@ -13,6 +13,58 @@ interface BuildingListProps {
   buildings: Building[];
 }
 
+const buildingImageMap: Record<string, string> = {
+    // Defensive
+    'Cannon': 'https://static.wikia.nocookie.net/clashofclans/images/2/28/Cannon_info.png',
+    'Archer Tower': 'https://static.wikia.nocookie.net/clashofclans/images/3/3f/Archer_Tower_info.png',
+    'Mortar': 'https://static.wikia.nocookie.net/clashofclans/images/2/2e/Mortar_info.png',
+    'Air Defense': 'https://static.wikia.nocookie.net/clashofclans/images/8/80/Air_Defense_info.png',
+    'Wizard Tower': 'https://static.wikia.nocookie.net/clashofclans/images/d/d4/Wizard_Tower_info.png',
+    'Air Sweeper': 'https://static.wikia.nocookie.net/clashofclans/images/2/27/Air_Sweeper_info.png',
+    'Hidden Tesla': 'https://static.wikia.nocookie.net/clashofclans/images/2/2e/Hidden_Tesla_info.png',
+    'Bomb Tower': 'https://static.wikia.nocookie.net/clashofclans/images/a/a2/Bomb_Tower_info.png',
+    'X-Bow': 'https://static.wikia.nocookie.net/clashofclans/images/c/c0/X-Bow_info.png',
+    'Inferno Tower': 'https://static.wikia.nocookie.net/clashofclans/images/e/e1/Inferno_Tower_info.png',
+    'Eagle Artillery': 'https://static.wikia.nocookie.net/clashofclans/images/c/ce/Eagle_Artillery_info.png',
+    'Scattershot': 'https://static.wikia.nocookie.net/clashofclans/images/a/a2/Scattershot_info.png',
+    'Spell Tower': 'https://static.wikia.nocookie.net/clashofclans/images/1/19/Spell_Tower_info.png',
+    'Monolith': 'https://static.wikia.nocookie.net/clashofclans/images/e/e1/Monolith_info.png',
+    // Army
+    'Army Camp': 'https://static.wikia.nocookie.net/clashofclans/images/7/7a/Army_Camp_info.png',
+    'Barracks': 'https://static.wikia.nocookie.net/clashofclans/images/0/03/Barracks_info.png',
+    'Dark Barracks': 'https://static.wikia.nocookie.net/clashofclans/images/9/90/Dark_Barracks_info.png',
+    'Laboratory': 'https://static.wikia.nocookie.net/clashofclans/images/7/77/Laboratory_info.png',
+    'Spell Factory': 'https://static.wikia.nocookie.net/clashofclans/images/5/59/Spell_Factory_info.png',
+    'Dark Spell Factory': 'https://static.wikia.nocookie.net/clashofclans/images/4/4c/Dark_Spell_Factory_info.png',
+    'Workshop': 'https://static.wikia.nocookie.net/clashofclans/images/5/50/Workshop_info.png',
+    'Clan Castle': 'https://static.wikia.nocookie.net/clashofclans/images/9/95/Clan_Castle_info.png',
+    'Pet House': 'https://static.wikia.nocookie.net/clashofclans/images/f/f6/Pet_House_info.png',
+    'Blacksmith': 'https://static.wikia.nocookie.net/clashofclans/images/f/f2/Blacksmith_info.png',
+    // Resource
+    'Gold Mine': 'https://static.wikia.nocookie.net/clashofclans/images/4/4f/Gold_Mine_info.png',
+    'Elixir Collector': 'https://static.wikia.nocookie.net/clashofclans/images/1/11/Elixir_Collector_info.png',
+    'Dark Elixir Drill': 'https://static.wikia.nocookie.net/clashofclans/images/c/c3/Dark_Elixir_Drill_info.png',
+    'Gold Storage': 'https://static.wikia.nocookie.net/clashofclans/images/1/14/Gold_Storage_info.png',
+    'Elixir Storage': 'https://static.wikia.nocookie.net/clashofclans/images/6/64/Elixir_Storage_info.png',
+    'Dark Elixir Storage': 'https://static.wikia.nocookie.net/clashofclans/images/9/95/Dark_Elixir_Storage_info.png',
+    // Other
+    'Town Hall': 'https://static.wikia.nocookie.net/clashofclans/images/7/7d/Town_Hall_info.png',
+    "Builder's Hut": "https://static.wikia.nocookie.net/clashofclans/images/7/71/Builder%27s_Hut_info.png",
+    // Traps
+    'Bomb': 'https://static.wikia.nocookie.net/clashofclans/images/9/91/Bomb_info.png',
+    'Spring Trap': 'https://static.wikia.nocookie.net/clashofclans/images/c/ce/Spring_Trap_info.png',
+    'Air Bomb': 'https://static.wikia.nocookie.net/clashofclans/images/a/a3/Air_Bomb_info.png',
+    'Giant Bomb': 'https://static.wikia.nocookie.net/clashofclans/images/f/fe/Giant_Bomb_info.png',
+    'Seeking Air Mine': 'https://static.wikia.nocookie.net/clashofclans/images/d/d4/Seeking_Air_Mine_info.png',
+    'Skeleton Trap': 'https://static.wikia.nocookie.net/clashofclans/images/7/75/Skeleton_Trap_info.png',
+    'Tornado Trap': 'https://static.wikia.nocookie.net/clashofclans/images/1/1c/Tornado_Trap_info.png',
+    // Hero Altars
+    'Barbarian King Altar': 'https://static.wikia.nocookie.net/clashofclans/images/e/e8/Barbarian_King_Altar.png',
+    'Archer Queen Altar': 'https://static.wikia.nocookie.net/clashofclans/images/2/23/Archer_Queen_Altar.png',
+    'Grand Warden Altar': 'https://static.wikia.nocookie.net/clashofclans/images/8/82/Grand_Warden_Altar.png',
+    'Royal Champion Altar': 'https://static.wikia.nocookie.net/clashofclans/images/a/a9/Royal_Champion_Altar.png',
+};
+
 export function BuildingList({ buildings }: BuildingListProps) {
 
   const groupedBuildings = useMemo(() => {
@@ -76,12 +128,11 @@ export function BuildingList({ buildings }: BuildingListProps) {
                         .map(b => (
                         <div key={b.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                             <Image
-                                src={'https://placehold.co/128x128.png'}
+                                src={buildingImageMap[b.name] || 'https://placehold.co/128x128.png'}
                                 alt={b.name}
                                 width={128}
                                 height={128}
                                 className="rounded-md self-center aspect-square object-contain bg-muted/20"
-                                data-ai-hint={`clash of clans ${b.name.toLowerCase().replace(/'/g, '')}`}
                             />
                             <div className="text-center mt-1">
                                 <p className="font-bold text-card-foreground">{b.name}</p>

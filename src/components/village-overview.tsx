@@ -14,7 +14,6 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
   const imageUrl = base === 'home' 
     ? 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16.png'
     : 'https://static.wikia.nocookie.net/clashofclans/images/a/a4/Builder_Hall10.png';
-  const imageHint = base === 'home' ? 'clash of clans town hall' : 'clash of clans builder hall';
 
   return (
     <Card>
@@ -32,7 +31,6 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
                 width={160} 
                 height={160} 
                 className="rounded-lg shadow-lg aspect-square object-contain bg-muted/30 p-2" 
-                data-ai-hint={imageHint}
             />
             <div className="flex-grow space-y-2">
                 <p className="text-muted-foreground">Current Level</p>

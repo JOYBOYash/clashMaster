@@ -18,16 +18,50 @@ interface TroopGuideProps {
 }
 
 const troopImageMap: Record<string, string> = {
+    // Elixir Troops
     'Barbarian': 'https://static.wikia.nocookie.net/clashofclans/images/8/81/Barbarian-avatar.png',
     'Archer': 'https://static.wikia.nocookie.net/clashofclans/images/9/91/Archer-avatar.png',
     'Giant': 'https://static.wikia.nocookie.net/clashofclans/images/a/ab/Giant-avatar.png',
     'Goblin': 'https://static.wikia.nocookie.net/clashofclans/images/f/f1/Goblin-avatar.png',
+    'Wall Breaker': 'https://static.wikia.nocookie.net/clashofclans/images/1/14/Wall_Breaker-avatar.png',
+    'Balloon': 'https://static.wikia.nocookie.net/clashofclans/images/3/3a/Balloon-avatar.png',
+    'Wizard': 'https://static.wikia.nocookie.net/clashofclans/images/8/8e/Wizard-avatar.png',
+    'Healer': 'https://static.wikia.nocookie.net/clashofclans/images/a/a4/Healer-avatar.png',
+    'Dragon': 'https://static.wikia.nocookie.net/clashofclans/images/b/b8/Dragon-avatar.png',
+    'Pekka': 'https://static.wikia.nocookie.net/clashofclans/images/c/c7/P.E.K.K.A-avatar.png',
+    'Baby Dragon': 'https://static.wikia.nocookie.net/clashofclans/images/a/a5/Baby_Dragon-avatar.png',
+    'Miner': 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Miner-avatar.png',
+    'Electro Titan': 'https://static.wikia.nocookie.net/clashofclans/images/e/ec/Electro_Titan_info.png',
+    'Root Rider': 'https://static.wikia.nocookie.net/clashofclans/images/a/a1/Root_Rider_info.png',
+    
+    // Dark Elixir Troops
     'Minion': 'https://static.wikia.nocookie.net/clashofclans/images/7/76/Minion-avatar.png',
     'Hog Rider': 'https://static.wikia.nocookie.net/clashofclans/images/5/52/Hog_Rider-avatar.png',
+    'Valkyrie': 'https://static.wikia.nocookie.net/clashofclans/images/6/6e/Valkyrie-avatar.png',
+    'Golem': 'https://static.wikia.nocookie.net/clashofclans/images/a/a6/Golem-avatar.png',
+    'Witch': 'https://static.wikia.nocookie.net/clashofclans/images/a/a2/Witch-avatar.png',
+    'Lava Hound': 'https://static.wikia.nocookie.net/clashofclans/images/5/5b/Lava_Hound-avatar.png',
+    'Bowler': 'https://static.wikia.nocookie.net/clashofclans/images/2/23/Bowler-avatar.png',
+    'Ice Golem': 'https://static.wikia.nocookie.net/clashofclans/images/a/a8/Ice_Golem-avatar.png',
+    'Headhunter': 'https://static.wikia.nocookie.net/clashofclans/images/5/52/Headhunter_info.png',
+    'Apprentice Warden': 'https://static.wikia.nocookie.net/clashofclans/images/e/e5/Apprentice_Warden_info.png',
+    
+    // Elixir Spells
     'Lightning Spell': 'https://static.wikia.nocookie.net/clashofclans/images/a/a3/Lightning_Spell_info.png',
     'Healing Spell': 'https://static.wikia.nocookie.net/clashofclans/images/6/65/Healing_Spell_info.png',
     'Rage Spell': 'https://static.wikia.nocookie.net/clashofclans/images/3/3f/Rage_Spell_info.png',
+    'Jump Spell': 'https://static.wikia.nocookie.net/clashofclans/images/3/30/Jump_Spell_info.png',
+    'Freeze Spell': 'https://static.wikia.nocookie.net/clashofclans/images/a/a1/Freeze_Spell_info.png',
+    'Clone Spell': 'https://static.wikia.nocookie.net/clashofclans/images/1/13/Clone_Spell_info.png',
+    'Invisibility Spell': 'https://static.wikia.nocookie.net/clashofclans/images/c/c0/Invisibility_Spell_info.png',
+    'Recall Spell': 'https://static.wikia.nocookie.net/clashofclans/images/3/39/Recall_Spell_info.png',
+    
+    // Dark Elixir Spells
     'Poison Spell': 'https://static.wikia.nocookie.net/clashofclans/images/f/f9/Poison_Spell_info.png',
+    'Earthquake Spell': 'https://static.wikia.nocookie.net/clashofclans/images/9/91/Earthquake_Spell_info.png',
+    'Haste Spell': 'https://static.wikia.nocookie.net/clashofclans/images/7/7a/Haste_Spell_info.png',
+    'Skeleton Spell': 'https://static.wikia.nocookie.net/clashofclans/images/1/12/Skeleton_Spell_info.png',
+    'Bat Spell': 'https://static.wikia.nocookie.net/clashofclans/images/d/dd/Bat_Spell_info.png',
 };
 
 export function TroopGuide({ villageState }: TroopGuideProps) {
@@ -133,7 +167,6 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                                                     width={128}
                                                     height={128}
                                                     className="rounded-md self-center aspect-square object-contain bg-muted/20"
-                                                    data-ai-hint={`${item.name.toLowerCase().replace(/ spell/g, '')} clash of clans`}
                                                 />
                                                 <div className="text-center mt-1">
                                                     <p className="font-bold text-card-foreground">{item.name}</p>

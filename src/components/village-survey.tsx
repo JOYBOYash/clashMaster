@@ -322,7 +322,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                 <span>Step {currentStep + 1} of {surveySteps.length}</span>
                 <span>{currentSurveyStep.title}</span>
             </div>
-            <Progress value={((currentStep + 1) / surveySteps.length) * 100} className="h-3" />
+            <Progress value={((currentStep + 1) / surveySteps.length) * 100} />
             <p className="text-xs text-center text-muted-foreground pt-1 italic">
               {currentSurveyStep.trivia}
             </p>

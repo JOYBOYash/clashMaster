@@ -23,7 +23,7 @@ const buildingImageMap: Record<string, string> = {
     'Air Sweeper': '/images/buildings/air_sweeper.png',
     'Hidden Tesla': '/images/buildings/hidden_tesla.png',
     'Bomb Tower': '/images/buildings/bomb_tower.png',
-    'X-Bow': '/images/buildings/x-bow.png',
+    'X Bow': '/images/buildings/x-bow.png',
     'Inferno Tower': '/images/buildings/inferno_tower.png',
     'Eagle Artillery': '/images/buildings/eagle_artillery.png',
     'Scattershot': '/images/buildings/scattershot.png',
@@ -49,7 +49,7 @@ const buildingImageMap: Record<string, string> = {
     'Dark Elixir Storage': '/images/buildings/dark_elixir_storage.png',
     // Other
     'Town Hall': '/images/halls/town_hall_1.png', // Default, will be updated by level
-    "Builder's Hut": "/images/buildings/builders_hut.png",
+    "Builder Hut": "/images/buildings/builders_hut.png",
     "Wall": "/images/buildings/wall.png",
     // Traps
     'Bomb': '/images/buildings/bomb.png',

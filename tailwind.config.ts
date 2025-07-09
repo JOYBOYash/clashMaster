@@ -85,19 +85,15 @@ export default {
             height: '0',
           },
         },
-        'liquid-rotate': {
-          '0%': {
-            transform: 'rotate(0deg)',
-          },
-          '100%': {
-            transform: 'rotate(360deg)',
-          },
+        'shimmer': {
+          'from': { 'background-position': '200% 0' },
+          'to': { 'background-position': '-200% 0' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'liquid-rotate': 'liquid-rotate 5s linear infinite',
+        'shimmer': 'shimmer 4s linear infinite',
       },
     },
   },

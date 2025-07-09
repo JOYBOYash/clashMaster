@@ -5,7 +5,9 @@ import { useMemo } from 'react';
 import type { Building } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Home, Hammer } from 'lucide-react';
+import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import Image from 'next/image';
 
 interface BuildingListProps {
   buildings: Building[];
@@ -23,8 +25,9 @@ export function BuildingList({ buildings }: BuildingListProps) {
       hero: [],
     };
     buildings.forEach(b => {
-      if(groups[b.type]) {
-        groups[b.type].push(b);
+      const type = b.type || 'other';
+      if(groups[type]) {
+        groups[type].push(b);
       }
     });
     return groups;
@@ -42,10 +45,6 @@ export function BuildingList({ buildings }: BuildingListProps) {
     trap: Settings2,
     hero: Hammer
   };
-
-  const getBaseIcon = (base: 'home' | 'builder') => {
-    return base === 'home' ? <Home className="w-4 h-4 text-muted-foreground" /> : <Hammer className="w-4 h-4 text-muted-foreground" />;
-  }
 
   return (
     <>
@@ -71,18 +70,26 @@ export function BuildingList({ buildings }: BuildingListProps) {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-2">
                       {buildingsOfType
                         .sort((a,b) => a.name.localeCompare(b.name))
                         .map(b => (
-                        <div key={b.id} className="p-3 rounded-lg border bg-card hover:shadow-md transition-shadow">
-                            <p className="font-semibold text-card-foreground">{b.name}</p>
-                            <div className="flex justify-between items-center mt-1">
-                               <p className="text-sm text-muted-foreground">
-                                Level {b.level}
-                              </p>
-                              {getBaseIcon(b.base)}
+                        <div key={b.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
+                            <Image
+                                src={'https://placehold.co/128x128.png'}
+                                alt={b.name}
+                                width={128}
+                                height={128}
+                                className="rounded-md self-center aspect-square object-contain bg-muted/20"
+                                data-ai-hint={`clash of clans ${b.name.toLowerCase().replace(/'/g, '')}`}
+                            />
+                            <div className="text-center mt-1">
+                                <p className="font-bold text-card-foreground">{b.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Level {b.level} / {b.maxLevel}
+                                </p>
                             </div>
+                            <Progress value={(b.level / b.maxLevel) * 100} className="h-2" />
                         </div>
                       ))}
                     </div>

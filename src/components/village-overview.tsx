@@ -12,8 +12,8 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
   const BaseIcon = base === 'home' ? Home : Hammer;
   const title = base === 'home' ? 'Town Hall' : 'Builder Hall';
   const imageUrl = base === 'home' 
-    ? 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16.png'
-    : 'https://static.wikia.nocookie.net/clashofclans/images/a/a4/Builder_Hall10.png';
+    ? `https://static.wikia.nocookie.net/clashofclans/images/d/d4/Town_Hall${level}.png`
+    : `https://static.wikia.nocookie.net/clashofclans/images/4/42/Builder_Hall${level}.png`;
 
   return (
     <Card>

@@ -8,6 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import Image from 'next/image';
+import { buildingNameToType } from '@/lib/constants';
 
 interface BuildingListProps {
   buildings: Building[];
@@ -95,7 +96,7 @@ export function BuildingList({ buildings }: BuildingListProps) {
       hero: [],
     };
     buildings.forEach(b => {
-      const type = b.type || 'other';
+      const type = buildingNameToType[b.name] || b.type || 'other';
       if(groups[type]) {
         groups[type].push(b);
       }

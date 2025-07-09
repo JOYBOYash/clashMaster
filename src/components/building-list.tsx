@@ -23,7 +23,7 @@ const buildingImageMap: Record<string, string> = {
     'Air Sweeper': 'https://static.wikia.nocookie.net/clashofclans/images/c/c5/Air_Sweeper_info.png',
     'Hidden Tesla': 'https://static.wikia.nocookie.net/clashofclans/images/b/be/Hidden_Tesla_info.png',
     'Bomb Tower': 'https://static.wikia.nocookie.net/clashofclans/images/d/dd/Bomb_Tower_info.png',
-    'X-Bow': 'https://static.wikia.nocookie.net/clashofclans/images/e/e4/X-Bow_info.png',
+    'X Bow': 'https://static.wikia.nocookie.net/clashofclans/images/e/e4/X-Bow_info.png',
     'Inferno Tower': 'https://static.wikia.nocookie.net/clashofclans/images/5/57/Inferno_Tower_info.png',
     'Eagle Artillery': 'https://static.wikia.nocookie.net/clashofclans/images/a/a7/Eagle_Artillery_info.png',
     'Scattershot': 'https://static.wikia.nocookie.net/clashofclans/images/d/d2/Scattershot_info.png',
@@ -49,7 +49,7 @@ const buildingImageMap: Record<string, string> = {
     'Dark Elixir Storage': 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Dark_Elixir_Storage_info.png',
     // Other
     'Town Hall': 'https://static.wikia.nocookie.net/clashofclans/images/d/d7/Town_Hall_info.png',
-    "Builder's Hut": "https://static.wikia.nocookie.net/clashofclans/images/0/05/Builder%27s_Hut_info.png",
+    "Builder Hut": "https://static.wikia.nocookie.net/clashofclans/images/0/05/Builder%27s_Hut_info.png",
     // Traps
     'Bomb': 'https://static.wikia.nocookie.net/clashofclans/images/1/19/Bomb_info.png',
     'Spring Trap': 'https://static.wikia.nocookie.net/clashofclans/images/7/73/Spring_Trap_info.png',

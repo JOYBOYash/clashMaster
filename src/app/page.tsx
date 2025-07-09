@@ -1,5 +1,5 @@
-import { ClashTrackDashboard } from '@/components/clash-track-dashboard';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  return <ClashTrackDashboard />;
+export default function RootPage() {
+  redirect('/home');
 }

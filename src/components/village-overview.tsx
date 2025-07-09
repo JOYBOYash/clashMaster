@@ -9,36 +9,36 @@ interface VillageOverviewProps {
 }
 
 const townHallImageMap: Record<number, string> = {
-  1: 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Town_Hall1.png',
-  2: 'https://static.wikia.nocookie.net/clashofclans/images/3/33/Town_Hall2.png',
-  3: 'https://static.wikia.nocookie.net/clashofclans/images/4/4b/Town_Hall3.png',
-  4: 'https://static.wikia.nocookie.net/clashofclans/images/5/52/Town_Hall4.png',
-  5: 'https://static.wikia.nocookie.net/clashofclans/images/9/96/Town_Hall5.png',
-  6: 'https://static.wikia.nocookie.net/clashofclans/images/0/06/Town_Hall6.png',
-  7: 'https://static.wikia.nocookie.net/clashofclans/images/3/3b/Town_Hall7.png',
-  8: 'https://static.wikia.nocookie.net/clashofclans/images/1/13/Town_Hall8.png',
-  9: 'https://static.wikia.nocookie.net/clashofclans/images/3/33/Town_Hall9.png',
-  10: 'https://static.wikia.nocookie.net/clashofclans/images/a/a3/Town_Hall10.png',
-  11: 'https://static.wikia.nocookie.net/clashofclans/images/8/8d/Town_Hall11.png',
-  12: 'https://static.wikia.nocookie.net/clashofclans/images/a/a7/Town_Hall12-1.png',
-  13: 'https://static.wikia.nocookie.net/clashofclans/images/f/f7/Town_Hall13-1.png',
-  14: 'https://static.wikia.nocookie.net/clashofclans/images/3/3b/Town_Hall14-1.png',
-  15: 'https://static.wikia.nocookie.net/clashofclans/images/5/5c/Town_Hall15-1.png',
-  16: 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16-1.png',
-  17: 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16-1.png', // Placeholder for TH17
+  1: 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Town_Hall1.png/revision/latest',
+  2: 'https://static.wikia.nocookie.net/clashofclans/images/3/33/Town_Hall2.png/revision/latest',
+  3: 'https://static.wikia.nocookie.net/clashofclans/images/4/4b/Town_Hall3.png/revision/latest',
+  4: 'https://static.wikia.nocookie.net/clashofclans/images/5/52/Town_Hall4.png/revision/latest',
+  5: 'https://static.wikia.nocookie.net/clashofclans/images/9/96/Town_Hall5.png/revision/latest',
+  6: 'https://static.wikia.nocookie.net/clashofclans/images/0/06/Town_Hall6.png/revision/latest',
+  7: 'https://static.wikia.nocookie.net/clashofclans/images/3/3b/Town_Hall7.png/revision/latest',
+  8: 'https://static.wikia.nocookie.net/clashofclans/images/1/13/Town_Hall8.png/revision/latest',
+  9: 'https://static.wikia.nocookie.net/clashofclans/images/3/33/Town_Hall9.png/revision/latest',
+  10: 'https://static.wikia.nocookie.net/clashofclans/images/a/a3/Town_Hall10.png/revision/latest',
+  11: 'https://static.wikia.nocookie.net/clashofclans/images/8/8d/Town_Hall11.png/revision/latest',
+  12: 'https://static.wikia.nocookie.net/clashofclans/images/a/a7/Town_Hall12-1.png/revision/latest',
+  13: 'https://static.wikia.nocookie.net/clashofclans/images/f/f7/Town_Hall13-1.png/revision/latest',
+  14: 'https://static.wikia.nocookie.net/clashofclans/images/3/3b/Town_Hall14-1.png/revision/latest',
+  15: 'https://static.wikia.nocookie.net/clashofclans/images/5/5c/Town_Hall15-1.png/revision/latest',
+  16: 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16-1.png/revision/latest',
+  17: 'https://static.wikia.nocookie.net/clashofclans/images/8/87/Town_Hall16-1.png/revision/latest', // Placeholder for TH17
 };
 
 const builderHallImageMap: Record<number, string> = {
-    1: 'https://static.wikia.nocookie.net/clashofclans/images/8/80/Builder_Hall1.png',
-    2: 'https://static.wikia.nocookie.net/clashofclans/images/2/29/Builder_Hall2.png',
-    3: 'https://static.wikia.nocookie.net/clashofclans/images/f/f4/Builder_Hall3.png',
-    4: 'https://static.wikia.nocookie.net/clashofclans/images/c/c7/Builder_Hall4.png',
-    5: 'https://static.wikia.nocookie.net/clashofclans/images/1/11/Builder_Hall5.png',
-    6: 'https://static.wikia.nocookie.net/clashofclans/images/f/fa/Builder_Hall6.png',
-    7: 'https://static.wikia.nocookie.net/clashofclans/images/4/4c/Builder_Hall7.png',
-    8: 'https://static.wikia.nocookie.net/clashofclans/images/3/36/Builder_Hall8.png',
-    9: 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Builder_Hall9.png',
-    10: 'https://static.wikia.nocookie.net/clashofclans/images/d/d7/Builder_Hall10.png'
+    1: 'https://static.wikia.nocookie.net/clashofclans/images/8/80/Builder_Hall1.png/revision/latest',
+    2: 'https://static.wikia.nocookie.net/clashofclans/images/2/29/Builder_Hall2.png/revision/latest',
+    3: 'https://static.wikia.nocookie.net/clashofclans/images/f/f4/Builder_Hall3.png/revision/latest',
+    4: 'https://static.wikia.nocookie.net/clashofclans/images/c/c7/Builder_Hall4.png/revision/latest',
+    5: 'https://static.wikia.nocookie.net/clashofclans/images/1/11/Builder_Hall5.png/revision/latest',
+    6: 'https://static.wikia.nocookie.net/clashofclans/images/f/fa/Builder_Hall6.png/revision/latest',
+    7: 'https://static.wikia.nocookie.net/clashofclans/images/4/4c/Builder_Hall7.png/revision/latest',
+    8: 'https://static.wikia.nocookie.net/clashofclans/images/3/36/Builder_Hall8.png/revision/latest',
+    9: 'https://static.wikia.nocookie.net/clashofclans/images/5/54/Builder_Hall9.png/revision/latest',
+    10: 'https://static.wikia.nocookie.net/clashofclans/images/d/d7/Builder_Hall10.png/revision/latest'
 };
 
 export function VillageOverview({ base, level }: VillageOverviewProps) {

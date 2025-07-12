@@ -4,17 +4,13 @@
 import { useAuth } from '@/context/auth-context';
 import { redirect } from 'next/navigation';
 import { LandingPage } from '@/components/landing-page';
-import { Loader2 } from 'lucide-react';
+import { LoadingSpinner } from '@/components/loading-spinner';
 
 export default function RootPage() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (user) {

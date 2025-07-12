@@ -60,6 +60,12 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+      <footer className="w-full py-12">
+        <div className="container mx-auto text-center text-muted-foreground">
+          <p className="font-headline text-lg font-bold">Clash Master</p>
+          <p className="text-sm">built for fans by a fan</p>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -14,26 +14,26 @@ interface ExploreSectionProps {
 
 const allSkins = {
   'Barbarian King': [
-    { title: 'Champion King', category: 'Hero Skin', price: '1500 Gems', availability: 'Shop', imageUrl: 'https://placehold.co/600x400.png', hint: 'gold king armor' },
-    { title: 'P.E.K.K.A King', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: 'https://placehold.co/600x400.png', hint: 'robot king sword' },
+    { title: 'Champion King', category: 'Hero Skin', price: '1500 Gems', availability: 'Shop', imageUrl: '/images/skins/champion_king.png', hint: 'gold king armor' },
+    { title: 'P.E.K.K.A King', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/pekka_king.png', hint: 'robot king sword' },
   ],
   'Archer Queen': [
-    { title: 'Ice Queen', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: 'https://placehold.co/600x400.png', hint: 'ice queen crown' },
-    { title: 'Valkyrie Queen', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: 'https://placehold.co/600x400.png', hint: 'warrior queen axe' },
+    { title: 'Ice Queen', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: '/images/skins/ice_queen.png', hint: 'ice queen crown' },
+    { title: 'Valkyrie Queen', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/valkyrie_queen.png', hint: 'warrior queen axe' },
   ],
   'Grand Warden': [
-    { title: 'Party Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: 'https://placehold.co/600x400.png', hint: 'dj wizard staff' },
-    { title: 'Primal Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: 'https://placehold.co/600x400.png', hint: 'shaman wizard staff' },
+    { title: 'Party Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/party_warden.png', hint: 'dj wizard staff' },
+    { title: 'Primal Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/primal_warden.png', hint: 'shaman wizard staff' },
   ],
   'Royal Champion': [
-    { title: 'Gladiator Champion', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: 'https://placehold.co/600x400.png', hint: 'gladiator champion spear' },
-    { title: 'Shadow Champion', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: 'https://placehold.co/600x400.png', hint: 'ninja champion dark' },
+    { title: 'Gladiator Champion', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: '/images/skins/gladiator_champion.png', hint: 'gladiator champion spear' },
+    { title: 'Shadow Champion', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/shadow_champion.png', hint: 'ninja champion dark' },
   ],
 };
 
 const otherFeaturedItems = [
-  { title: "Magic Theater", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "https://placehold.co/600x400.png", hint: "magic theater stage" },
-  { title: "Shadow Scenery", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "https://placehold.co/600x400.png", hint: "dark castle night" },
+  { title: "Magic Theater", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/images/scenery/magic_theater.png", hint: "magic theater stage" },
+  { title: "Shadow Scenery", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/images/scenery/shadow_scenery.png", hint: "dark castle night" },
 ];
 
 type FeaturedItem = typeof otherFeaturedItems[0];

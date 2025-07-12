@@ -51,7 +51,7 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center font-headline text-2xl">
+        <CardTitle className="flex items-center text-2xl font-headline">
           <BaseIcon className="mr-3 h-8 w-8 text-primary" />
           {title} Overview
         </CardTitle>

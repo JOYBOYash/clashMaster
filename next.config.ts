@@ -12,11 +12,14 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
     remotePatterns: [],
+<<<<<<< HEAD
   },
    webpack: (config, { isServer }) => {
     // This is to fix a build error with Genkit
     config.externals.push('@opentelemetry/exporter-jaeger');
     return config;
+=======
+>>>>>>> 13f825aea5d340d73ac76a729b4d394c5580accd
   },
 };
 

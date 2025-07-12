@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [],
   },
+   webpack: (config, { isServer }) => {
+    // This is to fix a build error with Genkit
+    config.externals.push('@opentelemetry/exporter-jaeger');
+    return config;
+  },
 };
 
 export default nextConfig;

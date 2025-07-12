@@ -1,48 +1,90 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
-import type { Building, VillageState } from '@/lib/constants';
+import { useMemo } from 'react';
+import type { Building } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Shield, Coins, Sword, SlidersHorizontal, ArrowUpCircle } from 'lucide-react';
-import { StartUpgradeDialog } from './start-upgrade-dialog';
+import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import Image from 'next/image';
+import { buildingNameToType } from '@/lib/constants';
 
 interface BuildingListProps {
   buildings: Building[];
-  villageState: VillageState;
-  onUpdate: (newState: VillageState) => void;
 }
 
-export function BuildingList({ buildings, villageState, onUpdate }: BuildingListProps) {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
+const buildingImageMap: Record<string, string> = {
+    // Defensive
+    'Cannon': '/images/buildings/cannon.png',
+    'Archer Tower': '/images/buildings/archer_tower.png',
+    'Mortar': '/images/buildings/mortar.png',
+    'Air Defense': '/images/buildings/air_defense.png',
+    'Wizard Tower': '/images/buildings/wizard_tower.png',
+    'Air Sweeper': '/images/buildings/air_sweeper.png',
+    'Hidden Tesla': '/images/buildings/hidden_tesla.png',
+    'Bomb Tower': '/images/buildings/bomb_tower.png',
+    'X Bow': '/images/buildings/x-bow.png',
+    'Inferno Tower': '/images/buildings/inferno_tower.png',
+    'Eagle Artillery': '/images/buildings/eagle_artillery.png',
+    'Scattershot': '/images/buildings/scattershot.png',
+    'Spell Tower': '/images/buildings/spell_tower.png',
+    'Monolith': '/images/buildings/monolith.png',
+    // Army
+    'Army Camp': '/images/buildings/army_camp.png',
+    'Barracks': '/images/buildings/barracks.png',
+    'Dark Barracks': '/images/buildings/dark_barracks.png',
+    'Laboratory': '/images/buildings/laboratory.png',
+    'Spell Factory': '/images/buildings/spell_factory.png',
+    'Dark Spell Factory': '/images/buildings/dark_spell_factory.png',
+    'Workshop': '/images/buildings/workshop.png',
+    'Clan Castle': '/images/buildings/clan_castle.png',
+    'Pet House': '/images/buildings/pet_house.png',
+    'Blacksmith': '/images/buildings/blacksmith.png',
+    // Resource
+    'Gold Mine': '/images/buildings/gold_mine.png',
+    'Elixir Collector': '/images/buildings/elixir_collector.png',
+    'Dark Elixir Drill': '/images/buildings/dark_elixir_drill.png',
+    'Gold Storage': '/images/buildings/gold_storage.png',
+    'Elixir Storage': '/images/buildings/elixir_storage.png',
+    'Dark Elixir Storage': '/images/buildings/dark_elixir_storage.png',
+    // Other
+    'Town Hall': '/images/halls/town_hall_1.png', // Default, will be updated by level
+    "Builder Hut": "/images/buildings/builders_hut.png",
+    "Wall": "/images/buildings/wall.png",
+    // Traps
+    'Bomb': '/images/buildings/bomb.png',
+    'Spring Trap': '/images/buildings/spring_trap.png',
+    'Air Bomb': '/images/buildings/air_bomb.png',
+    'Giant Bomb': '/images/buildings/giant_bomb.png',
+    'Seeking Air Mine': '/images/buildings/seeking_air_mine.png',
+    'Skeleton Trap': '/images/buildings/skeleton_trap.png',
+    'Tornado Trap': '/images/buildings/tornado_trap.png',
+    // Hero Altars
+    'Barbarian King Altar': '/images/buildings/barbarian_king_altar.png',
+    'Archer Queen Altar': '/images/buildings/archer_queen_altar.png',
+    'Grand Warden Altar': '/images/buildings/grand_warden_altar.png',
+    'Royal Champion Altar': '/images/buildings/royal_champion_altar.png',
+};
 
-  const handleStartUpgradeClick = (building: Building) => {
-    setSelectedBuilding(building);
-    setDialogOpen(true);
-  };
-  
-  const handleStartUpgrade = (buildingId: string, durationDays: number, durationHours: number, durationMinutes: number) => {
-    const totalHours = (durationDays * 24) + durationHours + (durationMinutes / 60);
-    const upgradeEndTime = new Date(Date.now() + totalHours * 60 * 60 * 1000).toISOString();
-    
-    const updatedBuildings = villageState.buildings.map(b => 
-      b.id === buildingId 
-        ? {
-            ...b,
-            isUpgrading: true,
-            upgradeEndTime: upgradeEndTime,
-            upgradeTime: totalHours,
-          }
-        : b
-    );
+const getGroupedBuildings = (buildings: Building[]) => {
+    const buildingMap: { [key: string]: { building: Building; count: number } } = {};
+    buildings.forEach(b => {
+      const key = `${b.name}-${b.level}`;
+      if (buildingMap[key]) {
+        buildingMap[key].count += 1;
+      } else {
+        buildingMap[key] = { building: b, count: 1 };
+      }
+    });
+    return Object.values(buildingMap).sort((a, b) => {
+        if (a.building.name < b.building.name) return -1;
+        if (a.building.name > b.building.name) return 1;
+        return a.building.level - b.building.level;
+    });
+};
 
-    onUpdate({ ...villageState, buildings: updatedBuildings });
-    setDialogOpen(false);
-    setSelectedBuilding(null);
-  };
+export function BuildingList({ buildings }: BuildingListProps) {
 
   const groupedBuildings = useMemo(() => {
     const groups: Record<string, Building[]> = {
@@ -50,10 +92,13 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
       army: [],
       resource: [],
       other: [],
+      trap: [],
+      hero: [],
     };
     buildings.forEach(b => {
-      if(groups[b.type]) {
-        groups[b.type].push(b);
+      const type = buildingNameToType[b.name] || b.type || 'other';
+      if(groups[type]) {
+        groups[type].push(b);
       }
     });
     return groups;
@@ -68,14 +113,16 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
     army: Sword,
     resource: Coins,
     other: SlidersHorizontal,
+    trap: Settings2,
+    hero: Hammer
   };
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Village Buildings</CardTitle>
-          <CardDescription>A complete list of all your buildings and their current levels. You can also start new upgrades manually here.</CardDescription>
+          <CardTitle className="font-headline">Village Buildings & Traps</CardTitle>
+          <CardDescription>A complete list of all your buildings and their current levels, based on your imported data.</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="multiple" defaultValue={defaultOpenCategories} className="w-full">
@@ -84,42 +131,41 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
               const Icon = typeIcons[type];
               return (
                 <AccordionItem value={type} key={type}>
-                  <AccordionTrigger className="text-lg font-semibold capitalize">
-                    <div className="flex items-center">
-                      <Icon className="w-5 h-5 mr-3 text-primary" />
-                      {type} Buildings
+                  <AccordionTrigger className="text-lg font-semibold capitalize hover:no-underline">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                        <Icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className='text-xl font-headline tracking-wide'>{type}</span>
+                       <span className="text-sm font-normal text-muted-foreground">({getGroupedBuildings(buildingsOfType).length})</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="space-y-2">
-                      {buildingsOfType
-                        .sort((a,b) => a.name.localeCompare(b.name))
-                        .map(b => (
-                        <div key={b.id} className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50">
-                          <div>
-                            <p className="font-medium">{b.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              Level {b.level} / {b.maxLevel}
-                            </p>
-                          </div>
-                          {b.level < b.maxLevel && !b.isUpgrading && (
-                            <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={() => handleStartUpgradeClick(b)}
-                            >
-                                <ArrowUpCircle className="mr-2" />
-                                Start Upgrade
-                            </Button>
-                          )}
-                          {b.isUpgrading && (
-                              <span className="text-sm text-accent font-semibold">Upgrading...</span>
-                          )}
-                           {b.level >= b.maxLevel && (
-                              <span className="text-sm text-green-600 font-semibold">Max Level</span>
-                          )}
-                        </div>
-                      ))}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-2">
+                        {getGroupedBuildings(buildingsOfType).map(({ building, count }) => (
+                            <div key={`${building.name}-${building.level}`} className="relative p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
+                                {count > 1 && (
+                                    <div className="absolute top-2 right-2 z-10 bg-primary text-primary-foreground text-xs font-bold rounded-full px-2 py-0.5 shadow-md">
+                                        x{count}
+                                    </div>
+                                )}
+                                <Image
+                                    src={buildingImageMap[building.name] || '/images/buildings/default.png'}
+                                    alt={building.name}
+                                    width={128}
+                                    height={128}
+                                    className="rounded-md self-center aspect-square object-contain bg-muted/20"
+                                    unoptimized
+                                />
+                                <div className="text-center mt-1">
+                                    <p className="font-bold text-card-foreground">{building.name}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        Level {building.level} / {building.maxLevel}
+                                    </p>
+                                </div>
+                                <Progress value={(building.level / building.maxLevel) * 100} className="h-2" />
+                            </div>
+                        ))}
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -128,14 +174,6 @@ export function BuildingList({ buildings, villageState, onUpdate }: BuildingList
           </Accordion>
         </CardContent>
       </Card>
-      {selectedBuilding && (
-        <StartUpgradeDialog
-          isOpen={dialogOpen}
-          onOpenChange={setDialogOpen}
-          building={selectedBuilding}
-          onStartUpgrade={handleStartUpgrade}
-        />
-      )}
     </>
   );
 }

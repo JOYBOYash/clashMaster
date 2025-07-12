@@ -1,13 +1,25 @@
-import { MainHeader } from '@/components/main-header';
-import { ClashTrackDashboard } from '@/components/clash-track-dashboard';
 
-export default function Home() {
-  return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
-      <MainHeader />
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ClashTrackDashboard />
-      </main>
-    </div>
-  );
+"use client";
+
+import { useAuth } from '@/context/auth-context';
+import { redirect } from 'next/navigation';
+import { LandingPage } from '@/components/landing-page';
+import { Loader2 } from 'lucide-react';
+
+export default function RootPage() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (user) {
+    redirect('/home');
+  }
+
+  return <LandingPage />;
 }

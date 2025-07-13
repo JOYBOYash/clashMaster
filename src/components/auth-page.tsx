@@ -87,6 +87,7 @@ export function AuthPage() {
                             alt={img.alt}
                             fill
                             className="object-cover"
+                            unoptimized
                         />
                     </div>
                   </CarouselItem>

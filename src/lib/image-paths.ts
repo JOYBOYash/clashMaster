@@ -7,9 +7,9 @@ export const carouselImages = [
 
 export const heroAvatars = [
     '/_avatars/bk_avatar.png',
-    '/_avatars/aq_avatar.png',
-    '/_avatars/gw_avatar.png',
-    '/_avatars/rc_avatar.png',
+    '/_avatars/bk_avatar2.png',
+    '/_avatars/mp_avatar2.png',
+    '/_avatars/mp_avatar.png',
 ];
 
 export const allSkins = {
@@ -53,13 +53,12 @@ export const townHallImageMap: Record<number, string> = {
     14: 'Building_HV_Town_Hall_level_14_1.png',
     15: 'Building_HV_Town_Hall_level_15_2.png',
     16: 'Building_HV_Town_Hall_level_16_1.png',
-    17: 'Building_HV_Town_Hall_level_17_1.png',
 };
 
 export function getHallImagePath(base: 'home' | 'builder', level: number): string {
     if (base === 'home') {
         const imageName = townHallImageMap[level] || 'default.png';
-        return `/_halls/town_hall/${imageName}`;
+        return `/_town-halls/${imageName}`;
     }
     // Assuming builder hall names are simple, adjust if needed
     return `/_halls/builder_hall/Building_BH_Builder_Hall${level}.png`;
@@ -67,7 +66,7 @@ export function getHallImagePath(base: 'home' | 'builder', level: number): strin
 
 export function getBuildingImagePath(name: string, level: number): string {
     // Handle special cases first
-    if (name === 'X Bow') {
+    if (name === 'X-Bow') {
       return `/_buildings/x-bow/Building_HV_X-Bow_level_${level}.png`;
     }
     if (name === 'Wall') {

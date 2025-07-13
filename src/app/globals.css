@@ -71,12 +71,17 @@
     --chart-4: 250 75% 70%;
     --chart-5: 340 75% 60%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
   }
 }

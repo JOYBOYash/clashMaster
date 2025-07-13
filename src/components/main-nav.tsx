@@ -28,7 +28,7 @@ export function MainNav({
           key={route.href}
           href={route.href}
           className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
+            "text-sm font-medium transition-colors hover:text-primary font-headline",
             pathname.startsWith(route.href) ? "text-primary" : "text-muted-foreground"
           )}
         >

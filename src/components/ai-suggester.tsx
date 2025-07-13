@@ -110,7 +110,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
       <CardHeader className="flex flex-row items-center gap-4">
         {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" unoptimized />}
         <div className='flex-1'>
-          <CardTitle className="flex items-center font-headline text-2xl">
+          <CardTitle className="flex items-center text-2xl">
             <Lightbulb className="mr-3 h-8 w-8 text-accent" />
             AI Upgrade Advisor
           </CardTitle>

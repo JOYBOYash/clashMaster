@@ -14,7 +14,7 @@ export default function RootPage() {
   }
 
   if (user) {
-    redirect('/home');
+    redirect('/sign-in');
   }
 
   return <LandingPage />;

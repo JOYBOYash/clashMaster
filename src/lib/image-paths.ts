@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview Centralized manifest for all static image assets.
  * 
@@ -14,7 +13,9 @@
 const createPathMap = (basePath: string, items: string[]): Record<string, string> => {
     const map: Record<string, string> = {};
     items.forEach(item => {
-        const key = item.replace('.png', '').replace(/_/g, ' ').toLowerCase();
+        // Use the item name directly, replacing underscores with spaces and removing the extension.
+        // This preserves casing.
+        const key = item.replace('.png', '').replace(/_/g, ' ');
         map[key] = `${basePath}/${item}`;
     });
     return map;
@@ -41,11 +42,13 @@ export const townHallImageMap: Record<number, string> = {
 };
 
 // --- Building Image Paths ---
-const buildingImageFiles = ['air_defense.png', 'air_sweeper.png', 'archer_queen_altar.png', 'archer_tower.png', 'army_camp.png', 'barbarian_king_altar.png', 'barracks.png', 'blacksmith.png', 'bomb.png', 'bomb_tower.png', 'builders_hut.png', 'cannon.png', 'clan_castle.png', 'dark_barracks.png', 'dark_elixir_drill.png', 'dark_elixir_storage.png', 'dark_spell_factory.png', 'eagle_artillery.png', 'elixir_collector.png', 'elixir_storage.png', 'giant_bomb.png', 'gold_mine.png', 'gold_storage.png', 'grand_warden_altar.png', 'hidden_tesla.png', 'inferno_tower.png', 'laboratory.png', 'monolith.png', 'mortar.png', 'pet_house.png', 'royal_champion_altar.png', 'scattershot.png', 'seeking_air_mine.png', 'skeleton_trap.png', 'spell_factory.png', 'spell_tower.png', 'spring_trap.png', 'tornado_trap.png', 'wall.png', 'workshop.png', 'wizard_tower.png', 'x-bow.png'];
+// We create a map where the key is the building name as it appears in game data (e.g., "Archer Tower")
+const buildingImageFiles = ['Air Defense.png', 'Air Sweeper.png', 'Archer Queen Altar.png', 'Archer Tower.png', 'Army Camp.png', 'Barbarian King Altar.png', 'Barracks.png', 'Blacksmith.png', 'Bomb.png', 'Bomb Tower.png', 'Builder Hut.png', 'Cannon.png', 'Clan Castle.png', 'Dark Barracks.png', 'Dark Elixir Drill.png', 'Dark Elixir Storage.png', 'Dark Spell Factory.png', 'Eagle Artillery.png', 'Elixir Collector.png', 'Elixir Storage.png', 'Giant Bomb.png', 'Gold Mine.png', 'Gold Storage.png', 'Grand Warden Altar.png', 'Hidden Tesla.png', 'Inferno Tower.png', 'Laboratory.png', 'Monolith.png', 'Mortar.png', 'Pet House.png', 'Royal Champion Altar.png', 'Scattershot.png', 'Seeking Air Mine.png', 'Skeleton Trap.png', 'Spell Factory.png', 'Spell Tower.png', 'Spring Trap.png', 'Tornado Trap.png', 'Wall.png', 'Workshop.png', 'Wizard Tower.png', 'X-Bow.png'];
 const buildingImageMap = createPathMap('/_buildings', buildingImageFiles);
 
 // --- Troop Image Paths ---
-const troopImageFiles = ['apprentice_warden.png', 'archer.png', 'baby_dragon.png', 'balloon.png', 'barbarian.png', 'bat_spell.png', 'bowler.png', 'clone_spell.png', 'dragon.png', 'earthquake_spell.png', 'electro_titan.png', 'freeze_spell.png', 'giant.png', 'goblin.png', 'golem.png', 'haste_spell.png', 'headhunter.png', 'healer.png', 'healing_spell.png', 'hog_rider.png', 'ice_golem.png', 'invisibility_spell.png', 'jump_spell.png', 'lava_hound.png', 'lightning_spell.png', 'miner.png', 'minion.png', 'pekka.png', 'poison_spell.png', 'rage_spell.png', 'recall_spell.png', 'root_rider.png', 'skeleton_spell.png', 'valkyrie.png', 'wall_breaker.png', 'witch.png', 'wizard.png'];
+// Keys are the troop names as they appear in game data (e.g., "Baby Dragon")
+const troopImageFiles = ['Apprentice Warden.png', 'Archer.png', 'Baby Dragon.png', 'Balloon.png', 'Barbarian.png', 'Bat Spell.png', 'Bowler.png', 'Clone Spell.png', 'Dragon.png', 'Earthquake Spell.png', 'Electro Titan.png', 'Freeze Spell.png', 'Giant.png', 'Goblin.png', 'Golem.png', 'Haste Spell.png', 'Headhunter.png', 'Healer.png', 'Healing Spell.png', 'Hog Rider.png', 'Ice Golem.png', 'Invisibility Spell.png', 'Jump Spell.png', 'Lava Hound.png', 'Lightning Spell.png', 'Miner.png', 'Minion.png', 'P.E.K.K.A.png', 'Poison Spell.png', 'Rage Spell.png', 'Recall Spell.png', 'Root Rider.png', 'Skeleton Spell.png', 'Valkyrie.png', 'Wall Breaker.png', 'Witch.png', 'Wizard.png'];
 const troopImageMap = createPathMap('/_troops', troopImageFiles);
 
 // --- UI Asset Paths ---
@@ -117,12 +120,22 @@ export const getHallImagePath = (base: 'home' | 'builder', level: number): strin
     return defaultImagePath;
 };
 
+// Simple lookup, no case conversion
 export const getBuildingImagePath = (name: string): string => {
-  return buildingImageMap[name.toLowerCase().replace(/ /g, '-')] || defaultImagePath;
+  // Special case for X-Bow which has a dash in the filename
+  if (name === 'X Bow') {
+      return buildingImageMap['X-Bow'] || defaultImagePath;
+  }
+  return buildingImageMap[name] || defaultImagePath;
 };
 
+// Simple lookup, no case conversion
 export const getTroopImagePath = (name: string): string => {
-  return troopImageMap[name.toLowerCase()] || defaultImagePath;
+    // Special case for P.E.K.K.A. which has periods in the filename
+  if (name === 'P.E.K.K.A') {
+      return troopImageMap['P.E.K.K.A.'] || defaultImagePath;
+  }
+  return troopImageMap[name] || defaultImagePath;
 };
 
 export const getFeaturedItems = (unlockedHeroNames: string[]): FeaturedItem[] => {

@@ -84,6 +84,19 @@ export const getItemData = (name: string): GameItem | undefined => {
   return processedGameData.get(name);
 };
 
+export const getElixirTypeForItem = (itemName: string): 'regular' | 'dark' | 'none' => {
+  const item = getItemData(itemName);
+  if (!item || !item.upgrade) return 'none';
+  
+  if (item.upgrade.resource === 'Dark Elixir') {
+    return 'dark';
+  }
+  if (item.upgrade.resource === 'Elixir') {
+    return 'regular';
+  }
+  return 'none';
+};
+
 // Function to get available items for a given Town Hall level
 export const getItemsForTownHall = (
     thLevel: number, 

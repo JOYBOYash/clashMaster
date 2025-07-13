@@ -6,7 +6,7 @@ import { AuthProvider } from '@/context/auth-context';
 import { AppWrapper } from '@/components/app-wrapper';
 
 export const metadata: Metadata = {
-  title: 'ClashTrack',
+  title: 'Blueprints',
   description: 'Master your Clash of Clans village with AI-powered upgrade suggestions.',
 };
 

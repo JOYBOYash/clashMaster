@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
-import { gameData, getItemsForTownHall, getMaxLevelForItem, getBuildingCountsForTownHall, singleInstanceBuildings, buildingUnlockLevels, GameItem } from '@/lib/game-data';
-import { type VillageState, type Building, type Troop, buildingNameToType, type Hero, type Pet, type Equipment } from '@/lib/constants';
+import { useState, useMemo, useEffect } from 'react';
+import { getItemsForTownHall, getMaxLevelForItem, getBuildingCountsForTownHall, singleInstanceBuildings, buildingUnlockLevels, GameItem, getElixirTypeForItem } from '@/lib/game-data';
+import type { VillageState, Building, Troop, Hero, Pet, Equipment } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,6 +14,9 @@ import { SurveyProgress } from './survey-progress';
 import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Terminal } from 'lucide-react';
+import Image from 'next/image';
+import { heroAvatarAssets } from '@/lib/image-paths';
+import { buildingNameToType } from '@/lib/constants';
 
 interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
@@ -26,6 +29,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [isMaxAllChecked, setIsMaxAllChecked] = useState(false);
+  const [currentAvatar, setCurrentAvatar] = useState(heroAvatarAssets[0]);
 
   const surveySteps = useMemo(() => {
     if (!townHallLevel) return [{ id: 'townHall', title: 'Town Hall Level', icon: Home, items: [] }];
@@ -44,6 +48,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']) },
     ];
   }, [townHallLevel]);
+  
+  useEffect(() => {
+    setCurrentAvatar(heroAvatarAssets[currentStep % heroAvatarAssets.length]);
+  }, [currentStep]);
 
   const handleLevelChange = (key: string, value: string, maxLevel: number) => {
     const numericValue = parseInt(value, 10);
@@ -108,7 +116,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     return (
       <div key={buildingName} className="space-y-4">
         <h4 className="font-semibold text-foreground text-lg">{buildingName}</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: count }).map((_, i) => {
             const inputKey = `${buildingName}-${i}`;
             return (
@@ -125,7 +133,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                       placeholder="Lvl"
                       className="w-full"
                     />
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 shrink-0">
                         <Checkbox
                           id={`${inputKey}-max`}
                           onCheckedChange={(checked) => { if (checked) setMaxLevel(inputKey, maxLevel) }}
@@ -161,7 +169,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                  placeholder="Lvl"
                  className="w-24"
                />
-               <div className="flex items-center space-x-2">
+               <div className="flex items-center space-x-2 shrink-0">
                    <Checkbox
                      id={`${inputKey}-max`}
                      onCheckedChange={(checked) => { if (checked) setMaxLevel(inputKey, maxLevel) }}
@@ -253,10 +261,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const heroes: Hero[] = [];
     const pets: Pet[] = [];
     const equipment: Equipment[] = [];
-
+    
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
 
-    // Process all buildings
     Object.keys(buildingUnlockLevels).forEach(name => {
       if (buildingUnlockLevels[name] > townHallLevel || name === 'Wall') return;
 
@@ -266,18 +273,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         const level = levels[inputKey] || 1;
         const maxLevel = getMaxLevelForItem(name, townHallLevel);
         buildings.push({
-          id: inputKey,
-          name: name,
-          level: level,
-          maxLevel: maxLevel,
-          type: buildingNameToType[name] || 'other',
-          base: 'home',
-          isUpgrading: false
+          id: inputKey, name: name, level: level, maxLevel: maxLevel,
+          type: buildingNameToType[name] || 'other', base: 'home', isUpgrading: false
         });
       }
     });
 
-    // Handle Walls
     const wallCount = buildingCounts['Wall'] || 0;
     const maxWallLevel = getMaxLevelForItem('Wall', townHallLevel);
     let assignedWallCount = 0;
@@ -287,20 +288,18 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         for (let i = 0; i < countForLevel; i++) {
             buildings.push({
                 id: `Wall-${level}-${i}`, name: 'Wall', level, maxLevel: maxWallLevel,
-                type: 'other', base: 'home', isUpgrading: false
+                type: buildingNameToType['Wall'] || 'other', base: 'home', isUpgrading: false
             });
             assignedWallCount++;
         }
     }
-    // Add remaining walls at level 1
     for (let i = 0; i < (wallCount - assignedWallCount); i++) {
         buildings.push({
             id: `Wall-1-unassigned-${i}`, name: 'Wall', level: 1, maxLevel: maxWallLevel,
-            type: 'other', base: 'home', isUpgrading: false
+            type: buildingNameToType['Wall'] || 'other', base: 'home', isUpgrading: false
         });
     }
 
-    // Process other items
     getItemsForTownHall(townHallLevel, ['troop', 'spell', 'hero', 'pet', 'equipment']).forEach(item => {
         const key = `${item.type}-${item.name}`;
         const level = levels[key] || 0;
@@ -309,8 +308,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         switch (item.type) {
             case 'troop':
             case 'spell':
-                const elixirType = rawTroopData.find(t => tidToName(t.tid) === item.name)?.unlock?.resource.toLowerCase().includes('dark') ? 'dark' : 'regular';
-                troops.push({ id: key, name: item.name, level, maxLevel, village: 'home', elixirType: elixirType as 'regular' | 'dark' });
+                troops.push({ id: key, name: item.name, level, maxLevel, village: 'home', elixirType: getElixirTypeForItem(item.name) });
                 break;
             case 'hero':
                 heroes.push({ id: key, name: item.name, level, maxLevel, village: 'home' });
@@ -368,52 +366,72 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
 
   return (
-    <Card className="max-w-4xl mx-auto mt-8 w-full">
-      <CardHeader>
-        <div className="w-full mb-4">
-          <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />
-        </div>
-        <div className='flex items-center gap-4'>
-             <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 shrink-0">
-                <Icon className="w-7 h-7 text-primary" />
+    <div className="w-full h-full flex items-center justify-center p-0 md:p-4">
+      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden rounded-xl shadow-2xl border bg-card">
+        
+        <div className="hidden md:flex flex-col items-center justify-center bg-muted/30 p-12">
+            <div className="w-48 h-48 lg:w-64 lg:h-64 relative">
+                <Image 
+                    src={currentAvatar}
+                    alt="Hero Avatar"
+                    fill
+                    className="object-contain animate-float"
+                    unoptimized
+                />
             </div>
-            <div>
-                <CardTitle className="font-headline text-3xl">{currentStepConfig.title}</CardTitle>
-                <CardDescription>
-                  {currentStep === 0 ? "Select your Town Hall level to begin." : "Enter the levels for the items below."}
-                </CardDescription>
-            </div>
+            <p className="text-center text-muted-foreground mt-8 text-lg font-headline">Just a few questions to build your village's blueprint!</p>
         </div>
-      </CardHeader>
-      <CardContent className="min-h-[300px] max-h-[60vh] overflow-y-auto p-6">
-        {currentStep > 0 && townHallLevel && currentStepConfig.id !== 'walls' && (
-          <div className="flex items-center space-x-2 mb-6 p-3 rounded-md bg-muted sticky top-0 z-10">
-            <Checkbox
-              id="max-all-step"
-              checked={isMaxAllChecked}
-              onCheckedChange={handleMaxAllForStep}
-            />
-            <Label htmlFor="max-all-step" className="font-semibold text-base cursor-pointer">
-              Max All for this Step
-            </Label>
-          </div>
-        )}
-        {renderContent()}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
-            <ChevronLeft /> Back
-        </Button>
-        {currentStep < surveySteps.length - 1 ? (
-          <Button onClick={handleNext} disabled={!townHallLevel}>
-            Next <ChevronRight />
-          </Button>
-        ) : (
-          <Button onClick={handleSubmit} disabled={!townHallLevel} className="bg-green-600 hover:bg-green-700">
-            Generate My Dashboard
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+
+        <div className="flex flex-col">
+            <Card className="border-0 shadow-none rounded-none flex flex-col flex-grow">
+              <CardHeader>
+                <div className="w-full mb-4">
+                  <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />
+                </div>
+                <div className='flex items-center gap-4'>
+                     <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 shrink-0">
+                        <Icon className="w-7 h-7 text-primary" />
+                    </div>
+                    <div>
+                        <CardTitle className="font-headline text-3xl">{currentStepConfig.title}</CardTitle>
+                        <CardDescription>
+                          {currentStep === 0 ? "Select your Town Hall level to begin." : "Enter the levels for the items below."}
+                        </CardDescription>
+                    </div>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-grow min-h-[300px] max-h-[60vh] overflow-y-auto p-6 space-y-6">
+                {currentStep > 0 && townHallLevel && currentStepConfig.id !== 'walls' && (
+                  <div className="flex items-center space-x-2 mb-6 p-3 rounded-md bg-muted sticky top-0 z-10">
+                    <Checkbox
+                      id="max-all-step"
+                      checked={isMaxAllChecked}
+                      onCheckedChange={handleMaxAllForStep}
+                    />
+                    <Label htmlFor="max-all-step" className="font-semibold text-base cursor-pointer">
+                      Max All for this Step
+                    </Label>
+                  </div>
+                )}
+                {renderContent()}
+              </CardContent>
+              <CardFooter className="flex justify-between mt-auto">
+                <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
+                    <ChevronLeft /> Back
+                </Button>
+                {currentStep < surveySteps.length - 1 ? (
+                  <Button onClick={handleNext} disabled={!townHallLevel}>
+                    Next <ChevronRight />
+                  </Button>
+                ) : (
+                  <Button onClick={handleSubmit} disabled={!townHallLevel} className="bg-green-600 hover:bg-green-700">
+                    Generate My Blueprint
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+        </div>
+      </div>
+    </div>
   );
 }

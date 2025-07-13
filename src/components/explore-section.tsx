@@ -72,6 +72,7 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
                     fill
                     unoptimized
                     className="object-cover transition-transform group-hover:scale-105"
+                    onError={(e) => { e.currentTarget.src = '/_misc/default.png'; }}
                   />
                    <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
                     <Badge variant="secondary" className="shadow-lg">{item.availability}</Badge>

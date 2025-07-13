@@ -81,7 +81,7 @@ export function AuthPage() {
               <CarouselContent>
                 {carouselImages.map((img, index) => (
                   <CarouselItem key={index} className="p-0">
-                    <div className="relative w-full h-full aspect-[9/16] sm:aspect-square md:aspect-auto">
+                    <div className="relative w-full h-[550px]">
                         <Image
                             src={img.src}
                             alt={img.alt}

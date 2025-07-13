@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/context/auth-context';
@@ -31,31 +31,42 @@ export function AuthPage() {
   const { signUp, signIn } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('sign-in');
 
-  const { register: registerSignIn, handleSubmit: handleSignInSubmit, formState: { errors: signInErrors } } = useForm<FormValues>({
+  const { register: registerSignIn, handleSubmit: handleSignInSubmit, setValue: setSignInValue, formState: { errors: signInErrors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
 
-  const { register: registerSignUp, handleSubmit: handleSignUpSubmit, formState: { errors: signUpErrors } } = useForm<FormValues>({
+  const { register: registerSignUp, handleSubmit: handleSignUpSubmit, setValue: setSignUpValue, formState: { errors: signUpErrors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
 
-  const onSignIn = async (data: FormValues) => {
+  const onSignIn: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
     try {
       await signIn(data.email, data.password);
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Sign In Failed',
-        description: error.message || 'An unexpected error occurred.',
-      });
+      if (error.code === 'auth/user-not-found') {
+        toast({
+          title: 'New to ClashTrack?',
+          description: "It looks like you don't have an account. Please sign up to continue.",
+        });
+        setSignUpValue('email', data.email);
+        setSignUpValue('password', '');
+        setActiveTab('sign-up');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Sign In Failed',
+          description: error.message || 'An unexpected error occurred.',
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const onSignUp = async (data: FormValues) => {
+  const onSignUp: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
     try {
       await signUp(data.email, data.password);
@@ -77,28 +88,29 @@ export function AuthPage() {
   return (
     <div className="w-full h-full flex-grow flex items-center justify-center p-4">
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden rounded-xl shadow-2xl border">
+        
         <div className="hidden md:block relative">
-            <Carousel className="w-full h-full" autoplay>
-              <CarouselContent>
-                {carouselImageAssets.map((img, index) => (
-                  <CarouselItem key={index} className="p-0">
-                    <div className="relative w-full h-[550px]">
-                        <Image
-                            src={img.src}
-                            alt={img.alt}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                        />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+          <Carousel className="w-full h-full" autoplay>
+            <CarouselContent>
+              {carouselImageAssets.map((img, index) => (
+                <CarouselItem key={index} className="p-0">
+                  <div className="relative w-full h-[550px]">
+                      <Image
+                          src={img.src}
+                          alt={img.alt}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                      />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
 
         <div className="bg-card flex flex-col justify-center p-6 sm:p-10">
-          <Tabs defaultValue="sign-in" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="sign-in">Sign In</TabsTrigger>
               <TabsTrigger value="sign-up">Sign Up</TabsTrigger>
@@ -161,6 +173,7 @@ export function AuthPage() {
             </TabsContent>
           </Tabs>
         </div>
+
       </div>
     </div>
   );

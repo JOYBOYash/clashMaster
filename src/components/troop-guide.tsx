@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
-import { troopImageMap } from '@/lib/image-paths';
+import { getTroopImagePath } from '@/lib/image-paths';
 
 interface TroopGuideProps {
     villageState: VillageState;
@@ -59,14 +59,6 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
         } finally {
             setIsLoading(false);
         }
-    };
-    
-    const getTroopImagePath = (name: string): string => {
-        if (troopImageMap[name]) {
-            return `/_troops/super/${troopImageMap[name]}`;
-        }
-        const formattedName = name.replace(/\s+/g, '_').replace(/\./g, '');
-        return `/_troops/${formattedName}.png`;
     };
 
     return (

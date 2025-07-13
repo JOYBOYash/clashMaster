@@ -1,5 +1,4 @@
 
-
 export const carouselImages = [
     { src: '/_login_carousel/barbarianKing-side-profile-login-carousel.png', alt: 'Barbarian King' },
     { src: '/_login_carousel/warden-side-profile-login-carousel.png', alt: 'Grand Warden' },
@@ -37,7 +36,51 @@ export const otherFeaturedItems = [
   { title: "Shadow Scenery", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/_scenery/shadow_scenery.png", hint: "dark castle night" },
 ];
 
-export const troopImageMap: Record<string, string> = {
+export const townHallImageMap: Record<number, string> = {
+    1: 'Building_HV_Town_Hall_level_1.png',
+    2: 'Building_HV_Town_Hall_level_2.png',
+    3: 'Building_HV_Town_Hall_level_3.png',
+    4: 'Building_HV_Town_Hall_level_4.png',
+    5: 'Building_HV_Town_Hall_level_5.png',
+    6: 'Building_HV_Town_Hall_level_6.png',
+    7: 'Building_HV_Town_Hall_level_7.png',
+    8: 'Building_HV_Town_Hall_level_8.png',
+    9: 'Building_HV_Town_Hall_level_9.png',
+    10: 'Building_HV_Town_Hall_level_10.png',
+    11: 'Building_HV_Town_Hall_level_11.png',
+    12: 'Building_HV_Town_Hall_level_12_1.png',
+    13: 'Building_HV_Town_Hall_level_13_1.png',
+    14: 'Building_HV_Town_Hall_level_14_1.png',
+    15: 'Building_HV_Town_Hall_level_15_2.png',
+    16: 'Building_HV_Town_Hall_level_16_1.png',
+    17: 'Building_HV_Town_Hall_level_17_1.png',
+};
+
+export function getHallImagePath(base: 'home' | 'builder', level: number): string {
+    if (base === 'home') {
+        const imageName = townHallImageMap[level] || 'default.png';
+        return `/_halls/town_hall/${imageName}`;
+    }
+    // Assuming builder hall names are simple, adjust if needed
+    return `/_halls/builder_hall/Building_BH_Builder_Hall${level}.png`;
+};
+
+export function getBuildingImagePath(name: string, level: number): string {
+    // Handle special cases first
+    if (name === 'X Bow') {
+      return `/_buildings/x-bow/Building_HV_X-Bow_level_${level}.png`;
+    }
+    if (name === 'Wall') {
+        return `/_buildings/wall/Wall_level_${level}.png`
+    }
+
+    const folderName = name.replace(/\s+/g, '-').toLowerCase();
+    const formattedName = name.replace(/\s+/g, '_');
+    
+    return `/_buildings/${folderName}/Building_HV_${formattedName}_level_${level}.png`;
+};
+
+const troopImageMap: Record<string, string> = {
     'Super Barbarian': 'Icon_HV_Super_Barbarian.png',
     'Super Archer': 'Icon_HV_Super_Archer.png',
     'Super Wall Breaker': 'Icon_HV_Super_Wall_Breaker.png',
@@ -54,4 +97,12 @@ export const troopImageMap: Record<string, string> = {
     'Super Minion': 'Icon_HV_Super_Minion.png',
     'Super Wizard': 'Icon_HV_Super_Wizard.png',
     'Super Hog Rider': 'Icon_HV_Super_Hog_Rider.png',
+};
+
+export function getTroopImagePath(name: string): string {
+    if (troopImageMap[name]) {
+        return `/_troops/super/${troopImageMap[name]}`;
+    }
+    const formattedName = name.replace(/\s+/g, '_').replace(/\./g, '');
+    return `/_troops/${formattedName}.png`;
 };

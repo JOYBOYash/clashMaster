@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -87,7 +86,6 @@ export function AuthPage() {
                             alt={img.alt}
                             fill
                             className="object-cover"
-                            unoptimized
                         />
                     </div>
                   </CarouselItem>

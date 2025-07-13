@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
 import type { VillageState, Building as BuildingType } from '@/lib/constants';
 import { Skeleton } from './ui/skeleton';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
 
 interface AiSuggesterProps {
@@ -30,7 +30,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<StaticImageData | null>(null);
 
   useEffect(() => {
       // This will only run on the client, preventing hydration mismatch
@@ -108,7 +108,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   return (
     <Card className="bg-gradient-to-br from-card to-muted/20 border-primary/20">
       <CardHeader className="flex flex-row items-center gap-4">
-        {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" unoptimized />}
+        {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" />}
         <div className='flex-1'>
           <CardTitle className="flex items-center font-headline text-2xl">
             <Lightbulb className="mr-3 h-8 w-8 text-accent" />

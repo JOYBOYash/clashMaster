@@ -10,12 +10,14 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true,
-    remotePatterns: [],
+    // The `unoptimized` prop on the Image component is used instead
+    // remotePatterns: [],
   },
    webpack: (config, { isServer }) => {
     // This is to fix a build error with Genkit
     config.externals.push('@opentelemetry/exporter-jaeger');
+    // This is to allow dynamic require() for images in image-paths.ts
+    config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
 };

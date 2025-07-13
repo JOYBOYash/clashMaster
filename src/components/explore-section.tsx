@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles, Loader2 } from "lucide-react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import type { VillageState } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { skinAssets, otherFeaturedItemAssets } from '@/lib/image-paths';
@@ -18,7 +18,7 @@ type FeaturedItem = {
     category: string;
     price: string;
     availability: string;
-    imageUrl: string;
+    imageUrl: StaticImageData;
     hint: string;
 };
 
@@ -78,7 +78,6 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
                     data-ai-hint={item.hint}
                     fill
                     className="object-cover transition-transform group-hover:scale-105"
-                    unoptimized
                   />
                    <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
                     <Badge variant="secondary" className="shadow-lg">{item.availability}</Badge>

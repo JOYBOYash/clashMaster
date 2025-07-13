@@ -32,23 +32,25 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const [currentAvatar, setCurrentAvatar] = useState(heroAvatarAssets[0]);
 
   const surveySteps = useMemo(() => {
-    if (!townHallLevel) return [{ id: 'townHall', title: 'Town Hall Level', icon: Home, items: [] }];
+    if (!townHallLevel) return [{ id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" }];
 
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
     
     return [
-      { id: 'townHall', title: 'Town Hall Level', icon: Home, items: [] },
-      { id: 'keyBuildings', title: 'Key Buildings', icon: Library, items: singleInstanceBuildings.filter(b => buildingUnlockLevels[b] <= townHallLevel) },
-      { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'] },
-      { id: 'storages', title: 'Resource Storages', icon: Warehouse, items: ['Gold Storage', 'Elixir Storage', 'Dark Elixir Storage'].filter(b => buildingUnlockLevels[b] <= townHallLevel) },
-      { id: 'collectors', title: 'Resource Collectors', icon: Coins, items: ['Gold Mine', 'Elixir Collector', 'Dark Elixir Drill'].filter(b => buildingUnlockLevels[b] <= townHallLevel) },
-      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(buildingCounts).filter(b => buildingNameToType[b] === 'defensive' && buildingUnlockLevels[b] <= townHallLevel) },
-      { id: 'walls', title: 'Walls', icon: BrickWall, items: ['Wall'] },
-      { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']) },
-      { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']) },
+      { id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" },
+      { id: 'keyBuildings', title: 'Key Buildings', icon: Library, items: singleInstanceBuildings.filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "These core buildings define your village's capabilities." },
+      { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'], text: "The bigger the camp, the bigger the army. Simple!" },
+      { id: 'storages', title: 'Resource Storages', icon: Warehouse, items: ['Gold Storage', 'Elixir Storage', 'Dark Elixir Storage'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "You can't spend what you can't hold. Let's log your storage capacity." },
+      { id: 'collectors', title: 'Resource Collectors', icon: Coins, items: ['Gold Mine', 'Elixir Collector', 'Dark Elixir Drill'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "Passive income is the best income. How are your collectors doing?" },
+      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(buildingCounts).filter(b => buildingNameToType[b] === 'defensive' && buildingUnlockLevels[b] <= townHallLevel), text: "A good offense is a good defense... but a great defense is even better!" },
+      { id: 'walls', title: 'Walls', icon: BrickWall, items: ['Wall'], text: "The backbone of your defense. Tell me about your walls." },
+      { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']), text: "Time to review your forces. Every troop level counts." },
+      { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']), text: "The most powerful units in the game. Let's see how your legends are progressing." },
     ];
   }, [townHallLevel]);
   
+  const currentStepConfig = surveySteps[currentStep];
+
   useEffect(() => {
     setCurrentAvatar(heroAvatarAssets[currentStep % heroAvatarAssets.length]);
   }, [currentStep]);
@@ -74,7 +76,6 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     setIsMaxAllChecked(checked === true);
     if (!townHallLevel) return;
 
-    const currentStepConfig = surveySteps[currentStep];
     if (!currentStepConfig) return;
 
     const newLevelsUpdate: Record<string, number> = {};
@@ -121,7 +122,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
             const inputKey = `${buildingName}-${i}`;
             return (
               <div key={inputKey} className="space-y-2 p-3 border rounded-lg bg-background/50">
-                <Label htmlFor={inputKey} className="text-sm font-semibold">#{i + 1}</Label>
+                { count > 1 && <Label htmlFor={inputKey} className="text-sm font-semibold">#{i + 1}</Label> }
                 <div className="flex items-center gap-2">
                     <Input
                       id={inputKey}
@@ -329,8 +330,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     onSurveyComplete(villageState);
   };
   
-  const currentStepConfig = surveySteps[currentStep];
   const Icon = currentStepConfig.icon;
+  const currentText = currentStepConfig.text || "Just a few questions to build your village's blueprint!";
+
 
   const renderContent = () => {
     if (!townHallLevel && currentStep > 0) {
@@ -366,11 +368,11 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-0 md:p-4">
-      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden rounded-xl shadow-2xl border bg-card">
+    <div className="w-full h-full flex items-center justify-center p-0">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-screen lg:min-h-0 lg:rounded-xl lg:shadow-2xl lg:border bg-card">
         
-        <div className="hidden md:flex flex-col items-center justify-center bg-muted/30 p-12">
-            <div className="w-48 h-48 lg:w-64 lg:h-64 relative">
+        <div className="flex flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 order-1 lg:order-none">
+            <div className="w-32 h-32 lg:w-64 lg:h-64 relative">
                 <Image 
                     src={currentAvatar}
                     alt="Hero Avatar"
@@ -379,10 +381,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     unoptimized
                 />
             </div>
-            <p className="text-center text-muted-foreground mt-8 text-lg font-headline">Just a few questions to build your village's blueprint!</p>
+            <p className="text-center text-muted-foreground mt-8 text-lg font-headline max-w-sm">{currentText}</p>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col order-none lg:order-1">
             <Card className="border-0 shadow-none rounded-none flex flex-col flex-grow">
               <CardHeader>
                 <div className="w-full mb-4">
@@ -400,7 +402,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     </div>
                 </div>
               </CardHeader>
-              <CardContent className="flex-grow min-h-[300px] max-h-[60vh] overflow-y-auto p-6 space-y-6">
+              <CardContent className="flex-grow min-h-[300px] max-h-[65vh] overflow-y-auto p-6 space-y-6">
                 {currentStep > 0 && townHallLevel && currentStepConfig.id !== 'walls' && (
                   <div className="flex items-center space-x-2 mb-6 p-3 rounded-md bg-muted sticky top-0 z-10">
                     <Checkbox
@@ -435,3 +437,4 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </div>
   );
 }
+

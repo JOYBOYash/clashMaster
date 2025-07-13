@@ -19,7 +19,6 @@ export default {
       fontFamily: {
         body: ['SupercellMagic', 'sans-serif'],
         headline: ['SupercellMagic', 'sans-serif'],
-        code: ['monospace'],
       },
       colors: {
         border: "hsl(var(--border))",

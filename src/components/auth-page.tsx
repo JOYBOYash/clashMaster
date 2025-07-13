@@ -46,7 +46,7 @@ export function AuthPage() {
     try {
       await signIn(data.email, data.password);
     } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
         toast({
           title: 'New to ClashTrack?',
           description: "It looks like you don't have an account. Please sign up to continue.",

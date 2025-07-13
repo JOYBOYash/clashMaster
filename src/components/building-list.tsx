@@ -9,21 +9,7 @@ import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'luci
 import { Progress } from '@/components/ui/progress';
 import Image from 'next/image';
 import { buildingNameToType } from '@/lib/constants';
-
-const getBuildingImagePath = (name: string, level: number): string => {
-    // Handle special cases first
-    if (name === 'X Bow') {
-      return `/_buildings/x-bow/Building_HV_X-Bow_level_${level}.png`;
-    }
-    if (name === 'Wall') {
-        return `/_buildings/wall/Wall_level_${level}.png`
-    }
-
-    const folderName = name.replace(/\s+/g, '-').toLowerCase();
-    const formattedName = name.replace(/\s+/g, '_');
-    
-    return `/_buildings/${folderName}/Building_HV_${formattedName}_level_${level}.png`;
-};
+import { getBuildingImagePath } from '@/lib/image-paths';
 
 const getGroupedBuildings = (buildings: Building[]) => {
     const buildingMap: { [key: string]: { building: Building; count: number } } = {};

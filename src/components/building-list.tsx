@@ -9,8 +9,22 @@ import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'luci
 import { Progress } from '@/components/ui/progress';
 import Image from 'next/image';
 import { buildingNameToType } from '@/lib/constants';
-import { buildingImageMap } from '@/lib/image-paths';
 
+const getBuildingImagePath = (name: string, level: number): string => {
+    const formattedName = name.replace(/\s+/g, '_');
+    const folderName = name.replace(/\s+/g, '-').toLowerCase();
+
+    // Default to level 1 if no specific level image exists or for simplicity
+    // This logic can be expanded if you have all level images for all buildings
+    const finalLevel = level > 0 ? level : 1; 
+
+    // Handle special cases from game data naming conventions
+    if (name === 'X Bow') {
+      return `/_buildings/x-bow/Building_HV_X-Bow_level_${finalLevel}.png`;
+    }
+
+    return `/_buildings/${folderName}/Building_HV_${formattedName}_level_${finalLevel}.png`;
+};
 
 const getGroupedBuildings = (buildings: Building[]) => {
     const buildingMap: { [key: string]: { building: Building; count: number } } = {};
@@ -28,6 +42,10 @@ const getGroupedBuildings = (buildings: Building[]) => {
         return a.building.level - b.building.level;
     });
 };
+
+interface BuildingListProps {
+  buildings: Building[];
+}
 
 export function BuildingList({ buildings }: BuildingListProps) {
 
@@ -95,12 +113,13 @@ export function BuildingList({ buildings }: BuildingListProps) {
                                     </div>
                                 )}
                                 <Image
-                                    src={buildingImageMap[building.name] || buildingImageMap['default']}
+                                    src={getBuildingImagePath(building.name, building.level)}
                                     alt={building.name}
                                     width={128}
                                     height={128}
                                     className="rounded-md self-center aspect-square object-contain bg-muted/20"
                                     unoptimized
+                                    onError={(e) => { e.currentTarget.src = '/_misc/default.png'; }}
                                 />
                                 <div className="text-center mt-1">
                                     <p className="font-bold text-card-foreground">{building.name}</p>

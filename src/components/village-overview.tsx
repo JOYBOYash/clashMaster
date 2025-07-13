@@ -12,9 +12,13 @@ interface VillageOverviewProps {
 export function VillageOverview({ base, level }: VillageOverviewProps) {
   const BaseIcon = base === 'home' ? Home : Hammer;
   const title = base === 'home' ? 'Town Hall' : 'Builder Hall';
-  const imageUrl = base === 'home' 
-    ? townHallImageMap[level] || townHallImageMap[1]
-    : builderHallImageMap[level] || builderHallImageMap[1];
+  
+  const getHallImagePath = (base: 'home' | 'builder', level: number): string => {
+    const formattedName = base === 'home' ? 'Town_Hall' : 'Builder_Hall';
+    return `/_halls/${formattedName.toLowerCase()}/Building_h_${formattedName}_level_${level}.png`;
+  };
+
+  const imageUrl = getHallImagePath(base, level);
 
   return (
     <Card>

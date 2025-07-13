@@ -60,6 +60,11 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
             setIsLoading(false);
         }
     };
+    
+    const getTroopImagePath = (name: string): string => {
+        const formattedName = name.replace(/\s+/g, '_').replace(/\./g, '');
+        return `/_troops/${formattedName}.png`;
+    };
 
     return (
         <div className="space-y-8">
@@ -116,12 +121,13 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                                         {data.map(item => (
                                             <div key={item.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                                                 <Image
-                                                    src={troopImageMap[item.name] || troopImageMap['default']}
+                                                    src={getTroopImagePath(item.name)}
                                                     alt={item.name}
                                                     width={128}
                                                     height={128}
                                                     className="rounded-md self-center aspect-square object-contain bg-muted/20"
                                                     unoptimized
+                                                    onError={(e) => { e.currentTarget.src = '/_misc/default.png'; }}
                                                 />
                                                 <div className="text-center mt-1">
                                                     <p className="font-bold text-card-foreground">{item.name}</p>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -11,7 +12,7 @@ export function MainNav({
   const pathname = usePathname();
 
   const routes = [
-    { href: '/home', label: 'Home' },
+    { href: '/sign-in', label: 'Home' },
     { href: '/upgrades', label: 'Upgrades' },
     { href: '/army-guide', label: 'Army Guide' },
     { href: '/explore', label: 'Explore' }

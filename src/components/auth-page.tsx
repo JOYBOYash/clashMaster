@@ -17,16 +17,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
-import barbarianKingImg from '../../public/_login_carousel/barbarianKing-side-profile-login-carousel.png';
-import wardenImg from '../../public/_login_carousel/warden-side-profile-login-carousel.png';
-import princeImg from '../../public/_login_carousel/prince-side-profile-login-carousel.png';
-
-
-const carouselImageAssets = [
-    { src: barbarianKingImg, alt: 'Barbarian King' },
-    { src: wardenImg, alt: 'Grand Warden' },
-    { src: princeImg, alt: 'Minion Prince' },
-];
+import { carouselImageAssets } from '@/lib/image-paths';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -97,6 +88,7 @@ export function AuthPage() {
                             alt={img.alt}
                             fill
                             className="object-cover"
+                            unoptimized
                         />
                     </div>
                   </CarouselItem>

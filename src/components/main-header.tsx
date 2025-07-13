@@ -52,22 +52,22 @@ export function MainHeader() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel className="font-normal">
+                  <DropdownMenuLabel className="font-normal font-headline">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">My Account</p>
-                      <p className="text-xs leading-none text-muted-foreground">
+                      <p className="text-xs leading-none text-muted-foreground font-body">
                         {user.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <AlertDialogTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer font-headline">
                       <RefreshCw className="mr-2 h-4 w-4" />
                       <span>Start Over</span>
                     </DropdownMenuItem>
                   </AlertDialogTrigger>
-                  <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                  <DropdownMenuItem onClick={signOut} className="cursor-pointer font-headline">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign Out</span>
                   </DropdownMenuItem>

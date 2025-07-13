@@ -7,13 +7,21 @@ import { Sparkles, Loader2 } from "lucide-react";
 import Image from "next/image";
 import type { VillageState } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
-import { allSkins, otherFeaturedItems } from '@/lib/image-paths';
+import { skinAssets, otherFeaturedItemAssets } from '@/lib/image-paths';
+import type { StaticImageData } from 'next/image';
 
 interface ExploreSectionProps {
   villageState: VillageState;
 }
 
-type FeaturedItem = (typeof allSkins)['Barbarian King'][0] | typeof otherFeaturedItems[0];
+type FeaturedItem = {
+    title: string;
+    category: string;
+    price: string;
+    availability: string;
+    imageUrl: StaticImageData;
+    hint: string;
+};
 
 
 // Fisher-Yates shuffle algorithm
@@ -36,12 +44,12 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
     
     let availableSkins: FeaturedItem[] = [];
     for (const heroName of unlockedHeroNames) {
-      if (allSkins[heroName as keyof typeof allSkins]) {
-        availableSkins = availableSkins.concat(allSkins[heroName as keyof typeof allSkins]);
+      if (skinAssets[heroName as keyof typeof skinAssets]) {
+        availableSkins = availableSkins.concat(skinAssets[heroName as keyof typeof skinAssets]);
       }
     }
 
-    const combinedPool = [...availableSkins, ...otherFeaturedItems];
+    const combinedPool = [...availableSkins, ...otherFeaturedItemAssets];
     const shuffled = shuffleArray(combinedPool);
     setFeaturedItems(shuffled.slice(0, 3));
   }, [villageState]);
@@ -70,9 +78,7 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
                     alt={item.title}
                     data-ai-hint={item.hint}
                     fill
-                    unoptimized
                     className="object-cover transition-transform group-hover:scale-105"
-                    onError={(e) => { e.currentTarget.src = '/_misc/default.png'; }}
                   />
                    <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
                     <Badge variant="secondary" className="shadow-lg">{item.availability}</Badge>

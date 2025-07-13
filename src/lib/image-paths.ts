@@ -66,10 +66,10 @@ export function getHallImagePath(base: 'home' | 'builder', level: number): strin
 
 export function getBuildingImagePath(name: string, level: number): string {
     // Handle special cases first
-    if (name === 'X-Bow') {
+    if (name.toLowerCase() === 'x-bow') {
       return `/_buildings/x-bow/Building_HV_X-Bow_level_${level}.png`;
     }
-    if (name === 'Wall') {
+    if (name.toLowerCase() === 'wall') {
         return `/_buildings/wall/Wall_level_${level}.png`
     }
 

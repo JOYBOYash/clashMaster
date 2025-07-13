@@ -1,46 +1,60 @@
 
-import type { StaticImageData } from 'next/image';
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Home, Hammer } from 'lucide-react';
-import Image from 'next/image';
-
-// Default/Placeholder Image
-import defaultImage from '../../public/_misc/default.png';
+import Image, { type StaticImageData } from 'next/image';
 
 // Town Hall Images
-import th1 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_1.png';
-import th2 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_2.png';
-import th3 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_3.png';
-import th4 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_4.png';
-import th5 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_5.png';
-import th6 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_6.png';
-import th7 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_7.png';
-import th8 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_8.png';
-import th9 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_9.png';
-import th10 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_10.png';
-import th11 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_11.png';
-import th12 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_12_1.png';
-import th13 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_13_1.png';
-import th14 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_14_1.png';
-import th15 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_15_2.png';
-import th16 from '../../public/_halls/town_hall/Building_HV_Town_Hall_level_16_1.png';
+import townHall1 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_1.png';
+import townHall2 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_2.png';
+import townHall3 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_3.png';
+import townHall4 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_4.png';
+import townHall5 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_5.png';
+import townHall6 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_6.png';
+import townHall7 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_7.png';
+import townHall8 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_8.png';
+import townHall9 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_9.png';
+import townHall10 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_10.png';
+import townHall11 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_11.png';
+import townHall12 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_12_1.png';
+import townHall13 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_13_1.png';
+import townHall14 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_14_1.png';
+import townHall15 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_15_2.png';
+import townHall16 from '../../../public/_halls/town_hall/Building_HV_Town_Hall_level_16_1.png';
+import defaultHall from '../../../public/_misc/default.png';
 
 const townHallImageMap: Record<number, StaticImageData> = {
-    1: th1, 2: th2, 3: th3, 4: th4, 5: th5, 6: th6, 7: th7, 8: th8, 9: th9, 10: th10, 11: th11, 12: th12, 13: th13, 14: th14, 15: th15, 16: th16
+    1: townHall1,
+    2: townHall2,
+    3: townHall3,
+    4: townHall4,
+    5: townHall5,
+    6: townHall6,
+    7: townHall7,
+    8: townHall8,
+    9: townHall9,
+    10: townHall10,
+    11: townHall11,
+    12: townHall12,
+    13: townHall13,
+    14: townHall14,
+    15: townHall15,
+    16: townHall16,
 };
 
-// Builder Hall Images (using placeholders for now)
 const builderHallImageMap: Record<number, StaticImageData> = {
-    1: defaultImage, 2: defaultImage, 3: defaultImage, 4: defaultImage, 5: defaultImage,
-    6: defaultImage, 7: defaultImage, 8: defaultImage, 9: defaultImage, 10: defaultImage
+    1: defaultHall, 2: defaultHall, 3: defaultHall, 4: defaultHall, 5: defaultHall,
+    6: defaultHall, 7: defaultHall, 8: defaultHall, 9: defaultHall, 10: defaultHall,
 };
 
 const getHallImagePath = (base: 'home' | 'builder', level: number): StaticImageData => {
     if (base === 'home') {
-        return townHallImageMap[level] || defaultImage;
+        return townHallImageMap[level] || defaultHall;
     }
-    return builderHallImageMap[level] || defaultImage;
+    return builderHallImageMap[level] || defaultHall;
 };
+
 
 interface VillageOverviewProps {
   base: 'home' | 'builder';

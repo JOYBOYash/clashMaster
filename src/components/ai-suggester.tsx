@@ -8,8 +8,15 @@ import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
 import type { VillageState, Building as BuildingType } from '@/lib/constants';
 import { Skeleton } from './ui/skeleton';
-import Image, { type StaticImageData } from 'next/image';
-import { heroAvatarAssets } from '@/lib/image-paths';
+import Image from 'next/image';
+
+import bkAvatar1 from '../../../public/_avatars/bk_avatar.png';
+import bkAvatar2 from '../../../public/_avatars/bk_avatar2.png';
+import mpAvatar1 from '../../../public/_avatars/mp_avatar.png';
+import mpAvatar2 from '../../../public/_avatars/mp_avatar2.png';
+
+const heroAvatarAssets = [bkAvatar1, bkAvatar2, mpAvatar1, mpAvatar2];
+
 
 interface AiSuggesterProps {
   villageState: VillageState;
@@ -30,7 +37,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const [avatar, setAvatar] = useState<StaticImageData | null>(null);
+  const [avatar, setAvatar] = useState(heroAvatarAssets[0]);
 
   useEffect(() => {
       // This will only run on the client, preventing hydration mismatch

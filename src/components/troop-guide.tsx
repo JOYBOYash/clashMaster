@@ -10,9 +10,19 @@ import type { VillageState } from '@/lib/constants';
 import { suggestArmy, type SuggestArmyInput, type SuggestArmyOutput } from '@/ai/flows/suggest-army';
 import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { Progress } from '@/components/ui/progress';
-import defaultImage from '../../public/_misc/default.png';
+
+import defaultImage from '../../../public/_misc/default.png';
+
+const imageMap: Record<string, StaticImageData> = {
+  'default': defaultImage,
+};
+
+const getTroopImagePath = (name: string): StaticImageData => {
+  return imageMap[name.toLowerCase().replace(/ /g, '_')] || imageMap['default'];
+};
+
 
 interface TroopGuideProps {
     villageState: VillageState;
@@ -116,7 +126,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                                         {data.map(item => (
                                             <div key={item.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                                                 <Image
-                                                    src={defaultImage}
+                                                    src={getTroopImagePath(item.name)}
                                                     alt={item.name}
                                                     width={128}
                                                     height={128}

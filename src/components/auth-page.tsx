@@ -16,7 +16,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { carouselImageAssets } from '@/lib/image-paths';
+
+import barbarianKingImg from '../../public/_login_carousel/barbarianKing-side-profile-login-carousel.png';
+import wardenImg from '../../public/_login_carousel/warden-side-profile-login-carousel.png';
+import princeImg from '../../public/_login_carousel/prince-side-profile-login-carousel.png';
+
+
+const carouselImageAssets = [
+    { src: barbarianKingImg, alt: 'Barbarian King' },
+    { src: wardenImg, alt: 'Grand Warden' },
+    { src: princeImg, alt: 'Minion Prince' },
+];
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),

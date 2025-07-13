@@ -1,1050 +1,191 @@
 
-export const gameData = {
-  "clash_of_clans_data": {
-    "last_updated": "2025-01-07",
-    "max_town_hall_level": 17,
-    "town_halls": {
-      "TH1": {
-        "level": 1,
-        "upgrade_cost": 0,
-        "upgrade_time": "0s",
-        "hitpoints": 1500,
-        "buildings": {
-          "cannon": {"count": 1, "max_level": 1},
-          "gold_mine": {"count": 1, "max_level": 1},
-          "elixir_collector": {"count": 1, "max_level": 1},
-          "gold_storage": {"count": 1, "max_level": 1},
-          "elixir_storage": {"count": 1, "max_level": 1},
-          "army_camp": {"count": 1, "max_level": 1},
-          "builder_hut": {"count": 1, "max_level": 1},
-          "walls": {"count": 0, "max_level": 0}
-        },
-        "army": {
-          "army_camps_capacity": 20,
-          "barracks": {"count": 1, "max_level": 1},
-          "troops": {
-            "barbarian": {"max_level": 1, "housing_space": 1},
-            "archer": {"max_level": 1, "housing_space": 1}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 0, "max_level": 0},
-          "spells": {}
-        },
-        "heroes": {}
-      },
-      "TH2": {
-        "level": 2,
-        "upgrade_cost": 1000,
-        "upgrade_time": "15m",
-        "hitpoints": 1600,
-        "buildings": {
-          "cannon": {"count": 1, "max_level": 2},
-          "archer_tower": {"count": 1, "max_level": 2},
-          "gold_mine": {"count": 1, "max_level": 2},
-          "elixir_collector": {"count": 1, "max_level": 2},
-          "gold_storage": {"count": 1, "max_level": 2},
-          "elixir_storage": {"count": 1, "max_level": 2},
-          "army_camp": {"count": 1, "max_level": 2},
-          "barracks": {"count": 1, "max_level": 2},
-          "builder_hut": {"count": 2, "max_level": 1},
-          "walls": {"count": 25, "max_level": 2}
-        },
-        "army": {
-          "army_camps_capacity": 30,
-          "barracks": {"count": 1, "max_level": 2},
-          "troops": {
-            "barbarian": {"max_level": 2, "housing_space": 1},
-            "archer": {"max_level": 2, "housing_space": 1}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 0, "max_level": 0},
-          "spells": {}
-        },
-        "heroes": {}
-      },
-      "TH3": {
-        "level": 3,
-        "upgrade_cost": 4000,
-        "upgrade_time": "1h",
-        "hitpoints": 1800,
-        "buildings": {
-          "cannon": {"count": 2, "max_level": 3},
-          "archer_tower": {"count": 1, "max_level": 3},
-          "gold_mine": {"count": 2, "max_level": 3},
-          "elixir_collector": {"count": 2, "max_level": 3},
-          "gold_storage": {"count": 1, "max_level": 3},
-          "elixir_storage": {"count": 1, "max_level": 3},
-          "army_camp": {"count": 2, "max_level": 3},
-          "barracks": {"count": 1, "max_level": 3},
-          "builder_hut": {"count": 3, "max_level": 1},
-          "walls": {"count": 50, "max_level": 3},
-          "clan_castle": {"count": 1, "max_level": 1}
-        },
-        "army": {
-          "army_camps_capacity": 70,
-          "barracks": {"count": 1, "max_level": 3},
-          "troops": {
-            "barbarian": {"max_level": 3, "housing_space": 1},
-            "archer": {"max_level": 3, "housing_space": 1},
-            "goblin": {"max_level": 3, "housing_space": 1}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 0, "max_level": 0},
-          "spells": {}
-        },
-        "heroes": {}
-      },
-      "TH4": {
-        "level": 4,
-        "upgrade_cost": 25000,
-        "upgrade_time": "4h",
-        "hitpoints": 2100,
-        "buildings": {
-          "cannon": {"count": 2, "max_level": 4},
-          "archer_tower": {"count": 2, "max_level": 4},
-          "mortar": {"count": 1, "max_level": 2},
-          "gold_mine": {"count": 3, "max_level": 4},
-          "elixir_collector": {"count": 3, "max_level": 4},
-          "gold_storage": {"count": 2, "max_level": 4},
-          "elixir_storage": {"count": 2, "max_level": 4},
-          "army_camp": {"count": 3, "max_level": 4},
-          "barracks": {"count": 2, "max_level": 4},
-          "laboratory": {"count": 1, "max_level": 1},
-          "spell_factory": {"count": 1, "max_level": 1},
-          "builder_hut": {"count": 4, "max_level": 1},
-          "walls": {"count": 75, "max_level": 4},
-          "clan_castle": {"count": 1, "max_level": 2}
-        },
-        "army": {
-          "army_camps_capacity": 120,
-          "barracks": {"count": 2, "max_level": 4},
-          "troops": {
-            "barbarian": {"max_level": 4, "housing_space": 1},
-            "archer": {"max_level": 4, "housing_space": 1},
-            "goblin": {"max_level": 4, "housing_space": 1},
-            "giant": {"max_level": 2, "housing_space": 5}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 1, "max_level": 1},
-          "spells": {
-            "lightning_spell": {"max_level": 3, "housing_space": 1}
-          }
-        },
-        "heroes": {}
-      },
-      "TH5": {
-        "level": 5,
-        "upgrade_cost": 150000,
-        "upgrade_time": "12h",
-        "hitpoints": 2400,
-        "buildings": {
-          "cannon": {"count": 3, "max_level": 5},
-          "archer_tower": {"count": 2, "max_level": 5},
-          "mortar": {"count": 1, "max_level": 3},
-          "air_defense": {"count": 1, "max_level": 3},
-          "gold_mine": {"count": 4, "max_level": 5},
-          "elixir_collector": {"count": 4, "max_level": 5},
-          "gold_storage": {"count": 2, "max_level": 5},
-          "elixir_storage": {"count": 2, "max_level": 5},
-          "army_camp": {"count": 4, "max_level": 5},
-          "barracks": {"count": 2, "max_level": 5},
-          "laboratory": {"count": 1, "max_level": 2},
-          "spell_factory": {"count": 1, "max_level": 2},
-          "builder_hut": {"count": 5, "max_level": 1},
-          "walls": {"count": 100, "max_level": 5},
-          "clan_castle": {"count": 1, "max_level": 2}
-        },
-        "army": {
-          "army_camps_capacity": 135,
-          "barracks": {"count": 2, "max_level": 5},
-          "troops": {
-            "barbarian": {"max_level": 5, "housing_space": 1},
-            "archer": {"max_level": 5, "housing_space": 1},
-            "goblin": {"max_level": 5, "housing_space": 1},
-            "giant": {"max_level": 3, "housing_space": 5},
-            "wizard": {"max_level": 3, "housing_space": 4}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 1, "max_level": 2},
-          "spells": {
-            "lightning_spell": {"max_level": 4, "housing_space": 1},
-            "healing_spell": {"max_level": 3, "housing_space": 1}
-          }
-        },
-        "heroes": {}
-      },
-      "TH6": {
-        "level": 6,
-        "upgrade_cost": 750000,
-        "upgrade_time": "1d",
-        "hitpoints": 2800,
-        "buildings": {
-          "cannon": {"count": 3, "max_level": 6},
-          "archer_tower": {"count": 3, "max_level": 6},
-          "mortar": {"count": 2, "max_level": 4},
-          "air_defense": {"count": 2, "max_level": 4},
-          "gold_mine": {"count": 5, "max_level": 6},
-          "elixir_collector": {"count": 5, "max_level": 6},
-          "gold_storage": {"count": 2, "max_level": 6},
-          "elixir_storage": {"count": 2, "max_level": 6},
-          "army_camp": {"count": 4, "max_level": 6},
-          "barracks": {"count": 3, "max_level": 6},
-          "laboratory": {"count": 1, "max_level": 3},
-          "spell_factory": {"count": 1, "max_level": 2},
-          "builder_hut": {"count": 5, "max_level": 1},
-          "walls": {"count": 125, "max_level": 6},
-          "clan_castle": {"count": 1, "max_level": 3}
-        },
-        "army": {
-          "army_camps_capacity": 150,
-          "barracks": {"count": 3, "max_level": 6},
-          "troops": {
-            "barbarian": {"max_level": 6, "housing_space": 1},
-            "archer": {"max_level": 6, "housing_space": 1},
-            "goblin": {"max_level": 6, "housing_space": 1},
-            "giant": {"max_level": 4, "housing_space": 5},
-            "wizard": {"max_level": 4, "housing_space": 4},
-            "balloon": {"max_level": 4, "housing_space": 5}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 1, "max_level": 2},
-          "spells": {
-            "lightning_spell": {"max_level": 5, "housing_space": 1},
-            "healing_spell": {"max_level": 4, "housing_space": 1}
-          }
-        },
-        "heroes": {}
-      },
-      "TH7": {
-        "level": 7,
-        "upgrade_cost": 1200000,
-        "upgrade_time": "2d",
-        "hitpoints": 3200,
-        "buildings": {
-          "cannon": {"count": 4, "max_level": 7},
-          "archer_tower": {"count": 4, "max_level": 7},
-          "mortar": {"count": 2, "max_level": 5},
-          "air_defense": {"count": 2, "max_level": 5},
-          "wizard_tower": {"count": 2, "max_level": 4},
-          "gold_mine": {"count": 6, "max_level": 7},
-          "elixir_collector": {"count": 6, "max_level": 7},
-          "dark_elixir_drill": {"count": 1, "max_level": 3},
-          "gold_storage": {"count": 3, "max_level": 7},
-          "elixir_storage": {"count": 3, "max_level": 7},
-          "dark_elixir_storage": {"count": 1, "max_level": 1},
-          "army_camp": {"count": 4, "max_level": 6},
-          "barracks": {"count": 4, "max_level": 7},
-          "dark_barracks": {"count": 1, "max_level": 2},
-          "laboratory": {"count": 1, "max_level": 4},
-          "spell_factory": {"count": 1, "max_level": 3},
-          "builder_hut": {"count": 5, "max_level": 1},
-          "walls": {"count": 150, "max_level": 7},
-          "clan_castle": {"count": 1, "max_level": 4}
-        },
-        "army": {
-          "army_camps_capacity": 200,
-          "barracks": {"count": 4, "max_level": 7},
-          "troops": {
-            "barbarian": {"max_level": 7, "housing_space": 1},
-            "archer": {"max_level": 7, "housing_space": 1},
-            "goblin": {"max_level": 7, "housing_space": 1},
-            "giant": {"max_level": 5, "housing_space": 5},
-            "wizard": {"max_level": 5, "housing_space": 4},
-            "balloon": {"max_level": 5, "housing_space": 5},
-            "healer": {"max_level": 2, "housing_space": 14},
-            "dragon": {"max_level": 2, "housing_space": 20},
-            "minion": {"max_level": 2, "housing_space": 2}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 1, "max_level": 3},
-          "spells": {
-            "lightning_spell": {"max_level": 6, "housing_space": 1},
-            "healing_spell": {"max_level": 5, "housing_space": 1},
-            "rage_spell": {"max_level": 4, "housing_space": 2}
-          }
-        },
-        "heroes": {
-          "barbarian_king": {"max_level": 5, "unlock_level": 1}
-        }
-      },
-      "TH8": {
-        "level": 8,
-        "upgrade_cost": 2000000,
-        "upgrade_time": "3d",
-        "hitpoints": 3500,
-        "buildings": {
-          "cannon": {"count": 5, "max_level": 8},
-          "archer_tower": {"count": 4, "max_level": 8},
-          "mortar": {"count": 3, "max_level": 6},
-          "air_defense": {"count": 3, "max_level": 6},
-          "wizard_tower": {"count": 3, "max_level": 6},
-          "gold_mine": {"count": 6, "max_level": 8},
-          "elixir_collector": {"count": 6, "max_level": 8},
-          "dark_elixir_drill": {"count": 2, "max_level": 4},
-          "gold_storage": {"count": 3, "max_level": 8},
-          "elixir_storage": {"count": 3, "max_level": 8},
-          "dark_elixir_storage": {"count": 1, "max_level": 2},
-          "army_camp": {"count": 4, "max_level": 6},
-          "barracks": {"count": 4, "max_level": 8},
-          "dark_barracks": {"count": 2, "max_level": 4},
-          "laboratory": {"count": 1, "max_level": 5},
-          "spell_factory": {"count": 1, "max_level": 4},
-          "builder_hut": {"count": 5, "max_level": 1},
-          "walls": {"count": 175, "max_level": 8},
-          "clan_castle": {"count": 1, "max_level": 4},
-          "blacksmith": {"count": 1, "max_level": 1}
-        },
-        "army": {
-          "army_camps_capacity": 200,
-          "barracks": {"count": 4, "max_level": 8},
-          "troops": {
-            "barbarian": {"max_level": 8, "housing_space": 1},
-            "archer": {"max_level": 8, "housing_space": 1},
-            "goblin": {"max_level": 8, "housing_space": 1},
-            "giant": {"max_level": 6, "housing_space": 5},
-            "wizard": {"max_level": 6, "housing_space": 4},
-            "balloon": {"max_level": 6, "housing_space": 5},
-            "healer": {"max_level": 3, "housing_space": 14},
-            "dragon": {"max_level": 3, "housing_space": 20},
-            "pekka": {"max_level": 3, "housing_space": 25},
-            "minion": {"max_level": 4, "housing_space": 2},
-            "hog_rider": {"max_level": 4, "housing_space": 5}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 1, "max_level": 4},
-          "spells": {
-            "lightning_spell": {"max_level": 6, "housing_space": 1},
-            "healing_spell": {"max_level": 5, "housing_space": 1},
-            "rage_spell": {"max_level": 5, "housing_space": 2}
-          }
-        },
-        "heroes": {
-          "barbarian_king": {"max_level": 10, "unlock_level": 1}
-        }
-      },
-      "TH9": {
-        "level": 9,
-        "upgrade_cost": 3000000,
-        "upgrade_time": "5d",
-        "hitpoints": 4200,
-        "buildings": {
-          "cannon": {"count": 5, "max_level": 10},
-          "archer_tower": {"count": 5, "max_level": 10},
-          "mortar": {"count": 4, "max_level": 7},
-          "air_defense": {"count": 4, "max_level": 7},
-          "wizard_tower": {"count": 4, "max_level": 7},
-          "air_sweeper": {"count": 2, "max_level": 3},
-          "hidden_tesla": {"count": 4, "max_level": 7},
-          "gold_mine": {"count": 7, "max_level": 12},
-          "elixir_collector": {"count": 7, "max_level": 12},
-          "dark_elixir_drill": {"count": 3, "max_level": 6},
-          "gold_storage": {"count": 4, "max_level": 11},
-          "elixir_storage": {"count": 4, "max_level": 11},
-          "dark_elixir_storage": {"count": 1, "max_level": 4},
-          "army_camp": {"count": 4, "max_level": 6},
-          "barracks": {"count": 4, "max_level": 10},
-          "dark_barracks": {"count": 2, "max_level": 6},
-          "laboratory": {"count": 1, "max_level": 6},
-          "spell_factory": {"count": 1, "max_level": 5},
-          "dark_spell_factory": {"count": 1, "max_level": 3},
-          "builder_hut": {"count": 5, "max_level": 1},
-          "walls": {"count": 250, "max_level": 10},
-          "clan_castle": {"count": 1, "max_level": 6},
-          "blacksmith": {"count": 1, "max_level": 2}
-        },
-        "army": {
-          "army_camps_capacity": 220,
-          "barracks": {"count": 4, "max_level": 10},
-          "troops": {
-            "barbarian": {"max_level": 10, "housing_space": 1},
-            "archer": {"max_level": 10, "housing_space": 1},
-            "goblin": {"max_level": 10, "housing_space": 1},
-            "giant": {"max_level": 7, "housing_space": 5},
-            "wizard": {"max_level": 7, "housing_space": 4},
-            "balloon": {"max_level": 7, "housing_space": 5},
-            "healer": {"max_level": 4, "housing_space": 14},
-            "dragon": {"max_level": 4, "housing_space": 20},
-            "pekka": {"max_level": 4, "housing_space": 25},
-            "minion": {"max_level": 5, "housing_space": 2},
-            "hog_rider": {"max_level": 5, "housing_space": 5},
-            "valkyrie": {"max_level": 2, "housing_space": 8},
-            "golem": {"max_level": 2, "housing_space": 30},
-            "witch": {"max_level": 1, "housing_space": 12},
-            "lava_hound": {"max_level": 2, "housing_space": 30}
-          }
-        },
-        "spells": {
-          "spell_factory": {"count": 1, "max_level": 5},
-          "spells": {
-            "lightning_spell": {"max_level": 6, "housing_space": 1},
-            "healing_spell": {"max_level": 6, "housing_space": 1},
-            "rage_spell": {"max_level": 5, "housing_space": 2},
-            "jump_spell": {"max_level": 2, "housing_space": 2},
-            "poison_spell": {"max_level": 3, "housing_space": 1},
-            "earthquake_spell": {"max_level": 3, "housing_space": 1}
-          }
-        },
-        "heroes": {
-          "barbarian_king": {"max_level": 30, "unlock_level": 1},
-          "archer_queen": {"max_level": 30, "unlock_level": 1}
-        }
-      },
-   "TH10": {
-    "level": 10,
-    "upgrade_cost": 5000000,
-    "upgrade_time": "8d",
-    "hitpoints": 6200,
-    "buildings": {
-      "cannon": {"count": 7, "max_level": 13},
-      "archer_tower": {"count": 8, "max_level": 13},
-      "mortar": {"count": 4, "max_level": 8},
-      "air_defense": {"count": 4, "max_level": 8},
-      "wizard_tower": {"count": 5, "max_level": 9},
-      "air_sweeper": {"count": 2, "max_level": 5},
-      "hidden_tesla": {"count": 4, "max_level": 8},
-      "bomb_tower": {"count": 2, "max_level": 4},
-      "x_bow": {"count": 4, "max_level": 4},
-      "inferno_tower": {"count": 2, "max_level": 3},
-      "gold_mine": {"count": 7, "max_level": 12},
-      "elixir_collector": {"count": 7, "max_level": 12},
-      "dark_elixir_drill": {"count": 3, "max_level": 6},
-      "gold_storage": {"count": 4, "max_level": 11},
-      "elixir_storage": {"count": 4, "max_level": 11},
-      "dark_elixir_storage": {"count": 1, "max_level": 6},
-      "army_camp": {"count": 4, "max_level": 8},
-      "barracks": {"count": 4, "max_level": 12},
-      "dark_barracks": {"count": 2, "max_level": 6},
-      "laboratory": {"count": 1, "max_level": 8},
-      "spell_factory": {"count": 1, "max_level": 5},
-      "dark_spell_factory": {"count": 1, "max_level": 4},
-      "clan_castle": {"count": 1, "max_level": 5},
-      "walls": {"count": 275, "max_level": 11},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "blacksmith": {"count": 1, "max_level": 3}
-    },
-    "army": {
-      "army_camps_capacity": 240,
-      "barracks": {"count": 4, "max_level": 12},
-      "troops": {
-        "barbarian": {"max_level": 7, "housing_space": 1},
-        "archer": {"max_level": 7, "housing_space": 1},
-        "giant": {"max_level": 7, "housing_space": 5},
-        "goblin": {"max_level": 6, "housing_space": 1},
-        "wall_breaker": {"max_level": 6, "housing_space": 2},
-        "balloon": {"max_level": 6, "housing_space": 5},
-        "wizard": {"max_level": 7, "housing_space": 4},
-        "healer": {"max_level": 4, "housing_space": 14},
-        "dragon": {"max_level": 5, "housing_space": 20},
-        "pekka": {"max_level": 5, "housing_space": 25},
-        "minion": {"max_level": 6, "housing_space": 2},
-        "hog_rider": {"max_level": 6, "housing_space": 5},
-        "valkyrie": {"max_level": 5, "housing_space": 8},
-        "golem": {"max_level": 5, "housing_space": 30},
-        "witch": {"max_level": 3, "housing_space": 12},
-        "lava_hound": {"max_level": 2, "housing_space": 30}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 5},
-      "spells": {
-        "lightning_spell": {"max_level": 6, "housing_space": 1},
-        "healing_spell": {"max_level": 6, "housing_space": 1},
-        "rage_spell": {"max_level": 5, "housing_space": 2},
-        "jump_spell": {"max_level": 2, "housing_space": 2},
-        "freeze_spell": {"max_level": 5, "housing_space": 1},
-        "poison_spell": {"max_level": 3, "housing_space": 1},
-        "earthquake_spell": {"max_level": 3, "housing_space": 1}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 40, "unlock_level": 1},
-      "archer_queen": {"max_level": 40, "unlock_level": 1}
-    }
-  },
-  "TH11": {
-    "level": 11,
-    "upgrade_cost": 7000000,
-    "upgrade_time": "14d",
-    "hitpoints": 6800,
-    "buildings": {
-      "cannon": {"count": 7, "max_level": 13},
-      "archer_tower": {"count": 8, "max_level": 13},
-      "mortar": {"count": 4, "max_level": 8},
-      "air_defense": {"count": 4, "max_level": 8},
-      "wizard_tower": {"count": 5, "max_level": 9},
-      "air_sweeper": {"count": 2, "max_level": 6},
-      "hidden_tesla": {"count": 4, "max_level": 8},
-      "bomb_tower": {"count": 2, "max_level": 4},
-      "x_bow": {"count": 4, "max_level": 4},
-      "inferno_tower": {"count": 2, "max_level": 3},
-      "eagle_artillery": {"count": 1, "max_level": 2},
-      "gold_mine": {"count": 7, "max_level": 12},
-      "elixir_collector": {"count": 7, "max_level": 12},
-      "dark_elixir_drill": {"count": 3, "max_level": 6},
-      "gold_storage": {"count": 4, "max_level": 12},
-      "elixir_storage": {"count": 4, "max_level": 12},
-      "dark_elixir_storage": {"count": 1, "max_level": 6},
-      "army_camp": {"count": 4, "max_level": 8},
-      "barracks": {"count": 4, "max_level": 10},
-      "dark_barracks": {"count": 2, "max_level": 6},
-      "laboratory": {"count": 1, "max_level": 9},
-      "spell_factory": {"count": 1, "max_level": 5},
-      "dark_spell_factory": {"count": 1, "max_level": 3},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 275, "max_level": 11},
-      "clan_castle": {"count": 1, "max_level": 6},
-      "blacksmith": {"count": 1, "max_level": 4}
-    },
-    "army": {
-      "army_camps_capacity": 260,
-      "barracks": {"count": 4, "max_level": 10},
-      "troops": {
-        "barbarian": {"max_level": 3, "housing_space": 1},
-        "archer": {"max_level": 3, "housing_space": 1},
-        "goblin": {"max_level": 3, "housing_space": 1},
-        "giant": {"max_level": 5, "housing_space": 5},
-        "wizard": {"max_level": 4, "housing_space": 4},
-        "balloon": {"max_level": 5, "housing_space": 5},
-        "healer": {"max_level": 2, "housing_space": 14},
-        "dragon": {"max_level": 2, "housing_space": 20},
-        "pekka": {"max_level": 3, "housing_space": 25},
-        "minion": {"max_level": 2, "housing_space": 2}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 5},
-      "spells": {
-        "lightning_spell": {"max_level": 6, "housing_space": 1},
-        "healing_spell": {"max_level": 6, "housing_space": 1},
-        "rage_spell": {"max_level": 5, "housing_space": 2},
-        "jump_spell": {"max_level": 2, "housing_space": 2},
-        "poison_spell": {"max_level": 3, "housing_space": 1},
-        "earthquake_spell": {"max_level": 3, "housing_space": 1}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 30, "unlock_level": 1},
-      "archer_queen": {"max_level": 30, "unlock_level": 1}
-    }
-  },
-  "TH12": {
-    "level": 12,
-    "upgrade_cost": 8500000,
-    "upgrade_time": "6d",
-    "hitpoints": 7500,
-    "buildings": {
-      "cannon": {"count": 6, "max_level": 15},
-      "archer_tower": {"count": 6, "max_level": 15},
-      "mortar": {"count": 4, "max_level": 10},
-      "air_defense": {"count": 4, "max_level": 10},
-      "wizard_tower": {"count": 5, "max_level": 12},
-      "air_sweeper": {"count": 2, "max_level": 7},
-      "hidden_tesla": {"count": 5, "max_level": 10},
-      "bomb_tower": {"count": 2, "max_level": 6},
-      "x_bow": {"count": 4, "max_level": 5},
-      "inferno_tower": {"count": 2, "max_level": 5},
-      "eagle_artillery": {"count": 1, "max_level": 3},
-      "workshop": {"count": 1, "max_level": 3},
-      "gold_mine": {"count": 7, "max_level": 15},
-      "elixir_collector": {"count": 7, "max_level": 15},
-      "dark_elixir_drill": {"count": 4, "max_level": 9},
-      "gold_storage": {"count": 4, "max_level": 13},
-      "elixir_storage": {"count": 4, "max_level": 13},
-      "dark_elixir_storage": {"count": 1, "max_level": 7},
-      "army_camp": {"count": 4, "max_level": 10},
-      "barracks": {"count": 4, "max_level": 12},
-      "dark_barracks": {"count": 2, "max_level": 7},
-      "laboratory": {"count": 1, "max_level": 10},
-      "spell_factory": {"count": 1, "max_level": 6},
-      "dark_spell_factory": {"count": 1, "max_level": 5},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 300, "max_level": 12},
-      "clan_castle": {"count": 1, "max_level": 8},
-      "blacksmith": {"count": 1, "max_level": 5}
-    },
-    "army": {
-      "army_camps_capacity": 260,
-      "barracks": {"count": 4, "max_level": 12},
-      "troops": {
-        "barbarian": {"max_level": 9, "housing_space": 1},
-        "archer": {"max_level": 9, "housing_space": 1},
-        "goblin": {"max_level": 8, "housing_space": 1},
-        "giant": {"max_level": 9, "housing_space": 5},
-        "wizard": {"max_level": 9, "housing_space": 4},
-        "balloon": {"max_level": 8, "housing_space": 5},
-        "healer": {"max_level": 4, "housing_space": 14},
-        "dragon": {"max_level": 7, "housing_space": 20},
-        "pekka": {"max_level": 8, "housing_space": 25},
-        "minion": {"max_level": 8, "housing_space": 2},
-        "hog_rider": {"max_level": 9, "housing_space": 5},
-        "valkyrie": {"max_level": 7, "housing_space": 8},
-        "golem": {"max_level": 9, "housing_space": 30},
-        "witch": {"max_level": 5, "housing_space": 12},
-        "lava_hound": {"max_level": 5, "housing_space": 30},
-        "baby_dragon": {"max_level": 6, "housing_space": 10},
-        "miner": {"max_level": 6, "housing_space": 6}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 6},
-      "spells": {
-        "lightning_spell": {"max_level": 9, "housing_space": 1},
-        "healing_spell": {"max_level": 7, "housing_space": 1},
-        "rage_spell": {"max_level": 6, "housing_space": 2},
-        "jump_spell": {"max_level": 4, "housing_space": 2},
-        "freeze_spell": {"max_level": 7, "housing_space": 1},
-        "poison_spell": {"max_level": 6, "housing_space": 1},
-        "earthquake_spell": {"max_level": 6, "housing_space": 1},
-        "haste_spell": {"max_level": 4, "housing_space": 1}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 65, "unlock_level": 1},
-      "archer_queen": {"max_level": 65, "unlock_level": 1},
-      "grand_warden": {"max_level": 40, "unlock_level": 7}
-    }
-  },
-  "TH13": {
-    "level": 13,
-    "upgrade_cost": 12500000,
-    "upgrade_time": "10d",
-    "hitpoints": 9200,
-    "buildings": {
-      "cannon": {"count": 6, "max_level": 19},
-      "archer_tower": {"count": 6, "max_level": 19},
-      "mortar": {"count": 4, "max_level": 13},
-      "air_defense": {"count": 4, "max_level": 11},
-      "wizard_tower": {"count": 5, "max_level": 13},
-      "air_sweeper": {"count": 2, "max_level": 8},
-      "hidden_tesla": {"count": 5, "max_level": 12},
-      "bomb_tower": {"count": 2, "max_level": 8},
-      "x_bow": {"count": 4, "max_level": 8},
-      "inferno_tower": {"count": 2, "max_level": 7},
-      "eagle_artillery": {"count": 1, "max_level": 4},
-      "scattershot": {"count": 2, "max_level": 2},
-      "workshop": {"count": 1, "max_level": 5},
-      "gold_mine": {"count": 7, "max_level": 18},
-      "elixir_collector": {"count": 7, "max_level": 18},
-      "dark_elixir_drill": {"count": 4, "max_level": 10},
-      "gold_storage": {"count": 4, "max_level": 14},
-      "elixir_storage": {"count": 4, "max_level": 14},
-      "dark_elixir_storage": {"count": 1, "max_level": 8},
-      "army_camp": {"count": 4, "max_level": 11},
-      "barracks": {"count": 4, "max_level": 15},
-      "dark_barracks": {"count": 2, "max_level": 10},
-      "laboratory": {"count": 1, "max_level": 11},
-      "spell_factory": {"count": 1, "max_level": 7},
-      "dark_spell_factory": {"count": 1, "max_level": 6},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 325, "max_level": 13},
-      "clan_castle": {"count": 1, "max_level": 9},
-      "blacksmith": {"count": 1, "max_level": 6}
-    },
-    "army": {
-      "army_camps_capacity": 280,
-      "barracks": {"count": 4, "max_level": 15},
-      "troops": {
-        "barbarian": {"max_level": 10, "housing_space": 1},
-        "archer": {"max_level": 10, "housing_space": 1},
-        "goblin": {"max_level": 8, "housing_space": 1},
-        "giant": {"max_level": 10, "housing_space": 5},
-        "wizard": {"max_level": 10, "housing_space": 4},
-        "balloon": {"max_level": 9, "housing_space": 5},
-        "healer": {"max_level": 6, "housing_space": 14},
-        "dragon": {"max_level": 8, "housing_space": 20},
-        "pekka": {"max_level": 9, "housing_space": 25},
-        "minion": {"max_level": 9, "housing_space": 2},
-        "hog_rider": {"max_level": 10, "housing_space": 5},
-        "valkyrie": {"max_level": 8, "housing_space": 8},
-        "golem": {"max_level": 10, "housing_space": 30},
-        "lava_hound": {"max_level": 6, "housing_space": 30},
-        "bowler": {"max_level": 5, "housing_space": 6},
-        "baby_dragon": {"max_level": 7, "housing_space": 10},
-        "miner": {"max_level": 7, "housing_space": 6},
-        "ice_golem": {"max_level": 5, "housing_space": 20},
-        "yeti": {"max_level": 3, "housing_space": 30},
-        "dragon_rider": {"max_level": 2, "housing_space": 30}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 7},
-      "spells": {
-        "lightning_spell": {"max_level": 9, "housing_space": 1},
-        "healing_spell": {"max_level": 8, "housing_space": 1},
-        "rage_spell": {"max_level": 6, "housing_space": 2},
-        "jump_spell": {"max_level": 4, "housing_space": 2},
-        "freeze_spell": {"max_level": 7, "housing_space": 1},
-        "poison_spell": {"max_level": 7, "housing_space": 1},
-        "skeleton_spell": {"max_level": 7, "housing_space": 5},
-        "clone_spell": {"max_level": 6, "housing_space": 3},
-        "invisibility_spell": {"max_level": 4, "housing_space": 3},
-        "haste_spell": {"max_level": 4, "housing_space": 1}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 75, "unlock_level": 1},
-      "archer_queen": {"max_level": 75, "unlock_level": 1},
-      "grand_warden": {"max_level": 50, "unlock_level": 9},
-      "royal_champion": {"max_level": 25, "unlock_level": 13}
-    }
-  },
-  "TH14": {
-    "level": 14,
-    "upgrade_cost": 18000000,
-    "upgrade_time": "12d",
-    "hitpoints": 10400,
-    "buildings": {
-      "cannon": {"count": 6, "max_level": 20},
-      "archer_tower": {"count": 6, "max_level": 20},
-      "mortar": {"count": 4, "max_level": 14},
-      "air_defense": {"count": 4, "max_level": 12},
-      "wizard_tower": {"count": 5, "max_level": 14},
-      "air_sweeper": {"count": 2, "max_level": 9},
-      "hidden_tesla": {"count": 5, "max_level": 13},
-      "bomb_tower": {"count": 2, "max_level": 9},
-      "x_bow": {"count": 4, "max_level": 9},
-      "inferno_tower": {"count": 3, "max_level": 8},
-      "eagle_artillery": {"count": 1, "max_level": 4},
-      "scattershot": {"count": 2, "max_level": 2},
-      "monolith": {"count": 3, "max_level": 3},
-      "workshop": {"count": 1, "max_level": 6},
-      "gold_mine": {"count": 7, "max_level": 19},
-      "elixir_collector": {"count": 7, "max_level": 19},
-      "dark_elixir_drill": {"count": 4, "max_level": 10},
-      "gold_storage": {"count": 4, "max_level": 15},
-      "elixir_storage": {"count": 4, "max_level": 15},
-      "dark_elixir_storage": {"count": 1, "max_level": 9},
-      "army_camp": {"count": 4, "max_level": 11},
-      "barracks": {"count": 4, "max_level": 16},
-      "dark_barracks": {"count": 2, "max_level": 11},
-      "laboratory": {"count": 1, "max_level": 12},
-      "spell_factory": {"count": 1, "max_level": 8},
-      "dark_spell_factory": {"count": 1, "max_level": 7},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 350, "max_level": 14},
-      "clan_castle": {"count": 1, "max_level": 10},
-      "pet_house": {"count": 1, "max_level": 4},
-      "blacksmith": {"count": 1, "max_level": 7}
-    },
-    "army": {
-      "army_camps_capacity": 300,
-      "barracks": {"count": 4, "max_level": 16},
-      "troops": {
-        "barbarian": {"max_level": 11, "housing_space": 1},
-        "archer": {"max_level": 11, "housing_space": 1},
-        "goblin": {"max_level": 9, "housing_space": 1},
-        "giant": {"max_level": 11, "housing_space": 5},
-        "wizard": {"max_level": 11, "housing_space": 4},
-        "balloon": {"max_level": 10, "housing_space": 5},
-        "healer": {"max_level": 7, "housing_space": 14},
-        "dragon": {"max_level": 9, "housing_space": 20},
-        "pekka": {"max_level": 10, "housing_space": 25},
-        "minion": {"max_level": 10, "housing_space": 2},
-        "hog_rider": {"max_level": 11, "housing_space": 5},
-        "valkyrie": {"max_level": 9, "housing_space": 8},
-        "golem": {"max_level": 11, "housing_space": 30},
-        "witch": {"max_level": 6, "housing_space": 12},
-        "lava_hound": {"max_level": 7, "housing_space": 30},
-        "bowler": {"max_level": 6, "housing_space": 6},
-        "baby_dragon": {"max_level": 8, "housing_space": 10},
-        "miner": {"max_level": 8, "housing_space": 6},
-        "ice_golem": {"max_level": 6, "housing_space": 30},
-        "yeti": {"max_level": 4, "housing_space": 30},
-        "dragon_rider": {"max_level": 3, "housing_space": 30}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 8},
-      "spells": {
-        "lightning_spell": {"max_level": 10, "housing_space": 1},
-        "healing_spell": {"max_level": 8, "housing_space": 1},
-        "rage_spell": {"max_level": 6, "housing_space": 2},
-        "jump_spell": {"max_level": 4, "housing_space": 2},
-        "freeze_spell": {"max_level": 8, "housing_space": 1},
-        "poison_spell": {"max_level": 7, "housing_space": 1},
-        "skeleton_spell": {"max_level": 8, "housing_space": 5},
-        "clone_spell": {"max_level": 6, "housing_space": 3},
-        "invisibility_spell": {"max_level": 5, "housing_space": 3},
-        "bat_spell": {"max_level": 6, "housing_space": 5}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 85, "unlock_level": 1},
-      "archer_queen": {"max_level": 85, "unlock_level": 1},
-      "grand_warden": {"max_level": 55, "unlock_level": 9},
-      "royal_champion": {"max_level": 25, "unlock_level": 13}
-    }
-  },
-  "TH15": {
-    "level": 15,
-    "upgrade_cost": 25000000,
-    "upgrade_time": "14d",
-    "hitpoints": 12200,
-    "buildings": {
-      "cannon": {"count": 7, "max_level": 22},
-      "archer_tower": {"count": 7, "max_level": 22},
-      "mortar": {"count": 4, "max_level": 15},
-      "air_defense": {"count": 4, "max_level": 13},
-      "wizard_tower": {"count": 5, "max_level": 15},
-      "air_sweeper": {"count": 2, "max_level": 10},
-      "hidden_tesla": {"count": 6, "max_level": 14},
-      "bomb_tower": {"count": 2, "max_level": 10},
-      "x_bow": {"count": 4, "max_level": 10},
-      "inferno_tower": {"count": 3, "max_level": 9},
-      "eagle_artillery": {"count": 1, "max_level": 5},
-      "scattershot": {"count": 2, "max_level": 4},
-      "monolith": {"count": 4, "max_level": 3},
-      "workshop": {"count": 1, "max_level": 7},
-      "gold_mine": {"count": 7, "max_level": 20},
-      "elixir_collector": {"count": 7, "max_level": 20},
-      "dark_elixir_drill": {"count": 4, "max_level": 11},
-      "gold_storage": {"count": 4, "max_level": 16},
-      "elixir_storage": {"count": 4, "max_level": 16},
-      "dark_elixir_storage": {"count": 1, "max_level": 10},
-      "army_camp": {"count": 4, "max_level": 12},
-      "barracks": {"count": 4, "max_level": 17},
-      "dark_barracks": {"count": 2, "max_level": 12},
-      "laboratory": {"count": 1, "max_level": 13},
-      "spell_factory": {"count": 1, "max_level": 9},
-      "dark_spell_factory": {"count": 1, "max_level": 8},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 400, "max_level": 15},
-      "clan_castle": {"count": 1, "max_level": 11},
-      "pet_house": {"count": 1, "max_level": 8},
-      "blacksmith": {"count": 1, "max_level": 8}
-    },
-    "army": {
-      "army_camps_capacity": 320,
-      "barracks": {"count": 4, "max_level": 17},
-      "troops": {
-        "barbarian": {"max_level": 12, "housing_space": 1},
-        "archer": {"max_level": 12, "housing_space": 1},
-        "goblin": {"max_level": 9, "housing_space": 1},
-        "giant": {"max_level": 12, "housing_space": 5},
-        "wizard": {"max_level": 12, "housing_space": 4},
-        "balloon": {"max_level": 11, "housing_space": 5},
-        "healer": {"max_level": 7, "housing_space": 14},
-        "dragon": {"max_level": 9, "housing_space": 20},
-        "pekka": {"max_level": 11, "housing_space": 25},
-        "minion": {"max_level": 10, "housing_space": 2},
-        "hog_rider": {"max_level": 11, "housing_space": 5},
-        "valkyrie": {"max_level": 9, "housing_space": 8},
-        "golem": {"max_level": 11, "housing_space": 30},
-        "witch": {"max_level": 6, "housing_space": 12},
-        "lava_hound": {"max_level": 7, "housing_space": 30},
-        "bowler": {"max_level": 6, "housing_space": 6},
-        "baby_dragon": {"max_level": 8, "housing_space": 10},
-        "miner": {"max_level": 8, "housing_space": 6},
-        "ice_golem": {"max_level": 6, "housing_space": 30},
-        "yeti": {"max_level": 5, "housing_space": 30},
-        "dragon_rider": {"max_level": 3, "housing_space": 30},
-        "super_minions": {"max_level": 1, "housing_space": 2}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 9},
-      "spells": {
-        "lightning_spell": {"max_level": 10, "housing_space": 1},
-        "healing_spell": {"max_level": 9, "housing_space": 1},
-        "rage_spell": {"max_level": 6, "housing_space": 2},
-        "jump_spell": {"max_level": 4, "housing_space": 2},
-        "freeze_spell": {"max_level": 8, "housing_space": 1},
-        "poison_spell": {"max_level": 7, "housing_space": 1},
-        "skeleton_spell": {"max_level": 8, "housing_space": 5},
-        "clone_spell": {"max_level": 6, "housing_space": 3},
-        "invisibility_spell": {"max_level": 5, "housing_space": 3},
-        "bat_spell": {"max_level": 6, "housing_space": 5}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 90, "unlock_level": 1},
-      "archer_queen": {"max_level": 90, "unlock_level": 1},
-      "grand_warden": {"max_level": 55, "unlock_level": 9},
-      "royal_champion": {"max_level": 35, "unlock_level": 13}
-    }
-  },
-  "TH16": {
-    "level": 16,
-    "upgrade_cost": 30000000,
-    "upgrade_time": "15d",
-    "hitpoints": 13800,
-    "buildings": {
-      "cannon": {"count": 7, "max_level": 22},
-      "archer_tower": {"count": 7, "max_level": 22},
-      "mortar": {"count": 4, "max_level": 15},
-      "air_defense": {"count": 4, "max_level": 13},
-      "wizard_tower": {"count": 5, "max_level": 15},
-      "air_sweeper": {"count": 2, "max_level": 10},
-      "hidden_tesla": {"count": 6, "max_level": 14},
-      "bomb_tower": {"count": 2, "max_level": 10},
-      "x_bow": {"count": 4, "max_level": 10},
-      "inferno_tower": {"count": 3, "max_level": 9},
-      "eagle_artillery": {"count": 1, "max_level": 5},
-      "scattershot": {"count": 2, "max_level": 4},
-      "monolith": {"count": 4, "max_level": 4},
-      "workshop": {"count": 1, "max_level": 7},
-      "gold_mine": {"count": 7, "max_level": 21},
-      "elixir_collector": {"count": 7, "max_level": 21},
-      "dark_elixir_drill": {"count": 4, "max_level": 12},
-      "gold_storage": {"count": 4, "max_level": 16},
-      "elixir_storage": {"count": 4, "max_level": 16},
-      "dark_elixir_storage": {"count": 1, "max_level": 10},
-      "army_camp": {"count": 4, "max_level": 12},
-      "barracks": {"count": 4, "max_level": 18},
-      "dark_barracks": {"count": 2, "max_level": 12},
-      "laboratory": {"count": 1, "max_level": 13},
-      "spell_factory": {"count": 1, "max_level": 9},
-      "dark_spell_factory": {"count": 1, "max_level": 8},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 450, "max_level": 16},
-      "clan_castle": {"count": 1, "max_level": 12},
-      "pet_house": {"count": 1, "max_level": 9},
-      "blacksmith": {"count": 1, "max_level": 9}
-    },
-    "army": {
-      "army_camps_capacity": 330,
-      "barracks": {"count": 4, "max_level": 18},
-      "troops": {
-        "barbarian": {"max_level": 12, "housing_space": 1},
-        "archer": {"max_level": 12, "housing_space": 1},
-        "goblin": {"max_level": 9, "housing_space": 1},
-        "giant": {"max_level": 12, "housing_space": 5},
-        "wizard": {"max_level": 12, "housing_space": 4},
-        "balloon": {"max_level": 11, "housing_space": 5},
-        "healer": {"max_level": 7, "housing_space": 14},
-        "dragon": {"max_level": 9, "housing_space": 20},
-        "pekka": {"max_level": 11, "housing_space": 25},
-        "minion": {"max_level": 10, "housing_space": 2},
-        "hog_rider": {"max_level": 11, "housing_space": 5},
-        "valkyrie": {"max_level": 9, "housing_space": 8},
-        "golem": {"max_level": 11, "housing_space": 30},
-        "witch": {"max_level": 6, "housing_space": 12},
-        "lava_hound": {"max_level": 7, "housing_space": 30},
-        "bowler": {"max_level": 6, "housing_space": 6},
-        "baby_dragon": {"max_level": 8, "housing_space": 10},
-        "miner": {"max_level": 8, "housing_space": 6},
-        "ice_golem": {"max_level": 6, "housing_space": 30},
-        "yeti": {"max_level": 5, "housing_space": 30},
-        "dragon_rider": {"max_level": 3, "housing_space": 30}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 9},
-      "spells": {
-        "lightning_spell": {"max_level": 10, "housing_space": 1},
-        "healing_spell": {"max_level": 9, "housing_space": 1},
-        "rage_spell": {"max_level": 6, "housing_space": 2},
-        "jump_spell": {"max_level": 4, "housing_space": 2},
-        "freeze_spell": {"max_level": 8, "housing_space": 1},
-        "poison_spell": {"max_level": 7, "housing_space": 1},
-        "skeleton_spell": {"max_level": 8, "housing_space": 5},
-        "clone_spell": {"max_level": 6, "housing_space": 3},
-        "invisibility_spell": {"max_level": 5, "housing_space": 3},
-        "bat_spell": {"max_level": 6, "housing_space": 5}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 100, "unlock_level": 1},
-      "archer_queen": {"max_level": 100, "unlock_level": 1},
-      "grand_warden": {"max_level": 60, "unlock_level": 9},
-      "royal_champion": {"max_level": 40, "unlock_level": 13}
-    }
-  },
-  "TH17": {
-    "level": 17,
-    "upgrade_cost": 40000000,
-    "upgrade_time": "18d",
-    "hitpoints": 15400,
-    "buildings": {
-      "cannon": {"count": 7, "max_level": 22},
-      "archer_tower": {"count": 7, "max_level": 22},
-      "mortar": {"count": 4, "max_level": 15},
-      "air_defense": {"count": 4, "max_level": 13},
-      "wizard_tower": {"count": 5, "max_level": 15},
-      "air_sweeper": {"count": 2, "max_level": 10},
-      "hidden_tesla": {"count": 6, "max_level": 14},
-      "bomb_tower": {"count": 2, "max_level": 10},
-      "x_bow": {"count": 4, "max_level": 10},
-      "inferno_tower": {"count": 3, "max_level": 9},
-      "eagle_artillery": {"count": 1, "max_level": 5},
-      "scattershot": {"count": 2, "max_level": 4},
-      "monolith": {"count": 4, "max_level": 4},
-      "workshop": {"count": 1, "max_level": 7},
-      "gold_mine": {"count": 7, "max_level": 21},
-      "elixir_collector": {"count": 7, "max_level": 21},
-      "dark_elixir_drill": {"count": 4, "max_level": 12},
-      "gold_storage": {"count": 4, "max_level": 16},
-      "elixir_storage": {"count": 4, "max_level": 16},
-      "dark_elixir_storage": {"count": 1, "max_level": 10},
-      "army_camp": {"count": 4, "max_level": 12},
-      "barracks": {"count": 4, "max_level": 18},
-      "dark_barracks": {"count": 2, "max_level": 12},
-      "laboratory": {"count": 1, "max_level": 13},
-      "spell_factory": {"count": 1, "max_level": 9},
-      "dark_spell_factory": {"count": 1, "max_level": 8},
-      "builder_hut": {"count": 5, "max_level": 1},
-      "walls": {"count": 500, "max_level": 17},
-      "clan_castle": {"count": 1, "max_level": 13},
-      "pet_house": {"count": 1, "max_level": 10},
-      "blacksmith": {"count": 1, "max_level": 9}
-    },
-    "army": {
-      "army_camps_capacity": 350,
-      "barracks": {"count": 4, "max_level": 18},
-      "troops": {
-        "barbarian": {"max_level": 12, "housing_space": 1},
-        "archer": {"max_level": 12, "housing_space": 1},
-        "goblin": {"max_level": 9, "housing_space": 1},
-        "giant": {"max_level": 12, "housing_space": 5},
-        "wizard": {"max_level": 12, "housing_space": 4},
-        "balloon": {"max_level": 11, "housing_space": 5},
-        "healer": {"max_level": 7, "housing_space": 14},
-        "dragon": {"max_level": 9, "housing_space": 20},
-        "pekka": {"max_level": 11, "housing_space": 25},
-        "minion": {"max_level": 10, "housing_space": 2},
-        "hog_rider": {"max_level": 11, "housing_space": 5},
-        "valkyrie": {"max_level": 9, "housing_space": 8},
-        "golem": {"max_level": 11, "housing_space": 30},
-        "witch": {"max_level": 6, "housing_space": 12},
-        "lava_hound": {"max_level": 7, "housing_space": 30},
-        "bowler": {"max_level": 6, "housing_space": 6},
-        "baby_dragon": {"max_level": 8, "housing_space": 10},
-        "miner": {"max_level": 8, "housing_space": 6},
-        "ice_golem": {"max_level": 6, "housing_space": 30},
-        "yeti": {"max_level": 5, "housing_space": 30},
-        "dragon_rider": {"max_level": 3, "housing_space": 30}
-      }
-    },
-    "spells": {
-      "spell_factory": {"count": 1, "max_level": 9},
-      "spells": {
-        "lightning_spell": {"max_level": 10, "housing_space": 1},
-        "healing_spell": {"max_level": 9, "housing_space": 1},
-        "rage_spell": {"max_level": 6, "housing_space": 2},
-        "jump_spell": {"max_level": 4, "housing_space": 2},
-        "freeze_spell": {"max_level": 8, "housing_space": 1},
-        "poison_spell": {"max_level": 7, "housing_space": 1},
-        "skeleton_spell": {"max_level": 8, "housing_space": 5},
-        "clone_spell": {"max_level": 6, "housing_space": 3},
-        "invisibility_spell": {"max_level": 5, "housing_space": 3},
-        "bat_spell": {"max_level": 6, "housing_space": 5}
-      }
-    },
-    "heroes": {
-      "barbarian_king": {"max_level": 100, "unlock_level": 1},
-      "archer_queen": {"max_level": 100, "unlock_level": 1},
-      "grand_warden": {"max_level": 65, "unlock_level": 9},
-      "royal_champion": {"max_level": 50, "unlock_level": 13}
-    }
+import rawTroopData from './troopUpgradeStats-formatted.json';
+import equipmentData from './equipment.json';
+import superTroopData from './super-troops.json';
+
+// Type definitions for our structured data
+export interface UnlockInfo {
+  hall: number;
+  building: string;
+  buildingLevel: number;
+}
+
+export interface GameItem {
+  name: string;
+  type: 'building' | 'troop' | 'spell' | 'hero' | 'pet' | 'equipment' | 'siege';
+  unlock: UnlockInfo;
+  maxLevelByTownHall: number[];
+  upgrade?: {
+    cost: number[];
+    time: number[];
+    resource: string;
+  };
+}
+
+export interface TownHallData {
+  buildings: Record<string, { count: number; max_level: number; }>;
+  troops: Record<string, { max_level: number; }>;
+  spells: Record<string, { max_level: number; }>;
+  heroes: Record<string, { max_level: number; }>;
+  pets: Record<string, { max_level: number; }>;
+  walls: { count: number, max_level: number };
+}
+
+const snakeToTitleCase = (str: string) => {
+    if (!str) return '';
+    return str.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+};
+
+const tidToName = (tid: string): string => {
+    return tid.replace('TID_', '').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
+
+const processedGameData = new Map<string, GameItem>();
+
+// Process raw data into a structured map
+rawTroopData.forEach((item: any) => {
+  let name = item.name;
+  if (item.tid) {
+    name = tidToName(item.tid);
   }
-}
-}
-}
+  
+  const category = item.category as string;
+  let type: GameItem['type'] = 'troop';
+  if (category === 'troop' && item.subCategory === 'pet') type = 'pet';
+  else if (category === 'troop' && item.subCategory === 'siege') type = 'siege';
+  else if (category === 'spell') type = 'spell';
+  else if (category === 'hero') type = 'hero';
+  else if (category === 'equipment') type = 'equipment';
+
+  // Fix for items that are buildings but are in this list
+  if(['Wall Wrecker', 'Battle Blimp', 'Stone Slammer', 'Siege Barracks', 'Log Launcher', 'Flame Flinger', 'Battle Drill', 'Troop Launcher'].includes(name)){
+    type = 'siege';
+  }
+
+  const gameItem: GameItem = {
+    name: name,
+    type: type,
+    unlock: {
+      hall: item.unlock?.hall || 0,
+      building: item.unlock?.building || '',
+      buildingLevel: item.unlock?.buildingLevel || 0,
+    },
+    maxLevelByTownHall: item.levels,
+    upgrade: item.upgrade,
+  };
+  processedGameData.set(name, gameItem);
+});
+
+// Helper function to get an item's data
+export const getItemData = (name: string): GameItem | undefined => {
+  return processedGameData.get(name);
+};
+
+// Function to get available items for a given Town Hall level
+export const getItemsForTownHall = (
+    thLevel: number, 
+    types: GameItem['type'][]
+): GameItem[] => {
+    const items: GameItem[] = [];
+    processedGameData.forEach(item => {
+        if (types.includes(item.type) && item.unlock.hall <= thLevel && item.unlock.hall > 0) {
+            items.push(item);
+        }
+    });
+    return items.sort((a,b) => a.name.localeCompare(b.name));
+};
+
+export const getMaxLevelForItem = (itemName: string, thLevel: number): number => {
+    const item = getItemData(itemName);
+    if (!item || !item.maxLevelByTownHall || thLevel < 1) {
+        return 1;
+    }
+    return item.maxLevelByTownHall[thLevel -1] || 1;
+};
+
+// A simplified structure for the survey based on the new data.
+// We'll generate this dynamically in the survey component itself.
+// This file now acts as the data access layer.
+
+export const buildingUnlockLevels: Record<string, number> = {
+    'Laboratory': 4,
+    'Barracks': 1, 
+    'Dark Barracks': 7,
+    'Spell Factory': 4,
+    'Dark Spell Factory': 9,
+    'Clan Castle': 3,
+    'Workshop': 12,
+    'Pet House': 14,
+    'Blacksmith': 8,
+    'Army Camp': 1,
+    'Gold Storage': 1,
+    'Elixir Storage': 1,
+    'Dark Elixir Storage': 7,
+    'Gold Mine': 1,
+    'Elixir Collector': 1,
+    'Dark Elixir Drill': 7,
+    'Cannon': 1,
+    'Archer Tower': 2,
+    'Mortar': 4,
+    'Air Defense': 5,
+    'Wizard Tower': 7,
+    'Air Sweeper': 9,
+    'Hidden Tesla': 9,
+    'Bomb Tower': 10,
+    'X Bow': 9,
+    'Inferno Tower': 10,
+    'Eagle Artillery': 11,
+    'Scattershot': 13,
+    'Spell Tower': 9,
+    'Monolith': 9,
+    'Wall': 2,
+};
+
+export const getBuildingCountsForTownHall = (thLevel: number): Record<string, number> => {
+    const counts: Record<string, {th: number, count: number}[]> = {
+        'Cannon': [{th:1, count:1}, {th:3, count:2}, {th:7, count:4}, {th:8, count:5}, {th:12, count:6}, {th:10, count:7}],
+        'Archer Tower': [{th:2, count:1}, {th:4, count:2}, {th:6, count:3}, {th:7, count:4}, {th:9, count:5}, {th:12, count:6}, {th:10, count:8}, {th:15, count:7}],
+        'Mortar': [{th:4, count:1}, {th:6, count:2}, {th:8, count:3}, {th:9, count:4}],
+        'Air Defense': [{th:5, count:1}, {th:6, count:2}, {th:8, count:3}, {th:9, count:4}],
+        'Wizard Tower': [{th:7, count:2}, {th:8, count:3}, {th:9, count:4}, {th:10, count:5}],
+        'Air Sweeper': [{th:9, count:2}],
+        'Hidden Tesla': [{th:9, count:4}, {th:12, count:5}, {th:15, count:6}],
+        'Bomb Tower': [{th:10, count:2}],
+        'X Bow': [{th:9, count:4}],
+        'Inferno Tower': [{th:10, count:2}, {th:14, count:3}],
+        'Eagle Artillery': [{th:11, count:1}],
+        'Scattershot': [{th:13, count:2}],
+        'Spell Tower': [{th:9, count:2}],
+        'Monolith': [{th:9, count:3},{th:14, count:4}],
+        'Army Camp': [{th:1, count:1}, {th:3, count:2}, {th:4, count:3}, {th:5, count:4}],
+        'Gold Storage': [{th:1, count:1}, {th:4, count:2}, {th:7, count:3}, {th:9, count:4}],
+        'Elixir Storage': [{th:1, count:1}, {th:4, count:2}, {th:7, count:3}, {th:9, count:4}],
+        'Dark Elixir Drill': [{th:7, count:1}, {th:8, count:2}, {th:9, count:3}, {th:13, count:4}],
+        'Wall': [{th:2, count:25}, {th:3, count:50}, {th:4, count:75}, {th:5, count:100}, {th:6, count:125}, {th:7, count:150}, {th:8, count:175}, {th:9, count:250}, {th:10, count:275}, {th:12, count:300}, {th:13, count:325}, {th:14, count:350}, {th:15, count:400}, {th:16, count:450}, {th:17, count:500}],
+    };
+
+    const finalCounts: Record<string, number> = {};
+    for (const building in counts) {
+        let currentCount = 0;
+        for (const tier of counts[building]) {
+            if (thLevel >= tier.th) {
+                currentCount = tier.count;
+            } else {
+                break;
+            }
+        }
+        if (currentCount > 0) {
+            finalCounts[building] = currentCount;
+        }
+    }
+    return finalCounts;
+};
+
+// Single instance buildings don't change count
+export const singleInstanceBuildings = [
+    'Laboratory', 'Spell Factory', 'Dark Spell Factory', 'Clan Castle', 
+    'Workshop', 'Pet House', 'Blacksmith', 'Barracks', 'Dark Barracks', 'Dark Elixir Storage'
+];

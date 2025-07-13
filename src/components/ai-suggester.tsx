@@ -9,14 +9,7 @@ import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/
 import type { VillageState, Building as BuildingType } from '@/lib/constants';
 import { Skeleton } from './ui/skeleton';
 import Image from 'next/image';
-
-import bkAvatar1 from '../../../public/_avatars/bk_avatar.png';
-import bkAvatar2 from '../../../public/_avatars/bk_avatar2.png';
-import mpAvatar1 from '../../../public/_avatars/mp_avatar.png';
-import mpAvatar2 from '../../../public/_avatars/mp_avatar2.png';
-
-const heroAvatarAssets = [bkAvatar1, bkAvatar2, mpAvatar1, mpAvatar2];
-
+import { heroAvatarAssets } from '@/lib/image-paths';
 
 interface AiSuggesterProps {
   villageState: VillageState;
@@ -115,7 +108,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   return (
     <Card className="bg-gradient-to-br from-card to-muted/20 border-primary/20">
       <CardHeader className="flex flex-row items-center gap-4">
-        {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" />}
+        {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" unoptimized />}
         <div className='flex-1'>
           <CardTitle className="flex items-center font-headline text-2xl">
             <Lightbulb className="mr-3 h-8 w-8 text-accent" />

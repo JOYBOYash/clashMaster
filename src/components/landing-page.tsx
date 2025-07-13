@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Castle, ShieldCheck, BarChart, Wand2 } from 'lucide-react';
 import Image from 'next/image';
 
+
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <div className="flex flex-col items-center text-center p-6 rounded-xl bg-card/50 border border-border/50">
     <div className="p-4 bg-primary/10 rounded-full mb-4">

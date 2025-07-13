@@ -2,7 +2,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Home, Hammer } from 'lucide-react';
 import Image from 'next/image';
-import { townHallImageMap, builderHallImageMap } from '@/lib/image-paths';
 
 interface VillageOverviewProps {
   base: 'home' | 'builder';
@@ -14,8 +13,9 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
   const title = base === 'home' ? 'Town Hall' : 'Builder Hall';
   
   const getHallImagePath = (base: 'home' | 'builder', level: number): string => {
-    const formattedName = base === 'home' ? 'Town_Hall' : 'Builder_Hall';
-    return `/_halls/${formattedName.toLowerCase()}/Building_h_${formattedName}_level_${level}.png`;
+    const formattedName = base === 'home' ? 'town_hall' : 'builder_hall';
+    const buildingName = base === 'home' ? 'Town_Hall' : 'Builder_Hall';
+    return `/_halls/${formattedName}/Building_h_${buildingName}_level_${level}.png`;
   };
 
   const imageUrl = getHallImagePath(base, level);

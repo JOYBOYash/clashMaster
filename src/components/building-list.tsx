@@ -11,19 +11,18 @@ import Image from 'next/image';
 import { buildingNameToType } from '@/lib/constants';
 
 const getBuildingImagePath = (name: string, level: number): string => {
-    const formattedName = name.replace(/\s+/g, '_');
-    const folderName = name.replace(/\s+/g, '-').toLowerCase();
-
-    // Default to level 1 if no specific level image exists or for simplicity
-    // This logic can be expanded if you have all level images for all buildings
-    const finalLevel = level > 0 ? level : 1; 
-
-    // Handle special cases from game data naming conventions
+    // Handle special cases first
     if (name === 'X Bow') {
-      return `/_buildings/x-bow/Building_HV_X-Bow_level_${finalLevel}.png`;
+      return `/_buildings/x-bow/Building_HV_X-Bow_level_${level}.png`;
+    }
+    if (name === 'Wall') {
+        return `/_buildings/wall/Wall_level_${level}.png`
     }
 
-    return `/_buildings/${folderName}/Building_HV_${formattedName}_level_${finalLevel}.png`;
+    const folderName = name.replace(/\s+/g, '-').toLowerCase();
+    const formattedName = name.replace(/\s+/g, '_');
+    
+    return `/_buildings/${folderName}/Building_HV_${formattedName}_level_${level}.png`;
 };
 
 const getGroupedBuildings = (buildings: Building[]) => {

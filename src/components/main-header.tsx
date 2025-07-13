@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 export function MainHeader() {
   const { user, signOut, clearVillageState } = useAuth();
@@ -33,8 +34,8 @@ export function MainHeader() {
       <div className="container flex h-16 items-center">
         <Link href="/sign-in" className="mr-8 flex items-center space-x-2">
           <Castle className="h-8 w-8 mr-2 text-primary" />
-          <h1 className="text-2xl font-bold text-primary font-headline">
-            Clash Master
+          <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
+            ClashTrack
           </h1>
         </Link>
         

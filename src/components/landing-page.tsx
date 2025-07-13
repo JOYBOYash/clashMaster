@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Castle, ShieldCheck, BarChart, Wand2, Heart } from 'lucide-react';
 import Image from 'next/image';
-import coclogo from '@/public/coc_logo.png'
+
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <div className="flex flex-col items-center text-center p-6 rounded-xl bg-card/50 border border-border/50">
@@ -25,7 +25,7 @@ export function LandingPage() {
         <div className="container mx-auto px-4">
             <div className="flex justify-center mb-6">
                 <Image
-                    src={coclogo}
+                    src='/coc_logo.png'
                     alt="Clash of Clans Logo" 
                     data-ai-hint="clash of clans logo"
                     width={400} 

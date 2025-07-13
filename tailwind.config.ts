@@ -18,7 +18,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['var(--font-body)'],
-        headline: ['var(--font-headline)'],
+        headline: ['SupercellMagic', 'var(--font-headline)', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

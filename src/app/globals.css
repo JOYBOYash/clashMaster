@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 @layer base {
+  @font-face {
+    font-family: 'SupercellMagic';
+    src: url('/SupercellMagic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
   :root {
     --background: 36 33% 92%; /* off-white parchment */
     --foreground: 27 39% 20%; /* darker brown */

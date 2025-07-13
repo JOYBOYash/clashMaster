@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Castle, ShieldCheck, BarChart, Wand2 } from 'lucide-react';
 import Image from 'next/image';
-import townHall16 from '@/public/_town-halls/Building_HV_Town_Hall_level_16_1.png';
+import { getHallImagePath } from '@/lib/image-paths';
 
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
@@ -25,7 +25,7 @@ export function LandingPage() {
       <section className="w-full text-center py-20 lg:py-32 bg-gradient-to-b from-background to-muted/40">
         <div className="container mx-auto px-4">
             <div className="flex justify-center mb-6">
-                 <Image src={townHall16} alt="Town Hall" width={160} height={160} unoptimized />
+                 <Image src={getHallImagePath('home', 16)} alt="Town Hall" width={160} height={160} unoptimized />
             </div>
           <h1 className="text-4xl md:text-6xl font-extrabold font-headline tracking-tight text-primary">
             Master Your Clash of Clans Village

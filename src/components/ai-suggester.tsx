@@ -33,6 +33,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [avatar, setAvatar] = useState('');
 
   useEffect(() => {
+      // This will only run on the client, preventing hydration mismatch
       setAvatar(heroAvatars[Math.floor(Math.random() * heroAvatars.length)]);
   }, []);
 

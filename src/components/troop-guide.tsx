@@ -62,6 +62,12 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
     };
     
     const getTroopImagePath = (name: string): string => {
+        if (name.startsWith('Super')) {
+            const superTroopFileName = troopImageMap[name];
+            if (superTroopFileName) {
+                 return `/_troops/super/${superTroopFileName}`;
+            }
+        }
         const formattedName = name.replace(/\s+/g, '_').replace(/\./g, '');
         return `/_troops/${formattedName}.png`;
     };

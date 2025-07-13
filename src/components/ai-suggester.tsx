@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
 import type { VillageState, Building as BuildingType } from '@/lib/constants';
 import { Skeleton } from './ui/skeleton';
+import Image from 'next/image';
 
 interface AiSuggesterProps {
   villageState: VillageState;
@@ -23,10 +23,22 @@ const iconMap: Record<string, React.ElementType> = {
   default: Lightbulb
 };
 
+const heroAvatars = [
+    '/images/_avatars/bk_avatar.png',
+    '/images/_avatars/aq_avatar.png',
+    '/images/_avatars/gw_avatar.png',
+    '/images/_avatars/rc_avatar.png',
+]
+
 export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const [avatar, setAvatar] = useState('');
+
+  useEffect(() => {
+      setAvatar(heroAvatars[Math.floor(Math.random() * heroAvatars.length)]);
+  }, []);
 
   const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
   const heroesForBase = (villageState.heroes || []).filter(h => h.village === base);
@@ -99,14 +111,17 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
 
   return (
     <Card className="bg-gradient-to-br from-card to-muted/20 border-primary/20">
-      <CardHeader>
-        <CardTitle className="flex items-center font-headline text-2xl">
-          <Lightbulb className="mr-3 h-8 w-8 text-accent" />
-          AI Upgrade Advisor
-        </CardTitle>
-        <CardDescription>
-          Your top 3 personalized recommendations for the {base === 'home' ? 'Home Village' : 'Builder Base'}.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center gap-4">
+        {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" unoptimized/>}
+        <div className='flex-1'>
+          <CardTitle className="flex items-center font-headline text-2xl">
+            <Lightbulb className="mr-3 h-8 w-8 text-accent" />
+            AI Upgrade Advisor
+          </CardTitle>
+          <CardDescription>
+            Your top 3 personalized recommendations for the {base === 'home' ? 'Home Village' : 'Builder Base'}.
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading && renderSkeleton()}
@@ -122,7 +137,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
                     <Icon className="w-8 h-8 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-lg text-card-foreground font-headline tracking-wide">{s.buildingName}</p>
+                    <h3 className="font-bold text-lg text-card-foreground font-headline tracking-wide">{s.buildingName}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{s.reason}</p>
                   </div>
                 </div>
@@ -142,5 +157,3 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
     </Card>
   );
 }
-
-    

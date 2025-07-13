@@ -33,7 +33,7 @@ export function LandingPage() {
             Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
           </p>
           <Button asChild size="lg" className="mt-8 text-lg font-bold">
-            <Link href="/home">Get Started for Free</Link>
+            <Link href="/sign-in">Get Started for Free</Link>
           </Button>
         </div>
       </section>

@@ -31,7 +31,7 @@ export function MainHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <Link href="/home" className="mr-8 flex items-center space-x-2">
+        <Link href="/sign-in" className="mr-8 flex items-center space-x-2">
           <Castle className="h-8 w-8 mr-2 text-primary" />
           <h1 className="text-2xl font-bold text-primary font-headline">
             Clash Master
@@ -90,7 +90,7 @@ export function MainHeader() {
             </AlertDialog>
           ) : (
             <Button asChild>
-                <Link href="/home">Get Started</Link>
+                <Link href="/sign-in">Get Started</Link>
             </Button>
           )}
         </div>

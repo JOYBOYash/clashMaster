@@ -3,7 +3,7 @@
 import { AuthWrapper } from '@/components/auth-wrapper';
 import { VillageView } from '@/components/village-view';
 
-export default function HomePage() {
+export default function SignInPage() {
   return (
     <AuthWrapper>
       {(villageState) => <VillageView villageState={villageState} />}

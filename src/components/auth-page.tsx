@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { AuthWrapper } from './auth-wrapper';
+import { redirect } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -22,8 +22,8 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const AuthForm = () => {
-  const { signUp, signIn, user, loading: authLoading } = useAuth();
+export const AuthPage = () => {
+  const { signUp, signIn, user, loading: authLoading, villageState } = useAuth();
   const { toast } = useToast();
   const [formLoading, setFormLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('sign-in');
@@ -40,10 +40,11 @@ const AuthForm = () => {
     setFormLoading(true);
     try {
       await signIn(data.email, data.password);
+      // On successful sign-in, the AuthProvider's onAuthStateChanged will handle redirection logic.
     } catch (error: any) {
       if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
         toast({
-          title: 'New to ClashTrack?',
+          title: 'New to Blueprints?',
           description: "It looks like you don't have an account. Please sign up to continue.",
         });
         setSignUpValue('email', data.email);
@@ -65,10 +66,7 @@ const AuthForm = () => {
     setFormLoading(true);
     try {
       await signUp(data.email, data.password);
-      toast({
-        title: 'Account Created',
-        description: "You've been successfully signed up! You are now logged in.",
-      });
+      // onAuthStateChanged in AuthProvider will trigger, and the user will be redirected to /survey
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -81,6 +79,15 @@ const AuthForm = () => {
   };
   
   const isLoading = formLoading || authLoading;
+
+  // If user and villageState are loaded, redirect from here.
+  if (!authLoading && user) {
+    if (villageState) {
+        redirect('/upgrades');
+    } else {
+        redirect('/survey');
+    }
+  }
 
   return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -146,12 +153,4 @@ const AuthForm = () => {
         </TabsContent>
       </Tabs>
   );
-}
-
-export function AuthPage() {
-  return (
-    <AuthWrapper>
-      {() => <AuthForm />}
-    </AuthWrapper>
-  )
 }

@@ -3,17 +3,15 @@
 
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from "lucide-react";
-import { VillageSurvey } from './village-survey';
-import type { VillageState } from "@/lib/constants";
-import { VillageView } from "./village-view";
 import { redirect } from "next/navigation";
+import type { VillageState } from "@/lib/constants";
 
 interface AuthWrapperProps {
-  children: (villageState?: VillageState) => React.ReactNode;
+  children: (villageState: VillageState) => React.ReactNode;
 }
 
 export function AuthWrapper({ children }: AuthWrapperProps) {
-  const { user, loading, villageState, saveVillageState } = useAuth();
+  const { user, loading, villageState } = useAuth();
 
   if (loading) {
     return (
@@ -23,12 +21,14 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
     );
   }
   
-  if (user) {
-    if (villageState) {
-        redirect('/upgrades');
-    }
-    return <VillageSurvey onSurveyComplete={saveVillageState} />;
+  if (!user) {
+    redirect('/sign-in');
   }
 
-  return <>{children()}</>;
+  if (user && !villageState) {
+    redirect('/survey');
+  }
+
+  // At this point, user is logged in and has village state
+  return <>{children(villageState!)}</>;
 }

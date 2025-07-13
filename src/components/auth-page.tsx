@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { carouselImages } from '@/lib/image-paths';
+import { carouselImageAssets } from '@/lib/image-paths';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -79,7 +79,7 @@ export function AuthPage() {
         <div className="hidden md:block relative">
             <Carousel className="w-full h-full" autoplay>
               <CarouselContent>
-                {carouselImages.map((img, index) => (
+                {carouselImageAssets.map((img, index) => (
                   <CarouselItem key={index} className="p-0">
                     <div className="relative w-full h-[550px]">
                         <Image
@@ -87,7 +87,6 @@ export function AuthPage() {
                             alt={img.alt}
                             fill
                             className="object-cover"
-                            unoptimized
                         />
                     </div>
                   </CarouselItem>

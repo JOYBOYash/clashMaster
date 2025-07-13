@@ -30,8 +30,6 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
                 width={160} 
                 height={160} 
                 className="rounded-lg shadow-lg aspect-square object-contain bg-muted/30 p-2" 
-                unoptimized
-                onError={(e) => { e.currentTarget.src = '/_misc/default.png'; }}
             />
             <div className="flex-grow space-y-2">
                 <p className="text-muted-foreground">Current Level</p>

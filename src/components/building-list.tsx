@@ -104,7 +104,6 @@ export function BuildingList({ buildings }: BuildingListProps) {
                                     height={128}
                                     className="rounded-md self-center aspect-square object-contain bg-muted/20"
                                     unoptimized
-                                    onError={(e) => { e.currentTarget.src = '/_misc/default.png'; }}
                                 />
                                 <div className="text-center mt-1">
                                     <p className="font-bold text-card-foreground">{building.name}</p>

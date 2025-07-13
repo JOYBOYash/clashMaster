@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,6 +9,7 @@ import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/
 import type { VillageState, Building as BuildingType } from '@/lib/constants';
 import { Skeleton } from './ui/skeleton';
 import Image from 'next/image';
+import { heroAvatars } from '@/lib/image-paths';
 
 interface AiSuggesterProps {
   villageState: VillageState;
@@ -23,12 +25,6 @@ const iconMap: Record<string, React.ElementType> = {
   default: Lightbulb
 };
 
-const heroAvatars = [
-    '/images/_avatars/bk_avatar.png',
-    '/images/_avatars/aq_avatar.png',
-    '/images/_avatars/gw_avatar.png',
-    '/images/_avatars/rc_avatar.png',
-]
 
 export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);

@@ -23,22 +23,22 @@ const createPathMap = (basePath: string, items: string[]): Record<string, string
 
 // --- Town/Builder Hall Paths ---
 export const townHallImageMap: Record<number, string> = {
-    1: './assets/_town-halls/Building_HV_Town_Hall_level_1.png',
-    2: './assets/_town-halls/Building_HV_Town_Hall_level_2.png',
-    3: './assets/_town-halls/Building_HV_Town_Hall_level_3.png',
-    4: './assets/_town-halls/Building_HV_Town_Hall_level_4.png',
-    5: './assets/_town-halls/Building_HV_Town_Hall_level_5.png',
-    6: './assets/_town-halls/Building_HV_Town_Hall_level_6.png',
-    7: './assets/_town-halls/Building_HV_Town_Hall_level_7.png',
-    8: './assets/_town-halls/Building_HV_Town_Hall_level_8.png',
-    9: './assets/_town-halls/Building_HV_Town_Hall_level_9.png',
-    10: './assets/_town-halls/Building_HV_Town_Hall_level_10.png',
-    11: './assets/_town-halls/Building_HV_Town_Hall_level_11.png',
-    12: './assets/_town-halls/Building_HV_Town_Hall_level_12_1.png',
-    13: './assets/_town-halls/Building_HV_Town_Hall_level_13_1.png',
-    14: './assets/_town-halls/Building_HV_Town_Hall_level_14_1.png',
-    15: './assets/_town-halls/Building_HV_Town_Hall_level_15_2.png',
-    16: './assets/_town-halls/Building_HV_Town_Hall_level_16_1.png',
+    1: '/assets/_town-halls/Building_HV_Town_Hall_level_1.png',
+    2: '/assets/_town-halls/Building_HV_Town_Hall_level_2.png',
+    3: '/assets/_town-halls/Building_HV_Town_Hall_level_3.png',
+    4: '/assets/_town-halls/Building_HV_Town_Hall_level_4.png',
+    5: '/assets/_town-halls/Building_HV_Town_Hall_level_5.png',
+    6: '/assets/_town-halls/Building_HV_Town_Hall_level_6.png',
+    7: '/assets/_town-halls/Building_HV_Town_Hall_level_7.png',
+    8: '/assets/_town-halls/Building_HV_Town_Hall_level_8.png',
+    9: '/assets/_town-halls/Building_HV_Town_Hall_level_9.png',
+    10: '/assets/_town-halls/Building_HV_Town_Hall_level_10.png',
+    11: '/assets/_town-halls/Building_HV_Town_Hall_level_11.png',
+    12: '/assets/_town-halls/Building_HV_Town_Hall_level_12_1.png',
+    13: '/assets/_town-halls/Building_HV_Town_Hall_level_13_1.png',
+    14: '/assets/_town-halls/Building_HV_Town_Hall_level_14_1.png',
+    15: '/assets/_town-halls/Building_HV_Town_Hall_level_15_2.png',
+    16: '/assets/_town-halls/Building_HV_Town_Hall_level_16_1.png',
 };
 
 // --- Building Image Paths ---
@@ -60,8 +60,8 @@ export const heroAvatarAssets = [
 ];
 
 export const carouselImageAssets = [
-  { src: '../assets/_login_carousel/BK_SideProfile.png', alt: 'Barbarian King' },
-    { src: '../assets/_login_carousel/AQ_SideProfile.png', alt: 'Archer Queen' },
+  { src: '@/public/assets/_login_carousel/BK_SideProfile.png', alt: 'Barbarian King' },
+    { src: '@/src/assets/_login_carousel/AQ_SideProfile.png', alt: 'Archer Queen' },
     { src: '../assets/_login_carousel/GW_SideProfile.png', alt: 'Grand Warden' },
     { src: '../assets/_login_carousel/MP_SideProfile.png', alt: 'Minion Prince' },
     { src: '../assets/_login_carousel/RC_SideProfile.png', alt: 'Royal Champion' },

@@ -6,7 +6,7 @@ import { AuthProvider } from '@/context/auth-context';
 import { AppWrapper } from '@/components/app-wrapper';
 
 export const metadata: Metadata = {
-  title: 'Clash Master',
+  title: 'ClashTrack',
   description: 'Master your Clash of Clans village with AI-powered upgrade suggestions.',
 };
 
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("font-headline antialiased")}>
+      <body className={cn("font-body antialiased")}>
         <AuthProvider>
           <AppWrapper>
             {children}

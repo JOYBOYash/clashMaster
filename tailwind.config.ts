@@ -17,7 +17,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['SupercellMagic', 'sans-serif'],
+        body: ['Alegreya', 'sans-serif'],
         headline: ['SupercellMagic', 'sans-serif'],
       },
       colors: {

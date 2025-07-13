@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -79,12 +80,12 @@ export function AuthPage() {
   return (
     <div className="w-full h-full flex-grow flex items-center justify-center p-4">
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 overflow-hidden rounded-xl shadow-2xl border">
-        <div className="hidden md:block">
+        <div className="hidden md:block relative">
             <Carousel className="w-full h-full" autoplay>
               <CarouselContent>
                 {carouselImages.map((img, index) => (
                   <CarouselItem key={index} className="p-0">
-                    <div className="relative w-full h-full aspect-square">
+                    <div className="relative w-full h-full aspect-[9/16] sm:aspect-square">
                         <Image
                             src={img.src}
                             alt={img.alt}

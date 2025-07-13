@@ -72,9 +72,9 @@ export function LandingPage() {
           <div className="flex justify-center mb-4">
             <Heart className="w-12 h-12 text-destructive" />
           </div>
-          <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By Fans, For Fans</h2>
+          <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
           <p className="text-lg text-foreground/80 mb-6">
-            We're passionate Clash of Clans players, just like you. We built Clash Master to enhance the strategic depth of the game we love, providing tools to help you plan and progress more effectively. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
+            As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
           </p>
           <p className="text-sm text-muted-foreground italic">
             Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy: www.supercell.com/fan-content-policy.
@@ -85,7 +85,7 @@ export function LandingPage() {
       <footer className="w-full py-12">
         <div className="container mx-auto text-center text-muted-foreground">
           <p className="font-headline text-lg font-bold">Clash Master</p>
-          <p className="text-sm">built for fans by a fan</p>
+          <p className="text-sm">built by a fan (with a little AI help)</p>
         </div>
       </footer>
     </div>

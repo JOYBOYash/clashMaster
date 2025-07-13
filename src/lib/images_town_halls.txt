@@ -134,3 +134,12 @@ Folder: public/images/scenery/
 
 magic_theater.png
 shadow_scenery.png
+
+AEthetics: public/images/aesthetics
+
+1. warden-side-profile-login-carousel.png - https://fankit.supercell.com/d/vkEdmkUCngKw/game-assets/show/eyJpZCI6MTAwNDQzLCJzY29wZSI6ImFzc2V0OnZpZXciLCJ0aW1lc3RhbXAiOiIxNzUyMzY2MzI3In0:supercell:cwlQaQu7ZhBXVwLaSQuCTYcMFInsrT_oSXAgxypaINk
+
+2.  barbarianKing-side-profile-login-carousel.png - https://fankit.supercell.com/d/vkEdmkUCngKw/game-assets/show/eyJpZCI6MTAwNDQxLCJzY29wZSI6ImFzc2V0OnZpZXciLCJ0aW1lc3RhbXAiOiIxNzUyMzY2NDQzIn0:supercell:pnW5yhhdFM33WVB5cizUtmRvMtyFxnFgyW6ztXYyONw
+
+3.  prince-side-profile-login-carousel.png - https://fankit.supercell.com/d/vkEdmkUCngKw/game-assets/show/eyJpZCI6MTAwNDM2LCJzY29wZSI6ImFzc2V0OnZpZXciLCJ0aW1lc3RhbXAiOiIxNzUyMzY2NDg1In0:supercell:NZM7OePbdsAPd2wtebOYkX1Ec1S7RKGG2p32MwuHadU
+

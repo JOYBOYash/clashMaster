@@ -103,7 +103,6 @@ export function BuildingList({ buildings }: BuildingListProps) {
                                     width={128}
                                     height={128}
                                     className="rounded-md self-center aspect-square object-contain bg-muted/20"
-                                    unoptimized
                                 />
                                 <div className="text-center mt-1">
                                     <p className="font-bold text-card-foreground">{building.name}</p>

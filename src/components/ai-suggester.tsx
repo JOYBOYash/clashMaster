@@ -37,8 +37,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   }, []);
 
   const buildingsForBase = (villageState.buildings || []).filter(b => b.base === base);
-  const heroesForBase = (villageState.heroes || []).filter(h => h.village === base);
-
+  
   const getSuggestionType = (name: string): string => {
     if (villageState.buildings.find(b => b.name === name)) return villageState.buildings.find(b => b.name === name)!.type;
     if (villageState.heroes.find(h => h.name === name)) return 'hero';

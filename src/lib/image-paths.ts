@@ -37,10 +37,6 @@ export const otherFeaturedItems = [
   { title: "Shadow Scenery", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/_scenery/shadow_scenery.png", hint: "dark castle night" },
 ];
 
-export const townHallImageMap: Record<number, string> = {};
-export const builderHallImageMap: Record<number, string> = {};
-export const buildingImageMap: Record<string, string> = {};
-
 export const troopImageMap: Record<string, string> = {
     'Super Barbarian': 'Icon_HV_Super_Barbarian.png',
     'Super Archer': 'Icon_HV_Super_Archer.png',

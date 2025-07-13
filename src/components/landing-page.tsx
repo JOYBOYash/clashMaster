@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Castle, ShieldCheck, BarChart, Wand2, Heart } from 'lucide-react';
 import Image from 'next/image';
+import coclogo from '@/public/coc_logo.png'
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <div className="flex flex-col items-center text-center p-6 rounded-xl bg-card/50 border border-border/50">
@@ -24,7 +25,7 @@ export function LandingPage() {
         <div className="container mx-auto px-4">
             <div className="flex justify-center mb-6">
                 <Image
-                    src="https://placehold.co/400x150.png"
+                    src={coclogo}
                     alt="Clash of Clans Logo" 
                     data-ai-hint="clash of clans logo"
                     width={400} 
@@ -77,8 +78,9 @@ export function LandingPage() {
             As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
           </p>
           <p className="text-sm text-muted-foreground italic">
-            Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy: www.supercell.com/fan-content-policy.
+            Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
           </p>
+          <a className='text-red-600 bg-blue-500/10'>www.supercell.com/fan-content-policy</a>.
         </div>
       </section>
 

@@ -7,9 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { buildingNameToType } from '@/lib/constants';
-import defaultImage from '../../public/_misc/default.png';
+
+import defaultImage from '../../../public/_misc/default.png';
+
+const imageMap: Record<string, StaticImageData> = {
+  'default': defaultImage,
+};
+
+const getBuildingImagePath = (name: string): StaticImageData => {
+  return imageMap[name.toLowerCase().replace(/ /g, '_')] || imageMap['default'];
+};
+
 
 const getGroupedBuildings = (buildings: Building[]) => {
     const buildingMap: { [key: string]: { building: Building; count: number } } = {};
@@ -98,7 +108,7 @@ export function BuildingList({ buildings }: BuildingListProps) {
                                     </div>
                                 )}
                                 <Image
-                                    src={defaultImage}
+                                    src={getBuildingImagePath(building.name)}
                                     alt={building.name}
                                     width={128}
                                     height={128}

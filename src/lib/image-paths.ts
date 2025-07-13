@@ -1,0 +1,160 @@
+
+export const townHallImageMap: Record<number, string> = {
+  1: '/images/halls/town_hall_1.png',
+  2: '/images/halls/town_hall_2.png',
+  3: '/images/halls/town_hall_3.png',
+  4: '/images/halls/town_hall_4.png',
+  5: '/images/halls/town_hall_5.png',
+  6: '/images/halls/town_hall_6.png',
+  7: '/images/halls/town_hall_7.png',
+  8: '/images/halls/town_hall_8.png',
+  9: '/images/halls/town_hall_9.png',
+  10: '/images/halls/town_hall_10.png',
+  11: '/images/halls/town_hall_11.png',
+  12: '/images/halls/town_hall_12.png',
+  13: '/images/halls/town_hall_13.png',
+  14: '/images/halls/town_hall_14.png',
+  15: '/images/halls/town_hall_15.png',
+  16: '/images/halls/town_hall_16.png',
+  17: '/images/halls/town_hall_17.png',
+};
+
+export const builderHallImageMap: Record<number, string> = {
+    1: '/images/halls/builder_hall_1.png',
+    2: '/images/halls/builder_hall_2.png',
+    3: '/images/halls/builder_hall_3.png',
+    4: '/images/halls/builder_hall_4.png',
+    5: '/images/halls/builder_hall_5.png',
+    6: '/images/halls/builder_hall_6.png',
+    7: '/images/halls/builder_hall_7.png',
+    8: '/images/halls/builder_hall_8.png',
+    9: '/images/halls/builder_hall_9.png',
+    10: '/images/halls/builder_hall_10.png'
+};
+
+export const buildingImageMap: Record<string, string> = {
+    'Cannon': '/images/buildings/cannon.png',
+    'Archer Tower': '/images/buildings/archer_tower.png',
+    'Mortar': '/images/buildings/mortar.png',
+    'Air Defense': '/images/buildings/air_defense.png',
+    'Wizard Tower': '/images/buildings/wizard_tower.png',
+    'Air Sweeper': '/images/buildings/air_sweeper.png',
+    'Hidden Tesla': '/images/buildings/hidden_tesla.png',
+    'Bomb Tower': '/images/buildings/bomb_tower.png',
+    'X Bow': '/images/buildings/x-bow.png',
+    'Inferno Tower': '/images/buildings/inferno_tower.png',
+    'Eagle Artillery': '/images/buildings/eagle_artillery.png',
+    'Scattershot': '/images/buildings/scattershot.png',
+    'Spell Tower': '/images/buildings/spell_tower.png',
+    'Monolith': '/images/buildings/monolith.png',
+    'Army Camp': '/images/buildings/army_camp.png',
+    'Barracks': '/images/buildings/barracks.png',
+    'Dark Barracks': '/images/buildings/dark_barracks.png',
+    'Laboratory': '/images/buildings/laboratory.png',
+    'Spell Factory': '/images/buildings/spell_factory.png',
+    'Dark Spell Factory': '/images/buildings/dark_spell_factory.png',
+    'Workshop': '/images/buildings/workshop.png',
+    'Clan Castle': '/images/buildings/clan_castle.png',
+    'Pet House': '/images/buildings/pet_house.png',
+    'Blacksmith': '/images/buildings/blacksmith.png',
+    'Gold Mine': '/images/buildings/gold_mine.png',
+    'Elixir Collector': '/images/buildings/elixir_collector.png',
+    'Dark Elixir Drill': '/images/buildings/dark_elixir_drill.png',
+    'Gold Storage': '/images/buildings/gold_storage.png',
+    'Elixir Storage': '/images/buildings/elixir_storage.png',
+    'Dark Elixir Storage': '/images/buildings/dark_elixir_storage.png',
+    'Town Hall': townHallImageMap[1], 
+    "Builder Hut": "/images/buildings/builders_hut.png",
+    "Wall": "/images/buildings/wall.png",
+    'Bomb': '/images/buildings/bomb.png',
+    'Spring Trap': '/images/buildings/spring_trap.png',
+    'Air Bomb': '/images/buildings/air_bomb.png',
+    'Giant Bomb': '/images/buildings/giant_bomb.png',
+    'Seeking Air Mine': '/images/buildings/seeking_air_mine.png',
+    'Skeleton Trap': '/images/buildings/skeleton_trap.png',
+    'Tornado Trap': '/images/buildings/tornado_trap.png',
+    'Barbarian King Altar': '/images/buildings/barbarian_king_altar.png',
+    'Archer Queen Altar': '/images/buildings/archer_queen_altar.png',
+    'Grand Warden Altar': '/images/buildings/grand_warden_altar.png',
+    'Royal Champion Altar': '/images/buildings/royal_champion_altar.png',
+    'default': '/images/buildings/default.png',
+};
+
+export const troopImageMap: Record<string, string> = {
+    'Barbarian': '/images/troops/barbarian.png',
+    'Archer': '/images/troops/archer.png',
+    'Giant': '/images/troops/giant.png',
+    'Goblin': '/images/troops/goblin.png',
+    'Wall Breaker': '/images/troops/wall_breaker.png',
+    'Balloon': '/images/troops/balloon.png',
+    'Wizard': '/images/troops/wizard.png',
+    'Healer': '/images/troops/healer.png',
+    'Dragon': '/images/troops/dragon.png',
+    'P.E.K.K.A': '/images/troops/pekka.png', // Note the name difference
+    'Baby Dragon': '/images/troops/baby_dragon.png',
+    'Miner': '/images/troops/miner.png',
+    'Electro Titan': '/images/troops/electro_titan.png',
+    'Root Rider': '/images/troops/root_rider.png',
+    'Minion': '/images/troops/minion.png',
+    'Hog Rider': '/images/troops/hog_rider.png',
+    'Valkyrie': '/images/troops/valkyrie.png',
+    'Golem': '/images/troops/golem.png',
+    'Witch': '/images/troops/witch.png',
+    'Lava Hound': '/images/troops/lava_hound.png',
+    'Bowler': '/images/troops/bowler.png',
+    'Ice Golem': '/images/troops/ice_golem.png',
+    'Headhunter': '/images/troops/headhunter.png',
+    'Apprentice Warden': '/images/troops/apprentice_warden.png',
+    'Lightning Spell': '/images/troops/lightning_spell.png',
+    'Healing Spell': '/images/troops/healing_spell.png',
+    'Rage Spell': '/images/troops/rage_spell.png',
+    'Jump Spell': '/images/troops/jump_spell.png',
+    'Freeze Spell': '/images/troops/freeze_spell.png',
+    'Clone Spell': '/images/troops/clone_spell.png',
+    'Invisibility Spell': '/images/troops/invisibility_spell.png',
+    'Recall Spell': '/images/troops/recall_spell.png',
+    'Poison Spell': '/images/troops/poison_spell.png',
+    'Earthquake Spell': '/images/troops/earthquake_spell.png',
+    'Haste Spell': '/images/troops/haste_spell.png',
+    'Skeleton Spell': '/images/troops/skeleton_spell.png',
+    'Bat Spell': '/images/troops/bat_spell.png',
+    'default': '/images/troops/default.png',
+};
+
+
+export const carouselImages = [
+    { src: '/images/_login_carousel/barbarianKing-side-profile-login-carousel.png', alt: 'Barbarian King' },
+    { src: '/images/_login_carousel/warden-side-profile-login-carousel.png', alt: 'Grand Warden' },
+    { src: '/images/_login_carousel/prince-side-profile-login-carousel.png', alt: 'Minion Prince' },
+];
+
+export const heroAvatars = [
+    '/images/_avatars/bk_avatar.png',
+    '/images/_avatars/aq_avatar.png',
+    '/images/_avatars/gw_avatar.png',
+    '/images/_avatars/rc_avatar.png',
+];
+
+export const allSkins = {
+  'Barbarian King': [
+    { title: 'Champion King', category: 'Hero Skin', price: '1500 Gems', availability: 'Shop', imageUrl: '/images/skins/champion_king.png', hint: 'gold king armor' },
+    { title: 'P.E.K.K.A King', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/pekka_king.png', hint: 'robot king sword' },
+  ],
+  'Archer Queen': [
+    { title: 'Ice Queen', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: '/images/skins/ice_queen.png', hint: 'ice queen crown' },
+    { title: 'Valkyrie Queen', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/valkyrie_queen.png', hint: 'warrior queen axe' },
+  ],
+  'Grand Warden': [
+    { title: 'Party Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/party_warden.png', hint: 'dj wizard staff' },
+    { title: 'Primal Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/primal_warden.png', hint: 'shaman wizard staff' },
+  ],
+  'Royal Champion': [
+    { title: 'Gladiator Champion', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: '/images/skins/gladiator_champion.png', hint: 'gladiator champion spear' },
+    { title: 'Shadow Champion', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/images/skins/shadow_champion.png', hint: 'ninja champion dark' },
+  ],
+};
+
+export const otherFeaturedItems = [
+  { title: "Magic Theater", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/images/scenery/magic_theater.png", hint: "magic theater stage" },
+  { title: "Shadow Scenery", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/images/scenery/shadow_scenery.png", hint: "dark castle night" },
+];

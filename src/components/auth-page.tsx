@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { carouselImages } from '@/lib/image-paths';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -24,11 +25,6 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const carouselImages = [
-    { src: '/images/_login_carousel/barbarianKing-side-profile-login-carousel.png', alt: 'Barbarian King' },
-    { src: '/images/_login_carousel/warden-side-profile-login-carousel.png', alt: 'Grand Warden' },
-    { src: '/images/_login_carousel/prince-side-profile-login-carousel.png', alt: 'Minion Prince' },
-];
 
 export function AuthPage() {
   const { signUp, signIn } = useAuth();
@@ -85,7 +81,7 @@ export function AuthPage() {
               <CarouselContent>
                 {carouselImages.map((img, index) => (
                   <CarouselItem key={index} className="p-0">
-                    <div className="relative w-full h-full aspect-[9/16] sm:aspect-square">
+                    <div className="relative w-full h-full aspect-[9/16] sm:aspect-square md:aspect-auto">
                         <Image
                             src={img.src}
                             alt={img.alt}

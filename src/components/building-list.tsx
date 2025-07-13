@@ -9,63 +9,8 @@ import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'luci
 import { Progress } from '@/components/ui/progress';
 import Image from 'next/image';
 import { buildingNameToType } from '@/lib/constants';
+import { buildingImageMap } from '@/lib/image-paths';
 
-interface BuildingListProps {
-  buildings: Building[];
-}
-
-const buildingImageMap: Record<string, string> = {
-    // Defensive
-    'Cannon': '/images/buildings/cannon.png',
-    'Archer Tower': '/images/buildings/archer_tower.png',
-    'Mortar': '/images/buildings/mortar.png',
-    'Air Defense': '/images/buildings/air_defense.png',
-    'Wizard Tower': '/images/buildings/wizard_tower.png',
-    'Air Sweeper': '/images/buildings/air_sweeper.png',
-    'Hidden Tesla': '/images/buildings/hidden_tesla.png',
-    'Bomb Tower': '/images/buildings/bomb_tower.png',
-    'X Bow': '/images/buildings/x-bow.png',
-    'Inferno Tower': '/images/buildings/inferno_tower.png',
-    'Eagle Artillery': '/images/buildings/eagle_artillery.png',
-    'Scattershot': '/images/buildings/scattershot.png',
-    'Spell Tower': '/images/buildings/spell_tower.png',
-    'Monolith': '/images/buildings/monolith.png',
-    // Army
-    'Army Camp': '/images/buildings/army_camp.png',
-    'Barracks': '/images/buildings/barracks.png',
-    'Dark Barracks': '/images/buildings/dark_barracks.png',
-    'Laboratory': '/images/buildings/laboratory.png',
-    'Spell Factory': '/images/buildings/spell_factory.png',
-    'Dark Spell Factory': '/images/buildings/dark_spell_factory.png',
-    'Workshop': '/images/buildings/workshop.png',
-    'Clan Castle': '/images/buildings/clan_castle.png',
-    'Pet House': '/images/buildings/pet_house.png',
-    'Blacksmith': '/images/buildings/blacksmith.png',
-    // Resource
-    'Gold Mine': '/images/buildings/gold_mine.png',
-    'Elixir Collector': '/images/buildings/elixir_collector.png',
-    'Dark Elixir Drill': '/images/buildings/dark_elixir_drill.png',
-    'Gold Storage': '/images/buildings/gold_storage.png',
-    'Elixir Storage': '/images/buildings/elixir_storage.png',
-    'Dark Elixir Storage': '/images/buildings/dark_elixir_storage.png',
-    // Other
-    'Town Hall': '/images/halls/town_hall_1.png', // Default, will be updated by level
-    "Builder Hut": "/images/buildings/builders_hut.png",
-    "Wall": "/images/buildings/wall.png",
-    // Traps
-    'Bomb': '/images/buildings/bomb.png',
-    'Spring Trap': '/images/buildings/spring_trap.png',
-    'Air Bomb': '/images/buildings/air_bomb.png',
-    'Giant Bomb': '/images/buildings/giant_bomb.png',
-    'Seeking Air Mine': '/images/buildings/seeking_air_mine.png',
-    'Skeleton Trap': '/images/buildings/skeleton_trap.png',
-    'Tornado Trap': '/images/buildings/tornado_trap.png',
-    // Hero Altars
-    'Barbarian King Altar': '/images/buildings/barbarian_king_altar.png',
-    'Archer Queen Altar': '/images/buildings/archer_queen_altar.png',
-    'Grand Warden Altar': '/images/buildings/grand_warden_altar.png',
-    'Royal Champion Altar': '/images/buildings/royal_champion_altar.png',
-};
 
 const getGroupedBuildings = (buildings: Building[]) => {
     const buildingMap: { [key: string]: { building: Building; count: number } } = {};
@@ -150,7 +95,7 @@ export function BuildingList({ buildings }: BuildingListProps) {
                                     </div>
                                 )}
                                 <Image
-                                    src={buildingImageMap[building.name] || '/images/buildings/default.png'}
+                                    src={buildingImageMap[building.name] || buildingImageMap['default']}
                                     alt={building.name}
                                     width={128}
                                     height={128}

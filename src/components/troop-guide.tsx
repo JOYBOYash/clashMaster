@@ -12,57 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
+import { troopImageMap } from '@/lib/image-paths';
 
 interface TroopGuideProps {
     villageState: VillageState;
 }
-
-const troopImageMap: Record<string, string> = {
-    // Elixir Troops
-    'Barbarian': '/images/troops/barbarian.png',
-    'Archer': '/images/troops/archer.png',
-    'Giant': '/images/troops/giant.png',
-    'Goblin': '/images/troops/goblin.png',
-    'Wall Breaker': '/images/troops/wall_breaker.png',
-    'Balloon': '/images/troops/balloon.png',
-    'Wizard': '/images/troops/wizard.png',
-    'Healer': '/images/troops/healer.png',
-    'Dragon': '/images/troops/dragon.png',
-    'Pekka': '/images/troops/pekka.png',
-    'Baby Dragon': '/images/troops/baby_dragon.png',
-    'Miner': '/images/troops/miner.png',
-    'Electro Titan': '/images/troops/electro_titan.png',
-    'Root Rider': '/images/troops/root_rider.png',
-    
-    // Dark Elixir Troops
-    'Minion': '/images/troops/minion.png',
-    'Hog Rider': '/images/troops/hog_rider.png',
-    'Valkyrie': '/images/troops/valkyrie.png',
-    'Golem': '/images/troops/golem.png',
-    'Witch': '/images/troops/witch.png',
-    'Lava Hound': '/images/troops/lava_hound.png',
-    'Bowler': '/images/troops/bowler.png',
-    'Ice Golem': '/images/troops/ice_golem.png',
-    'Headhunter': '/images/troops/headhunter.png',
-    'Apprentice Warden': '/images/troops/apprentice_warden.png',
-    
-    // Elixir Spells
-    'Lightning Spell': '/images/troops/lightning_spell.png',
-    'Healing Spell': '/images/troops/healing_spell.png',
-    'Rage Spell': '/images/troops/rage_spell.png',
-    'Jump Spell': '/images/troops/jump_spell.png',
-    'Freeze Spell': '/images/troops/freeze_spell.png',
-    'Clone Spell': '/images/troops/clone_spell.png',
-    'Invisibility Spell': '/images/troops/invisibility_spell.png',
-    'Recall Spell': '/images/troops/recall_spell.png',
-    
-    // Dark Elixir Spells
-    'Poison Spell': '/images/troops/poison_spell.png',
-    'Earthquake Spell': '/images/troops/earthquake_spell.png',
-    'Haste Spell': '/images/troops/haste_spell.png',
-    'Skeleton Spell': '/images/troops/skeleton_spell.png',
-    'Bat Spell': '/images/troops/bat_spell.png',
-};
 
 export function TroopGuide({ villageState }: TroopGuideProps) {
     const [isLoading, setIsLoading] = useState(false);
@@ -162,7 +116,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                                         {data.map(item => (
                                             <div key={item.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                                                 <Image
-                                                    src={troopImageMap[item.name] || '/images/troops/default.png'}
+                                                    src={troopImageMap[item.name] || troopImageMap['default']}
                                                     alt={item.name}
                                                     width={128}
                                                     height={128}

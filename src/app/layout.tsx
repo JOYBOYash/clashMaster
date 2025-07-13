@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("antialiased")}>
+      <body className={cn("antialiased font-body font-headline")}>
         <AuthProvider>
           <AppWrapper>
             {children}

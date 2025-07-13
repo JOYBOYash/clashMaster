@@ -80,7 +80,7 @@ export function LandingPage() {
           <p className="text-sm text-muted-foreground italic">
             Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
           </p>
-          <a className='text-red-600 bg-blue-500/10'>www.supercell.com/fan-content-policy</a>.
+          <a className='text-red-600 font-headline text-sm bg-blue-500/10 cursor-pointer' href='https://supercell.com/en/fan-content-policy/'>supercell.com/en/fan-content-policy/</a>.
         </div>
       </section>
 

@@ -1,13 +1,15 @@
+
 "use client";
 
 import { useAuth } from "@/context/auth-context";
 import { Loader2 } from "lucide-react";
-import { AuthPage } from "./auth-page";
 import { VillageSurvey } from './village-survey';
 import type { VillageState } from "@/lib/constants";
+import { VillageView } from "./village-view";
+import { redirect } from "next/navigation";
 
 interface AuthWrapperProps {
-  children: (villageState: VillageState) => React.ReactNode;
+  children: (villageState?: VillageState) => React.ReactNode;
 }
 
 export function AuthWrapper({ children }: AuthWrapperProps) {
@@ -21,13 +23,12 @@ export function AuthWrapper({ children }: AuthWrapperProps) {
     );
   }
   
-  if (!user) {
-    return <AuthPage />;
-  }
-
-  if (!villageState) {
+  if (user) {
+    if (villageState) {
+        redirect('/upgrades');
+    }
     return <VillageSurvey onSurveyComplete={saveVillageState} />;
   }
 
-  return <>{children(villageState)}</>;
+  return <>{children()}</>;
 }

@@ -3,28 +3,31 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, BarChart, Wand2, Heart } from 'lucide-react';
+import { Target, Wand2, ShieldCheck, Swords, BrainCircuit, Heart, BarChart } from 'lucide-react';
 import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
+import { FlipCard } from './feature-flip-card';
 
-
-const FeatureCard = ({ imageSrc, title, description, reverse = false }: { imageSrc: string, title: string, description: string, reverse?: boolean }) => (
-  <div className="relative group transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-2">
-    <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 w-28 h-28">
-       <Image 
-         src={imageSrc}
-         alt={`${title} Avatar`}
-         fill
-         className="object-contain animate-float"
-         unoptimized
-       />
-    </div>
-    <div className="flex flex-col items-center text-center p-6 pt-20 rounded-xl bg-card/50 border border-border/50 shadow-lg">
-      <h3 className="text-xl font-bold font-headline text-card-foreground mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  </div>
-);
+const features = [
+  {
+    icon: BarChart,
+    title: 'Visual Progress Tracking',
+    description: 'See your entire village at a glance. Our dashboards provide a clear overview of your building, troop, and hero levels, helping you identify what to focus on next.',
+    color: 'text-green-500'
+  },
+  {
+    icon: BrainCircuit,
+    title: 'AI Upgrade Strategy',
+    description: 'Let our AI act as your personal strategist. It analyzes your current village state to suggest the most impactful and efficient upgrades, saving you time and resources.',
+    color: 'text-blue-500'
+  },
+  {
+    icon: Swords,
+    title: 'Custom Army Compositions',
+    description: 'Tired of using the same old army? Get powerful army suggestions tailored specifically to your Town Hall and troop levels for any situation—war, farming, or trophy pushing.',
+    color: 'text-red-500'
+  },
+];
 
 
 export function LandingPage() {
@@ -56,29 +59,11 @@ export function LandingPage() {
 
       <section className="w-full py-20 lg:py-32">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center font-headline mb-24">Why You'll Love Clash Master</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-24 md:gap-y-0 md:gap-x-8">
-            <div className="mt-8 md:mt-0">
-               <FeatureCard 
-                imageSrc={heroAvatarAssets[1]}
-                title="AI Upgrade Advisor" 
-                description="Our smart AI analyzes your village and suggests the most optimal upgrades to maximize your progress." 
-              />
-            </div>
-             <div className="mt-8 md:mt-16">
-              <FeatureCard 
-                imageSrc={heroAvatarAssets[0]}
-                title="Progress Tracking" 
-                description="Visualize your entire village progress. See how far you've come and what's left to max out your base." 
-              />
-            </div>
-             <div className="mt-8 md:mt-0">
-              <FeatureCard 
-                imageSrc={heroAvatarAssets[2]}
-                title="Strategic Army Guides" 
-                description="Receive powerful army compositions tailored to your Town Hall and troop levels for any situation." 
-              />
-            </div>
+          <h2 className="text-3xl font-bold text-center font-headline mb-16">Unlock Your Village's Full Potential</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <FlipCard key={index} {...feature} />
+            ))}
           </div>
         </div>
       </section>

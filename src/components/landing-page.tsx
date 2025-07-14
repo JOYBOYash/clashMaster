@@ -73,7 +73,7 @@ export function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
             {features.map((feature, index) => (
               <div key={index} className="relative">
-                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40">
+                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40 z-10">
                   <Image
                     src={feature.avatar}
                     alt="Hero Avatar"

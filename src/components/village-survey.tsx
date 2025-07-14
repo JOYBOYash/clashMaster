@@ -80,21 +80,26 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     }
   };
   
-  const handleWallCountChange = (level: number, count: number) => {
+  const handleWallCountChange = (level: number, newCount: number) => {
     if (!townHallLevel) return;
-    const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
-    const totalCount = buildingCounts['Wall'] || 0;
-    const numericCount = Math.max(0, Math.min(count, totalCount));
-    const inputKey = `wall-${level}`;
-    
-    const otherWallsCount = Object.keys(levels)
-        .filter(key => key.startsWith('wall-') && key !== inputKey)
-        .reduce((sum, key) => sum + (levels[key] || 0), 0);
-    
-    const cappedCount = Math.min(numericCount, totalCount - otherWallsCount);
 
-    setLevels(prev => ({ ...prev, [inputKey]: cappedCount }));
-  }
+    const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
+    const totalWallCount = buildingCounts['Wall'] || 0;
+    const inputKey = `wall-${level}`;
+    const currentCountForLevel = levels[inputKey] || 0;
+
+    // Calculate sum of other walls
+    const otherWallsCount = Object.keys(levels)
+      .filter(key => key.startsWith('wall-') && key !== inputKey)
+      .reduce((sum, key) => sum + (levels[key] || 0), 0);
+
+    // Clamp the new count to not exceed total available walls
+    const maxAllowed = totalWallCount - otherWallsCount;
+    const finalCount = Math.max(0, Math.min(newCount, maxAllowed));
+
+    setLevels(prev => ({ ...prev, [inputKey]: finalCount }));
+  };
+
 
   const setAllToMax = (items: (string | GameItem)[], type: 'building' | 'item') => {
     if (!townHallLevel) return;
@@ -229,59 +234,57 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const renderWallInputs = () => {
     if (!townHallLevel) return null;
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
-    const totalCount = buildingCounts['Wall'] || 0;
+    const totalWallCount = buildingCounts['Wall'] || 0;
     const maxLevel = getMaxLevelForItem('Wall', townHallLevel);
-    const isError = assignedWallCount > totalCount;
-    const remainingWalls = totalCount - assignedWallCount;
+    const isError = assignedWallCount > totalWallCount;
+    const remainingWalls = totalWallCount - assignedWallCount;
 
     return (
-        <div className="space-y-4">
-            <Alert variant={isError ? 'destructive' : 'default'} className='sticky top-0 z-10'>
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Wall Assignment</AlertTitle>
-                <AlertDescription>
-                   Total Walls: <span className="font-bold">{totalCount}</span> |
-                   Assigned: <span className="font-bold">{assignedWallCount}</span> |
-                   Remaining: <span className={cn("font-bold", remainingWalls < 0 ? 'text-destructive-foreground' : '')}>{remainingWalls}</span>
-                    {isError && <span className="font-bold text-destructive-foreground ml-4">You have assigned more walls than available!</span>}
-                </AlertDescription>
-            </Alert>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => {
-                    const inputKey = `wall-${level}`;
-                    const currentCount = levels[inputKey] || 0;
-                    const maxForThisSlider = currentCount + remainingWalls;
-                    return (
-                        <div key={inputKey} className="space-y-3 p-3 rounded-lg border bg-background/50">
-                            <div className='flex items-center gap-4'>
-                                <Image src={getBuildingImagePathByLevel('Wall', level)} alt={`Wall level ${level}`} width={48} height={48} className="rounded-md" unoptimized />
-                                <Label htmlFor={inputKey} className="text-base font-semibold flex-1">Level {level} Walls</Label>
-                                <Input
-                                    id={`${inputKey}-input`}
-                                    type="number"
-                                    min="0"
-                                    max={totalCount}
-                                    value={currentCount}
-                                    onChange={(e) => handleWallCountChange(level, parseInt(e.target.value) || 0)}
-                                    className="w-24 text-center font-bold"
-                                />
-                            </div>
-                            <Slider
-                                id={inputKey}
-                                min={0}
-                                max={maxForThisSlider < 0 ? 0 : maxForThisSlider}
-                                step={1}
-                                value={[currentCount]}
-                                onValueChange={(value) => handleWallCountChange(level, value[0])}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
+      <div className="space-y-4">
+        <Alert variant={isError ? 'destructive' : 'default'} className="sticky top-0 z-10 bg-card/95 backdrop-blur-sm">
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Wall Assignment</AlertTitle>
+          <AlertDescription>
+            Total Walls: <span className="font-bold">{totalWallCount}</span> |
+            Assigned: <span className="font-bold">{assignedWallCount}</span> |
+            Remaining: <span className={cn("font-bold", remainingWalls < 0 ? 'text-destructive-foreground' : '')}>{remainingWalls}</span>
+            {isError && <span className="font-bold text-destructive-foreground ml-4">You have assigned more walls than available!</span>}
+          </AlertDescription>
+        </Alert>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+          {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => {
+            const inputKey = `wall-${level}`;
+            const currentCount = levels[inputKey] || 0;
+            return (
+              <div key={inputKey} className="space-y-3 p-3 rounded-lg border bg-background/50">
+                <div className="flex items-center gap-4">
+                  <Image src={getBuildingImagePathByLevel('Wall', level)} alt={`Wall level ${level}`} width={48} height={48} className="rounded-md" unoptimized />
+                  <Label htmlFor={inputKey} className="text-base font-semibold flex-1">Level {level} Walls</Label>
+                  <Input
+                    id={`${inputKey}-input`}
+                    type="number"
+                    min="0"
+                    max={totalWallCount}
+                    value={currentCount}
+                    onChange={(e) => handleWallCountChange(level, parseInt(e.target.value) || 0)}
+                    className="w-24 text-center font-bold"
+                  />
+                </div>
+                <Slider
+                  id={inputKey}
+                  min={0}
+                  max={totalWallCount}
+                  step={1}
+                  value={[currentCount]}
+                  onValueChange={(value) => handleWallCountChange(level, value[0])}
+                />
+              </div>
+            );
+          })}
         </div>
-    )
-  }
-
+      </div>
+    );
+  };
 
   const handleNext = () => {
     setCurrentStep(prev => Math.min(prev + 1, surveySteps.length - 1));
@@ -293,8 +296,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const handleSubmit = async () => {
     if (!townHallLevel) return;
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
-    const wallCount = buildingCounts['Wall'] || 0;
-    if (assignedWallCount > wallCount) {
+    const totalWallCount = buildingCounts['Wall'] || 0;
+    
+    if (assignedWallCount > totalWallCount) {
         alert("You have assigned more walls than you have at this Town Hall level. Please correct the counts before submitting.");
         return;
     }
@@ -319,27 +323,34 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       }
     });
 
+    // Correctly handle wall submission
     const maxWallLevel = getMaxLevelForItem('Wall', townHallLevel);
-    let assignedWallPieces = 0;
+    let wallPiecesAssignedInLoop = 0;
+    
+    // Add walls that the user specified
     for (let level = 1; level <= maxWallLevel; level++) {
         const key = `wall-${level}`;
         const countForLevel = levels[key] || 0;
         for (let i = 0; i < countForLevel; i++) {
-            if (assignedWallPieces >= wallCount) break;
             buildings.push({
-                id: `Wall-${level}-${assignedWallPieces}`, name: 'Wall', level, maxLevel: maxWallLevel,
-                type: buildingNameToType['Wall'] || 'other', base: 'home', isUpgrading: false
+                id: `Wall-${level}-${wallPiecesAssignedInLoop}`, name: 'Wall', level, maxLevel: maxWallLevel,
+                type: 'other', base: 'home', isUpgrading: false
             });
-            assignedWallPieces++;
+            wallPiecesAssignedInLoop++;
         }
     }
-    // Add remaining walls as level 1
-    for (let i = assignedWallPieces; i < wallCount; i++) {
-        buildings.push({
-            id: `Wall-1-unassigned-${i}`, name: 'Wall', level: 1, maxLevel: maxWallLevel,
-            type: buildingNameToType['Wall'] || 'other', base: 'home', isUpgrading: false
-        });
+    
+    // Add any remaining walls as level 1
+    const remainingWallCount = totalWallCount - wallPiecesAssignedInLoop;
+    if (remainingWallCount > 0) {
+        for (let i = 0; i < remainingWallCount; i++) {
+            buildings.push({
+                id: `Wall-1-unassigned-${i}`, name: 'Wall', level: 1, maxLevel: maxWallLevel,
+                type: 'other', base: 'home', isUpgrading: false
+            });
+        }
     }
+
 
     getItemsForTownHall(townHallLevel, ['troop', 'spell', 'hero', 'pet', 'equipment']).forEach(item => {
         const key = `${item.type}-${item.name}`;
@@ -455,7 +466,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
 
         <div className="flex flex-col col-span-1 lg:col-span-3 h-full">
-            <Card className="border-0 rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card shadow-none transition-none hover:transform-none hover:shadow-none">
+            <Card className="border-0 rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card shadow-none hover:shadow-none transition-none hover:transform-none">
               <CardHeader className='shrink-0'>
                 <div className="w-full mb-4">
                   <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />

@@ -13,10 +13,10 @@ export default function RootPage() {
     return <LoadingSpinner />;
   }
 
-  // If the user is logged in, the default page is '/upgrades'.
+  // If the user is logged in, the default page is '/dashboard'.
   // The AuthWrapper in the main layout will handle redirecting to /survey if needed.
   if (user) {
-    redirect('/upgrades');
+    redirect('/dashboard');
   }
 
   // If no user is logged in, show the public landing page.

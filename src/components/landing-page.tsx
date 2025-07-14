@@ -69,10 +69,26 @@ export function LandingPage() {
 
       <section className="w-full py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center font-headline mb-16">Unlock Your Village's Full Potential</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
             {features.map((feature, index) => (
-              <FlipCard key={index} {...feature} />
+              <div key={index} className="relative">
+                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40">
+                  <Image
+                    src={feature.avatar}
+                    alt="Hero Avatar"
+                    fill
+                    className="object-contain animate-float"
+                    unoptimized
+                  />
+                </div>
+                <FlipCard
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                  color={feature.color}
+                />
+              </div>
             ))}
           </div>
         </div>

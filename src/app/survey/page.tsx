@@ -22,7 +22,7 @@ export default function SurveyPage() {
     }
 
     return (
-        <div className='w-full h-screen overflow-hidden flex items-center justify-center'>
+        <div className='w-full h-full flex items-center justify-center'>
              <VillageSurvey onSurveyComplete={saveVillageState} />
         </div>
     );

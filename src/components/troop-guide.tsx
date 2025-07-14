@@ -62,7 +62,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-fade-in-up">
             <Card className='themed-card'>
                 <CardHeader>
                     <CardTitle className="font-headline">AI Army Advisor</CardTitle>

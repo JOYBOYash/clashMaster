@@ -23,46 +23,48 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
   }, [villageState]);
 
   return (
-    <Card className="bg-transparent border-0 shadow-none">
-      <CardHeader className="px-0">
-        <CardTitle className="font-headline flex items-center">
-            <Sparkles className="mr-2 h-6 w-6 text-accent" />
-            Weekly Showcase
-        </CardTitle>
-        <CardDescription>A rotating selection of this week's featured skins and sceneries!</CardDescription>
-      </CardHeader>
-      <CardContent className="px-0">
-        {!featuredItems ? (
-           <div className="flex justify-center items-center h-48">
-             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredItems.map((item, index) => (
-              <Card key={index} className="themed-card overflow-hidden group flex flex-col">
-                <div className="relative aspect-video">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    data-ai-hint={item.hint}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                    unoptimized
-                  />
-                   <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
-                    <Badge variant="secondary" className="shadow-lg">{item.availability}</Badge>
-                    <Badge className="shadow-lg bg-accent text-accent-foreground">{item.price}</Badge>
+    <div className="animate-fade-in-up">
+      <Card className="bg-transparent border-0 shadow-none">
+        <CardHeader className="px-0">
+          <CardTitle className="font-headline flex items-center">
+              <Sparkles className="mr-2 h-6 w-6 text-accent" />
+              Weekly Showcase
+          </CardTitle>
+          <CardDescription>A rotating selection of this week's featured skins and sceneries!</CardDescription>
+        </CardHeader>
+        <CardContent className="px-0">
+          {!featuredItems ? (
+            <div className="flex justify-center items-center h-48">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredItems.map((item, index) => (
+                <Card key={index} className="themed-card overflow-hidden group flex flex-col">
+                  <div className="relative aspect-video">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      data-ai-hint={item.hint}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                      unoptimized
+                    />
+                    <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
+                      <Badge variant="secondary" className="shadow-lg">{item.availability}</Badge>
+                      <Badge className="shadow-lg bg-accent text-accent-foreground">{item.price}</Badge>
+                    </div>
                   </div>
-                </div>
-                 <div className="p-4 bg-muted/30 flex-1 flex flex-col">
-                    <p className="text-sm font-semibold text-muted-foreground">{item.category}</p>
-                    <h3 className="text-lg font-bold font-headline text-card-foreground">{item.title}</h3>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                  <div className="p-4 bg-muted/30 flex-1 flex flex-col">
+                      <p className="text-sm font-semibold text-muted-foreground">{item.category}</p>
+                      <h3 className="text-lg font-bold font-headline text-card-foreground">{item.title}</h3>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

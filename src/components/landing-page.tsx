@@ -10,6 +10,7 @@ import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 import { MainHeader } from './main-header';
 import { useAuth } from '@/context/auth-context';
+import { cn } from '@/lib/utils';
 
 const features = [
   {
@@ -51,7 +52,7 @@ export function LandingPage() {
 
           {/* Hero Section */}
           <section className="relative w-full text-center min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
-            <div className="container relative mx-auto px-4 z-10">
+            <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
                 <div className="flex justify-center mb-6">
                     <Image
                         src='/coc_logo.png'
@@ -76,7 +77,7 @@ export function LandingPage() {
 
           {/* Features Section */}
           <section className="w-full py-20 lg:py-32 bg-background">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
                 {features.map((feature, index) => (
@@ -104,7 +105,7 @@ export function LandingPage() {
 
           {/* Fan Content Section */}
           <section className="w-full py-20 lg:py-24 bg-muted/40">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
               <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
                   <div className="w-48 h-48 relative shrink-0">
                       <Image 

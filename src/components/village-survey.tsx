@@ -267,7 +267,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                             <Slider
                                 id={inputKey}
                                 min={0}
-                                max={totalCount - (assignedWallCount - currentCount)}
+                                max={currentCount + remainingWalls}
                                 step={1}
                                 value={[currentCount]}
                                 onValueChange={(value) => handleWallCountChange(level, value[0])}
@@ -480,9 +480,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     <ChevronLeft /> Back
                 </Button>
                 <div className="flex-grow flex justify-center">
-                    <Button variant="link" asChild>
+                  <Button variant="link" asChild>
                       <Link href="/"><X className='mr-2' />Cancel Setup</Link>
-                    </Button>
+                  </Button>
                 </div>
                 {currentStep < surveySteps.length - 1 ? (
                   <Button onClick={handleNext} disabled={!townHallLevel}>

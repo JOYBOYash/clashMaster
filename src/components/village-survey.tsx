@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SurveyProgress } from './survey-progress';
-import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp, Terminal } from 'lucide-react';
+import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp, Terminal, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import Image from 'next/image';
 import { heroAvatarAssets, getBuildingImagePathByLevel } from '@/lib/image-paths';
@@ -17,6 +17,7 @@ import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from './ui/scroll-area';
+import Link from 'next/link';
 
 interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
@@ -346,7 +347,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         switch (item.type) {
             case 'troop':
             case 'spell':
-                troops.push({ id: key, name: item.name, level, maxLevel, village: 'home' });
+                troops.push({ id: key, name: item.name, level, maxLevel, village: 'home', elixirType: 'regular' });
                 break;
             case 'hero':
                 heroes.push({ id: key, name: item.name, level, maxLevel, village: 'home' });
@@ -474,10 +475,15 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     {renderContent()}
                 </CardContent>
               </ScrollArea>
-              <CardFooter className="flex justify-between mt-auto border-t pt-6 bg-card sticky bottom-0 shrink-0">
+              <CardFooter className="flex justify-between items-center mt-auto border-t pt-6 bg-card sticky bottom-0 shrink-0">
                 <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
                     <ChevronLeft /> Back
                 </Button>
+                <div className="flex-grow flex justify-center">
+                    <Button variant="link" asChild>
+                      <Link href="/"><X className='mr-2' />Cancel Setup</Link>
+                    </Button>
+                </div>
                 {currentStep < surveySteps.length - 1 ? (
                   <Button onClick={handleNext} disabled={!townHallLevel}>
                     Next <ChevronRight />

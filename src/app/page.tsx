@@ -7,15 +7,21 @@ import { LandingPage } from '@/components/landing-page';
 import { LoadingSpinner } from '@/components/loading-spinner';
 
 export default function RootPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, villageState } = useAuth();
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
+  // If the user is logged in, redirect them to the appropriate page
   if (user) {
-    redirect('/sign-in');
+    if (villageState) {
+      redirect('/upgrades');
+    } else {
+      redirect('/survey');
+    }
   }
 
+  // If no user, show the landing page
   return <LandingPage />;
 }

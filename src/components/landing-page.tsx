@@ -40,9 +40,9 @@ export function LandingPage() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <section className="relative w-full text-center py-20 lg:py-32 bg-gradient-to-b from-background to-muted/40 overflow-hidden">
+      <section className="relative w-full text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted/40 overflow-hidden">
         <Image
-            src="/assets/_login_carousel/AQ_SideProfile.png"
+            src="/assets/hero_bg.png"
             alt="Clash of Clans background"
             data-ai-hint="clash of clans battle"
             fill

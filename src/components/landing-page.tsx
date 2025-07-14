@@ -72,7 +72,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="w-full py-20 lg:py-32">
+      <section className="w-full py-20 lg:py-32 bg-background">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center font-headline mb-16">Unlock Your Village's Full Potential</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -109,7 +109,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <footer className="w-full py-12">
+      <footer className="w-full py-12 bg-background">
         <div className="container mx-auto text-center text-muted-foreground">
           <p className="font-headline text-lg font-bold">Clash Master</p>
           <p className="text-sm">built by a fan (with a little AI help)</p>

@@ -9,9 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SurveyProgress } from './survey-progress';
-import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp } from 'lucide-react';
+import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp, Terminal } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Terminal } from 'lucide-react';
 import Image from 'next/image';
 import { heroAvatarAssets, getBuildingImagePathByLevel } from '@/lib/image-paths';
 import { buildingNameToType } from '@/lib/constants';
@@ -49,11 +48,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const currentStepConfig = surveySteps[currentStep];
 
   const assignedWallCount = useMemo(() => {
-    if (!townHallLevel || currentStepConfig.id !== 'walls') return 0;
     return Object.keys(levels)
         .filter(key => key.startsWith('wall-'))
         .reduce((sum, key) => sum + (levels[key] || 0), 0);
-  }, [levels, townHallLevel, currentStepConfig.id]);
+  }, [levels]);
 
 
   useEffect(() => {
@@ -427,7 +425,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     <div className="w-full flex-grow flex items-center justify-center p-0 lg:p-4 bg-background lg:bg-transparent">
       <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full min-h-screen lg:min-h-0 lg:h-[90vh] lg:max-h-[800px] lg:rounded-xl lg:shadow-2xl lg:border bg-card">
         
-        <div className="flex col-span-1 lg:col-span-2 flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl">
+        <div className="hidden lg:flex col-span-1 lg:col-span-2 flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl">
             <div className="w-64 h-64 relative">
                 <Image 
                     src={currentAvatar}
@@ -484,5 +482,4 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   );
 }
 
-
-    
+  

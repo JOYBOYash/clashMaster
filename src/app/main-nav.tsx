@@ -12,7 +12,7 @@ export function MainNav({
   const pathname = usePathname();
 
   const routes = [
-    { href: '/sign-in', label: 'Home' },
+    { href: '/dashboard', label: 'Dashboard' },
     { href: '/upgrades', label: 'Upgrades' },
     { href: '/army-guide', label: 'Army Guide' },
     { href: '/explore', label: 'Explore' }

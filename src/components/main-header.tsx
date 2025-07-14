@@ -28,11 +28,12 @@ import { cn } from "@/lib/utils";
 
 export function MainHeader() {
   const { user, signOut, clearVillageState } = useAuth();
+  const homeHref = user ? '/dashboard' : '/';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <Link href="/sign-in" className="mr-8 flex items-center space-x-2">
+        <Link href={homeHref} className="mr-8 flex items-center space-x-2">
           <Castle className="h-8 w-8 mr-2 text-primary" />
           <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
             Blueprints

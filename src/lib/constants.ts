@@ -26,7 +26,6 @@ export const TroopSchema = zod.object({
   level: zod.number().min(0),
   maxLevel: zod.number().min(1),
   village: zod.enum(['home', 'builder']),
-  elixirType: zod.enum(['regular', 'dark', 'none']),
 });
 export type Troop = z.infer<typeof TroopSchema>;
 
@@ -113,3 +112,5 @@ export const buildingNameToType: Record<string, Building['type']> = {
     'Skeleton Trap': 'trap',
     'Tornado Trap': 'trap'
 };
+
+    

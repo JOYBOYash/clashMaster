@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { getItemsForTownHall, getMaxLevelForItem, getBuildingCountsForTownHall, singleInstanceBuildings, buildingUnlockLevels, GameItem, getElixirTypeForItem } from '@/lib/game-data';
+import { getItemsForTownHall, getMaxLevelForItem, getBuildingCountsForTownHall, singleInstanceBuildings, buildingUnlockLevels, GameItem } from '@/lib/game-data';
 import type { VillageState, Building, Troop, Hero, Pet, Equipment } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -22,36 +22,50 @@ interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
 }
 
+const surveyStepTexts: Record<string, string> = {
+    default: "Let's start with the heart of your village—the Town Hall!",
+    keyBuildings: "These core buildings define your village's capabilities.",
+    armyCamps: "The bigger the camp, the bigger the army. Simple!",
+    storages: "You can't spend what you can't hold. Let's log your storage capacity.",
+    collectors: "Passive income is the best income. How are your collectors doing?",
+    defenses: "A good offense is a good defense... but a great defense is even better!",
+    walls: "The backbone of your defense. Tell me about your walls.",
+    troops: "Time to review your forces. Every troop level counts.",
+    heroes: "The most powerful units in the game. Let's see how your legends are progressing.",
+};
+
+
 export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const [townHallLevel, setTownHallLevel] = useState<number | null>(null);
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [currentAvatar, setCurrentAvatar] = useState(heroAvatarAssets[0]);
-
-  const surveySteps = useMemo(() => {
-    if (!townHallLevel) return [{ id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" }];
-
-    const stepConfig = [
-      { id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" },
-      { id: 'keyBuildings', title: 'Key Buildings', icon: Library, items: singleInstanceBuildings.filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "These core buildings define your village's capabilities." },
-      { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'], text: "The bigger the camp, the bigger the army. Simple!" },
-      { id: 'storages', title: 'Resource Storages', icon: Warehouse, items: ['Gold Storage', 'Elixir Storage', 'Dark Elixir Storage'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "You can't spend what you can't hold. Let's log your storage capacity." },
-      { id: 'collectors', title: 'Resource Collectors', icon: Coins, items: ['Gold Mine', 'Elixir Collector', 'Dark Elixir Drill'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "Passive income is the best income. How are your collectors doing?" },
-      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(getBuildingCountsForTownHall(townHallLevel)).filter(b => buildingNameToType[b] === 'defensive' && !singleInstanceBuildings.includes(b) && buildingUnlockLevels[b] <= townHallLevel), text: "A good offense is a good defense... but a great defense is even better!" },
-      { id: 'walls', title: 'Walls', icon: BrickWall, items: ['Wall'], text: "The backbone of your defense. Tell me about your walls." },
-      { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']), text: "Time to review your forces. Every troop level counts." },
-      { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']), text: "The most powerful units in the game. Let's see how your legends are progressing." },
-    ];
-    return stepConfig.filter(step => step.items.length > 0 || step.id === 'townHall');
-  }, [townHallLevel]);
   
-  const currentStepConfig = surveySteps[currentStep];
-
   const assignedWallCount = useMemo(() => {
     return Object.keys(levels)
         .filter(key => key.startsWith('wall-'))
         .reduce((sum, key) => sum + (levels[key] || 0), 0);
   }, [levels]);
+
+  const surveySteps = useMemo(() => {
+    if (!townHallLevel) return [{ id: 'townHall', title: 'Town Hall Level', icon: Home, items: [] }];
+
+    const stepConfig = [
+      { id: 'townHall', title: 'Town Hall Level', icon: Home, items: [] },
+      { id: 'keyBuildings', title: 'Key Buildings', icon: Library, items: singleInstanceBuildings.filter(b => buildingUnlockLevels[b] <= townHallLevel) },
+      { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'] },
+      { id: 'storages', title: 'Resource Storages', icon: Warehouse, items: ['Gold Storage', 'Elixir Storage', 'Dark Elixir Storage'].filter(b => buildingUnlockLevels[b] <= townHallLevel) },
+      { id: 'collectors', title: 'Resource Collectors', icon: Coins, items: ['Gold Mine', 'Elixir Collector', 'Dark Elixir Drill'].filter(b => buildingUnlockLevels[b] <= townHallLevel) },
+      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(getBuildingCountsForTownHall(townHallLevel)).filter(b => buildingNameToType[b] === 'defensive' && !singleInstanceBuildings.includes(b) && buildingUnlockLevels[b] <= townHallLevel) },
+      { id: 'walls', title: 'Walls', icon: BrickWall, items: ['Wall'] },
+      { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']) },
+      { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']) },
+    ];
+    return stepConfig.filter(step => step.items.length > 0 || step.id === 'townHall');
+  }, [townHallLevel]);
+  
+  const currentStepConfig = surveySteps[currentStep];
+  const currentText = surveyStepTexts[currentStepConfig.id as keyof typeof surveyStepTexts] || surveyStepTexts.default;
 
 
   useEffect(() => {
@@ -220,7 +234,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
     return (
         <div className="space-y-4">
-            <Alert variant={isError ? 'destructive' : 'default'}>
+            <Alert variant={isError ? 'destructive' : 'default'} className='sticky top-0 z-10'>
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>Wall Assignment</AlertTitle>
                 <AlertDescription>
@@ -332,7 +346,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         switch (item.type) {
             case 'troop':
             case 'spell':
-                troops.push({ id: key, name: item.name, level, maxLevel, village: 'home', elixirType: getElixirTypeForItem(item.name) });
+                troops.push({ id: key, name: item.name, level, maxLevel, village: 'home' });
                 break;
             case 'hero':
                 heroes.push({ id: key, name: item.name, level, maxLevel, village: 'home' });
@@ -354,7 +368,6 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   };
   
   const Icon = currentStepConfig.icon;
-  const currentText = currentStepConfig.text;
 
   const renderContent = () => {
     if (!townHallLevel) {
@@ -422,10 +435,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
 
   return (
-    <div className="w-full flex-grow flex items-center justify-center p-0 lg:p-4 bg-background lg:bg-transparent">
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full min-h-screen lg:min-h-0 lg:h-[90vh] lg:max-h-[800px] lg:rounded-xl lg:shadow-2xl lg:border bg-card">
+    <div className="w-full flex-grow flex items-center justify-center p-0 bg-background">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full lg:h-[90vh] lg:max-h-[800px] lg:rounded-xl lg:shadow-2xl lg:border bg-card">
         
-        <div className="hidden lg:flex col-span-1 lg:col-span-2 flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl">
+        <div className="lg:col-span-2 flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl hidden lg:flex">
             <div className="w-64 h-64 relative">
                 <Image 
                     src={currentAvatar}
@@ -482,4 +495,4 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   );
 }
 
-  
+    

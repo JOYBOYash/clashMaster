@@ -7,6 +7,7 @@ import { Target, Wand2, ShieldCheck, Swords, BrainCircuit, Heart, BarChart } fro
 import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
 import { FlipCard } from './feature-flip-card';
+import { useEffect, useState } from 'react';
 
 const features = [
   {
@@ -31,14 +32,28 @@ const features = [
 
 
 export function LandingPage() {
+  const [fanAvatar, setFanAvatar] = useState(heroAvatarAssets[0]);
+
+  useEffect(() => {
+      setFanAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
+  }, []);
+
   return (
     <div className="w-full flex flex-col items-center">
-      <section className="w-full text-center py-20 lg:py-32 bg-gradient-to-b from-background to-muted/40">
-        <div className="container mx-auto px-4">
+      <section className="relative w-full text-center py-20 lg:py-32 bg-gradient-to-b from-background to-muted/40 overflow-hidden">
+        <Image
+            src="/assets/_login_carousel/AQ_SideProfile.png"
+            alt="Clash of Clans background"
+            data-ai-hint="clash of clans battle"
+            fill
+            className="object-cover object-top opacity-10"
+            unoptimized
+        />
+        <div className="container relative mx-auto px-4 z-10">
             <div className="flex justify-center mb-6">
                 <Image
                     src='/coc_logo.png'
-                    alt="Clash of Clans Logo" 
+                    alt="Clash of Clans Logo"
                     data-ai-hint="clash of clans logo"
                     width={400} 
                     height={150}
@@ -69,18 +84,28 @@ export function LandingPage() {
       </section>
 
       <section className="w-full py-20 lg:py-24 bg-muted/40">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <div className="flex justify-center mb-4">
-            <Heart className="w-12 h-12 text-destructive" />
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
+              <div className="w-48 h-48 relative shrink-0">
+                  <Image 
+                      src={fanAvatar}
+                      alt="Hero Avatar"
+                      fill
+                      className="object-contain animate-float"
+                      unoptimized
+                  />
+              </div>
+              <div className="max-w-2xl">
+                <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
+                <p className="text-lg text-foreground/80 mb-6">
+                  As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
+                </p>
+                <p className="text-sm text-muted-foreground italic">
+                  Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
+                </p>
+                <a className='text-red-600 font-headline text-sm bg-blue-500/10 cursor-pointer' href='https://supercell.com/en/fan-content-policy/'>supercell.com/en/fan-content-policy/</a>.
+              </div>
           </div>
-          <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
-          <p className="text-lg text-foreground/80 mb-6">
-            As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
-          </p>
-          <p className="text-sm text-muted-foreground italic">
-            Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
-          </p>
-          <a className='text-red-600 font-headline text-sm bg-blue-500/10 cursor-pointer' href='https://supercell.com/en/fan-content-policy/'>supercell.com/en/fan-content-policy/</a>.
         </div>
       </section>
 

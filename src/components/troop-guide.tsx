@@ -63,7 +63,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
 
     return (
         <div className="space-y-8">
-            <Card>
+            <Card className='themed-card'>
                 <CardHeader>
                     <CardTitle className="font-headline">AI Army Advisor</CardTitle>
                     <CardDescription>Get a powerful army composition suggestion based on your troop levels.</CardDescription>
@@ -75,7 +75,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                     </Button>
 
                     {suggestion && (
-                        <Alert className="mt-6">
+                        <Alert className="mt-6 bg-background/50">
                             <AlertTitle className="font-headline flex items-center">
                                 <Wand2 className="mr-2" />
                                 {suggestion.armyName}
@@ -93,7 +93,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className='themed-card'>
                 <CardHeader>
                     <CardTitle className="font-headline">Army Compendium</CardTitle>
                     <CardDescription>An overview of all your unlocked troops and spells.</CardDescription>
@@ -101,7 +101,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                 <CardContent>
                     <Accordion type="multiple" defaultValue={troopCategories.map(c => c.title)} className="w-full">
                         {troopCategories.map(({ title, data, icon: Icon }) => (
-                            <AccordionItem value={title} key={title}>
+                            <AccordionItem value={title} key={title} className="border-green-500/20">
                                 <AccordionTrigger className="text-lg font-semibold capitalize hover:no-underline">
                                     <div className="flex items-center gap-3">
                                         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">

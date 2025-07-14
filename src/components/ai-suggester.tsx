@@ -11,6 +11,7 @@ import { Skeleton } from './ui/skeleton';
 import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
 import { Badge } from './ui/badge';
+import { cn } from '@/lib/utils';
 
 interface AiSuggesterProps {
   villageState: VillageState;
@@ -34,7 +35,6 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const [avatar, setAvatar] = useState(heroAvatarAssets[0]);
 
   useEffect(() => {
-      // This will only run on the client, preventing hydration mismatch
       setAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
   }, []);
 
@@ -43,8 +43,8 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const getSuggestionType = (name: string): string => {
     if (villageState.buildings.find(b => b.name === name)) return villageState.buildings.find(b => b.name === name)!.type;
     if (villageState.heroes.find(h => h.name === name)) return 'hero';
-    if (villageState.pets.find(p => p.name === name)) return 'hero'; // Represent pets with heart icon for simplicity
-    if (villageState.equipment.find(e => e.name === name)) return 'army'; // Represent equipment with sword icon
+    if (villageState.pets.find(p => p.name === name)) return 'hero'; 
+    if (villageState.equipment.find(e => e.name === name)) return 'army';
     return 'default';
   };
 
@@ -94,23 +94,24 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
   const renderSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="flex flex-col gap-4 p-4 rounded-lg border bg-background/50">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-6 w-24 rounded-full" />
-            <Skeleton className="h-6 w-20 rounded-full" />
+        <Card key={i} className="themed-card p-4 flex flex-col justify-between">
+           <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+            </div>
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-5/6" />
           </div>
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-        </div>
+        </Card>
       ))}
     </div>
   );
 
   return (
-    <Card className="bg-gradient-to-br from-card to-muted/20 border-primary/20">
-      <CardHeader className="flex flex-row items-center gap-4">
-        {avatar && <Image src={avatar} alt="Hero Avatar" width={80} height={80} className="rounded-full border-4 border-primary/50" unoptimized />}
+    <Card className="bg-transparent border-0 shadow-none">
+      <CardHeader className="px-0">
         <div className='flex-1'>
           <CardTitle className="flex items-center text-2xl">
             <Lightbulb className="mr-3 h-8 w-8 text-accent" />
@@ -121,7 +122,7 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0">
         {isLoading && renderSkeleton()}
 
         {!isLoading && suggestions && suggestions.suggestedUpgrades.length > 0 && (
@@ -130,33 +131,37 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
               const suggestionType = getSuggestionType(s.buildingName);
               const Icon = iconMap[suggestionType] || iconMap['default'];
               return (
-                 <div key={index} className="flex flex-col gap-3 p-4 rounded-xl border-green-500/30 bg-green-100/40 dark:bg-green-900/20 hover:shadow-lg transition-all hover:-translate-y-1">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="bg-yellow-400/80 text-yellow-900 border-yellow-500/50">
-                        <Star className="w-3 h-3 mr-1.5" />
-                        TOP PICK
-                    </Badge>
-                     <Badge variant="outline" className="border-gray-400/50 capitalize">
-                        <Icon className="w-3 h-3 mr-1.5" />
-                        {suggestionType}
-                    </Badge>
-                  </div>
+                 <Card key={index} className="themed-card p-4 flex flex-col justify-between hover:-translate-y-1 transition-transform">
                   <div>
-                    <h3 className="font-bold text-lg text-card-foreground font-headline tracking-wide">{s.buildingName}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{s.reason}</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Badge variant="secondary" className="bg-yellow-400/80 text-yellow-900 border-yellow-500/50">
+                          <Star className="w-3 h-3 mr-1.5" />
+                          TOP PICK
+                      </Badge>
+                      <Badge variant="outline" className="border-gray-400/50 capitalize">
+                          <Icon className="w-3 h-3 mr-1.5" />
+                          {suggestionType}
+                      </Badge>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg text-card-foreground font-headline tracking-wide">{s.buildingName}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{s.reason}</p>
+                    </div>
                   </div>
-                </div>
+                </Card>
               )
             })}
           </div>
         )}
 
         {!isLoading && (!suggestions || suggestions.suggestedUpgrades.length === 0) && (
-          <div className="text-center py-8">
-            <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <p className="mt-4 text-muted-foreground">No suggestions available right now.</p>
-            <p className="text-sm text-muted-foreground/80">Your builders might be busy or you're already a maxed-out legend!</p>
-          </div>
+          <Card className="themed-card">
+            <CardContent className="text-center py-8">
+              <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground/50" />
+              <p className="mt-4 text-muted-foreground">No suggestions available right now.</p>
+              <p className="text-sm text-muted-foreground/80">Your builders might be busy or you're already a maxed-out legend!</p>
+            </CardContent>
+          </Card>
         )}
       </CardContent>
     </Card>

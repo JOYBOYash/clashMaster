@@ -86,21 +86,8 @@
   }
 }
 
-/* For flip card */
-@layer utilities {
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  .transform-style-3d {
-    transform-style: preserve-3d;
-  }
-  .backface-hidden {
-    backface-visibility: hidden;
-  }
-  .rotate-y-180 {
-    transform: rotateY(180deg);
-  }
-  .group-hover\:rotate-y-180:hover {
-    transform: rotateY(180deg);
+@layer components {
+  .themed-card {
+    @apply bg-gradient-to-br from-green-100/40 to-blue-100/30 dark:from-green-900/20 dark:to-blue-900/20 border-green-500/30 rounded-xl shadow-lg;
   }
 }

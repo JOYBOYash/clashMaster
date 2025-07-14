@@ -36,7 +36,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
     
-    return [
+    const stepConfig = [
       { id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" },
       { id: 'keyBuildings', title: 'Key Buildings', icon: Library, items: singleInstanceBuildings.filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "These core buildings define your village's capabilities." },
       { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'], text: "The bigger the camp, the bigger the army. Simple!" },
@@ -47,20 +47,21 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']), text: "Time to review your forces. Every troop level counts." },
       { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']), text: "The most powerful units in the game. Let's see how your legends are progressing." },
     ];
+    return stepConfig.filter(step => step.items.length > 0 || step.id === 'townHall');
   }, [townHallLevel]);
   
   const currentStepConfig = surveySteps[currentStep];
 
-  useEffect(() => {
-    setCurrentAvatar(heroAvatarAssets[currentStep % heroAvatarAssets.length]);
-  }, [currentStep]);
-
   const assignedCount = useMemo(() => {
-    if (!townHallLevel || currentStepConfig.id !== 'walls') return 0;
+    if (!townHallLevel || !currentStepConfig || currentStepConfig.id !== 'walls') return 0;
     return Object.keys(levels)
         .filter(key => key.startsWith('wall-'))
         .reduce((sum, key) => sum + (levels[key] || 0), 0);
-  }, [levels, townHallLevel, currentStepConfig.id]);
+  }, [levels, townHallLevel, currentStepConfig]);
+
+  useEffect(() => {
+    setCurrentAvatar(heroAvatarAssets[currentStep % heroAvatarAssets.length]);
+  }, [currentStep]);
 
   const handleLevelChange = (key: string, value: string, maxLevel: number) => {
     const numericValue = parseInt(value, 10);
@@ -91,8 +92,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if (currentStepConfig.id === 'walls') {
       // Special handling for walls
     } else if (['keyBuildings', 'armyCamps', 'storages', 'collectors', 'defenses'].includes(currentStepConfig.id)) {
-        currentStepConfig.items.forEach((buildingName: string | GameItem) => {
-            const name = typeof buildingName === 'string' ? buildingName : buildingName.name;
+        (currentStepConfig.items as string[]).forEach((name: string) => {
             const count = singleInstanceBuildings.includes(name) ? 1 : (buildingCounts[name] || 0);
             const maxLevel = getMaxLevelForItem(name, townHallLevel);
 
@@ -209,7 +209,6 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
     const totalCount = buildingCounts['Wall'] || 0;
     const maxLevel = getMaxLevelForItem('Wall', townHallLevel);
-
     const isError = assignedCount > totalCount;
 
     return (
@@ -343,7 +342,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       case 'townHall':
         return <Select onValueChange={(v) => { setTownHallLevel(parseInt(v)); setLevels({}); }}>
           <SelectTrigger className="w-full mt-2 text-base py-6"><SelectValue placeholder="Select your Town Hall level..." /></SelectTrigger>
-          <SelectContent>{Array.from({ length: 16 }, (_, i) => i + 1).map(l => <SelectItem key={l} value={String(l)}>Town Hall {l}</SelectItem>)}</SelectContent>
+          <SelectContent>{Array.from({ length: 17 }, (_, i) => i + 1).map(l => <SelectItem key={l} value={String(l)}>Town Hall {l}</SelectItem>)}</SelectContent>
         </Select>;
       case 'walls':
         return renderWallInputs();
@@ -364,7 +363,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
           )
       default:
         return (currentStepConfig.items as (string | GameItem)[]).map(item => 
-          typeof item === 'string' ? renderBuildingInputs(item) : renderSingleItemInput(item)
+          typeof item === 'string' ? renderBuildingInputs(item) : renderSingleItemInput(item as GameItem)
         );
     }
   }
@@ -440,3 +439,5 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </div>
   );
 }
+
+    

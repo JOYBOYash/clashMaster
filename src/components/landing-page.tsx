@@ -14,19 +14,22 @@ const features = [
     icon: BarChart,
     title: 'Visual Progress Tracking',
     description: 'See your entire village at a glance. Our dashboards provide a clear overview of your building, troop, and hero levels, helping you identify what to focus on next.',
-    color: 'text-green-500'
+    color: 'text-green-500',
+    avatar: heroAvatarAssets[0]
   },
   {
     icon: BrainCircuit,
     title: 'AI Upgrade Strategy',
     description: 'Let our AI act as your personal strategist. It analyzes your current village state to suggest the most impactful and efficient upgrades, saving you time and resources.',
-    color: 'text-blue-500'
+    color: 'text-blue-500',
+    avatar: heroAvatarAssets[1]
   },
   {
     icon: Swords,
     title: 'Custom Army Compositions',
     description: 'Tired of using the same old army? Get powerful army suggestions tailored specifically to your Town Hall and troop levels for any situation—war, farming, or trophy pushing.',
-    color: 'text-red-500'
+    color: 'text-red-500',
+    avatar: heroAvatarAssets[2]
   },
 ];
 

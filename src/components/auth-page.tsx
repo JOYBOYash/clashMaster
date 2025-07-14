@@ -99,8 +99,8 @@ export const AuthPage = () => {
           <Card className="border-0 shadow-none">
             <form onSubmit={handleSignInSubmit(onSignIn)}>
               <CardHeader className="px-1">
-                <CardTitle className="font-headline text-3xl">Welcome Back</CardTitle>
-                <CardDescription>Enter your credentials to access your village.</CardDescription>
+                <CardTitle className="font-headline text-3xl animate-fade-in-up">Welcome Back</CardTitle>
+                <CardDescription className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>Enter your credentials to access your village.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-1">
                 <div className="space-y-2">
@@ -127,8 +127,8 @@ export const AuthPage = () => {
           <Card className="border-0 shadow-none">
             <form onSubmit={handleSignUpSubmit(onSignUp)}>
               <CardHeader className="px-1">
-                <CardTitle className="font-headline text-3xl">Create Account</CardTitle>
-                <CardDescription>Get started with AI-powered village analysis.</CardDescription>
+                <CardTitle className="font-headline text-3xl animate-fade-in-up">Create Account</CardTitle>
+                <CardDescription className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>Get started with AI-powered village analysis.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-1">
                  <div className="space-y-2">

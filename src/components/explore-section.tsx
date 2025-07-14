@@ -23,15 +23,15 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
   }, [villageState]);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="bg-transparent border-0 shadow-none">
+      <CardHeader className="px-0">
         <CardTitle className="font-headline flex items-center">
             <Sparkles className="mr-2 h-6 w-6 text-accent" />
             Weekly Showcase
         </CardTitle>
         <CardDescription>A rotating selection of this week's featured skins and sceneries!</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0">
         {!featuredItems ? (
            <div className="flex justify-center items-center h-48">
              <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -39,7 +39,7 @@ export function ExploreSection({ villageState }: ExploreSectionProps) {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredItems.map((item, index) => (
-              <Card key={index} className="overflow-hidden group flex flex-col">
+              <Card key={index} className="themed-card overflow-hidden group flex flex-col">
                 <div className="relative aspect-video">
                   <Image
                     src={item.imageUrl}

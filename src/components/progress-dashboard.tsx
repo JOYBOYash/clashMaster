@@ -73,7 +73,7 @@ export function ProgressDashboard({ buildings }: ProgressDashboardProps) {
 
 
   return (
-    <Card>
+    <Card className='themed-card h-full'>
       <CardHeader>
         <CardTitle className="font-headline flex items-center">
             <Target className="mr-2 h-6 w-6 text-primary" />

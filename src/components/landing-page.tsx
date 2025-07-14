@@ -3,10 +3,10 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Target, Wand2, ShieldCheck, Swords, BrainCircuit, Heart, BarChart } from 'lucide-react';
+import { BarChart, BrainCircuit, Swords } from 'lucide-react';
 import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
-import { FlipCard } from './feature-flip-card';
+import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 
 const features = [
@@ -72,8 +72,8 @@ export function LandingPage() {
           <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
             {features.map((feature, index) => (
-              <div key={index} className="relative">
-                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40 z-10">
+              <div key={index} className="relative pt-16">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-40 h-40 z-10">
                   <Image
                     src={feature.avatar}
                     alt="Hero Avatar"
@@ -82,7 +82,7 @@ export function LandingPage() {
                     unoptimized
                   />
                 </div>
-                <FlipCard
+                <FeatureCard
                   icon={feature.icon}
                   title={feature.title}
                   description={feature.description}

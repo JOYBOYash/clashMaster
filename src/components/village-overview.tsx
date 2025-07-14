@@ -17,7 +17,7 @@ export function VillageOverview({ base, level }: VillageOverviewProps) {
   const imageUrl = getHallImagePath(base, level);
 
   return (
-    <Card>
+    <Card className='themed-card h-full'>
       <CardHeader>
         <CardTitle className="flex items-center text-2xl font-headline">
           <BaseIcon className="mr-3 h-8 w-8 text-primary" />

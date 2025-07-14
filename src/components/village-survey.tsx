@@ -17,7 +17,7 @@ import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from './ui/scroll-area';
-import Link from 'next/link';
+import { useAuth } from '@/context/auth-context';
 
 interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
@@ -37,6 +37,7 @@ const surveyStepTexts: Record<string, string> = {
 
 
 export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
+  const { signOut } = useAuth();
   const [townHallLevel, setTownHallLevel] = useState<number | null>(null);
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [currentStep, setCurrentStep] = useState(0);
@@ -268,7 +269,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                             <Slider
                                 id={inputKey}
                                 min={0}
-                                max={maxForThisSlider}
+                                max={maxForThisSlider < 0 ? 0 : maxForThisSlider}
                                 step={1}
                                 value={[currentCount]}
                                 onValueChange={(value) => handleWallCountChange(level, value[0])}
@@ -454,7 +455,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
 
         <div className="flex flex-col col-span-1 lg:col-span-3 h-full">
-            <Card className="border-0 shadow-none rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card transition-none hover:transform-none hover:shadow-none">
+            <Card className="border-0 rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card shadow-none transition-none hover:transform-none hover:shadow-none">
               <CardHeader className='shrink-0'>
                 <div className="w-full mb-4">
                   <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />
@@ -481,9 +482,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     <ChevronLeft /> Back
                 </Button>
                 <div className="flex-grow flex justify-center">
-                  <Button variant="link" asChild>
-                      <Link href="/"><X className='mr-2' />Cancel Setup</Link>
-                  </Button>
+                    <Button variant="link" onClick={signOut}>
+                        <X className='mr-2' />Cancel Setup
+                    </Button>
                 </div>
                 {currentStep < surveySteps.length - 1 ? (
                   <Button onClick={handleNext} disabled={!townHallLevel}>
@@ -501,3 +502,5 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </div>
   );
 }
+
+    

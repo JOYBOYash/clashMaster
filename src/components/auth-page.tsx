@@ -96,7 +96,7 @@ export const AuthPage = () => {
           <TabsTrigger value="sign-up">Sign Up</TabsTrigger>
         </TabsList>
         <TabsContent value="sign-in">
-          <Card className="border-0 shadow-none transition-none hover:transform-none">
+          <Card className="border-0 shadow-none transition-none hover:transform-none hover:shadow-none">
             <form onSubmit={handleSignInSubmit(onSignIn)}>
               <CardHeader className="px-1">
                 <CardTitle className="font-headline text-3xl animate-fade-in-up">Welcome Back</CardTitle>
@@ -124,7 +124,7 @@ export const AuthPage = () => {
           </Card>
         </TabsContent>
         <TabsContent value="sign-up">
-          <Card className="border-0 shadow-none transition-none hover:transform-none">
+          <Card className="border-0 shadow-none transition-none hover:transform-none hover:shadow-none">
             <form onSubmit={handleSignUpSubmit(onSignUp)}>
               <CardHeader className="px-1">
                 <CardTitle className="font-headline text-3xl animate-fade-in-up">Create Account</CardTitle>

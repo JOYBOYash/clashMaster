@@ -21,5 +21,9 @@ export default function SurveyPage() {
         redirect('/upgrades');
     }
 
-    return <VillageSurvey onSurveyComplete={saveVillageState} />;
+    return (
+        <div className='flex flex-col min-h-screen items-center justify-center bg-card'>
+             <VillageSurvey onSurveyComplete={saveVillageState} />
+        </div>
+    );
 }

@@ -146,6 +146,9 @@ export const heroAvatarAssets = [
    '/assets/_avatars/bk-avatar2.png',
     '/assets/_avatars/mp-avatar.png',
   '/assets/_avatars/mp-avatar2.png',
+  '/assets/_avatars/gw-avatar.png',
+  '/assets/_avatars/aq-avatar.png',
+  '/assets/_avatars/rc-avatar.png',
 ];
 
 export const carouselImageAssets = [

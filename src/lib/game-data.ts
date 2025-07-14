@@ -1,7 +1,6 @@
 
-import troopData from './raw.json';
-import equipmentData from './equipment.json';
-import superTroopData from './super-troops.json';
+import buildingData from './raw-defenses-buildings-resources-others.json';
+import troopData from './raw-troops-heroes-equipment-spells.json';
 
 // Type definitions for our structured data
 export interface GameItem {
@@ -23,22 +22,28 @@ export interface GameItem {
 const processedGameData = new Map<string, GameItem>();
 
 // Helper to create a unified GameItem
-const createGameItem = (item: any, type: GameItem['type'], category: string = ''): GameItem | null => {
-  if (!item.name) return null;
+const createGameItem = (name: string, item: any, type: GameItem['type']): GameItem | null => {
+  if (!name || !item) return null;
 
-  let unlockHall = item.unlock?.requiredTownHall || item.unlockTownHall || 1;
-  if(type === 'hero' && item.name === 'Barbarian King') unlockHall = 7;
-  if(type === 'hero' && item.name === 'Archer Queen') unlockHall = 8;
-  if(type === 'hero' && item.name === 'Grand Warden') unlockHall = 11;
-  if(type === 'hero' && item.name === 'Royal Champion') unlockHall = 13;
+  let unlockHall = item.unlockTownHall || 1;
+  if(item.unlock?.requiredTownHall) unlockHall = item.unlock.requiredTownHall;
+
+  // Manual overrides for heroes that don't have a TH level in the data
+  if(type === 'hero' && name === 'Barbarian King') unlockHall = 7;
+  if(type === 'hero' && name === 'Archer Queen') unlockHall = 9;
+  if(type === 'hero' && name === 'Grand Warden') unlockHall = 11;
+  if(type === 'hero' && name === 'Royal Champion') unlockHall = 13;
+  if(type === 'pet') unlockHall = 14;
 
 
   const maxLevelByTownHall = Array(17).fill(0);
-  (item.levels || []).forEach((levelInfo: any) => {
-    const th = levelInfo.requiredTownHall || levelInfo.requiredBuilderHall;
-    if (th) {
-      for (let i = th - 1; i < 17; i++) {
-        maxLevelByTownHall[i] = Math.max(maxLevelByTownHall[i], levelInfo.level);
+  (item.levels || []).forEach((levelInfo: any, index: number) => {
+    const requiredTH = levelInfo.requiredTownHall || levelInfo.requiredBuilderHall || unlockHall;
+    const level = levelInfo.level || (index + 1);
+    
+    if (requiredTH) {
+      for (let i = requiredTH - 1; i < 17; i++) {
+        maxLevelByTownHall[i] = Math.max(maxLevelByTownHall[i], level);
       }
     }
   });
@@ -51,9 +56,8 @@ const createGameItem = (item: any, type: GameItem['type'], category: string = ''
       }
    }
 
-
   return {
-    name: item.name,
+    name: name,
     type,
     unlock: {
       hall: unlockHall,
@@ -69,34 +73,40 @@ const createGameItem = (item: any, type: GameItem['type'], category: string = ''
   };
 };
 
-// Process all data sources
-Object.values(troopData.homeVillage.troops).forEach(item => {
-    const gameItem = createGameItem(item, 'troop');
+// Process all data from raw-troops-heroes-equipment-spells.json
+Object.entries(troopData.homeVillage.troops).forEach(([name, item]) => {
+    const gameItem = createGameItem(name, item, 'troop');
     if(gameItem) processedGameData.set(gameItem.name, gameItem);
 });
-Object.values(troopData.homeVillage.spells.elixir).forEach(item => {
-    const gameItem = createGameItem(item, 'spell');
+Object.entries(troopData.homeVillage.spells.elixir).forEach(([name, item]) => {
+    const gameItem = createGameItem(name, item, 'spell');
     if(gameItem) processedGameData.set(gameItem.name, gameItem);
 });
-Object.values(troopData.homeVillage.spells.darkElixir).forEach(item => {
-    const gameItem = createGameItem(item, 'spell');
+Object.entries(troopData.homeVillage.spells.darkElixir).forEach(([name, item]) => {
+    const gameItem = createGameItem(name, item, 'spell');
     if(gameItem) processedGameData.set(gameItem.name, gameItem);
 });
-Object.values(troopData.homeVillage.heroes).forEach(item => {
-    const gameItem = createGameItem(item, 'hero');
+Object.entries(troopData.homeVillage.heroes).forEach(([name, item]) => {
+    const gameItem = createGameItem(name, item, 'hero');
     if(gameItem) processedGameData.set(gameItem.name, gameItem);
 });
-Object.values(troopData.homeVillage.heroPets).forEach(item => {
-    const gameItem = createGameItem(item, 'pet');
+Object.entries(troopData.homeVillage.heroPets).forEach(([name, item]) => {
+    const gameItem = createGameItem(name, item, 'pet');
     if(gameItem) processedGameData.set(gameItem.name, gameItem);
 });
-Object.values(troopData.homeVillage.heroEquipment).forEach(item => {
-    const gameItem = createGameItem(item, 'equipment');
+Object.entries(troopData.homeVillage.heroEquipment).forEach(([name, item]) => {
+    const gameItem = createGameItem(name, item, 'equipment');
     if(gameItem) processedGameData.set(gameItem.name, gameItem);
 });
-Object.values(troopData.homeVillage.siegeMachines).forEach(item => {
-    const gameItem = createGameItem(item, 'siege');
-    if(gameItem) processedGameData.set(gameItem.name, gameItem);
+
+// Process all data from raw-defenses-buildings-resources-others.json
+const buildingCategories = ['resources', 'army', 'other', 'defenses', 'traps'];
+buildingCategories.forEach(category => {
+  const catKey = category as keyof typeof buildingData.homeVillage;
+  Object.entries((buildingData.homeVillage as any)[catKey]).forEach(([name, item]) => {
+      const gameItem = createGameItem(name, item, 'building');
+      if(gameItem) processedGameData.set(gameItem.name, gameItem);
+  });
 });
 
 
@@ -112,7 +122,8 @@ export const buildingUnlockLevels: Record<string, number> = {
 
 export const singleInstanceBuildings = [
     'Laboratory', 'Spell Factory', 'Dark Spell Factory', 'Clan Castle',
-    'Workshop', 'Pet House', 'Blacksmith', 'Barracks', 'Dark Barracks', 'Dark Elixir Storage'
+    'Workshop', 'Pet House', 'Blacksmith', 'Barracks', 'Dark Barracks', 'Dark Elixir Storage',
+    'Eagle Artillery', 'Monolith'
 ];
 
 
@@ -136,61 +147,51 @@ export const getItemsForTownHall = (thLevel: number, types: GameItem['type'][]):
 
 export const getMaxLevelForItem = (itemName: string, thLevel: number): number => {
     const item = getItemData(itemName);
-    if (item && item.maxLevelByTownHall && thLevel > 0 && thLevel <= item.maxLevelByTownHall.length) {
+    if (!item || !item.maxLevelByTownHall) {
+        // Fallback for Wall, which is not in processedGameData
+        if (itemName === 'Wall') {
+            const wallData = (buildingData.homeVillage as any).walls;
+            if(wallData) return wallData.maxLevelByTownHall[thLevel - 1] || 1;
+        }
+        return 1;
+    }
+    if (thLevel > 0 && thLevel <= item.maxLevelByTownHall.length) {
         return item.maxLevelByTownHall[thLevel - 1] || 1;
     }
-
-    // Fallback for buildings not in the main data file
-    const buildingData = (troopData.homeVillage.defenses as any)[itemName] || (troopData.homeVillage.traps as any)[itemName];
-    if (buildingData) {
-        let maxLevel = 0;
-        for (const levelInfo of buildingData.levels) {
-            if (levelInfo.requiredTownHall <= thLevel) {
-                maxLevel = levelInfo.level;
-            } else {
-                break;
-            }
-        }
-        return maxLevel || 1;
-    }
-    
     return 1;
 };
 
 export const getBuildingCountsForTownHall = (thLevel: number): Record<string, number> => {
-    const defenseData = troopData.homeVillage.defenses as any;
     const finalCounts: Record<string, number> = {};
+    if (thLevel <= 0 || thLevel > 17) return finalCounts;
 
-    for (const buildingName in defenseData) {
-        const buildingInfo = defenseData[buildingName];
-        if (buildingInfo.maxPerTownHall) {
+    const allBuildingData = [
+        ...Object.values(buildingData.homeVillage.defenses),
+        ...Object.values(buildingData.homeVillage.resources),
+        ...Object.values(buildingData.homeVillage.army),
+        ...Object.values(buildingData.homeVillage.other),
+        ...Object.values(buildingData.homeVillage.traps),
+        (buildingData.homeVillage as any).walls,
+    ];
+
+    for (const buildingInfo of allBuildingData) {
+        if (buildingInfo && buildingInfo.name && buildingInfo.maxPerTownHall) {
             const count = buildingInfo.maxPerTownHall[String(thLevel)];
             if(count) {
-              finalCounts[buildingName] = count;
+              finalCounts[buildingInfo.name] = count;
             }
         }
     }
-
-    const wallData = (troopData.homeVillage as any).walls;
-    if (wallData && wallData.maxPerTownHall) {
-        const wallCount = wallData.maxPerTownHall[String(thLevel)];
-        if (wallCount) {
-          finalCounts['Wall'] = wallCount;
-        }
-    }
-
-    // Add other buildings from hardcoded data if necessary
-    if(thLevel >= 1) finalCounts['Army Camp'] = 4;
-    if(thLevel >= 1) finalCounts['Gold Storage'] = thLevel >= 9 ? 4 : (thLevel >= 7 ? 3 : 2);
-    if(thLevel >= 1) finalCounts['Elixir Storage'] = thLevel >= 9 ? 4 : (thLevel >= 7 ? 3 : 2);
-    if(thLevel >= 8) finalCounts['Dark Elixir Drill'] = thLevel >= 13 ? 4 : (thLevel >= 10 ? 3 : (thLevel >= 9 ? 2 : 1));
-
     return finalCounts;
 };
 
 export const getElixirTypeForItem = (itemName: string): 'regular' | 'dark' | 'none' => {
   const item = getItemData(itemName);
-  if (!item || !item.upgrade) return 'none';
+  if (!item || !item.upgrade) {
+    const spellItem = (troopData.homeVillage.spells.elixir as any)[itemName] || (troopData.homeVillage.spells.darkElixir as any)[itemName];
+    if(spellItem) return spellItem.upgradeResource === 'Elixir' ? 'regular' : 'dark';
+    return 'none';
+  }
 
   if (item.upgrade.resource === 'Dark Elixir') {
     return 'dark';
@@ -200,5 +201,3 @@ export const getElixirTypeForItem = (itemName: string): 'regular' | 'dark' | 'no
   }
   return 'none';
 };
-
-    

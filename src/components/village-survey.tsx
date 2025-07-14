@@ -9,13 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SurveyProgress } from './survey-progress';
-import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall } from 'lucide-react';
+import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Terminal } from 'lucide-react';
 import Image from 'next/image';
 import { heroAvatarAssets, getBuildingImagePathByLevel } from '@/lib/image-paths';
 import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
+import { cn } from '@/lib/utils';
 
 interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
@@ -30,15 +31,13 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const surveySteps = useMemo(() => {
     if (!townHallLevel) return [{ id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" }];
 
-    const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
-    
     const stepConfig = [
       { id: 'townHall', title: 'Town Hall Level', icon: Home, items: [], text: "Let's start with the heart of your village—the Town Hall!" },
       { id: 'keyBuildings', title: 'Key Buildings', icon: Library, items: singleInstanceBuildings.filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "These core buildings define your village's capabilities." },
       { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'], text: "The bigger the camp, the bigger the army. Simple!" },
       { id: 'storages', title: 'Resource Storages', icon: Warehouse, items: ['Gold Storage', 'Elixir Storage', 'Dark Elixir Storage'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "You can't spend what you can't hold. Let's log your storage capacity." },
       { id: 'collectors', title: 'Resource Collectors', icon: Coins, items: ['Gold Mine', 'Elixir Collector', 'Dark Elixir Drill'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "Passive income is the best income. How are your collectors doing?" },
-      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(buildingCounts).filter(b => buildingNameToType[b] === 'defensive' && !singleInstanceBuildings.includes(b) && buildingUnlockLevels[b] <= townHallLevel), text: "A good offense is a good defense... but a great defense is even better!" },
+      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(getBuildingCountsForTownHall(townHallLevel)).filter(b => buildingNameToType[b] === 'defensive' && !singleInstanceBuildings.includes(b) && buildingUnlockLevels[b] <= townHallLevel), text: "A good offense is a good defense... but a great defense is even better!" },
       { id: 'walls', title: 'Walls', icon: BrickWall, items: ['Wall'], text: "The backbone of your defense. Tell me about your walls." },
       { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']), text: "Time to review your forces. Every troop level counts." },
       { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']), text: "The most powerful units in the game. Let's see how your legends are progressing." },
@@ -48,8 +47,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   
   const currentStepConfig = surveySteps[currentStep];
 
-  const assignedCount = useMemo(() => {
-    if (!townHallLevel || !currentStepConfig || currentStepConfig.id !== 'walls') return 0;
+  const assignedWallCount = useMemo(() => {
+    if (!townHallLevel || currentStepConfig.id !== 'walls') return 0;
     return Object.keys(levels)
         .filter(key => key.startsWith('wall-'))
         .reduce((sum, key) => sum + (levels[key] || 0), 0);
@@ -66,11 +65,46 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     }
   };
   
-  const handleWallCountChange = (level: number, count: number, maxCount: number) => {
-    const numericCount = Math.max(0, Math.min(count, maxCount));
+  const handleWallCountChange = (level: number, count: number) => {
+    if (!townHallLevel) return;
+    const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
+    const totalCount = buildingCounts['Wall'] || 0;
+    const numericCount = Math.max(0, Math.min(count, totalCount));
     const inputKey = `wall-${level}`;
-    setLevels(prev => ({ ...prev, [inputKey]: numericCount }));
+    
+    // Calculate current assigned count *without* the current level's input
+    const otherWallsCount = Object.keys(levels)
+        .filter(key => key.startsWith('wall-') && key !== inputKey)
+        .reduce((sum, key) => sum + (levels[key] || 0), 0);
+    
+    // Ensure the new count doesn't exceed the total available walls
+    const cappedCount = Math.min(numericCount, totalCount - otherWallsCount);
+
+    setLevels(prev => ({ ...prev, [inputKey]: cappedCount }));
   }
+
+  const setAllToMax = (items: (string | GameItem)[], type: 'building' | 'item') => {
+    if (!townHallLevel) return;
+    const newLevels = { ...levels };
+    if (type === 'building') {
+      (items as string[]).forEach(buildingName => {
+        const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
+        const count = singleInstanceBuildings.includes(buildingName) ? 1 : (buildingCounts[buildingName] || 0);
+        const maxLevel = getMaxLevelForItem(buildingName, townHallLevel);
+        for(let i=0; i<count; i++) {
+            const inputKey = `${buildingName}-${i}`;
+            newLevels[inputKey] = maxLevel;
+        }
+      });
+    } else {
+        (items as GameItem[]).forEach(item => {
+            const inputKey = `${item.type}-${item.name}`;
+            const maxLevel = getMaxLevelForItem(item.name, townHallLevel);
+            newLevels[inputKey] = maxLevel;
+        });
+    }
+    setLevels(newLevels);
+  };
 
   const renderBuildingInputs = (buildingName: string) => {
     if (!townHallLevel) return null;
@@ -82,7 +116,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     
     return (
       <div key={buildingName} className="space-y-6">
-        <h4 className="font-semibold text-foreground text-xl text-center">{buildingName}</h4>
+        <div className="flex justify-between items-center">
+            <h4 className="font-semibold text-foreground text-xl text-center">{buildingName}</h4>
+            <Button size="sm" variant="outline" onClick={() => setAllToMax([buildingName], 'building')}>
+                <ChevronsUp className='mr-2' /> Set to Max
+            </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {Array.from({ length: count }).map((_, i) => {
             const inputKey = `${buildingName}-${i}`;
@@ -157,7 +196,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
     return (
         <div className='space-y-4'>
-            {title && <h3 className="text-xl font-headline mb-2">{title}</h3>}
+            <div className='flex justify-between items-center'>
+                {title && <h3 className="text-xl font-headline mb-2">{title}</h3>}
+                <Button size="sm" variant="outline" onClick={() => setAllToMax(items, 'item')}>
+                    <ChevronsUp className='mr-2' /> Set to Max
+                </Button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 {items.map(item => renderSingleItemInput(item))}
             </div>
@@ -170,9 +214,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
     const totalCount = buildingCounts['Wall'] || 0;
     const maxLevel = getMaxLevelForItem('Wall', townHallLevel);
-    const isError = assignedCount > totalCount;
-
-    const remainingWalls = totalCount - assignedCount;
+    const isError = assignedWallCount > totalCount;
+    const remainingWalls = totalCount - assignedWallCount;
 
     return (
         <div className="space-y-4">
@@ -181,8 +224,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                 <AlertTitle>Wall Assignment</AlertTitle>
                 <AlertDescription>
                    Total Walls: <span className="font-bold">{totalCount}</span> |
-                   Assigned: <span className="font-bold">{assignedCount}</span> |
-                   Remaining: <span className={`font-bold ${isError ? 'text-destructive-foreground' : ''}`}>{remainingWalls}</span>
+                   Assigned: <span className="font-bold">{assignedWallCount}</span> |
+                   Remaining: <span className={cn("font-bold", remainingWalls < 0 ? 'text-destructive-foreground' : '')}>{remainingWalls}</span>
                     {isError && <span className="font-bold text-destructive-foreground ml-4">You have assigned more walls than available!</span>}
                 </AlertDescription>
             </Alert>
@@ -201,17 +244,17 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                                     min="0"
                                     max={totalCount}
                                     value={currentCount}
-                                    onChange={(e) => handleWallCountChange(level, parseInt(e.target.value) || 0, totalCount)}
+                                    onChange={(e) => handleWallCountChange(level, parseInt(e.target.value) || 0)}
                                     className="w-24 text-center font-bold"
                                 />
                             </div>
                             <Slider
                                 id={inputKey}
                                 min={0}
-                                max={totalCount}
+                                max={totalCount - (assignedWallCount - currentCount)}
                                 step={1}
                                 value={[currentCount]}
-                                onValueChange={(value) => handleWallCountChange(level, value[0], totalCount)}
+                                onValueChange={(value) => handleWallCountChange(level, value[0])}
                             />
                         </div>
                     );
@@ -231,6 +274,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
   const handleSubmit = async () => {
     if (!townHallLevel) return;
+    const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
+    const wallCount = buildingCounts['Wall'] || 0;
+    if (assignedWallCount > wallCount) {
+        alert("You have assigned more walls than you have at this Town Hall level. Please correct the counts before submitting.");
+        return;
+    }
 
     const buildings: Building[] = [];
     const troops: Troop[] = [];
@@ -238,11 +287,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const pets: Pet[] = [];
     const equipment: Equipment[] = [];
     
-    const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
-
     Object.keys(buildingUnlockLevels).forEach(name => {
       if (buildingUnlockLevels[name] > townHallLevel || name === 'Wall') return;
-
       const count = singleInstanceBuildings.includes(name) ? 1 : (buildingCounts[name] || 0);
       for (let i = 0; i < count; i++) {
         const inputKey = `${name}-${i}`;
@@ -255,23 +301,22 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       }
     });
 
-    const wallCount = buildingCounts['Wall'] || 0;
     const maxWallLevel = getMaxLevelForItem('Wall', townHallLevel);
-    let assignedWallCount = 0;
+    let assignedWallPieces = 0;
     for (let level = 1; level <= maxWallLevel; level++) {
         const key = `wall-${level}`;
         const countForLevel = levels[key] || 0;
         for (let i = 0; i < countForLevel; i++) {
-            if (assignedWallCount >= wallCount) break;
+            if (assignedWallPieces >= wallCount) break;
             buildings.push({
-                id: `Wall-${level}-${assignedWallCount}`, name: 'Wall', level, maxLevel: maxWallLevel,
+                id: `Wall-${level}-${assignedWallPieces}`, name: 'Wall', level, maxLevel: maxWallLevel,
                 type: buildingNameToType['Wall'] || 'other', base: 'home', isUpgrading: false
             });
-            assignedWallCount++;
+            assignedWallPieces++;
         }
     }
     // Add remaining walls as level 1
-    for (let i = assignedWallCount; i < wallCount; i++) {
+    for (let i = assignedWallPieces; i < wallCount; i++) {
         buildings.push({
             id: `Wall-1-unassigned-${i}`, name: 'Wall', level: 1, maxLevel: maxWallLevel,
             type: buildingNameToType['Wall'] || 'other', base: 'home', isUpgrading: false
@@ -308,12 +353,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   };
   
   const Icon = currentStepConfig.icon;
-  const currentText = currentStep > 0 ? currentStepConfig.text : "Let's start with the heart of your village—the Town Hall!";
+  const currentText = currentStepConfig.text;
 
   const renderContent = () => {
     if (!townHallLevel) {
        return (
-        <div className='flex flex-col items-center gap-4'>
+        <div className='flex flex-col items-center gap-4 my-auto'>
             <Image src={getBuildingImagePathByLevel('Town Hall', 1)} alt="Town Hall" width={150} height={150} unoptimized/>
              <Slider
                 min={1}
@@ -333,7 +378,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
     if (townHallLevel && currentStep === 0) {
         return (
-             <div className='flex flex-col items-center gap-4'>
+             <div className='flex flex-col items-center gap-4 my-auto'>
                 <Image src={getBuildingImagePathByLevel('Town Hall', townHallLevel)} alt={`Town Hall level ${townHallLevel}`} width={150} height={150} unoptimized/>
                  <Slider
                     min={1}
@@ -376,10 +421,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
 
   return (
-    <div className="w-full flex-grow flex items-center justify-center p-0 lg:p-4">
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full lg:min-h-0 lg:rounded-xl lg:shadow-2xl lg:border bg-card">
+    <div className="w-full flex-grow flex items-center justify-center p-0 lg:p-4 bg-background lg:bg-transparent">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full min-h-screen lg:min-h-0 lg:rounded-xl lg:shadow-2xl lg:border bg-card">
         
-        <div className="hidden lg:flex col-span-2 flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 rounded-l-xl">
+        <div className="col-span-1 lg:col-span-2 flex flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl">
             <div className="w-32 h-32 lg:w-64 lg:h-64 relative">
                 <Image 
                     src={currentAvatar}
@@ -410,10 +455,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     </div>
                 </div>
               </CardHeader>
-              <CardContent className="flex-grow overflow-y-auto p-6 space-y-6">
+              <CardContent className="flex-grow overflow-y-auto p-6 space-y-8">
                 {renderContent()}
               </CardContent>
-              <CardFooter className="flex justify-between mt-auto border-t pt-6">
+              <CardFooter className="flex justify-between mt-auto border-t pt-6 bg-card sticky bottom-0">
                 <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
                     <ChevronLeft /> Back
                 </Button>
@@ -422,7 +467,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     Next <ChevronRight />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={!townHallLevel} className="bg-green-600 hover:bg-green-700">
+                  <Button onClick={handleSubmit} disabled={!townHallLevel || assignedWallCount > (getBuildingCountsForTownHall(townHallLevel || 0)['Wall'] || 0)} className="bg-green-600 hover:bg-green-700">
                     Generate My Blueprint
                   </Button>
                 )}

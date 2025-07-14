@@ -55,6 +55,13 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     setCurrentAvatar(heroAvatarAssets[currentStep % heroAvatarAssets.length]);
   }, [currentStep]);
 
+  const assignedCount = useMemo(() => {
+    if (!townHallLevel || currentStepConfig.id !== 'walls') return 0;
+    return Object.keys(levels)
+        .filter(key => key.startsWith('wall-'))
+        .reduce((sum, key) => sum + (levels[key] || 0), 0);
+  }, [levels, townHallLevel, currentStepConfig.id]);
+
   const handleLevelChange = (key: string, value: string, maxLevel: number) => {
     const numericValue = parseInt(value, 10);
     if (!isNaN(numericValue) && numericValue >= 0 && numericValue <= maxLevel) {
@@ -202,12 +209,6 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const buildingCounts = getBuildingCountsForTownHall(townHallLevel);
     const totalCount = buildingCounts['Wall'] || 0;
     const maxLevel = getMaxLevelForItem('Wall', townHallLevel);
-
-    const assignedCount = useMemo(() => {
-        return Object.keys(levels)
-            .filter(key => key.startsWith('wall-'))
-            .reduce((sum, key) => sum + (levels[key] || 0), 0);
-    }, [levels]);
 
     const isError = assignedCount > totalCount;
 

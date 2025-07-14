@@ -17,6 +17,7 @@ import { heroAvatarAssets, getBuildingImagePathByLevel } from '@/lib/image-paths
 import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from './ui/scroll-area';
 
 interface VillageSurveyProps {
   onSurveyComplete: (data: VillageState) => void;
@@ -48,11 +49,11 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
   const currentStepConfig = surveySteps[currentStep];
 
   const assignedWallCount = useMemo(() => {
-    if (!townHallLevel || currentStepConfig.id !== 'walls') return 0;
+    if (!townHallLevel) return 0;
     return Object.keys(levels)
         .filter(key => key.startsWith('wall-'))
         .reduce((sum, key) => sum + (levels[key] || 0), 0);
-  }, [levels, townHallLevel, currentStepConfig]);
+  }, [levels, townHallLevel]);
 
 
   useEffect(() => {
@@ -72,12 +73,10 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const numericCount = Math.max(0, Math.min(count, totalCount));
     const inputKey = `wall-${level}`;
     
-    // Calculate current assigned count *without* the current level's input
     const otherWallsCount = Object.keys(levels)
         .filter(key => key.startsWith('wall-') && key !== inputKey)
         .reduce((sum, key) => sum + (levels[key] || 0), 0);
     
-    // Ensure the new count doesn't exceed the total available walls
     const cappedCount = Math.min(numericCount, totalCount - otherWallsCount);
 
     setLevels(prev => ({ ...prev, [inputKey]: cappedCount }));
@@ -118,23 +117,25 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       <div key={buildingName} className="space-y-6">
         <div className="flex justify-between items-center">
             <h4 className="font-semibold text-foreground text-xl text-center">{buildingName}</h4>
-            <Button size="sm" variant="outline" onClick={() => setAllToMax([buildingName], 'building')}>
-                <ChevronsUp className='mr-2' /> Set to Max
-            </Button>
+             {maxLevel > 1 && (
+                <Button size="sm" variant="outline" onClick={() => setAllToMax([buildingName], 'building')}>
+                    <ChevronsUp className='mr-2' /> Set to Max
+                </Button>
+            )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Array.from({ length: count }).map((_, i) => {
             const inputKey = `${buildingName}-${i}`;
             const currentLevel = levels[inputKey] ?? 1;
             const imagePath = getBuildingImagePathByLevel(buildingName, currentLevel);
             return (
-              <div key={inputKey} className="space-y-4 p-4 border rounded-xl bg-background/50 flex flex-col items-center">
-                 { count > 1 && <Label htmlFor={inputKey} className="text-lg font-semibold">#{i + 1}</Label> }
-                 <div className="relative w-32 h-32">
+              <div key={inputKey} className="p-3 border rounded-xl bg-background/50 flex flex-col items-center text-center gap-3">
+                 { count > 1 && <Label htmlFor={inputKey} className="text-sm font-semibold text-muted-foreground">#{i + 1}</Label> }
+                 <div className="relative w-24 h-24">
                     <Image src={imagePath} alt={`${buildingName} level ${currentLevel}`} fill className="object-contain" unoptimized />
                  </div>
-                 <div className='w-full text-center space-y-2'>
-                    <p className='font-bold text-2xl text-primary'>Level {currentLevel}</p>
+                 <div className='w-full space-y-2'>
+                    <p className='font-bold text-lg text-primary'>Level {currentLevel}</p>
                     <Slider
                       id={inputKey}
                       min={1}
@@ -142,6 +143,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                       step={1}
                       value={[currentLevel]}
                       onValueChange={(value) => handleLevelChange(inputKey, value[0], maxLevel)}
+                      disabled={maxLevel <= 1}
                     />
                      <div className='flex justify-between text-xs text-muted-foreground'>
                         <span>Lvl 1</span>
@@ -173,6 +175,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     step={1}
                     value={[currentLevel]}
                     onValueChange={(value) => handleLevelChange(inputKey, value[0], maxLevel)}
+                    disabled={maxLevel <= 1}
                 />
                 <Input
                     type="number"
@@ -401,31 +404,31 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         return renderWallInputs();
       case 'troops':
         return (
-            <>
+            <div className='space-y-8'>
                 {renderItemGroup(getItemsForTownHall(townHallLevel!, ['troop']), "Troops")}
                 {renderItemGroup(getItemsForTownHall(townHallLevel!, ['spell']), "Spells")}
-            </>
+            </div>
         )
       case 'heroes':
           return (
-            <>
+            <div className='space-y-8'>
                 {renderItemGroup(getItemsForTownHall(townHallLevel!, ['hero']), "Heroes")}
                 {renderItemGroup(getItemsForTownHall(townHallLevel!, ['pet']), "Pets")}
                 {renderItemGroup(getItemsForTownHall(townHallLevel!, ['equipment']), "Equipment")}
-            </>
+            </div>
           )
       default:
-        return (currentStepConfig.items as string[]).map(item => renderBuildingInputs(item as string));
+        return <div className='space-y-8'>{(currentStepConfig.items as string[]).map(item => renderBuildingInputs(item as string))}</div>;
     }
   }
 
 
   return (
     <div className="w-full flex-grow flex items-center justify-center p-0 lg:p-4 bg-background lg:bg-transparent">
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full min-h-screen lg:min-h-0 lg:rounded-xl lg:shadow-2xl lg:border bg-card">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-5 gap-0 h-full min-h-screen lg:min-h-0 lg:h-[90vh] lg:max-h-[800px] lg:rounded-xl lg:shadow-2xl lg:border bg-card">
         
-        <div className="col-span-1 lg:col-span-2 flex flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl">
-            <div className="w-32 h-32 lg:w-64 lg:h-64 relative">
+        <div className="hidden lg:flex col-span-1 lg:col-span-2 flex-col items-center justify-center bg-muted/30 p-8 lg:p-12 lg:rounded-l-xl">
+            <div className="w-64 h-64 relative">
                 <Image 
                     src={currentAvatar}
                     alt="Hero Avatar"
@@ -437,9 +440,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
             <p className="text-center text-muted-foreground mt-8 text-lg font-headline max-w-sm">{currentText}</p>
         </div>
 
-        <div className="flex flex-col col-span-1 lg:col-span-3">
+        <div className="flex flex-col col-span-1 lg:col-span-3 h-full">
             <Card className="border-0 shadow-none rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full">
-              <CardHeader>
+              <CardHeader className='shrink-0'>
                 <div className="w-full mb-4">
                   <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />
                 </div>
@@ -455,10 +458,12 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                     </div>
                 </div>
               </CardHeader>
-              <CardContent className="flex-grow overflow-y-auto p-6 space-y-8">
-                {renderContent()}
-              </CardContent>
-              <CardFooter className="flex justify-between mt-auto border-t pt-6 bg-card sticky bottom-0">
+              <ScrollArea className="flex-grow h-0">
+                <CardContent className="p-6">
+                    {renderContent()}
+                </CardContent>
+              </ScrollArea>
+              <CardFooter className="flex justify-between mt-auto border-t pt-6 bg-card sticky bottom-0 shrink-0">
                 <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
                     <ChevronLeft /> Back
                 </Button>
@@ -478,3 +483,6 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </div>
   );
 }
+
+
+    

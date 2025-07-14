@@ -40,15 +40,7 @@ export function LandingPage() {
 
   return (
     <div className="w-full">
-      <section className="relative w-full text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted/40 overflow-hidden">
-        <Image
-            src="/assets/hero_bg.png"
-            alt="Clash of Clans background"
-            data-ai-hint="clash of clans battle"
-            fill
-            className="object-cover object-top opacity-10"
-            unoptimized
-        />
+      <section className="relative w-full text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
         <div className="container relative mx-auto px-4 z-10">
             <div className="flex justify-center mb-6">
                 <Image

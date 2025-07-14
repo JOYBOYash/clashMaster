@@ -249,6 +249,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                 {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => {
                     const inputKey = `wall-${level}`;
                     const currentCount = levels[inputKey] || 0;
+                    const maxForThisSlider = currentCount + remainingWalls;
                     return (
                         <div key={inputKey} className="space-y-3 p-3 rounded-lg border bg-background/50">
                             <div className='flex items-center gap-4'>
@@ -267,7 +268,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                             <Slider
                                 id={inputKey}
                                 min={0}
-                                max={currentCount + remainingWalls}
+                                max={maxForThisSlider}
                                 step={1}
                                 value={[currentCount]}
                                 onValueChange={(value) => handleWallCountChange(level, value[0])}
@@ -453,7 +454,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
 
         <div className="flex flex-col col-span-1 lg:col-span-3 h-full">
-            <Card className="border-0 shadow-none rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card">
+            <Card className="border-0 shadow-none rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card transition-none hover:transform-none">
               <CardHeader className='shrink-0'>
                 <div className="w-full mb-4">
                   <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />

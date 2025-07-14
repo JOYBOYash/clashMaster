@@ -1,3 +1,4 @@
+
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
@@ -64,7 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    return firebaseSignOut(auth);
+    await firebaseSignOut(auth);
+    // After signing out, redirect to the homepage.
+    window.location.href = '/';
   };
 
   const saveVillageState = async (state: VillageState) => {

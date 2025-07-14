@@ -39,7 +39,7 @@ export function LandingPage() {
   }, []);
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full">
       <section className="relative w-full text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted/40 overflow-hidden">
         <Image
             src="/assets/hero_bg.png"

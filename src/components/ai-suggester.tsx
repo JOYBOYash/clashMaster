@@ -2,14 +2,15 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Lightbulb, Loader2, Shield, Sword, Coins, Building, Heart } from 'lucide-react';
+import { Lightbulb, Loader2, Shield, Sword, Coins, Building, Heart, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { suggestUpgrades, SuggestUpgradesInput, SuggestUpgradesOutput } from '@/ai/flows/suggest-upgrades';
-import type { VillageState, Building as BuildingType } from '@/lib/constants';
+import type { VillageState } from '@/lib/constants';
 import { Skeleton } from './ui/skeleton';
 import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
+import { Badge } from './ui/badge';
 
 interface AiSuggesterProps {
   villageState: VillageState;
@@ -94,12 +95,13 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[...Array(3)].map((_, i) => (
         <div key={i} className="flex flex-col gap-4 p-4 rounded-lg border bg-background/50">
-          <Skeleton className="w-12 h-12 rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
           </div>
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
         </div>
       ))}
     </div>
@@ -128,11 +130,18 @@ export function AiSuggester({ villageState, base }: AiSuggesterProps) {
               const suggestionType = getSuggestionType(s.buildingName);
               const Icon = iconMap[suggestionType] || iconMap['default'];
               return (
-                 <div key={index} className="flex flex-col gap-4 p-4 rounded-xl border bg-card/80 hover:bg-muted/50 transition-colors hover:shadow-lg hover:-translate-y-1">
-                  <div className="p-3 bg-primary/10 rounded-lg w-fit">
-                    <Icon className="w-8 h-8 text-primary" />
+                 <div key={index} className="flex flex-col gap-3 p-4 rounded-xl border-green-500/30 bg-green-100/40 dark:bg-green-900/20 hover:shadow-lg transition-all hover:-translate-y-1">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="bg-yellow-400/80 text-yellow-900 border-yellow-500/50">
+                        <Star className="w-3 h-3 mr-1.5" />
+                        TOP PICK
+                    </Badge>
+                     <Badge variant="outline" className="border-gray-400/50 capitalize">
+                        <Icon className="w-3 h-3 mr-1.5" />
+                        {suggestionType}
+                    </Badge>
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <h3 className="font-bold text-lg text-card-foreground font-headline tracking-wide">{s.buildingName}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{s.reason}</p>
                   </div>

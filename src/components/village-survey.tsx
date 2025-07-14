@@ -42,7 +42,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
       { id: 'armyCamps', title: 'Army Camps', icon: Swords, items: ['Army Camp'], text: "The bigger the camp, the bigger the army. Simple!" },
       { id: 'storages', title: 'Resource Storages', icon: Warehouse, items: ['Gold Storage', 'Elixir Storage', 'Dark Elixir Storage'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "You can't spend what you can't hold. Let's log your storage capacity." },
       { id: 'collectors', title: 'Resource Collectors', icon: Coins, items: ['Gold Mine', 'Elixir Collector', 'Dark Elixir Drill'].filter(b => buildingUnlockLevels[b] <= townHallLevel), text: "Passive income is the best income. How are your collectors doing?" },
-      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(buildingCounts).filter(b => buildingNameToType[b] === 'defensive' && buildingUnlockLevels[b] <= townHallLevel), text: "A good offense is a good defense... but a great defense is even better!" },
+      { id: 'defenses', title: 'Defenses', icon: Shield, items: Object.keys(buildingCounts).filter(b => buildingNameToType[b] === 'defensive' && !singleInstanceBuildings.includes(b) && buildingUnlockLevels[b] <= townHallLevel), text: "A good offense is a good defense... but a great defense is even better!" },
       { id: 'walls', title: 'Walls', icon: BrickWall, items: ['Wall'], text: "The backbone of your defense. Tell me about your walls." },
       { id: 'troops', title: 'Troops & Spells', icon: Dna, items: getItemsForTownHall(townHallLevel, ['troop', 'spell']), text: "Time to review your forces. Every troop level counts." },
       { id: 'heroes', title: 'Heroes, Pets & Equipment', icon: Gem, items: getItemsForTownHall(townHallLevel, ['hero', 'pet', 'equipment']), text: "The most powerful units in the game. Let's see how your legends are progressing." },
@@ -131,7 +131,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                       max={maxLevel}
                       value={levels[inputKey] ?? ''}
                       onChange={(e) => handleLevelChange(inputKey, e.target.value, maxLevel)}
-                      placeholder="Lvl"
+                      placeholder={`Lvl (Max ${maxLevel})`}
                       className="w-full"
                     />
                     <div className="flex items-center space-x-2 shrink-0">
@@ -167,8 +167,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
                  max={maxLevel}
                  value={levels[inputKey] ?? ''}
                  onChange={(e) => handleLevelChange(inputKey, e.target.value, maxLevel)}
-                 placeholder="Lvl"
-                 className="w-24"
+                 placeholder={`Lvl (Max ${maxLevel})`}
+                 className="w-32"
                />
                <div className="flex items-center space-x-2 shrink-0">
                    <Checkbox
@@ -362,7 +362,9 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
             </>
           )
       default:
-        return (currentStepConfig.items as string[]).map(name => renderBuildingInputs(name));
+        return (currentStepConfig.items as (string | GameItem)[]).map(item => 
+          typeof item === 'string' ? renderBuildingInputs(item) : renderSingleItemInput(item)
+        );
     }
   }
 
@@ -437,4 +439,3 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </div>
   );
 }
-

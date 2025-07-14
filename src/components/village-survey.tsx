@@ -454,7 +454,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
         </div>
 
         <div className="flex flex-col col-span-1 lg:col-span-3 h-full">
-            <Card className="border-0 shadow-none rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card transition-none hover:transform-none">
+            <Card className="border-0 shadow-none rounded-none lg:rounded-r-xl flex flex-col flex-grow h-full bg-card transition-none hover:transform-none hover:shadow-none">
               <CardHeader className='shrink-0'>
                 <div className="w-full mb-4">
                   <SurveyProgress currentStep={currentStep} totalSteps={surveySteps.length} />

@@ -8,6 +8,8 @@ import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
+import { MainHeader } from './main-header';
+import { useAuth } from '@/context/auth-context';
 
 const features = [
   {
@@ -36,96 +38,105 @@ const features = [
 
 export function LandingPage() {
   const [fanAvatar, setFanAvatar] = useState(heroAvatarAssets[0]);
+  const { user } = useAuth();
 
   useEffect(() => {
       setFanAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
   }, []);
 
   return (
-    <div className="w-full">
-      <section className="relative w-full text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
-        <div className="container relative mx-auto px-4 z-10">
-            <div className="flex justify-center mb-6">
-                <Image
-                    src='/coc_logo.png'
-                    alt="Clash of Clans Logo"
-                    data-ai-hint="clash of clans logo"
-                    width={400} 
-                    height={150}
-                    unoptimized
-                  />
-            </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold font-headline tracking-tight text-primary">
-            Master Your Village
-          </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-foreground/80">
-            Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
-          </p>
-          <Button asChild size="lg" className="mt-8 text-lg font-bold">
-            <Link href="/sign-in">Get Started for Free</Link>
-          </Button>
-        </div>
-      </section>
+    <div className='w-full'>
+       {!user && <MainHeader />}
+       <div className='relative w-full'>
 
-      <section className="w-full py-20 lg:py-32 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
-            {features.map((feature, index) => (
-              <div key={index} className="relative pt-16">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-40 h-40 z-10">
-                  <Image
-                    src={feature.avatar}
-                    alt="Hero Avatar"
-                    fill
-                    className="object-contain animate-float"
-                    unoptimized
-                  />
+          {/* Hero Section */}
+          <section className="relative w-full text-center min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
+            <div className="container relative mx-auto px-4 z-10">
+                <div className="flex justify-center mb-6">
+                    <Image
+                        src='/coc_logo.png'
+                        alt="Clash of Clans Logo"
+                        data-ai-hint="clash of clans logo"
+                        width={400} 
+                        height={150}
+                        unoptimized
+                      />
                 </div>
-                <FeatureCard
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                  color={feature.color}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <h1 className="text-4xl md:text-6xl font-extrabold font-headline tracking-tight text-primary">
+                Master Your Village
+              </h1>
+              <p className="mt-4 max-w-2xl mx-auto text-lg text-foreground/80">
+                Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
+              </p>
+              <Button asChild size="lg" className="mt-8 text-lg font-bold">
+                <Link href="/sign-in">Get Started for Free</Link>
+              </Button>
+            </div>
+          </section>
 
-      <section className="w-full py-20 lg:py-24 bg-muted/40">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
-              <div className="w-48 h-48 relative shrink-0">
-                  <Image 
-                      src={fanAvatar}
-                      alt="Hero Avatar"
-                      fill
-                      className="object-contain animate-float"
-                      unoptimized
-                  />
+          {/* Features Section */}
+          <section className="w-full py-20 lg:py-32 bg-background">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
+                {features.map((feature, index) => (
+                  <div key={index} className="relative">
+                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-40 h-40 z-10">
+                      <Image
+                        src={feature.avatar}
+                        alt="Hero Avatar"
+                        fill
+                        className="object-contain animate-float"
+                        unoptimized
+                      />
+                    </div>
+                    <FeatureCard
+                      icon={feature.icon}
+                      title={feature.title}
+                      description={feature.description}
+                      color={feature.color}
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="max-w-2xl">
-                <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
-                <p className="text-lg text-foreground/80 mb-6">
-                  As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
-                </p>
-                <p className="text-sm text-muted-foreground italic">
-                  Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
-                </p>
-                <a className='text-red-600 font-headline text-sm bg-blue-500/10 cursor-pointer' href='https://supercell.com/en/fan-content-policy/'>supercell.com/en/fan-content-policy/</a>.
-              </div>
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      <footer className="w-full py-12 bg-background">
-        <div className="container mx-auto text-center text-muted-foreground">
-          <p className="font-headline text-lg font-bold">Clash Master</p>
-          <p className="text-sm">built by a fan (with a little AI help)</p>
-        </div>
-      </footer>
+          {/* Fan Content Section */}
+          <section className="w-full py-20 lg:py-24 bg-muted/40">
+            <div className="container mx-auto px-4">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
+                  <div className="w-48 h-48 relative shrink-0">
+                      <Image 
+                          src={fanAvatar}
+                          alt="Hero Avatar"
+                          fill
+                          className="object-contain animate-float"
+                          unoptimized
+                      />
+                  </div>
+                  <div className="max-w-2xl">
+                    <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
+                    <p className="text-lg text-foreground/80 mb-6">
+                      As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
+                    </p>
+                    <p className="text-sm text-muted-foreground italic">
+                      Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
+                    </p>
+                    <a className='text-red-600 font-headline text-sm bg-blue-500/10 cursor-pointer' href='https://supercell.com/en/fan-content-policy/'>supercell.com/en/fan-content-policy/</a>.
+                  </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="w-full py-12 bg-background">
+            <div className="container mx-auto text-center text-muted-foreground">
+              <p className="font-headline text-lg font-bold">Clash Master</p>
+              <p className="text-sm">built by a fan (with a little AI help)</p>
+            </div>
+          </footer>
+      </div>
     </div>
   );
 }

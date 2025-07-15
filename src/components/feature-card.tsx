@@ -22,7 +22,7 @@ interface FeatureCardProps {
 export function FeatureCard({ icon: Icon, title, description, color, subFeatures, avatar, reverse = false }: FeatureCardProps) {
   return (
     <div className={cn(
-        "relative w-full min-h-[450px] bg-card shadow-2xl border border-border/20",
+        "relative w-full min-h-[450px] bg-card shadow-2xl border border-border/20 pt-24 md:pt-0",
         "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-2",
         "feature-card opacity-0 [clip-path:polygon(0_0,_100%_0,_100%_100%,_0_100%)]" 
     )}
@@ -37,7 +37,25 @@ export function FeatureCard({ icon: Icon, title, description, color, subFeatures
         )}></div>
 
         <div className={cn("relative grid grid-cols-1 md:grid-cols-2 h-full", reverse && "md:[direction:rtl]")}>
-            {/* Left Column: Content */}
+            {/* Column 1: Avatar */}
+            <div className="relative flex justify-center md:justify-start">
+                 <div className={cn(
+                    "absolute w-[250px] h-[250px] -top-20", // Mobile size & position
+                    "md:w-[450px] md:h-[450px] md:bottom-0 md:top-auto", // Desktop size & position
+                    "animate-hero-glow",
+                    reverse ? "md:-left-16" : "md:-right-16"
+                 )}>
+                    <Image
+                        src={avatar}
+                        alt={`${title} Avatar`}
+                        fill
+                        className="object-contain object-bottom drop-shadow-2xl"
+                        unoptimized
+                    />
+                </div>
+            </div>
+
+            {/* Column 2: Content */}
             <div className={cn("flex flex-col justify-center p-8 lg:p-12", reverse && "md:[direction:ltr]")}>
                 <div className="flex items-center gap-4 mb-4">
                     <Icon className={cn("w-8 h-8", color)} />
@@ -56,22 +74,6 @@ export function FeatureCard({ icon: Icon, title, description, color, subFeatures
                         </li>
                     ))}
                 </ul>
-            </div>
-
-            {/* Right Column: Avatar */}
-            <div className="relative h-full hidden md:flex items-center justify-center">
-                 <div className={cn(
-                    "absolute bottom-0 w-[450px] h-[450px] animate-hero-glow",
-                    reverse ? "-left-16" : "-right-16"
-                 )}>
-                    <Image
-                        src={avatar}
-                        alt={`${title} Avatar`}
-                        fill
-                        className="object-contain object-bottom drop-shadow-2xl"
-                        unoptimized
-                    />
-                </div>
             </div>
         </div>
     </div>

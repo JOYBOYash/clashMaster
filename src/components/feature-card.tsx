@@ -22,10 +22,14 @@ interface FeatureCardProps {
 export function FeatureCard({ icon: Icon, title, description, color, subFeatures, avatar, reverse = false }: FeatureCardProps) {
   return (
     <div className={cn(
-        "relative w-full min-h-[450px] bg-card rounded-2xl overflow-hidden shadow-2xl border border-border/20",
+        "relative w-full min-h-[450px] bg-card shadow-2xl border border-border/20",
         "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-2",
-        "feature-card opacity-0" // Added for GSAP animation targeting
-    )}>
+        "feature-card opacity-0 [clip-path:polygon(0_0,_100%_0,_100%_100%,_0_100%)]" 
+    )}
+    style={{
+        clipPath: 'polygon(2% 0, 100% 0, 98% 100%, 0 100%)'
+    }}
+    >
         {/* Diagonal Background Accent */}
         <div className={cn(
             "absolute top-0 h-full w-2/3 bg-muted/30",

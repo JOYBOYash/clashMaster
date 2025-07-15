@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
-import { getTroopImagePath } from '@/lib/image-paths';
+import { nameToPathMap, defaultImagePath } from '@/lib/image-paths';
 
 interface TroopGuideProps {
     villageState: VillageState;
@@ -114,7 +114,7 @@ export function TroopGuide({ villageState }: TroopGuideProps) {
                                 <AccordionContent>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-2">
                                         {data.map(item => {
-                                            const imagePath = getTroopImagePath(item.name);
+                                            const imagePath = nameToPathMap[item.name] || defaultImagePath;
                                             return (
                                                 <div key={item.id} className="p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                                                     <Image

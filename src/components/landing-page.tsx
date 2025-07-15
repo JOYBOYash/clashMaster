@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { BarChart, BrainCircuit, Swords, CheckCircle2, ShieldCheck, Gem } from 'lucide-react';
 import Image from 'next/image';
 import { heroAvatarAssets, separator, appLogoPath } from '@/lib/image-paths';
-import { FeatureCard } from './feature-flip-card';
+import { FeatureCard } from './feature-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -83,7 +83,7 @@ export function LandingPage() {
                           <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
                       </div>
 
-                      <h2 className="text-4xl lg:text-6xl font-extrabold font-headline tracking-tight text-foreground/90" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.2)'}}>
+                      <h2 className="text-4xl lg:text-4xl font-extrabold font-headline tracking-tight text-foreground/90" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.2)'}}>
                           Master Your Village
                       </h2>
                       <p className="mt-6 max-w-2xl text-lg lg:text-xl text-foreground/80">
@@ -109,28 +109,32 @@ export function LandingPage() {
               </div>
           </section>
 
+          <div className="container mx-auto px-4 my-20">
+            <Image
+                src={separator}
+                alt="Section Separator"
+                width={300}
+                height={40}
+                unoptimized
+                className="w-40 h-auto object-contain opacity-70 mx-auto"
+            />
+          </div>
+
           {/* Features Section */}
           <section className="w-full py-20 lg:py-32 bg-background">
             <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center font-headline mb-32">Unlock Your Village's Full Potential</h2>
-              <div className="flex flex-col items-center gap-y-48">
+              <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
+              <div className="flex flex-col items-center gap-y-24">
                 {features.map((feature, index) => (
-                  <div key={index} className="relative opacity-0 feature-card w-full max-w-2xl">
-                    <div className="absolute -top-28 left-1/2 -translate-x-1/2 w-48 h-48 z-10">
-                      <Image
-                        src={feature.avatar}
-                        alt="Hero Avatar"
-                        fill
-                        className="object-contain animate-float"
-                        unoptimized
-                      />
-                    </div>
+                  <div key={index} className="w-full max-w-5xl opacity-0 feature-card">
                     <FeatureCard
                       icon={feature.icon}
                       title={feature.title}
                       description={feature.description}
                       color={feature.color}
                       subFeatures={feature.subFeatures}
+                      avatar={feature.avatar}
+                      reverse={index % 2 !== 0}
                     />
                   </div>
                 ))}
@@ -143,8 +147,8 @@ export function LandingPage() {
             <Image
                 src={separator}
                 alt="Section Separator"
-                width={100}
-                height={20}
+                width={300}
+                height={40}
                 unoptimized
                 className="w-40 h-auto object-contain opacity-70 mx-auto"
             />
@@ -184,17 +188,6 @@ export function LandingPage() {
               <p className="font-headline text-lg font-bold">ProBuilder</p>
               <p className="text-sm">built by a fan (with a little AI help)</p>
             </div>
-
-            <div className="container mx-auto px-4">
-            <Image
-                src={separator}
-                alt="Section Separator"
-                width={100}
-                height={20}
-                unoptimized
-                className="w-40 h-20 object-contain opacity-70 mx-auto"
-            />
-          </div>
           </footer>
       </div>
     </div>

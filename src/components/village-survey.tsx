@@ -9,13 +9,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SurveyProgress } from './survey-progress';
-import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp, Terminal, X } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, ChevronsUp, X } from 'lucide-react';
 import Image from 'next/image';
 import { heroAvatarAssets, getBuildingImagePath } from '@/lib/image-paths';
 import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
 import { ScrollArea } from './ui/scroll-area';
 import { useAuth } from '@/context/auth-context';
 
@@ -107,6 +105,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if(count === 0) return null;
 
     const maxLevel = getMaxLevelForItem(buildingName, townHallLevel);
+    const imagePath = getBuildingImagePath(buildingName, 1); // Always get base image
     
     return (
       <div key={buildingName} className="space-y-6">
@@ -122,12 +121,11 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
           {Array.from({ length: count }).map((_, i) => {
             const inputKey = `${buildingName}-${i}`;
             const currentLevel = levels[inputKey] ?? 1;
-            const imagePath = getBuildingImagePath(buildingName, currentLevel);
             return (
               <div key={inputKey} className="p-3 border rounded-xl bg-background/50 flex flex-col items-center text-center gap-3">
                  { count > 1 && <Label htmlFor={inputKey} className="text-sm font-semibold text-muted-foreground">#{i + 1}</Label> }
                  <div className="relative w-24 h-24">
-                    <Image src={imagePath} alt={`${buildingName} level ${currentLevel}`} fill className="object-contain" unoptimized />
+                    <Image src={imagePath} alt={`${buildingName}`} fill className="object-contain" unoptimized />
                  </div>
                  <div className='w-full space-y-2'>
                     <p className='font-bold text-lg text-primary'>Level {currentLevel}</p>
@@ -409,5 +407,3 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     </div>
   );
 }
-
-    

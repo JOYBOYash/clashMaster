@@ -57,7 +57,7 @@ export function LandingPage() {
               <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
                   <div className="max-w-4xl mx-auto flex flex-col items-center">
                       
-                      <div className='flex items-center gap-4 mb-4'>
+                      <div className='flex flex-col items-center gap-4 mb-4'>
                           <Image
                               src={appLogoPath}
                               alt="ProBuilder App Logo"

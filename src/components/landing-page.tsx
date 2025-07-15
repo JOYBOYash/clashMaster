@@ -113,9 +113,9 @@ export function LandingPage() {
           <section className="w-full py-20 lg:py-32 bg-background">
             <div className="container mx-auto px-4">
               <h2 className="text-3xl font-bold text-center font-headline mb-32">Unlock Your Village's Full Potential</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-32">
+              <div className="flex flex-col items-center gap-y-48">
                 {features.map((feature, index) => (
-                  <div key={index} className="relative opacity-0 feature-card">
+                  <div key={index} className="relative opacity-0 feature-card w-full max-w-2xl">
                     <div className="absolute -top-28 left-1/2 -translate-x-1/2 w-48 h-48 z-10">
                       <Image
                         src={feature.avatar}

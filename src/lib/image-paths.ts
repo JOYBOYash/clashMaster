@@ -16,7 +16,7 @@ export const heroAvatarAssets = [
 ];
 
 export const appLogoPath = '/assets/probuilder.png';
-export const gameLogoPath = '/assets/coc_logo.png';
+
 
 export const carouselImageAssets = [
   { src: '/assets/_login_carousel/BK_SideProfile.png', alt: 'Barbarian King' },

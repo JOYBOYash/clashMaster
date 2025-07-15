@@ -9,7 +9,7 @@ import { Shield, Coins, Sword, SlidersHorizontal, Settings2, Hammer } from 'luci
 import { Progress } from '@/components/ui/progress';
 import Image from 'next/image';
 import { buildingNameToType } from '@/lib/constants';
-import { getBuildingImagePath } from '@/lib/image-paths';
+import { nameToPathMap, defaultImagePath } from '@/lib/image-paths';
 
 const getGroupedBuildings = (buildings: Building[]) => {
     const buildingMap: { [key: string]: { building: Building; count: number } } = {};
@@ -91,7 +91,7 @@ export function BuildingList({ buildings }: BuildingListProps) {
                   <AccordionContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-2">
                         {getGroupedBuildings(buildingsOfType).map(({ building, count }) => {
-                            const imagePath = getBuildingImagePath(building.name, building.level);
+                            const imagePath = nameToPathMap[building.name] || defaultImagePath;
                             return (
                                 <div key={`${building.name}-${building.level}`} className="relative p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
                                     {count > 1 && (

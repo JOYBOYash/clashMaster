@@ -3,9 +3,9 @@
  * @fileOverview Centralized manifest for all static image assets.
  */
 
-const defaultImagePath = 'https://placehold.co/128x128.png';
+export const defaultImagePath = 'https://placehold.co/128x128.png';
 
-const nameToPathMap: Record<string, string> = {
+export const nameToPathMap: Record<string, string> = {
     // Defenses
     'Cannon': '/assets/_defenses/cannon/Cannon_1.png',
     'Archer Tower': '/assets/_defenses/archer-tower/Archer_Tower_1.png',
@@ -107,16 +107,6 @@ const nameToPathMap: Record<string, string> = {
     'Rage Spell': '/assets/_spells/elixir/Icon_HV_Spell_Rage.png',
     'Recall Spell': '/assets/_spells/elixir/Icon_HV_Spell_Recall.png',
     'Revive Spell': '/assets/_spells/elixir/Icon_HV_Spell_Revive.png',
-};
-
-
-export const getBuildingImagePath = (name: string, level?: number): string => {
-    // This simplified function will always return the base image for now to ensure it loads.
-    // The level-specific path construction was the source of the bug.
-    if (name === 'Town Hall' && level) {
-      return `/assets/_town-halls/Town_Hall_${level}.png`;
-    }
-    return nameToPathMap[name] || defaultImagePath;
 };
 
 export const getHallImagePath = (base: 'home' | 'builder', level: number): string => {

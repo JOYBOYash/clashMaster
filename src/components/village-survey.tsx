@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { SurveyProgress } from './survey-progress';
 import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, ChevronsUp, X } from 'lucide-react';
 import Image from 'next/image';
-import { heroAvatarAssets, getBuildingImagePath } from '@/lib/image-paths';
+import { heroAvatarAssets, nameToPathMap, defaultImagePath } from '@/lib/image-paths';
 import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from './ui/scroll-area';
@@ -105,7 +105,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if(count === 0) return null;
 
     const maxLevel = getMaxLevelForItem(buildingName, townHallLevel);
-    const imagePath = getBuildingImagePath(buildingName, 1); // Always get base image
+    const imagePath = nameToPathMap[buildingName] || defaultImagePath;
     
     return (
       <div key={buildingName} className="space-y-6">
@@ -271,7 +271,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if (!townHallLevel) {
        return (
         <div className='flex flex-col items-center gap-4 my-auto'>
-            <Image src={getBuildingImagePath('Town Hall', 1)} alt="Town Hall" width={150} height={150} unoptimized/>
+            <Image src={nameToPathMap['Town Hall'] || defaultImagePath} alt="Town Hall" width={150} height={150} unoptimized/>
              <Slider
                 min={1}
                 max={17}
@@ -291,7 +291,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if (townHallLevel && currentStep === 0) {
         return (
              <div className='flex flex-col items-center gap-4 my-auto'>
-                <Image src={getBuildingImagePath('Town Hall', townHallLevel)} alt={`Town Hall level ${townHallLevel}`} width={150} height={150} unoptimized/>
+                <Image src={`/assets/_town-halls/Town_Hall_${townHallLevel}.png`} alt={`Town Hall level ${townHallLevel}`} width={150} height={150} unoptimized/>
                  <Slider
                     min={1}
                     max={17}

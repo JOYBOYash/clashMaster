@@ -118,10 +118,10 @@ export function LandingPage() {
                   <div className="max-w-2xl">
                     <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
                     <p className="text-lg text-foreground/80 mb-6">
-                      As a passionate Clash of Clans player, I built ClashTrack with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
+                      As a passionate Clash of Clans player, I built ProBuilder with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
                     </p>
                     <p className="text-sm text-muted-foreground italic">
-                      ClashTrack is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
+                      ProBuilder is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
                     </p>
                   </div>
               </div>
@@ -131,7 +131,7 @@ export function LandingPage() {
           {/* Footer */}
           <footer className="w-full py-12 bg-background">
             <div className="container mx-auto text-center text-muted-foreground">
-              <p className="font-headline text-lg font-bold">ClashTrack</p>
+              <p className="font-headline text-lg font-bold">ProBuilder</p>
               <p className="text-sm">built by a fan (with a little AI help)</p>
             </div>
           </footer>

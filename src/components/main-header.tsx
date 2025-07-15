@@ -26,7 +26,7 @@ export function MainHeader() {
         <Link href={homeHref} className="mr-8 flex items-center space-x-2">
           <Castle className="h-8 w-8 mr-2 text-primary" />
           <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
-            ClashTrack
+            ProBuilder
           </h1>
         </Link>
         

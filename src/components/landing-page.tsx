@@ -52,40 +52,47 @@ export function LandingPage() {
        <div className='relative w-full'>
 
           {/* Hero Section */}
-          <section className="relative w-full text-center min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
-            <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
-            
-                <div className="flex justify-center mb-6">
-                    <Image
-                        src={'/coc_logo.png'}
-                        alt="Clash of Clans Logo"
-                        data-ai-hint="clash of clans logo"
-                        width={400} 
-                        height={150}
-                        unoptimized
-                      />
-                </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold font-headline tracking-tight text-primary">
-                Master Your Village
-              </h1>
-              <Image
-                        src={appLogoPath}
-                        alt="ProBuilder App Logo"
-                        data-ai-hint="clash of clans logo"
-                        width={100} 
-                        height={250}
-                        unoptimized
-                      />
-            
-              <p className="mt-4 max-w-2xl mx-auto text-lg text-foreground/80">
-                Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
-              </p>
-              {!user && (
-                <Button asChild size="lg" className="mt-8 text-lg font-bold">
-                  <Link href="/sign-in">Get Started for Free</Link>
-                </Button>
-              )}
-            </div>
+          <section className="relative w-full text-center md:text-left min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
+              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+              <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
+                  <div className="grid md:grid-cols-2 gap-8 items-center">
+                      <div className="flex flex-col items-center md:items-start">
+                          <h1 className="text-4xl lg:text-6xl font-extrabold font-headline tracking-tight text-primary">
+                              Master Your Village
+                          </h1>
+                          <p className="mt-4 max-w-xl text-lg lg:text-xl text-foreground/80">
+                              Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
+                          </p>
+                          {!user && (
+                              <Button asChild size="lg" className="mt-8 text-lg font-bold">
+                                  <Link href="/sign-in">Get Started for Free</Link>
+                              </Button>
+                          )}
+                      </div>
+                      <div className="flex flex-col items-center justify-center gap-4">
+                          <Image
+                              src={'/coc_logo.png'}
+                              alt="Clash of Clans Logo"
+                              data-ai-hint="clash of clans logo"
+                              width={400} 
+                              height={150}
+                              unoptimized
+                          />
+                          <div className='flex items-center gap-4'>
+                              <p className='font-headline text-2xl text-muted-foreground'>with</p>
+                              <Image
+                                  src={appLogoPath}
+                                  alt="ProBuilder App Logo"
+                                  data-ai-hint="clash of clans logo"
+                                  width={80} 
+                                  height={80}
+                                  unoptimized
+                              />
+                              <p className='font-headline text-3xl text-primary'>ProBuilder</p>
+                          </div>
+                      </div>
+                  </div>
+              </div>
           </section>
 
           {/* Features Section */}

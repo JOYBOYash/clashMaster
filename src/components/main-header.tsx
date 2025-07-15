@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Castle, CircleUser, LogOut } from 'lucide-react';
+import { CircleUser, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from './ui/button';
 import { MainNav } from './main-nav';
@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { appLogoPath } from "@/lib/image-paths";
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
@@ -24,7 +26,7 @@ export function MainHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
         <Link href={homeHref} className="mr-8 flex items-center space-x-2">
-          <Castle className="h-8 w-8 mr-2 text-primary" />
+          <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
           <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
             ProBuilder
           </h1>

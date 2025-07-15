@@ -9,7 +9,8 @@ import { heroAvatarAssets } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
-import cocLogo from '/assets/coc_logo.png';
+import { appLogoPath } from '@/lib/image-paths';
+
 
 const features = [
   {
@@ -53,9 +54,10 @@ export function LandingPage() {
           {/* Hero Section */}
           <section className="relative w-full text-center min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
             <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
+            
                 <div className="flex justify-center mb-6">
                     <Image
-                        src={cocLogo}
+                        src={'/coc_logo.png'}
                         alt="Clash of Clans Logo"
                         data-ai-hint="clash of clans logo"
                         width={400} 
@@ -66,6 +68,15 @@ export function LandingPage() {
               <h1 className="text-4xl md:text-6xl font-extrabold font-headline tracking-tight text-primary">
                 Master Your Village
               </h1>
+              <Image
+                        src={appLogoPath}
+                        alt="ProBuilder App Logo"
+                        data-ai-hint="clash of clans logo"
+                        width={100} 
+                        height={250}
+                        unoptimized
+                      />
+            
               <p className="mt-4 max-w-2xl mx-auto text-lg text-foreground/80">
                 Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
               </p>

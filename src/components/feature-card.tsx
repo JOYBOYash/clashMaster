@@ -22,7 +22,7 @@ interface FeatureCardProps {
 export function FeatureCard({ icon: Icon, title, description, color, subFeatures, avatar, reverse = false }: FeatureCardProps) {
   return (
     <div className={cn(
-        "relative w-full min-h-[450px] bg-card shadow-2xl border border-border/20 pt-24 md:pt-0",
+        "relative w-full min-h-[550px] md:min-h-[450px] bg-card shadow-2xl border border-border/20 pt-24 md:pt-0",
         "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-2",
         "feature-card opacity-0 [clip-path:polygon(0_0,_100%_0,_100%_100%,_0_100%)]" 
     )}

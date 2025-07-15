@@ -8,9 +8,7 @@ import Image from 'next/image';
 import { heroAvatarAssets } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
-import { MainHeader } from './main-header';
 import { useAuth } from '@/context/auth-context';
-import { cn } from '@/lib/utils';
 
 const features = [
   {
@@ -47,11 +45,10 @@ export function LandingPage() {
 
   return (
     <div className='w-full'>
-       {!user && <MainHeader />}
        <div className='relative w-full'>
 
           {/* Hero Section */}
-          <section className="relative w-full text-center min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
+          <section className="relative w-full text-center min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center bg-gradient-to-b from-background via-card to-muted/60 overflow-hidden">
             <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
                 <div className="flex justify-center mb-6">
                     <Image
@@ -69,9 +66,11 @@ export function LandingPage() {
               <p className="mt-4 max-w-2xl mx-auto text-lg text-foreground/80">
                 Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
               </p>
-              <Button asChild size="lg" className="mt-8 text-lg font-bold">
-                <Link href="/sign-in">Get Started for Free</Link>
-              </Button>
+              {!user && (
+                <Button asChild size="lg" className="mt-8 text-lg font-bold">
+                  <Link href="/sign-in">Get Started for Free</Link>
+                </Button>
+              )}
             </div>
           </section>
 
@@ -119,12 +118,11 @@ export function LandingPage() {
                   <div className="max-w-2xl">
                     <h2 className="text-3xl font-bold font-headline mb-4">A Tool Built By a Fan, For Fans</h2>
                     <p className="text-lg text-foreground/80 mb-6">
-                      As a passionate Clash of Clans player, I built Clash Master with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
+                      As a passionate Clash of Clans player, I built ClashTrack with my AI partner to enhance the strategic depth of the game we love. This app is a companion to your gaming experience, designed to take your strategy to the next level, not replace the incredible fun of playing.
                     </p>
                     <p className="text-sm text-muted-foreground italic">
-                      Clash Master is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy:
+                      ClashTrack is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
                     </p>
-                    <a className='text-red-600 font-headline text-sm bg-blue-500/10 cursor-pointer' href='https://supercell.com/en/fan-content-policy/'>supercell.com/en/fan-content-policy/</a>.
                   </div>
               </div>
             </div>
@@ -133,7 +131,7 @@ export function LandingPage() {
           {/* Footer */}
           <footer className="w-full py-12 bg-background">
             <div className="container mx-auto text-center text-muted-foreground">
-              <p className="font-headline text-lg font-bold">Clash Master</p>
+              <p className="font-headline text-lg font-bold">ClashTrack</p>
               <p className="text-sm">built by a fan (with a little AI help)</p>
             </div>
           </footer>

@@ -23,16 +23,16 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export const AuthPage = () => {
-  const { signUp, signIn, user, loading: authLoading, villageState } = useAuth();
+  const { signUp, signIn, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [formLoading, setFormLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('sign-in');
 
-  const { register: registerSignIn, handleSubmit: handleSignInSubmit, setValue: setSignInValue, formState: { errors: signInErrors } } = useForm<FormValues>({
+  const { register: registerSignIn, handleSubmit: handleSignInSubmit, formState: { errors: signInErrors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
 
-  const { register: registerSignUp, handleSubmit: handleSignUpSubmit, setValue: setSignUpValue, formState: { errors: signUpErrors } } = useForm<FormValues>({
+  const { register: registerSignUp, handleSubmit: handleSignUpSubmit, formState: { errors: signUpErrors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
 
@@ -40,23 +40,14 @@ export const AuthPage = () => {
     setFormLoading(true);
     try {
       await signIn(data.email, data.password);
-      // On successful sign-in, the AuthProvider's onAuthStateChanged will handle redirection logic.
+      toast({ title: 'Sign In Successful', description: 'Welcome back!' });
+      redirect('/'); // Redirect to landing page on successful sign-in
     } catch (error: any) {
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        toast({
-          title: 'New to Blueprints?',
-          description: "It looks like you don't have an account. Please sign up to continue.",
-        });
-        setSignUpValue('email', data.email);
-        setSignUpValue('password', '');
-        setActiveTab('sign-up');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Sign In Failed',
-          description: error.message || 'An unexpected error occurred.',
-        });
-      }
+      toast({
+        variant: 'destructive',
+        title: 'Sign In Failed',
+        description: error.message || 'An unexpected error occurred.',
+      });
     } finally {
       setFormLoading(false);
     }
@@ -66,7 +57,8 @@ export const AuthPage = () => {
     setFormLoading(true);
     try {
       await signUp(data.email, data.password);
-      // onAuthStateChanged in AuthProvider will trigger, and the user will be redirected to /survey
+      toast({ title: 'Sign Up Successful', description: 'Welcome! You can now sign in.' });
+      redirect('/sign-in'); // Redirect to sign-in page on successful sign-up
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -80,13 +72,8 @@ export const AuthPage = () => {
   
   const isLoading = formLoading || authLoading;
 
-  // If user and villageState are loaded, redirect from here.
   if (!authLoading && user) {
-    if (villageState) {
-        redirect('/upgrades');
-    } else {
-        redirect('/survey');
-    }
+    redirect('/');
   }
 
   return (
@@ -100,7 +87,7 @@ export const AuthPage = () => {
             <form onSubmit={handleSignInSubmit(onSignIn)}>
               <CardHeader className="px-1">
                 <CardTitle className="font-headline text-3xl animate-fade-in-up">Welcome Back</CardTitle>
-                <CardDescription className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>Enter your credentials to access your village.</CardDescription>
+                <CardDescription className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>Enter your credentials to access your account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-1">
                 <div className="space-y-2">
@@ -128,7 +115,7 @@ export const AuthPage = () => {
             <form onSubmit={handleSignUpSubmit(onSignUp)}>
               <CardHeader className="px-1">
                 <CardTitle className="font-headline text-3xl animate-fade-in-up">Create Account</CardTitle>
-                <CardDescription className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>Get started with AI-powered village analysis.</CardDescription>
+                <CardDescription className="animate-fade-in-up" style={{ animationDelay: '0.1s' }}>Get started with your new account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 px-1">
                  <div className="space-y-2">

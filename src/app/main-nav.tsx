@@ -11,12 +11,12 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
 
-  const routes = [
-    { href: '/dashboard', label: 'Dashboard' },
-    { href: '/upgrades', label: 'Upgrades' },
-    { href: '/army-guide', label: 'Army Guide' },
-    { href: '/explore', label: 'Explore' }
-  ];
+  // All navigation links removed as per the new simplified structure.
+  const routes: { href: string, label: string }[] = [];
+
+  if (routes.length === 0) {
+    return null; // Return null to render nothing
+  }
 
   return (
     <nav

@@ -1,12 +1,4 @@
-"use client";
-
-import { AuthWrapper } from '@/components/auth-wrapper';
-import { TroopGuide } from '@/components/troop-guide';
-
+// This page has been removed.
 export default function ArmyGuidePage() {
-  return (
-    <AuthWrapper>
-      {(villageState) => <TroopGuide villageState={villageState} />}
-    </AuthWrapper>
-  );
+  return null;
 }

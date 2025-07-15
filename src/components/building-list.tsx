@@ -90,30 +90,33 @@ export function BuildingList({ buildings }: BuildingListProps) {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-2">
-                        {getGroupedBuildings(buildingsOfType).map(({ building, count }) => (
-                            <div key={`${building.name}-${building.level}`} className="relative p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
-                                {count > 1 && (
-                                    <div className="absolute top-2 right-2 z-10 bg-primary text-primary-foreground text-xs font-bold rounded-full px-2 py-0.5 shadow-md">
-                                        x{count}
+                        {getGroupedBuildings(buildingsOfType).map(({ building, count }) => {
+                            const imagePath = getBuildingImagePath(building.name, building.level);
+                            return (
+                                <div key={`${building.name}-${building.level}`} className="relative p-3 rounded-xl border bg-card/60 hover:shadow-lg transition-shadow flex flex-col gap-2 hover:-translate-y-1">
+                                    {count > 1 && (
+                                        <div className="absolute top-2 right-2 z-10 bg-primary text-primary-foreground text-xs font-bold rounded-full px-2 py-0.5 shadow-md">
+                                            x{count}
+                                        </div>
+                                    )}
+                                    <Image
+                                        src={imagePath}
+                                        alt={building.name}
+                                        width={128}
+                                        height={128}
+                                        className="rounded-md self-center aspect-square object-contain bg-muted/20"
+                                        unoptimized
+                                    />
+                                    <div className="text-center mt-1">
+                                        <p className="font-bold text-card-foreground">{building.name}</p>
+                                        <p className="text-xs text-muted-foreground">
+                                            Level {building.level} / {building.maxLevel}
+                                        </p>
                                     </div>
-                                )}
-                                <Image
-                                    src={getBuildingImagePath(building.name)}
-                                    alt={building.name}
-                                    width={128}
-                                    height={128}
-                                    className="rounded-md self-center aspect-square object-contain bg-muted/20"
-                                    unoptimized
-                                />
-                                <div className="text-center mt-1">
-                                    <p className="font-bold text-card-foreground">{building.name}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                        Level {building.level} / {building.maxLevel}
-                                    </p>
+                                    <Progress value={(building.level / building.maxLevel) * 100} className="h-2" />
                                 </div>
-                                <Progress value={(building.level / building.maxLevel) * 100} className="h-2" />
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                   </AccordionContent>
                 </AccordionItem>

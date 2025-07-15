@@ -14,12 +14,12 @@ export default function SignInPage() {
         <div className="hidden md:block relative">
           <Carousel className="w-full h-full" autoplay>
             <CarouselContent>
-              {carouselImageAssets.map((img, index) => (
+              {carouselImageAssets.map((item, index) => (
                 <CarouselItem key={index} className="p-0">
                   <div className="relative w-full h-[550px]">
                       <Image
-                          src={img.src}
-                          alt={img.alt}
+                          src={item.src}
+                          alt={item.alt}
                           fill
                           className="object-cover"
                           unoptimized

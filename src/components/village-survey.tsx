@@ -12,7 +12,7 @@ import { SurveyProgress } from './survey-progress';
 import { Dna, Gem, Swords, Shield, Coins, Library, Home, ChevronRight, ChevronLeft, Hammer, FlaskConical, Warehouse, BrickWall, ChevronsUp, Terminal, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import Image from 'next/image';
-import { heroAvatarAssets, getBuildingImagePathByLevel } from '@/lib/image-paths';
+import { heroAvatarAssets, getBuildingImagePath } from '@/lib/image-paths';
 import { buildingNameToType } from '@/lib/constants';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
@@ -122,7 +122,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
           {Array.from({ length: count }).map((_, i) => {
             const inputKey = `${buildingName}-${i}`;
             const currentLevel = levels[inputKey] ?? 1;
-            const imagePath = getBuildingImagePathByLevel(buildingName, currentLevel);
+            const imagePath = getBuildingImagePath(buildingName, currentLevel);
             return (
               <div key={inputKey} className="p-3 border rounded-xl bg-background/50 flex flex-col items-center text-center gap-3">
                  { count > 1 && <Label htmlFor={inputKey} className="text-sm font-semibold text-muted-foreground">#{i + 1}</Label> }
@@ -273,7 +273,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if (!townHallLevel) {
        return (
         <div className='flex flex-col items-center gap-4 my-auto'>
-            <Image src={getBuildingImagePathByLevel('Town Hall', 1)} alt="Town Hall" width={150} height={150} unoptimized/>
+            <Image src={getBuildingImagePath('Town Hall', 1)} alt="Town Hall" width={150} height={150} unoptimized/>
              <Slider
                 min={1}
                 max={17}
@@ -293,7 +293,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     if (townHallLevel && currentStep === 0) {
         return (
              <div className='flex flex-col items-center gap-4 my-auto'>
-                <Image src={getBuildingImagePathByLevel('Town Hall', townHallLevel)} alt={`Town Hall level ${townHallLevel}`} width={150} height={150} unoptimized/>
+                <Image src={getBuildingImagePath('Town Hall', townHallLevel)} alt={`Town Hall level ${townHallLevel}`} width={150} height={150} unoptimized/>
                  <Slider
                     min={1}
                     max={17}

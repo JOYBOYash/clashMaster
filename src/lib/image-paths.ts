@@ -17,6 +17,7 @@ export const heroAvatarAssets = [
 
 export const appLogoPath = '/assets/pb2.png';
 export const gameLogoPath = '/coc_logo.png';
+export const separator = '/assets/separator.png';
 
 
 export const carouselImageAssets = [

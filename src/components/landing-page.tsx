@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { BarChart, BrainCircuit, Swords } from 'lucide-react';
 import Image from 'next/image';
-import { heroAvatarAssets } from '@/lib/image-paths';
+import { heroAvatarAssets, separator } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
@@ -62,8 +62,8 @@ export function LandingPage() {
                               src={appLogoPath}
                               alt="ProBuilder App Logo"
                               data-ai-hint="clash of clans logo"
-                              width={80} 
-                              height={80}
+                              width={120} 
+                              height={120}
                               unoptimized
                               className='drop-shadow-lg'
                           />
@@ -124,6 +124,18 @@ export function LandingPage() {
             </div>
           </section>
 
+          <div className="container mx-auto px-4 my-8">
+            <Image
+                src={separator}
+                alt="Section Separator"
+                width={1200}
+                height={50}
+                unoptimized
+                className="w-full h-auto object-contain opacity-70"
+            />
+          </div>
+
+
           {/* Fan Content Section */}
           <section className="w-full py-20 lg:py-24 bg-muted/40">
             <div className="container mx-auto px-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
@@ -145,7 +157,7 @@ export function LandingPage() {
                     <p className="text-sm text-muted-foreground italic">
                       ProBuilder is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
                     </p>
-                    <a className='text-red-600 bg-yellow-300/30 text-sm text-italic cursor-pointer'>supercell.com/en/fan-content-policy/</a>
+                    <a href="https://supercell.com/en/fan-content-policy/" target="_blank" rel="noopener noreferrer" className='text-red-600 bg-yellow-600/30 text-sm text-italic cursor-pointer font-headline'>supercell.com/en/fan-content-policy/</a>
                   </div>
               </div>
             </div>

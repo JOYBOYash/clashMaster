@@ -5,20 +5,23 @@ import { usePathname } from "next/navigation";
 import { MainHeader } from "./main-header";
 import { Toaster } from "./ui/toaster";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-context";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const isSignInPage = usePathname() === '/sign-in';
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
-      <MainHeader />
+      {user && <MainHeader />}
       <main className={cn(
         "flex-grow flex flex-col items-stretch",
         isSignInPage && 'items-center justify-center'
       )}>
         <div className={cn(
           "w-full h-full",
-          !isSignInPage && "container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+          // The landing page should be full-width, other pages can have a container
+          !isSignInPage && user && "container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         )}>
             {children}
         </div>

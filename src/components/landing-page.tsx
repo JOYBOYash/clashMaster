@@ -126,7 +126,7 @@ export function LandingPage() {
               <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
               <div className="flex flex-col items-center gap-y-24">
                 {features.map((feature, index) => (
-                  <div key={index} className="w-full max-w-5xl opacity-0 feature-card">
+                  <div key={index} className="w-full max-w-5xl">
                     <FeatureCard
                       icon={feature.icon}
                       title={feature.title}

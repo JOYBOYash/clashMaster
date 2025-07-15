@@ -52,44 +52,45 @@ export function LandingPage() {
        <div className='relative w-full'>
 
           {/* Hero Section */}
-          <section className="relative w-full text-center md:text-left min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
-              <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+          <section className="relative w-full text-center min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
+              <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 backdrop-blur-sm"></div>
               <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
-                  <div className="grid md:grid-cols-2 gap-8 items-center">
-                      <div className="flex flex-col items-center md:items-start">
-                          <h1 className="text-4xl lg:text-6xl font-extrabold font-headline tracking-tight text-primary">
-                              Master Your Village
-                          </h1>
-                          <p className="mt-4 max-w-xl text-lg lg:text-xl text-foreground/80">
-                              Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro. Stop guessing, start mastering.
-                          </p>
-                          {!user && (
-                              <Button asChild size="lg" className="mt-8 text-lg font-bold">
-                                  <Link href="/sign-in">Get Started for Free</Link>
-                              </Button>
-                          )}
+                  <div className="max-w-4xl mx-auto flex flex-col items-center">
+                      
+                      <div className='flex items-center gap-4 mb-4'>
+                          <Image
+                              src={appLogoPath}
+                              alt="ProBuilder App Logo"
+                              data-ai-hint="clash of clans logo"
+                              width={80} 
+                              height={80}
+                              unoptimized
+                              className='drop-shadow-lg'
+                          />
+                          <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
                       </div>
-                      <div className="flex flex-col items-center justify-center gap-4">
+
+                      <h2 className="text-4xl lg:text-6xl font-extrabold font-headline tracking-tight text-foreground/90" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.2)'}}>
+                          Master Your Village
+                      </h2>
+                      <p className="mt-6 max-w-2xl text-lg lg:text-xl text-foreground/80">
+                          Stop guessing, start mastering. Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro.
+                      </p>
+                      {!user && (
+                          <Button asChild size="lg" className="mt-8 text-lg font-bold shadow-lg">
+                              <Link href="/sign-in">Get Started for Free</Link>
+                          </Button>
+                      )}
+                      <div className="mt-12 flex items-center justify-center gap-4 text-muted-foreground font-body">
+                          <span className='text-sm'>The AI Companion for</span>
                           <Image
                               src={'/coc_logo.png'}
                               alt="Clash of Clans Logo"
                               data-ai-hint="clash of clans logo"
-                              width={400} 
-                              height={150}
+                              width={150} 
+                              height={50}
                               unoptimized
                           />
-                          <div className='flex items-center gap-4'>
-                              <p className='font-headline text-2xl text-muted-foreground'>with</p>
-                              <Image
-                                  src={appLogoPath}
-                                  alt="ProBuilder App Logo"
-                                  data-ai-hint="clash of clans logo"
-                                  width={80} 
-                                  height={80}
-                                  unoptimized
-                              />
-                              <p className='font-headline text-3xl text-primary'>ProBuilder</p>
-                          </div>
                       </div>
                   </div>
               </div>

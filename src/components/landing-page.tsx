@@ -145,6 +145,7 @@ export function LandingPage() {
                     <p className="text-sm text-muted-foreground italic">
                       ProBuilder is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
                     </p>
+                    <a className='text-red-600 bg-yellow-300/30 text-sm text-italic cursor-pointer'>supercell.com/en/fan-content-policy/</a>
                   </div>
               </div>
             </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CircleUser, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from './ui/button';
-import { MainNav } from './main-nav';
+import { MainNav } from '../app/main-nav';
 import {
   DropdownMenu,
   DropdownMenuContent,

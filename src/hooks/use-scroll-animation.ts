@@ -14,19 +14,22 @@ export const useScrollAnimation = () => {
     featureCards.forEach((card: any) => {
       gsap.fromTo(card, 
         { 
-          y: 50, 
-          opacity: 0 
+          y: 60, 
+          opacity: 0,
+          scale: 0.95
         },
         {
           y: 0,
           opacity: 1,
+          scale: 1,
           duration: 0.8,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: card,
-            start: 'top 85%', // When the top of the card is 85% from the top of the viewport
-            end: 'bottom 20%',
-            toggleActions: 'play none none none',
+            start: 'top 85%',
+            end: 'bottom 15%',
+            // onEnter, onLeave, onEnterBack, onLeaveBack
+            toggleActions: 'play reverse play reverse',
           },
         }
       );

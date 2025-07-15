@@ -9,6 +9,7 @@ import { heroAvatarAssets } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
+import { gameLogoPath } from '@/lib/image-paths';
 
 const features = [
   {
@@ -35,6 +36,8 @@ const features = [
 ];
 
 
+
+
 export function LandingPage() {
   const [fanAvatar, setFanAvatar] = useState(heroAvatarAssets[0]);
   const { user } = useAuth();
@@ -52,7 +55,7 @@ export function LandingPage() {
             <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
                 <div className="flex justify-center mb-6">
                     <Image
-                        src='/coc_logo.png'
+                        src={gameLogoPath}
                         alt="Clash of Clans Logo"
                         data-ai-hint="clash of clans logo"
                         width={400} 

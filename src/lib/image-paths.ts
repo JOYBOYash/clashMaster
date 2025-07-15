@@ -7,78 +7,80 @@ const defaultImagePath = 'https://placehold.co/128x128.png';
 
 const nameToPathMap: Record<string, string> = {
     // Defenses
-    'Cannon': '/assets/_defenses/cannon',
-    'Archer Tower': '/assets/_defenses/archer-tower',
-    'Mortar': '/assets/_defenses/mortar',
-    'Air Defense': '/assets/_defenses/air-defense',
-    'Wizard Tower': '/assets/_defenses/wizard-tower',
-    'Air Sweeper': '/assets/_defenses/air-sweeper',
-    'Hidden Tesla': '/assets/_defenses/hidden-tesla',
-    'Bomb Tower': '/assets/_defenses/bomb-tower',
-    'X-Bow': '/assets/_defenses/x-bow',
-    'Inferno Tower': '/assets/_defenses/inferno-tower',
-    'Eagle Artillery': '/assets/_defenses/eagle-artillery',
-    'Scattershot': '/assets/_defenses/scattershot',
-    'Spell Tower': '/assets/_defenses/spell-tower',
-    'Monolith': '/assets/_defenses/monolith',
-    'Ricochet Cannon': '/assets/_defenses/ricochet-cannon',
-    'Multi-Archer Tower': '/assets/_defenses/multi-archer-tower',
+    'Cannon': '/assets/_defenses/cannon/Cannon_1.png',
+    'Archer Tower': '/assets/_defenses/archer-tower/Archer_Tower_1.png',
+    'Mortar': '/assets/_defenses/mortar/Mortar_1.png',
+    'Air Defense': '/assets/_defenses/air-defense/Air_Defense_1.png',
+    'Wizard Tower': '/assets/_defenses/wizard-tower/Wizard_Tower_1.png',
+    'Air Sweeper': '/assets/_defenses/air-sweeper/Air_Sweeper_1.png',
+    'Hidden Tesla': '/assets/_defenses/hidden-tesla/Hidden_Tesla_1.png',
+    'Bomb Tower': '/assets/_defenses/bomb-tower/Bomb_Tower_1.png',
+    'X-Bow': '/assets/_defenses/x-bow/X-Bow_1.png',
+    'Inferno Tower': '/assets/_defenses/inferno-tower/Inferno_Tower_1.png',
+    'Eagle Artillery': '/assets/_defenses/eagle-artillery/Eagle_Artillery_1.png',
+    'Scattershot': '/assets/_defenses/scattershot/Scattershot_1.png',
+    'Spell Tower': '/assets/_defenses/spell-tower/Spell_Tower_1.png',
+    'Monolith': '/assets/_defenses/monolith/Monolith_1.png',
+    'Ricochet Cannon': '/assets/_defenses/ricochet-cannon/Ricochet_Cannon_1.png',
+    'Multi-Archer Tower': '/assets/_defenses/multi-archer-tower/Multi-Archer_Tower_1.png',
+    'Wall': '/assets/_buildings/walls/Wall_1.png',
     
     // Resources
-    'Gold Mine': '/assets/_resources/collectors/gold-mines',
-    'Elixir Collector': '/assets/_resources/collectors/elixir-collector',
-    'Dark Elixir Drill': '/assets/_resources/collectors/dark-elixir-drills',
-    'Gold Storage': '/assets/_resources/storages/gold-storage',
-    'Elixir Storage': '/assets/_resources/storages/elixir-storage',
-    'Dark Elixir Storage': '/assets/_resources/storages/dark-elixir-storage',
+    'Gold Mine': '/assets/_resources/collectors/gold-mines/Gold_Mine_1.png',
+    'Elixir Collector': '/assets/_resources/collectors/elixir-collector/Elixir_Collector_1.png',
+    'Dark Elixir Drill': '/assets/_resources/collectors/dark-elixir-drills/Dark_Elixir_Drill_1.png',
+    'Gold Storage': '/assets/_resources/storages/gold-storage/Gold_Storage_1.png',
+    'Elixir Storage': '/assets/_resources/storages/elixir-storage/Elixir_Storage_1.png',
+    'Dark Elixir Storage': '/assets/_resources/storages/dark-elixir-storage/Dark_Elixir_Storage_1.png',
 
     // Army
-    'Army Camp': '/assets/_buildings/army-camp',
-    'Barracks': '/assets/_buildings/barracks',
-    'Dark Barracks': '/assets/_buildings/dark-barracks',
-    'Laboratory': '/assets/_buildings/laboratory',
-    'Spell Factory': '/assets/_buildings/spell-factory',
-    'Dark Spell Factory': '/assets/_buildings/dark-spell-factory',
-    'Workshop': '/assets/_buildings/workshop',
-    'Pet House': '/assets/_buildings/pet-house',
-    'Blacksmith': '/assets/_buildings/blacksmith',
+    'Army Camp': '/assets/_buildings/army-camp/Army_Camp_1.png',
+    'Barracks': '/assets/_buildings/barracks/Barracks_1.png',
+    'Dark Barracks': '/assets/_buildings/dark-barracks/Dark_Barracks_1.png',
+    'Laboratory': '/assets/_buildings/laboratory/Laboratory_1.png',
+    'Spell Factory': '/assets/_buildings/spell-factory/Spell_Factory_1.png',
+    'Dark Spell Factory': '/assets/_buildings/dark-spell-factory/Dark_Spell_Factory_1.png',
+    'Workshop': '/assets/_buildings/workshop/Workshop_1.png',
+    'Pet House': '/assets/_buildings/pet-house/Pet_House_1.png',
+    'Blacksmith': '/assets/_buildings/blacksmith/Blacksmith_1.png',
 
     // Other
-    'Town Hall': 'town-halls',
-    'Clan Castle': 'buildings/clan-castle',
-    "Builder's Hut": 'buildings/builders-hut',
-    'Wall': 'buildings/walls',
+    'Town Hall': '/assets/_town-halls/Town_Hall_1.png',
+    'Clan Castle': '/assets/_buildings/clan-castle/Clan_Castle_1.png',
+    "Builder's Hut": '/assets/_buildings/builders-hut/Builder_s_Hut_1.png',
+
+    // Traps
+    'Bomb': '/assets/_traps/bomb/Bomb_1.png',
+    'Spring Trap': '/assets/_traps/spring-trap/Spring_Trap_1.png',
+    'Air Bomb': '/assets/_traps/air-bomb/Air_Bomb_1.png',
+    'Giant Bomb': '/assets/_traps/giant-bomb/Giant_Bomb_1.png',
+    'Seeking Air Mine': '/assets/_traps/seeking-air-mine/Seeking_Air_Mine_1.png',
+    'Skeleton Trap': '/assets/_traps/skeleton-trap/Skeleton_Trap_1.png',
+    'Tornado Trap': '/assets/_traps/tornado-trap/Tornado_Trap_1.png',
 };
 
 
-export const getBuildingImagePathByLevel = (name: string, level: number): string => {
-    const basePath = nameToPathMap[name];
-    if (!basePath) return defaultImagePath;
-
-    let fileName = '';
-    if (name === 'Town Hall') {
-        fileName = `Town_Hall_${level}.png`;
-    } else if (name === 'Wall') {
-        fileName = `Wall_${level}.png`;
-    } else {
-        fileName = `${name.replace(/'/g, '').replace(/ /g, '_')}_${level}.png`;
+export const getBuildingImagePath = (name: string, level?: number): string => {
+    const basePath = (nameToPathMap[name] || defaultImagePath).split('/');
+    const defaultFilename = basePath.pop();
+    const folderPath = basePath.join('/');
+    
+    if (!level || !defaultFilename) {
+        return nameToPathMap[name] || defaultImagePath;
     }
     
-    // Fallback for names that might not match the pattern exactly but are in the folder
-    // This isn't perfect but handles some cases.
-    return `/assets/${basePath}/${fileName}`;
+    const filename = defaultFilename.replace('_1', `_${level}`);
+    return `${folderPath}/${filename}`;
 };
+
 
 export const getHallImagePath = (base: 'home' | 'builder', level: number): string => {
     if (base === 'home') {
-        return getBuildingImagePathByLevel('Town Hall', level);
+        return `/assets/_town-halls/Town_Hall_${level}.png`;
     }
     return `https://placehold.co/160x160.png`; 
 };
 
-export const getBuildingImagePath = (name: string): string => {
-    return getBuildingImagePathByLevel(name, 1);
-};
 
 const troopNameToPathMap: Record<string, string> = {
     // Elixir
@@ -132,11 +134,7 @@ const troopNameToPathMap: Record<string, string> = {
 
 
 export const getTroopImagePath = (name: string): string => {
-    const path = troopNameToPathMap[name];
-    if (path) {
-        return path;
-    }
-    return defaultImagePath;
+    return troopNameToPathMap[name] || defaultImagePath;
 };
 
 
@@ -152,11 +150,11 @@ export const heroAvatarAssets = [
 ];
 
 export const carouselImageAssets = [
-  { src: '/assets/_login_carousel/BK_SideProfile.png', alt: '/assets/_Barbarian King' },
-  { src: '/assets/_login_carousel/AQ_SideProfile.png', alt: '/assets/_Archer Queen' },
-  { src: '/assets/_login_carousel/GW_SideProfile.png', alt: '/assets/_Grand Warden' },
-  { src: '/assets/_login_carousel/MP_SideProfile.png', alt: '/assets/_Minion Prince' },
-  { src: '/assets/_login_carousel/RC_SideProfile.png', alt: '/assets/_Royal Champion' },
+  { src: '/assets/_login_carousel/BK_SideProfile.png', alt: 'Barbarian King' },
+  { src: '/assets/_login_carousel/AQ_SideProfile.png', alt: 'Archer Queen' },
+  { src: '/assets/_login_carousel/GW_SideProfile.png', alt: 'Grand Warden' },
+  { src: '/assets/_login_carousel/MP_SideProfile.png', alt: 'Minion Prince' },
+  { src: '/assets/_login_carousel/RC_SideProfile.png', alt: 'Royal Champion' },
 ];
 
 
@@ -171,26 +169,26 @@ export type FeaturedItem = {
 
 const skinAssets: Record<string, FeaturedItem[]> = {
   'Barbarian King': [
-    { title: '/assets/_Champion King', category: '/assets/_Hero Skin', price: '/assets/_1500 Gems', availability: '/assets/_Shop', imageUrl: '/assets/skins/champion_king.png', hint: '/assets/_gold king armor' },
-    { title: '/assets/_P.E.K.K.A King', category: '/assets/_Hero Skin', price: '/assets/_Gold Pass', availability: '/assets/_Past Season', imageUrl: '/assets/skins/pekka_king.png', hint: '/assets/_robot king sword' },
+    { title: 'Champion King', category: 'Hero Skin', price: '1500 Gems', availability: 'Shop', imageUrl: '/assets/skins/champion_king.png', hint: 'gold king armor' },
+    { title: 'P.E.K.K.A King', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/assets/skins/pekka_king.png', hint: 'robot king sword' },
   ],
   'Archer Queen': [
-    { title: '/assets/_Ice Queen', category: '/assets/_Hero Skin', price: '/assets/_1500 Gems', availability: '/assets/_Limited', imageUrl: '/assets/skins/ice_queen.png', hint: '/assets/_ice queen crown' },
-    { title: '/assets/_Valkyrie Queen', category: '/assets/_Hero Skin', price: '/assets/_Gold Pass', availability: '/assets/_Past Season', imageUrl: '/assets/skins/valkyrie_queen.png', hint: '/assets/_warrior queen axe' },
+    { title: 'Ice Queen', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: '/assets/skins/ice_queen.png', hint: 'ice queen crown' },
+    { title: 'Valkyrie Queen', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/assets/skins/valkyrie_queen.png', hint: 'warrior queen axe' },
   ],
   'Grand Warden': [
-    { title: '/assets/_Party Warden', category: '/assets/_Hero Skin', price: '/assets/_Gold Pass', availability: '/assets/_Past Season', imageUrl: '/assets/skins/party_warden.png', hint: '/assets/_dj wizard staff' },
-    { title: '/assets/_Primal Warden', category: '/assets/_Hero Skin', price: '/assets/_Gold Pass', availability: '/assets/_Past Season', imageUrl: '/assets/skins/primal_warden.png', hint: '/assets/_shaman wizard staff' },
+    { title: 'Party Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/assets/skins/party_warden.png', hint: 'dj wizard staff' },
+    { title: 'Primal Warden', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/assets/skins/primal_warden.png', hint: 'shaman wizard staff' },
   ],
   'Royal Champion': [
-    { title: '/assets/_Gladiator Champion', category: '/assets/_Hero Skin', price: '/assets/_1500 Gems', availability: '/assets/_Limited', imageUrl: '/assets/skins/gladiator_champion.png', hint: '/assets/_gladiator champion spear' },
-    { title: '/assets/_Shadow Champion', category: '/assets/_Hero Skin', price: '/assets/_Gold Pass', availability: '/assets/_Past Season', imageUrl: '/assets/skins/shadow_champion.png', hint: '/assets/_ninja champion dark' },
+    { title: 'Gladiator Champion', category: 'Hero Skin', price: '1500 Gems', availability: 'Limited', imageUrl: '/assets/skins/gladiator_champion.png', hint: 'gladiator champion spear' },
+    { title: 'Shadow Champion', category: 'Hero Skin', price: 'Gold Pass', availability: 'Past Season', imageUrl: '/assets/skins/shadow_champion.png', hint: 'ninja champion dark' },
   ],
 };
 
 const otherFeaturedItemAssets: FeaturedItem[] = [
-  { title: "Magic Theater", category: "Scenery", price: '/assets/_$6.99', availability: '/assets/_Shop', imageUrl: "/assets/scenery/magic_theater.png", hint: "magic theater stage" },
-  { title: "Shadow Scenery", category: "Scenery", price: '/assets/_$6.99', availability: '/assets/_Shop', imageUrl: "/assets/scenery/shadow_scenery.png", hint: "dark castle night" },
+  { title: "Magic Theater", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/assets/scenery/magic_theater.png", hint: "magic theater stage" },
+  { title: "Shadow Scenery", category: "Scenery", price: '$6.99', availability: 'Shop', imageUrl: "/assets/scenery/shadow_scenery.png", hint: "dark castle night" },
 ];
 
 // Fisher-Yates shuffle algorithm

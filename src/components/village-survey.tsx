@@ -192,8 +192,8 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
 
     return (
         <div className='space-y-4'>
-            <div className='flex justify-between items-center'>
-                {title && <h3 className="text-xl font-headline mb-2">{title}</h3>}
+            <div className='flex justify-end items-center'>
+                {title && <h3 className="text-xl font-headline mb-2 mr-auto">{title}</h3>}
                 <Button size="sm" variant="outline" onClick={() => setAllItemsInCategoryToMax(items)}>
                     <ChevronsUp className='mr-2' /> Set All to Max
                 </Button>

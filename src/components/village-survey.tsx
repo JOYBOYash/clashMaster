@@ -186,7 +186,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
        </div>
     )
   };
-
+  
   const renderItemGroup = (items: GameItem[], title?: string) => {
     if (!townHallLevel || items.length === 0) return null;
 

@@ -3,45 +3,58 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { BarChart, BrainCircuit, Swords } from 'lucide-react';
+import { BarChart, BrainCircuit, Swords, CheckCircle2, ShieldCheck, Gem } from 'lucide-react';
 import Image from 'next/image';
-import { heroAvatarAssets, separator } from '@/lib/image-paths';
+import { heroAvatarAssets, separator, appLogoPath } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
-import { appLogoPath } from '@/lib/image-paths';
-
+import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 
 const features = [
   {
     icon: BarChart,
     title: 'Visual Progress Tracking',
-    description: 'See your entire village at a glance. Our dashboards provide a clear overview of your building, troop, and hero levels, helping you identify what to focus on next.',
-    color: 'text-green-500',
-    avatar: heroAvatarAssets[0]
+    description: 'See your entire village at a glance to identify what to focus on next.',
+    color: 'text-green-400',
+    avatar: heroAvatarAssets[0],
+    subFeatures: [
+      { icon: CheckCircle2, text: 'Town Hall & Builder Hall levels' },
+      { icon: CheckCircle2, text: 'Individual building progress' },
+      { icon: CheckCircle2, text: 'Real-time upgrade timers' },
+    ]
   },
   {
     icon: BrainCircuit,
     title: 'AI Upgrade Strategy',
-    description: 'Let our AI act as your personal strategist. It analyzes your current village state to suggest the most impactful and efficient upgrades, saving you time and resources.',
-    color: 'text-blue-500',
-    avatar: heroAvatarAssets[1]
+    description: 'Let our AI act as your personal strategist, saving you time and resources.',
+    color: 'text-blue-400',
+    avatar: heroAvatarAssets[1],
+     subFeatures: [
+      { icon: ShieldCheck, text: 'Optimal upgrade paths' },
+      { icon: ShieldCheck, text: 'Resource management suggestions' },
+      { icon: ShieldCheck, text: 'Calculates based on builder availability' },
+    ]
   },
   {
     icon: Swords,
     title: 'Custom Army Compositions',
-    description: 'Tired of using the same old army? Get powerful army suggestions tailored specifically to your Town Hall and troop levels for any situation—war, farming, or trophy pushing.',
-    color: 'text-red-500',
-    avatar: heroAvatarAssets[2]
+    description: 'Get powerful army suggestions for war, farming, or trophy pushing.',
+    color: 'text-red-400',
+    avatar: heroAvatarAssets[2],
+    subFeatures: [
+        { icon: Gem, text: 'Tailored to your Town Hall level' },
+        { icon: Gem, text: 'Considers your available troop levels' },
+        { icon: Gem, text: 'Generates multiple options' },
+    ]
   },
 ];
-
-
-
 
 export function LandingPage() {
   const [fanAvatar, setFanAvatar] = useState(heroAvatarAssets[0]);
   const { user } = useAuth();
+  
+  useScrollAnimation();
 
   useEffect(() => {
       setFanAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
@@ -54,7 +67,7 @@ export function LandingPage() {
           {/* Hero Section */}
           <section className="relative w-full text-center min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
               <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 backdrop-blur-sm"></div>
-              <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
+              <div className="container relative mx-auto px-4 z-10">
                   <div className="max-w-4xl mx-auto flex flex-col items-center">
                       
                       <div className='flex flex-col items-center gap-4 mb-4'>
@@ -98,12 +111,12 @@ export function LandingPage() {
 
           {/* Features Section */}
           <section className="w-full py-20 lg:py-32 bg-background">
-            <div className="container mx-auto px-4 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              <h2 className="text-3xl font-bold text-center font-headline mb-24">Unlock Your Village's Full Potential</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center font-headline mb-32">Unlock Your Village's Full Potential</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-32">
                 {features.map((feature, index) => (
-                  <div key={index} className="relative">
-                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-40 h-40 z-10">
+                  <div key={index} className="relative opacity-0 feature-card">
+                    <div className="absolute -top-28 left-1/2 -translate-x-1/2 w-48 h-48 z-10">
                       <Image
                         src={feature.avatar}
                         alt="Hero Avatar"
@@ -117,6 +130,7 @@ export function LandingPage() {
                       title={feature.title}
                       description={feature.description}
                       color={feature.color}
+                      subFeatures={feature.subFeatures}
                     />
                   </div>
                 ))}
@@ -139,7 +153,7 @@ export function LandingPage() {
 
           {/* Fan Content Section */}
           <section className="w-full py-20 lg:py-24 bg-muted/40">
-            <div className="container mx-auto px-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <div className="container mx-auto px-4">
               <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
                   <div className="w-48 h-48 relative shrink-0">
                       <Image 
@@ -158,7 +172,7 @@ export function LandingPage() {
                     <p className="text-sm text-muted-foreground italic">
                       ProBuilder is not affiliated with, endorsed, sponsored, or specifically approved by Supercell and Supercell is not responsible for it. For more information see Supercell’s Fan Content Policy.
                     </p>
-                    <a href="https://supercell.com/en/fan-content-policy/" target="_blank" rel="noopener noreferrer" className='text-red-600 bg-yellow-600/30 text-sm text-italic cursor-pointer font-headline'>supercell.com/en/fan-content-policy/</a>
+                    <a href="https://supercell.com/en/fan-content-policy/" target="_blank" rel="noopener noreferrer" className='text-sm italic underline text-primary/80 hover:text-primary transition-colors'>supercell.com/en/fan-content-policy/</a>
                   </div>
               </div>
             </div>

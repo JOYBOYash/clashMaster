@@ -3,6 +3,8 @@
  * @fileOverview Centralized manifest for all static image assets.
  */
 
+import { Variable } from "lucide-react";
+
 export const heroAvatarAssets = [
     '/assets/_avatars/bk-avatar.png',
    '/assets/_avatars/bk-avatar2.png',
@@ -12,6 +14,9 @@ export const heroAvatarAssets = [
   '/assets/_avatars/aq-avatar.png',
   '/assets/_avatars/rc-avatar.png',
 ];
+
+export const appLogoPath = '/assets/probuilder.png';
+export const gameLogoPath = '/assets/coc_logo.png';
 
 export const carouselImageAssets = [
   { src: '/assets/_login_carousel/BK_SideProfile.png', alt: 'Barbarian King' },

@@ -4,7 +4,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Home, Hammer } from 'lucide-react';
 import Image from 'next/image';
-import { getHallImagePath } from '@/lib/image-paths';
+
+const getHallImagePath = (base: 'home' | 'builder', level: number): string => {
+    if (base === 'home') {
+        return `/assets/_town-halls/Town_Hall_${level}.png`;
+    }
+    return `https://placehold.co/160x160.png`; 
+};
 
 interface VillageOverviewProps {
   base: 'home' | 'builder';

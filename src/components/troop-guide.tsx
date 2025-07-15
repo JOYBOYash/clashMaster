@@ -12,7 +12,54 @@ import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
-import { nameToPathMap, defaultImagePath } from '@/lib/image-paths';
+
+const defaultImagePath = 'https://placehold.co/128x128.png';
+const nameToPathMap: Record<string, string> = {
+    'Archer': '/assets/_troops/elixir/archer.png',
+    'Baby Dragon': '/assets/_troops/elixir/baby-dragon.png',
+    'Balloon': '/assets/_troops/elixir/balloon.png',
+    'Barbarian': '/assets/_troops/elixir/barbarian.png',
+    'Dragon Rider': '/assets/_troops/elixir/dragon-rider.png',
+    'Dragon': '/assets/_troops/elixir/dragon.png',
+    'Electro Dragon': '/assets/_troops/elixir/electro-dragon.png',
+    'Electro Titan': '/assets/_troops/elixir/electro-titan.png',
+    'Giant': '/assets/_troops/elixir/giant.png',
+    'Goblin': '/assets/_troops/elixir/goblin.png',
+    'Healer': '/assets/_troops/elixir/healer.png',
+    'Miner': '/assets/_troops/elixir/miner.png',
+    'P.E.K.K.A': '/assets/_troops/elixir/pekka.png',
+    'Root Rider': '/assets/_troops/elixir/root-rider.png',
+    'Thrower': '/assets/_troops/elixir/thrower.png',
+    'Wall Breaker': '/assets/_troops/elixir/wall-breaker.png',
+    'Wizard': '/assets/_troops/elixir/wizard.png',
+    'Yeti': '/assets/_troops/elixir/yeti.png',
+    'Apprentice Warden': '/assets/_troops/dark-elixir/apprentice-warden.png',
+    'Bowler': '/assets/_troops/dark-elixir/bowler.png',
+    'Druid': '/assets/_troops/dark-elixir/druid.png',
+    'Golem': '/assets/_troops/dark-elixir/golem.png',
+    'Headhunter': '/assets/_troops/dark-elixir/head-hunter.png',
+    'Hog Rider': '/assets/_troops/dark-elixir/hog-rider.png',
+    'Ice Golem': '/assets/_troops/dark-elixir/ice-golem.png',
+    'Lava Hound': '/assets/_troops/dark-elixir/lava-hound.png',
+    'Minion': '/assets/_troops/dark-elixir/minion.png',
+    'Valkyrie': '/assets/_troops/dark-elixir/valkyrie.png',
+    'Witch': '/assets/_troops/dark-elixir/witch.png',
+    'Bat Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Bat.png',
+    'Earthquake Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Earthquake.png',
+    'Haste Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Haste.png',
+    'Poison Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Poison.png',
+    'Skeleton Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Skeleton.png',
+    'Overgrowth Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Overgrowth.png',
+    'Clone Spell': '/assets/_spells/elixir/Icon_HV_Spell_Clone.png',
+    'Freeze Spell': '/assets/_spells/elixir/Icon_HV_Spell_Freeze_new.png',
+    'Healing Spell': '/assets/_spells/elixir/Icon_HV_Spell_Heal.png',
+    'Invisibility Spell': '/assets/_spells/elixir/Icon_HV_Spell_Invisibility.png',
+    'Jump Spell': '/assets/_spells/elixir/Icon_HV_Spell_Jump.png',
+    'Lightning Spell': '/assets/_spells/elixir/Icon_HV_Spell_Lightning_new.png',
+    'Rage Spell': '/assets/_spells/elixir/Icon_HV_Spell_Rage.png',
+    'Recall Spell': '/assets/_spells/elixir/Icon_HV_Spell_Recall.png',
+    'Revive Spell': '/assets/_spells/elixir/Icon_HV_Spell_Revive.png',
+};
 
 interface TroopGuideProps {
     villageState: VillageState;

@@ -47,7 +47,7 @@ export const nameToPathMap: Record<string, string> = {
     // Other
     'Town Hall': '/assets/_town-halls/Town_Hall_1.png',
     'Clan Castle': '/assets/_buildings/clan-castle/Clan_Castle_1.png',
-    "Builder's Hut": '/assets/_buildings/builders-hut/Builder_s_Hut_1.png',
+    'Builder Hut': '/assets/_buildings/builders-hut/Builder_s_Hut_1.png',
 
     // Traps
     'Bomb': '/assets/_traps/bomb/Bomb_1.png',

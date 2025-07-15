@@ -53,6 +53,7 @@ const nameToPathMap: Record<string, string> = {
     'Blacksmith': '/assets/_buildings/blacksmith/Blacksmith_1.png',
     'Town Hall': '/assets/_town-halls/Town_Hall_1.png',
     'Clan Castle': '/assets/_buildings/clan-castle/Clan_Castle_1.png',
+    'Builder\'s Hut': '/assets/_buildings/builders-hut/Builder_s_Hut_1.png',
     'Builder Hut': '/assets/_buildings/builders-hut/Builder_s_Hut_1.png',
     'Bomb': '/assets/_traps/bomb/Bomb_1.png',
     'Spring Trap': '/assets/_traps/spring-trap/Spring_Trap_1.png',
@@ -269,7 +270,7 @@ export function VillageSurvey({ onSurveyComplete }: VillageSurveyProps) {
     const equipment: Equipment[] = [];
     
     Object.keys(buildingUnlockLevels).forEach(name => {
-      if (buildingUnlockLevels[name] > townHallLevel || name === 'Wall') return;
+      if (buildingUnlockLevels[name] > townHallLevel) return;
       const count = singleInstanceBuildings.includes(name) ? 1 : (buildingCounts[name] || 0);
       for (let i = 0; i < count; i++) {
         const inputKey = `${name}-${i}`;

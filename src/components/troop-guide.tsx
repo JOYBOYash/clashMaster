@@ -15,6 +15,7 @@ import { Progress } from '@/components/ui/progress';
 
 const defaultImagePath = 'https://placehold.co/128x128.png';
 const nameToPathMap: Record<string, string> = {
+    // Elixir Troops
     'Archer': '/assets/_troops/elixir/archer.png',
     'Baby Dragon': '/assets/_troops/elixir/baby-dragon.png',
     'Balloon': '/assets/_troops/elixir/balloon.png',
@@ -33,6 +34,8 @@ const nameToPathMap: Record<string, string> = {
     'Wall Breaker': '/assets/_troops/elixir/wall-breaker.png',
     'Wizard': '/assets/_troops/elixir/wizard.png',
     'Yeti': '/assets/_troops/elixir/yeti.png',
+    
+    // Dark Elixir Troops
     'Apprentice Warden': '/assets/_troops/dark-elixir/apprentice-warden.png',
     'Bowler': '/assets/_troops/dark-elixir/bowler.png',
     'Druid': '/assets/_troops/dark-elixir/druid.png',
@@ -44,6 +47,8 @@ const nameToPathMap: Record<string, string> = {
     'Minion': '/assets/_troops/dark-elixir/minion.png',
     'Valkyrie': '/assets/_troops/dark-elixir/valkyrie.png',
     'Witch': '/assets/_troops/dark-elixir/witch.png',
+
+    // Spells
     'Bat Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Bat.png',
     'Earthquake Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Earthquake.png',
     'Haste Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Haste.png',

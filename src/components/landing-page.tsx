@@ -9,6 +9,7 @@ import { heroAvatarAssets } from '@/lib/image-paths';
 import { FeatureCard } from './feature-flip-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
+import cocLogo from '/assets/coc_logo.png';
 
 const features = [
   {
@@ -54,7 +55,7 @@ export function LandingPage() {
             <div className="container relative mx-auto px-4 z-10 animate-fade-in-up">
                 <div className="flex justify-center mb-6">
                     <Image
-                        src={'/assets/coc_logo.png'}
+                        src={cocLogo}
                         alt="Clash of Clans Logo"
                         data-ai-hint="clash of clans logo"
                         width={400} 

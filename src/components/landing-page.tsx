@@ -124,14 +124,14 @@ export function LandingPage() {
             </div>
           </section>
 
-          <div className="container mx-auto px-4 my-8">
+          <div className="container mx-auto px-4 my-20">
             <Image
                 src={separator}
                 alt="Section Separator"
-                width={1200}
-                height={50}
+                width={100}
+                height={20}
                 unoptimized
-                className="w-full h-auto object-contain opacity-70"
+                className="w-40 h-auto object-contain opacity-70 mx-auto"
             />
           </div>
 

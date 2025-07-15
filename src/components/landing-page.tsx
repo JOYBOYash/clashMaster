@@ -124,6 +124,7 @@ export function LandingPage() {
             </div>
           </section>
 
+     
           <div className="container mx-auto px-4 my-20">
             <Image
                 src={separator}
@@ -169,6 +170,17 @@ export function LandingPage() {
               <p className="font-headline text-lg font-bold">ProBuilder</p>
               <p className="text-sm">built by a fan (with a little AI help)</p>
             </div>
+
+            <div className="container mx-auto px-4">
+            <Image
+                src={separator}
+                alt="Section Separator"
+                width={100}
+                height={20}
+                unoptimized
+                className="w-40 h-20 object-contain opacity-70 mx-auto"
+            />
+          </div>
           </footer>
       </div>
     </div>

@@ -57,33 +57,8 @@ const nameToPathMap: Record<string, string> = {
     'Seeking Air Mine': '/assets/_traps/seeking-air-mine/Seeking_Air_Mine_1.png',
     'Skeleton Trap': '/assets/_traps/skeleton-trap/Skeleton_Trap_1.png',
     'Tornado Trap': '/assets/_traps/tornado-trap/Tornado_Trap_1.png',
-};
 
-
-export const getBuildingImagePath = (name: string, level?: number): string => {
-    const basePath = (nameToPathMap[name] || defaultImagePath).split('/');
-    const defaultFilename = basePath.pop();
-    const folderPath = basePath.join('/');
-    
-    if (!level || !defaultFilename) {
-        return nameToPathMap[name] || defaultImagePath;
-    }
-    
-    const filename = defaultFilename.replace('_1', `_${level}`);
-    return `${folderPath}/${filename}`;
-};
-
-
-export const getHallImagePath = (base: 'home' | 'builder', level: number): string => {
-    if (base === 'home') {
-        return `/assets/_town-halls/Town_Hall_${level}.png`;
-    }
-    return `https://placehold.co/160x160.png`; 
-};
-
-
-const troopNameToPathMap: Record<string, string> = {
-    // Elixir
+    // Elixir Troops
     'Archer': '/assets/_troops/elixir/archer.png',
     'Baby Dragon': '/assets/_troops/elixir/baby-dragon.png',
     'Balloon': '/assets/_troops/elixir/balloon.png',
@@ -102,7 +77,8 @@ const troopNameToPathMap: Record<string, string> = {
     'Wall Breaker': '/assets/_troops/elixir/wall-breaker.png',
     'Wizard': '/assets/_troops/elixir/wizard.png',
     'Yeti': '/assets/_troops/elixir/yeti.png',
-    // Dark Elixir
+    
+    // Dark Elixir Troops
     'Apprentice Warden': '/assets/_troops/dark-elixir/apprentice-warden.png',
     'Bowler': '/assets/_troops/dark-elixir/bowler.png',
     'Druid': '/assets/_troops/dark-elixir/druid.png',
@@ -114,6 +90,7 @@ const troopNameToPathMap: Record<string, string> = {
     'Minion': '/assets/_troops/dark-elixir/minion.png',
     'Valkyrie': '/assets/_troops/dark-elixir/valkyrie.png',
     'Witch': '/assets/_troops/dark-elixir/witch.png',
+
     // Spells
     'Bat Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Bat.png',
     'Earthquake Spell': '/assets/_spells/dark-elixir/Icon_HV_Dark_Spell_Earthquake.png',
@@ -133,8 +110,24 @@ const troopNameToPathMap: Record<string, string> = {
 };
 
 
+export const getBuildingImagePath = (name: string, level?: number): string => {
+    // This simplified function will always return the base image for now to ensure it loads.
+    // The level-specific path construction was the source of the bug.
+    if (name === 'Town Hall' && level) {
+      return `/assets/_town-halls/Town_Hall_${level}.png`;
+    }
+    return nameToPathMap[name] || defaultImagePath;
+};
+
+export const getHallImagePath = (base: 'home' | 'builder', level: number): string => {
+    if (base === 'home') {
+        return `/assets/_town-halls/Town_Hall_${level}.png`;
+    }
+    return `https://placehold.co/160x160.png`; 
+};
+
 export const getTroopImagePath = (name: string): string => {
-    return troopNameToPathMap[name] || defaultImagePath;
+    return nameToPathMap[name] || defaultImagePath;
 };
 
 

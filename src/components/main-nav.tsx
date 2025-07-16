@@ -15,7 +15,8 @@ export function MainNav({
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/upgrades', label: 'Upgrades' },
     { href: '/army-guide', label: 'Army Guide' },
-    { href: '/explore', label: 'Explore' }
+    { href: '/explore', label: 'Explore' },
+    { href: '/survey', label: 'Survey' },
   ];
 
   return (

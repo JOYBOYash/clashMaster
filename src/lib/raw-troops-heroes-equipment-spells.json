@@ -1,1 +1,74 @@
-{}
+
+[
+    {
+        "name": "Heroes",
+        "items": [
+            { "name": "Barbarian King", "maxLevel": 95 },
+            { "name": "Archer Queen", "maxLevel": 95 },
+            { "name": "Grand Warden", "maxLevel": 70 },
+            { "name": "Royal Champion", "maxLevel": 45 },
+            { "name": "Battle Machine", "maxLevel": 35 },
+            { "name": "Battle Copter", "maxLevel": 35 }
+        ]
+    },
+    {
+        "name": "Elixir Troops",
+        "items": [
+            { "name": "Barbarian", "maxLevel": 12 },
+            { "name": "Archer", "maxLevel": 12 },
+            { "name": "Giant", "maxLevel": 12 },
+            { "name": "Goblin", "maxLevel": 9 },
+            { "name": "Wall Breaker", "maxLevel": 12 },
+            { "name": "Balloon", "maxLevel": 12 },
+            { "name": "Wizard", "maxLevel": 12 },
+            { "name": "Healer", "maxLevel": 9 },
+            { "name": "Dragon", "maxLevel": 11 },
+            { "name": "P.E.K.K.A", "maxLevel": 11 },
+            { "name": "Baby Dragon", "maxLevel": 10 },
+            { "name": "Miner", "maxLevel": 10 },
+            { "name": "Electro Dragon", "maxLevel": 7 },
+            { "name": "Yeti", "maxLevel": 5 },
+            { "name": "Dragon Rider", "maxLevel": 4 },
+            { "name": "Electro Titan", "maxLevel": 3 },
+            { "name": "Root Rider", "maxLevel": 3 }
+        ]
+    },
+    {
+        "name": "Dark Elixir Troops",
+        "items": [
+            { "name": "Minion", "maxLevel": 12 },
+            { "name": "Hog Rider", "maxLevel": 13 },
+            { "name": "Valkyrie", "maxLevel": 11 },
+            { "name": "Golem", "maxLevel": 13 },
+            { "name": "Witch", "maxLevel": 7 },
+            { "name": "Lava Hound", "maxLevel": 8 },
+            { "name": "Bowler", "maxLevel": 8 },
+            { "name": "Ice Golem", "maxLevel": 8 },
+            { "name": "Headhunter", "maxLevel": 5 },
+            { "name": "Apprentice Warden", "maxLevel": 4 }
+        ]
+    },
+    {
+        "name": "Elixir Spells",
+        "items": [
+            { "name": "Lightning Spell", "maxLevel": 11 },
+            { "name": "Healing Spell", "maxLevel": 9 },
+            { "name": "Rage Spell", "maxLevel": 7 },
+            { "name": "Jump Spell", "maxLevel": 5 },
+            { "name": "Freeze Spell", "maxLevel": 9 },
+            { "name": "Clone Spell", "maxLevel": 8 },
+            { "name": "Invisibility Spell", "maxLevel": 5 },
+            { "name": "Recall Spell", "maxLevel": 4 }
+        ]
+    },
+    {
+        "name": "Dark Elixir Spells",
+        "items": [
+            { "name": "Poison Spell", "maxLevel": 10 },
+            { "name": "Earthquake Spell", "maxLevel": 6 },
+            { "name": "Haste Spell", "maxLevel": 6 },
+            { "name": "Skeleton Spell", "maxLevel": 8 },
+            { "name": "Bat Spell", "maxLevel": 6 }
+        ]
+    }
+]

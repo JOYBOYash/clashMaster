@@ -65,12 +65,13 @@ export function LandingPage() {
        <div className='relative w-full'>
 
           {/* Hero Section */}
-          <section className="relative w-full text-center min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
+          <section className="relative w-full text-center md:text-left min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
               <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 backdrop-blur-sm"></div>
               <div className="container relative mx-auto px-4 z-10">
-                  <div className="max-w-4xl mx-auto flex flex-col items-center">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div className="flex flex-col items-center md:items-start max-w-xl">
                       
-                      <div className='flex flex-col items-center gap-4 mb-4'>
+                      <div className='flex flex-col items-center md:items-start gap-4 mb-4'>
                           <Image
                               src={appLogoPath}
                               alt="ProBuilder App Logo"
@@ -105,6 +106,18 @@ export function LandingPage() {
                               unoptimized
                           />
                       </div>
+                    </div>
+                    <div className="hidden md:flex justify-center items-center">
+                      <div className="relative w-[400px] h-[500px]">
+                        <Image 
+                            src={heroAvatarAssets[4]}
+                            alt="ProBuilder AI Assistant"
+                            fill
+                            className="object-contain animate-hero-glow"
+                            unoptimized
+                        />
+                      </div>
+                    </div>
                   </div>
               </div>
           </section>

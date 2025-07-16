@@ -102,12 +102,12 @@ export default {
         },
         'hero-glow': {
           '0%, 100%': {
+            filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))',
             transform: 'scale(1)',
-            opacity: '0.8',
           },
           '50%': {
-            transform: 'scale(1.05)',
-            opacity: '1',
+            filter: 'drop-shadow(0 0 20px hsl(var(--primary) / 0.8))',
+            transform: 'scale(1.03)',
           },
         },
       },

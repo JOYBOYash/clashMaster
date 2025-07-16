@@ -93,12 +93,81 @@ export function LandingPage() {
                     <p className="mt-4 max-w-2xl text-base lg:text-lg text-foreground/80">
                         Stop guessing, start mastering. Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro.
                     </p>
-                    <div className="relative w-[300px] h-[350px] md:w-[400px] md:h-[500px] my-4">
+                    <div className="relative w-[300px] h-[350px] md:w-[400px] md:h-[500px] my-4 flex items-center justify-center">
+                      <div 
+                        className="absolute inset-0 w-full h-full bg-no-repeat bg-center"
+                        style={{
+                          backgroundImage: `
+                            conic-gradient(from 90deg at 50% 50%,
+                              hsl(var(--primary) / 0.5) 0%,
+                              hsl(var(--primary) / 0.5) 5%,
+                              transparent 5%,
+                              transparent 15%,
+                              hsl(var(--primary) / 0.5) 15%,
+                              hsl(var(--primary) / 0.5) 20%,
+                              transparent 20%,
+                              transparent 30%,
+                              hsl(var(--primary) / 0.5) 30%,
+                              hsl(var(--primary) / 0.5) 35%,
+                              transparent 35%,
+                              transparent 45%,
+                              hsl(var(--primary) / 0.5) 45%,
+                              hsl(var(--primary) / 0.5) 50%,
+                              transparent 50%,
+                              transparent 60%,
+                              hsl(var(--primary) / 0.5) 60%,
+                              hsl(var(--primary) / 0.5) 65%,
+                              transparent 65%,
+                              transparent 75%,
+                              hsl(var(--primary) / 0.5) 75%,
+                              hsl(var(--primary) / 0.5) 80%,
+                              transparent 80%,
+                              transparent 90%,
+                              hsl(var(--primary) / 0.5) 90%,
+                              hsl(var(--primary) / 0.5) 95%,
+                              transparent 95%,
+                              transparent 100%
+                            )
+                          `,
+                           maskImage: 'radial-gradient(circle at center, black 0%, transparent 70%)',
+                        }}
+                      >
+                        <div className="absolute inset-0 w-full h-full animate-spin-slow bg-no-repeat bg-center"
+                          style={{
+                             backgroundImage: `
+                              conic-gradient(from 270deg at 50% 50%,
+                                transparent 0%,
+                                transparent 5%,
+                                hsl(var(--primary) / 0.5) 5%,
+                                hsl(var(--primary) / 0.5) 15%,
+                                transparent 15%,
+                                transparent 25%,
+                                hsl(var(--primary) / 0.5) 25%,
+                                hsl(var(--primary) / 0.5) 35%,
+                                transparent 35%,
+                                transparent 45%,
+                                hsl(var(--primary) / 0.5) 45%,
+                                hsl(var(--primary) / 0.5) 55%,
+                                transparent 55%,
+                                transparent 65%,
+                                hsl(var(--primary) / 0.5) 65%,
+                                hsl(var(--primary) / 0.5) 75%,
+                                transparent 75%,
+                                transparent 85%,
+                                hsl(var(--primary) / 0.5) 85%,
+                                hsl(var(--primary) / 0.5) 95%,
+                                transparent 95%
+                              )
+                            `,
+                             maskImage: 'radial-gradient(circle at center, black 0%, transparent 70%)',
+                          }}
+                        />
+                      </div>
                       <Image 
                           src={probuilderAvatar}
                           alt="ProBuilder AI Assistant"
                           fill
-                          className="object-contain animate-hero-glow"
+                          className="object-contain animate-hero-glow z-10"
                           unoptimized
                       />
                     </div>
@@ -205,5 +274,3 @@ export function LandingPage() {
     </div>
   );
 }
-
-    

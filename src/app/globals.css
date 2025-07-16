@@ -30,7 +30,7 @@
     --secondary-foreground: 27 20% 25%;
     --muted: 42 25% 85%;
     --muted-foreground: 25 15% 40%;
-    --accent: 30 95% 55%; /* orange-gold */
+    --accent: 45 100% 50%; /* rich gold */
     --accent-foreground: 0 0% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
@@ -58,7 +58,7 @@
     --secondary-foreground: 210 30% 90%;
     --muted: 220 15% 25%;
     --muted-foreground: 210 30% 65%;
-    --accent: 30 100% 55%; /* orange glow */
+    --accent: 45 100% 55%; /* gold glow */
     --accent-foreground: 0 0% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -74,6 +74,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     @apply border-border;
   }
@@ -91,17 +94,18 @@
     height: 12px;
   }
   ::-webkit-scrollbar-track {
-    background: hsl(var(--muted) / 0.5);
+    background: hsl(var(--background) / 0.8);
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary) / 0.6);
+    background: hsl(var(--accent) / 0.7);
     border-radius: 10px;
     border: 2px solid transparent;
     background-clip: content-box;
+    transition: background-color 0.3s;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary));
+    background: hsl(var(--accent));
     background-clip: content-box;
   }
 }

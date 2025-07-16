@@ -75,16 +75,18 @@ export function LandingPage() {
                <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent"></div>
 
               <div className="container relative mx-auto px-4 z-10 flex flex-col items-center">
-                    <div className="flex items-center gap-3">
-                        <Image
+              <Image
                             src={appLogoPath}
                             alt="ProBuilder App Logo"
                             data-ai-hint="clash of clans logo"
-                            width={80} 
-                            height={80}
+                            width={120} 
+                            height={120}
                             unoptimized
                             className='drop-shadow-lg'
                         />
+                    
+                    <div className="flex items-center gap-3">
+                     
                         <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
                     </div>
                     <h2 className="mt-2 text-2xl lg:text-3xl font-bold font-headline tracking-tight text-foreground/90" style={{textShadow: '1px 1px 2px hsl(var(--background) / 0.5)'}}>

@@ -70,32 +70,28 @@ export function LandingPage() {
               <div 
                 className="absolute inset-0 bg-background"
                 style={{
-                  backgroundImage: 'radial-gradient(circle at 100% 50%, hsl(var(--primary) / 0.15), transparent 40%), linear-gradient(to right, hsl(var(--background)) 50%, hsl(var(--background) / 0.8))'
+                  backgroundImage: 'radial-gradient(circle at 100% 50%, hsl(var(--primary) / 0.1), transparent 50%)'
                 }}
               ></div>
-              <div className="absolute inset-0 bg-repeat" style={{ backgroundImage: "url('/assets/sunburst.svg')", backgroundPosition: '100% 50%', backgroundSize: 'auto 150%', opacity: 0.3}}></div>
 
               <div className="container relative mx-auto px-4 z-10">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div className="flex flex-col items-center md:items-start max-w-xl">
+                    <div className="flex flex-col items-center md:items-start">
                       
-                      <div className='flex flex-col items-center md:items-start gap-4 mb-4'>
-                          <Image
-                              src={appLogoPath}
-                              alt="ProBuilder App Logo"
-                              data-ai-hint="clash of clans logo"
-                              width={120} 
-                              height={120}
-                              unoptimized
-                              className='drop-shadow-lg'
-                          />
-                          <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
-                      </div>
-
-                      <h2 className="text-4xl lg:text-4xl font-extrabold font-headline tracking-tight text-foreground/90" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.1)'}}>
+                      <Image
+                          src={appLogoPath}
+                          alt="ProBuilder App Logo"
+                          data-ai-hint="clash of clans logo"
+                          width={80} 
+                          height={80}
+                          unoptimized
+                          className='drop-shadow-lg mb-4'
+                      />
+                      <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
+                      <h2 className="mt-2 text-2xl lg:text-3xl font-bold font-headline tracking-tight text-foreground/90" style={{textShadow: '1px 1px 2px hsl(var(--foreground) / 0.1)'}}>
                           Master Your Village
                       </h2>
-                      <p className="mt-6 max-w-2xl text-lg lg:text-xl text-foreground/80">
+                      <p className="mt-4 max-w-lg text-base lg:text-lg text-foreground/80">
                           Stop guessing, start mastering. Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro.
                       </p>
                       {!user && (
@@ -103,14 +99,14 @@ export function LandingPage() {
                               <Link href="/sign-in">Get Started for Free</Link>
                           </Button>
                       )}
-                      <div className="mt-12 flex items-center justify-center gap-4 text-muted-foreground font-body">
+                      <div className="mt-10 flex items-center justify-center md:justify-start gap-4 text-muted-foreground font-body">
                           <span className='text-sm'>The AI Companion for</span>
                           <Image
                               src={'/coc_logo.png'}
                               alt="Clash of Clans Logo"
                               data-ai-hint="clash of clans logo"
-                              width={150} 
-                              height={50}
+                              width={120} 
+                              height={40}
                               unoptimized
                           />
                       </div>
@@ -214,7 +210,3 @@ export function LandingPage() {
     </div>
   );
 }
-
-    
-
-    

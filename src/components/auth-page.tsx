@@ -13,7 +13,6 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { redirect } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -41,7 +40,7 @@ export const AuthPage = () => {
     try {
       await signIn(data.email, data.password);
       toast({ title: 'Sign In Successful', description: 'Welcome back!' });
-      redirect('/'); // Redirect to landing page on successful sign-in
+      window.location.href = '/'; // Redirect to landing page on successful sign-in
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -58,7 +57,7 @@ export const AuthPage = () => {
     try {
       await signUp(data.email, data.password);
       toast({ title: 'Sign Up Successful', description: 'Welcome! You can now sign in.' });
-      redirect('/sign-in'); // Redirect to sign-in page on successful sign-up
+      window.location.href = '/sign-in'; // Redirect to sign-in page on successful sign-up
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -73,7 +72,7 @@ export const AuthPage = () => {
   const isLoading = formLoading || authLoading;
 
   if (!authLoading && user) {
-    redirect('/');
+    window.location.href = '/';
   }
 
   return (

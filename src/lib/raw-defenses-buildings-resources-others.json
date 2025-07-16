@@ -1,1 +1,74 @@
-{}
+
+[
+    {
+        "name": "Town Hall & Builder Hall",
+        "items": [
+            { "name": "Town Hall", "maxLevel": 16 },
+            { "name": "Builder Hall", "maxLevel": 10 }
+        ]
+    },
+    {
+        "name": "Resources",
+        "items": [
+            { "name": "Gold Storage", "maxLevel": 17 },
+            { "name": "Elixir Storage", "maxLevel": 17 },
+            { "name": "Dark Elixir Storage", "maxLevel": 11 },
+            { "name": "Gold Mine", "maxLevel": 15 },
+            { "name": "Elixir Collector", "maxLevel": 15 },
+            { "name": "Dark Elixir Drill", "maxLevel": 10 },
+            { "name": "Clan Castle", "maxLevel": 12 }
+        ]
+    },
+    {
+        "name": "Army Buildings",
+        "items": [
+            { "name": "Army Camp", "maxLevel": 12 },
+            { "name": "Barracks", "maxLevel": 16 },
+            { "name": "Dark Barracks", "maxLevel": 11 },
+            { "name": "Laboratory", "maxLevel": 14 },
+            { "name": "Spell Factory", "maxLevel": 7 },
+            { "name": "Dark Spell Factory", "maxLevel": 6 },
+            { "name": "Workshop", "maxLevel": 7 },
+            { "name": "Pet House", "maxLevel": 9 }
+        ]
+    },
+    {
+        "name": "Defenses",
+        "items": [
+            { "name": "Cannon", "maxLevel": 22 },
+            { "name": "Archer Tower", "maxLevel": 22 },
+            { "name": "Mortar", "maxLevel": 16 },
+            { "name": "Air Defense", "maxLevel": 15 },
+            { "name": "Wizard Tower", "maxLevel": 16 },
+            { "name": "Air Sweeper", "maxLevel": 8 },
+            { "name": "Hidden Tesla", "maxLevel": 14 },
+            { "name": "Bomb Tower", "maxLevel": 11 },
+            { "name": "X-Bow", "maxLevel": 11 },
+            { "name": "Inferno Tower", "maxLevel": 10 },
+            { "name": "Eagle Artillery", "maxLevel": 7 },
+            { "name": "Scattershot", "maxLevel": 5 },
+            { "name": "Spell Tower", "maxLevel": 4 },
+            { "name": "Monolith", "maxLevel": 3 },
+            { "name": "Wall", "maxLevel": 17 }
+        ]
+    },
+    {
+        "name": "Traps",
+        "items": [
+            { "name": "Bomb", "maxLevel": 12 },
+            { "name": "Spring Trap", "maxLevel": 6 },
+            { "name": "Air Bomb", "maxLevel": 11 },
+            { "name": "Giant Bomb", "maxLevel": 10 },
+            { "name": "Seeking Air Mine", "maxLevel": 6 },
+            { "name": "Skeleton Trap", "maxLevel": 5 },
+            { "name": "Tornado Trap", "maxLevel": 4 }
+        ]
+    },
+    {
+        "name": "Other",
+        "items": [
+            { "name": "Builders Hut", "maxLevel": 1 },
+            { "name": "Blacksmith", "maxLevel": 9 }
+        ]
+    }
+]

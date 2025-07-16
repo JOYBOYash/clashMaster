@@ -5,12 +5,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { BarChart, BrainCircuit, Swords, CheckCircle2, ShieldCheck, Gem } from 'lucide-react';
 import Image from 'next/image';
-import { heroAvatarAssets, separator, appLogoPath } from '@/lib/image-paths';
+import { heroAvatarAssets, separator, appLogoPath, probuilderAvatar } from '@/lib/image-paths';
 import { FeatureCard } from './feature-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { probuilderAvatar } from '@/lib/image-paths';
 
 const features = [
   {
@@ -66,63 +65,59 @@ export function LandingPage() {
        <div className='relative w-full'>
 
           {/* Hero Section */}
-          <section className="relative w-full text-center md:text-left min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center overflow-hidden">
+          <section className="relative w-full text-center py-20 lg:py-32 min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center overflow-hidden">
               <div 
                 className="absolute inset-0 bg-background"
                 style={{
-                  backgroundImage: 'radial-gradient(circle at 100% 50%, hsl(var(--primary) / 0.1), transparent 50%)'
+                  backgroundImage: 'radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.1), transparent 60%)'
                 }}
               ></div>
+               <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent"></div>
 
-              <div className="container relative mx-auto px-4 z-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div className="flex flex-col items-center md:items-start">
-                      
-                      <Image
-                          src={appLogoPath}
-                          alt="ProBuilder App Logo"
-                          data-ai-hint="clash of clans logo"
-                          width={80} 
-                          height={80}
-                          unoptimized
-                          className='drop-shadow-lg mb-4'
-                      />
-                      <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
-                      <h2 className="mt-2 text-2xl lg:text-3xl font-bold font-headline tracking-tight text-foreground/90" style={{textShadow: '1px 1px 2px hsl(var(--foreground) / 0.1)'}}>
-                          Master Your Village
-                      </h2>
-                      <p className="mt-4 max-w-lg text-base lg:text-lg text-foreground/80">
-                          Stop guessing, start mastering. Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro.
-                      </p>
-                      {!user && (
-                          <Button asChild size="lg" className="mt-8 text-lg font-bold shadow-lg">
-                              <Link href="/sign-in">Get Started for Free</Link>
-                          </Button>
-                      )}
-                      <div className="mt-10 flex items-center justify-center md:justify-start gap-4 text-muted-foreground font-body">
-                          <span className='text-sm'>The AI Companion for</span>
-                          <Image
-                              src={'/coc_logo.png'}
-                              alt="Clash of Clans Logo"
-                              data-ai-hint="clash of clans logo"
-                              width={120} 
-                              height={40}
-                              unoptimized
-                          />
-                      </div>
+              <div className="container relative mx-auto px-4 z-10 flex flex-col items-center">
+                    <div className="flex items-center gap-3">
+                        <Image
+                            src={appLogoPath}
+                            alt="ProBuilder App Logo"
+                            data-ai-hint="clash of clans logo"
+                            width={80} 
+                            height={80}
+                            unoptimized
+                            className='drop-shadow-lg'
+                        />
+                        <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
                     </div>
-                    <div className="hidden md:flex justify-center items-center">
-                      <div className="relative w-[400px] h-[500px]">
-                        <Image 
-                            src={probuilderAvatar}
-                            alt="ProBuilder AI Assistant"
-                            fill
-                            className="object-contain animate-hero-glow"
+                    <h2 className="mt-2 text-2xl lg:text-3xl font-bold font-headline tracking-tight text-foreground/90" style={{textShadow: '1px 1px 2px hsl(var(--background) / 0.5)'}}>
+                        Master Your Village
+                    </h2>
+                    <p className="mt-4 max-w-2xl text-base lg:text-lg text-foreground/80">
+                        Stop guessing, start mastering. Get AI-powered upgrade suggestions, track your progress, and plan your attacks like a pro.
+                    </p>
+                    <div className="relative w-[300px] h-[350px] md:w-[400px] md:h-[500px] my-4">
+                      <Image 
+                          src={probuilderAvatar}
+                          alt="ProBuilder AI Assistant"
+                          fill
+                          className="object-contain animate-hero-glow"
+                          unoptimized
+                      />
+                    </div>
+                    {!user && (
+                        <Button asChild size="lg" className="mt-4 text-lg font-bold shadow-lg">
+                            <Link href="/sign-in">Get Started for Free</Link>
+                        </Button>
+                    )}
+                    <div className="mt-10 flex items-center justify-center gap-4 text-muted-foreground font-body">
+                        <span className='text-sm'>The AI Companion for</span>
+                        <Image
+                            src={'/coc_logo.png'}
+                            alt="Clash of Clans Logo"
+                            data-ai-hint="clash of clans logo"
+                            width={120} 
+                            height={40}
                             unoptimized
                         />
-                      </div>
                     </div>
-                  </div>
               </div>
           </section>
 
@@ -210,3 +205,5 @@ export function LandingPage() {
     </div>
   );
 }
+
+    

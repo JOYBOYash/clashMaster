@@ -167,7 +167,7 @@ export function LandingPage() {
                           src={probuilderAvatar}
                           alt="ProBuilder AI Assistant"
                           fill
-                          className="object-contain z-10"
+                          className="object-contain z-10 animate-float"
                           unoptimized
                       />
                     </div>
@@ -274,3 +274,5 @@ export function LandingPage() {
     </div>
   );
 }
+
+    

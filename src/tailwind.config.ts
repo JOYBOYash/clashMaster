@@ -110,7 +110,7 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'float': 'float 4s ease-in-out infinite',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
-        'spin-slow': 'spin-slow 20s linear infinite',
+        'spin-slow': 'spin-slow 10s linear infinite',
       },
     },
   },

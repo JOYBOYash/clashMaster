@@ -196,10 +196,10 @@ export function LandingPage() {
             <Image
                 src={separator}
                 alt="Section Separator"
-                width={300}
-                height={40}
+                width={400}
+                height={120}
                 unoptimized
-                className="w-40 h-auto object-contain opacity-70 mx-auto"
+                className="w-80 h-auto object-contain opacity-70 mx-auto"
             />
           </div>
 
@@ -230,10 +230,10 @@ export function LandingPage() {
             <Image
                 src={separator}
                 alt="Section Separator"
-                width={300}
-                height={40}
+                width={400}
+                height={120}
                 unoptimized
-                className="w-40 h-auto object-contain opacity-70 mx-auto"
+                className="w-80 h-auto object-contain opacity-70 mx-auto"
             />
           </div>
 

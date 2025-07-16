@@ -10,6 +10,7 @@ import { FeatureCard } from './feature-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { probuilderAvatar } from '@/lib/image-paths';
 
 const features = [
   {
@@ -110,7 +111,7 @@ export function LandingPage() {
                     <div className="hidden md:flex justify-center items-center">
                       <div className="relative w-[400px] h-[500px]">
                         <Image 
-                            src={heroAvatarAssets[4]}
+                            src={probuilderAvatar}
                             alt="ProBuilder AI Assistant"
                             fill
                             className="object-contain animate-hero-glow"

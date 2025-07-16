@@ -174,9 +174,14 @@ export function LandingPage() {
                       />
                     </div>
                     {!user && (
-                        <Button asChild size="lg" className="mt-4 text-lg font-bold shadow-lg">
-                            <Link href="/sign-in">Get Started for Free</Link>
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <Button asChild size="lg" className="text-lg font-bold shadow-lg">
+                                <Link href="/sign-in">Get Started for Free</Link>
+                            </Button>
+                             <Button asChild size="lg" variant="outline" className="text-lg font-bold shadow-lg">
+                                <Link href="/sign-in">Take Survey</Link>
+                            </Button>
+                        </div>
                     )}
                     <div className="mt-10 flex items-center justify-center gap-4 text-muted-foreground font-body">
                         <span className='text-sm'>The AI Companion for</span>

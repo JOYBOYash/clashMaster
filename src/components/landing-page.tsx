@@ -66,8 +66,15 @@ export function LandingPage() {
        <div className='relative w-full'>
 
           {/* Hero Section */}
-          <section className="relative w-full text-center md:text-left min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/assets/hero_bg.jpg')"}}>
-              <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 backdrop-blur-sm"></div>
+          <section className="relative w-full text-center md:text-left min-h-[calc(80vh)] md:min-h-[calc(100vh-8rem)] flex items-center justify-center overflow-hidden">
+              <div 
+                className="absolute inset-0 bg-background"
+                style={{
+                  backgroundImage: 'radial-gradient(circle at 100% 50%, hsl(var(--primary) / 0.15), transparent 40%), linear-gradient(to right, hsl(var(--background)) 50%, hsl(var(--background) / 0.8))'
+                }}
+              ></div>
+              <div className="absolute inset-0 bg-repeat" style={{ backgroundImage: "url('/assets/sunburst.svg')", backgroundPosition: '100% 50%', backgroundSize: 'auto 150%', opacity: 0.3}}></div>
+
               <div className="container relative mx-auto px-4 z-10">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div className="flex flex-col items-center md:items-start max-w-xl">
@@ -85,7 +92,7 @@ export function LandingPage() {
                           <h1 className='font-headline text-5xl md:text-7xl text-primary drop-shadow-md'>ProBuilder</h1>
                       </div>
 
-                      <h2 className="text-4xl lg:text-4xl font-extrabold font-headline tracking-tight text-foreground/90" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.2)'}}>
+                      <h2 className="text-4xl lg:text-4xl font-extrabold font-headline tracking-tight text-foreground/90" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.1)'}}>
                           Master Your Village
                       </h2>
                       <p className="mt-6 max-w-2xl text-lg lg:text-xl text-foreground/80">
@@ -207,3 +214,5 @@ export function LandingPage() {
     </div>
   );
 }
+
+    

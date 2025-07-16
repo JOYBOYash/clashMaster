@@ -12,7 +12,9 @@ export function MainNav({
   const pathname = usePathname();
 
   // All navigation links removed as per the new simplified structure.
-  const routes: { href: string, label: string }[] = [];
+  const routes = [
+     { href: '/survey', label: 'Take Survey' },
+  ];
 
   if (routes.length === 0) {
     return null; // Return null to render nothing

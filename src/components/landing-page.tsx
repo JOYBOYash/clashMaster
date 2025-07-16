@@ -167,7 +167,7 @@ export function LandingPage() {
                           src={probuilderAvatar}
                           alt="ProBuilder AI Assistant"
                           fill
-                          className="object-contain animate-hero-glow z-10"
+                          className="object-contain z-10"
                           unoptimized
                       />
                     </div>

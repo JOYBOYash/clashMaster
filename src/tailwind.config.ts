@@ -100,16 +100,6 @@ export default {
             transform: 'translateY(0)',
           },
         },
-        'hero-glow': {
-          '0%, 100%': {
-            filter: 'drop-shadow(0 0 10px hsl(var(--primary) / 0.4))',
-            transform: 'scale(1)',
-          },
-          '50%': {
-            filter: 'drop-shadow(0 0 20px hsl(var(--primary) / 0.8))',
-            transform: 'scale(1.03)',
-          },
-        },
         'spin-slow': {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
@@ -120,7 +110,6 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'float': 'float 4s ease-in-out infinite',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
-        'hero-glow': 'hero-glow 5s ease-in-out infinite',
         'spin-slow': 'spin-slow 20s linear infinite',
       },
     },

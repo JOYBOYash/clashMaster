@@ -42,25 +42,9 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    if (asChild) {
-      return (
-        <Slot
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          {...props}
-        >
-          <>
-            {props.children}
-            {variant === 'default' && (
-              <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />
-            )}
-          </>
-        </Slot>
-      )
-    }
-
+    const Comp = asChild ? Slot : "button"
     return (
-      <button
+      <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
@@ -69,7 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {variant === 'default' && (
           <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />
         )}
-      </button>
+      </Comp>
     )
   }
 )

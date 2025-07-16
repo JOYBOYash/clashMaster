@@ -114,4 +114,32 @@
   .themed-card {
     @apply bg-gradient-to-br from-green-100/40 to-blue-100/30 dark:from-green-900/20 dark:to-blue-900/20 border-green-500/30 rounded-xl shadow-lg;
   }
+
+  @keyframes shine {
+    to {
+      background-position-x: -200%;
+    }
+  }
+
+  .group.relative.bg-primary::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 10%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 90%
+    );
+    background-size: 200% 100%;
+    background-position-x: 200%;
+    transition: background-position-x 0s ease-in-out;
+  }
+
+  .group.relative.bg-primary:hover::after {
+    animation: shine 1.2s ease-in-out;
+  }
 }

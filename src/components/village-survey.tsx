@@ -25,17 +25,20 @@ import armyData from '@/lib/raw-troops-heroes-equipment-spells.json';
 interface BuildingLevel {
     level: number;
     townHall: number;
+    [key: string]: any; // Allow other properties
 }
 
 interface BuildingItem {
     name: string;
     category: string;
+    build: { townHall: number; [key: string]: any };
     levels: BuildingLevel[];
 }
 
 interface ArmyItem {
     name: string;
     category: string;
+    unlock: { hall: number; [key: string]: any };
     levels: number[];
 }
 
@@ -44,16 +47,19 @@ interface ProcessedItem {
     data: BuildingItem | ArmyItem;
 }
 
+// Pre-filter hero altars
+const filteredVillageBuildings = villageData.buildings.filter(item => !item.name.includes("Altar"));
+
 const allData: Record<string, Record<string, ProcessedItem[]>> = {
     "Village": {},
     "Army": {}
 };
 
-villageData.buildings.forEach(item => {
+filteredVillageBuildings.forEach(item => {
     if (!allData.Village[item.category]) {
         allData.Village[item.category] = [];
     }
-    allData.Village[item.category].push({ name: item.name, data: item });
+    allData.Village[item.category].push({ name: item.name, data: item as BuildingItem });
 });
 
 armyData.forEach(item => {
@@ -62,8 +68,9 @@ armyData.forEach(item => {
     if (!allData.Army[categoryName]) {
         allData.Army[categoryName] = [];
     }
-    allData.Army[categoryName].push({ name: item.name, data: item });
+    allData.Army[categoryName].push({ name: item.name, data: item as ArmyItem });
 });
+
 
 const generateSchema = () => {
     const schemaShape: { [key: string]: z.ZodNumber } = {};
@@ -73,10 +80,12 @@ const generateSchema = () => {
             let maxLevel = 0;
             if ('build' in item.data) { // It's a BuildingItem
                 maxLevel = (item.data as BuildingItem).levels.length;
-            } else { // It's an ArmyItem
-                maxLevel = Math.max(...(item.data as ArmyItem).levels);
+            } else if ('dps' in item.data) { // It's a Hero item
+                 maxLevel = (item.data as any).dps.length;
+            } else { // It's a regular ArmyItem
+                maxLevel = (item.data as ArmyItem).levels.length;
             }
-            schemaShape[fieldName] = z.number().min(0).max(maxLevel);
+            schemaShape[fieldName] = z.number().min(0).max(maxLevel > 0 ? maxLevel : 100); // Set a high max for safety if 0
         });
     });
     return z.object(schemaShape);
@@ -107,7 +116,18 @@ export function VillageSurvey() {
     
     const townHallLevel = watch('town_hall');
 
+    const isUnlockedAtTownHall = useCallback((item: ProcessedItem, thLevel: number): boolean => {
+        if ('build' in item.data) { // BuildingItem
+            return item.data.build.townHall <= thLevel;
+        } else if ('unlock' in item.data) { // ArmyItem or Hero
+            return item.data.unlock.hall <= thLevel;
+        }
+        return false;
+    }, []);
+
     const getMaxLevelForTownHall = useCallback((item: ProcessedItem, thLevel: number): number => {
+        if (!isUnlockedAtTownHall(item, thLevel)) return 0;
+
         if (item.name === "Town Hall") {
              return (item.data as BuildingItem).levels.length;
         }
@@ -118,6 +138,7 @@ export function VillageSurvey() {
             return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
         } else { // It's an ArmyItem from armyData
             const armyUnit = item.data as ArmyItem;
+            // For heroes, levels array is TownHall requirements per level
             let maxLevel = 0;
             for (let i = 0; i < armyUnit.levels.length; i++) {
                 if (armyUnit.levels[i] <= thLevel) {
@@ -128,7 +149,7 @@ export function VillageSurvey() {
             }
             return maxLevel;
         }
-    }, []);
+    }, [isUnlockedAtTownHall]);
     
     useEffect(() => {
         const currentValues = getValues();
@@ -174,12 +195,15 @@ export function VillageSurvey() {
                                             const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
                                             const watchedValue = watch(fieldName);
                                             const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
+                                            const isUnlocked = isUnlockedAtTownHall(item, townHallLevel);
+
+                                            if (!isUnlocked && item.name !== 'Town Hall') return null;
                                             
                                             return (
                                             <div key={fieldName} className="space-y-3">
                                                 <div className="flex justify-between items-center">
                                                     <Label htmlFor={fieldName.toString()}>{titleCase(item.name.replace(/_/g, ' '))}</Label>
-                                                    <span className="text-sm font-medium text-primary w-10 text-center">{watchedValue} / {maxLevel}</span>
+                                                    <span className="text-sm font-medium text-primary w-16 text-center">{watchedValue} / {maxLevel}</span>
                                                 </div>
                                                 <Controller
                                                     name={fieldName}
@@ -215,3 +239,4 @@ export function VillageSurvey() {
         </form>
     );
 }
+

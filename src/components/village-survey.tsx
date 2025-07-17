@@ -117,6 +117,7 @@ export function VillageSurvey() {
     const townHallLevel = watch('town_hall');
 
     const isUnlockedAtTownHall = useCallback((item: ProcessedItem, thLevel: number): boolean => {
+        if (item.name === "Town Hall") return true;
         if ('build' in item.data) { // BuildingItem
             return item.data.build.townHall <= thLevel;
         } else if ('unlock' in item.data) { // ArmyItem or Hero
@@ -127,7 +128,7 @@ export function VillageSurvey() {
 
     const getMaxLevelForTownHall = useCallback((item: ProcessedItem, thLevel: number): number => {
         if (!isUnlockedAtTownHall(item, thLevel)) return 0;
-
+        
         if (item.name === "Town Hall") {
              return (item.data as BuildingItem).levels.length;
         }
@@ -197,7 +198,7 @@ export function VillageSurvey() {
                                             const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
                                             const isUnlocked = isUnlockedAtTownHall(item, townHallLevel);
 
-                                            if (!isUnlocked && item.name !== 'Town Hall') return null;
+                                            if (!isUnlocked) return null;
                                             
                                             return (
                                             <div key={fieldName} className="space-y-3">
@@ -216,7 +217,7 @@ export function VillageSurvey() {
                                                             step={1}
                                                             value={[field.value as number]}
                                                             onValueChange={(value) => field.onChange(value[0])}
-                                                            disabled={maxLevel === 0 && item.name !== 'Town Hall'}
+                                                            disabled={item.name !== 'Town Hall' && maxLevel === 0}
                                                         />
                                                     )}
                                                 />
@@ -239,4 +240,3 @@ export function VillageSurvey() {
         </form>
     );
 }
-

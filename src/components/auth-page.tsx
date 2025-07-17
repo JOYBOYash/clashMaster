@@ -57,13 +57,22 @@ export const AuthPage = () => {
     try {
       await signUp(data.email, data.password);
       toast({ title: 'Sign Up Successful', description: 'Welcome! You can now sign in.' });
-      window.location.href = '/sign-in'; // Redirect to sign-in page on successful sign-up
+      setActiveTab('sign-in');
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Sign Up Failed',
-        description: error.message || 'An unexpected error occurred.',
-      });
+      if (error.code === 'auth/email-already-in-use') {
+        toast({
+          variant: 'destructive',
+          title: 'Account Exists',
+          description: 'This email is already registered. Please sign in.',
+        });
+        setActiveTab('sign-in');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Sign Up Failed',
+          description: error.message || 'An unexpected error occurred.',
+        });
+      }
     } finally {
       setFormLoading(false);
     }

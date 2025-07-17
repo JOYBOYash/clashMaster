@@ -15,85 +15,72 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { titleCase } from "@/lib/utils";
 
 import villageData from '@/lib/raw-defenses-buildings-resources-others.json';
 import armyData from '@/lib/raw-troops-heroes-equipment-spells.json';
 
 // Type definitions matching the JSON structure
-interface ItemLevel {
+interface BuildingLevel {
     level: number;
-    // other properties are not needed for the survey form
+    townHall: number;
 }
 
 interface BuildingItem {
     name: string;
     category: string;
-    levels: ItemLevel[];
+    levels: BuildingLevel[];
 }
 
 interface ArmyItem {
     name: string;
     category: string;
-    levels: number[]; // The army data uses a simple array of numbers for levels
+    levels: number[];
 }
 
-// A unified type for processing
 interface ProcessedItem {
     name: string;
-    maxLevel: number;
+    data: BuildingItem | ArmyItem;
 }
 
-// Function to process building data
-const processBuildingData = (data: { buildings: BuildingItem[] }): Record<string, ProcessedItem[]> => {
-    const processed: Record<string, ProcessedItem[]> = {};
-    data.buildings.forEach(item => {
-        if (!processed[item.category]) {
-            processed[item.category] = [];
-        }
-        processed[item.category].push({
-            name: item.name,
-            maxLevel: item.levels.length,
-        });
-    });
-    return processed;
+const allData: Record<string, Record<string, ProcessedItem[]>> = {
+    "Village": {},
+    "Army": {}
 };
 
-// Function to process army data
-const processArmyData = (data: ArmyItem[]): Record<string, ProcessedItem[]> => {
-    const processed: Record<string, ProcessedItem[]> = {};
-    data.forEach(item => {
-        if (item.category === "equipment") return; // Exclude equipment for now
-        
-        const categoryName = titleCase(item.category);
-        if (!processed[categoryName]) {
-            processed[categoryName] = [];
-        }
-        processed[categoryName].push({
-            name: item.name,
-            maxLevel: Math.max(...item.levels),
-        });
-    });
-    return processed;
-};
+villageData.buildings.forEach(item => {
+    if (!allData.Village[item.category]) {
+        allData.Village[item.category] = [];
+    }
+    allData.Village[item.category].push({ name: item.name, data: item });
+});
 
-const allData = {
-    "Village": processBuildingData(villageData),
-    "Army": processArmyData(armyData),
-};
+armyData.forEach(item => {
+    if (item.category === "equipment") return;
+    const categoryName = titleCase(item.category);
+    if (!allData.Army[categoryName]) {
+        allData.Army[categoryName] = [];
+    }
+    allData.Army[categoryName].push({ name: item.name, data: item });
+});
 
 const generateSchema = () => {
     const schemaShape: { [key: string]: z.ZodNumber } = {};
     Object.values(allData).forEach(section => {
         Object.values(section).flat().forEach(item => {
             const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-            schemaShape[fieldName] = z.number().min(0).max(item.maxLevel);
+            let maxLevel = 0;
+            if ('build' in item.data) { // It's a BuildingItem
+                maxLevel = (item.data as BuildingItem).levels.length;
+            } else { // It's an ArmyItem
+                maxLevel = Math.max(...(item.data as ArmyItem).levels);
+            }
+            schemaShape[fieldName] = z.number().min(0).max(maxLevel);
         });
     });
     return z.object(schemaShape);
 };
-
 
 export function VillageSurvey() {
     const { toast } = useToast();
@@ -113,18 +100,58 @@ export function VillageSurvey() {
        return defaults as SurveyFormValues;
     }, []);
 
-    const { control, handleSubmit, watch } = useForm<SurveyFormValues>({
+    const { control, handleSubmit, watch, setValue, getValues } = useForm<SurveyFormValues>({
         resolver: zodResolver(surveySchema),
         defaultValues,
     });
+    
+    const townHallLevel = watch('town_hall');
+
+    const getMaxLevelForTownHall = useCallback((item: ProcessedItem, thLevel: number): number => {
+        if (item.name === "Town Hall") {
+             return (item.data as BuildingItem).levels.length;
+        }
+
+        if ('build' in item.data) { // It's a BuildingItem from villageData
+            const building = item.data as BuildingItem;
+            const availableLevels = building.levels.filter(l => l.townHall <= thLevel);
+            return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
+        } else { // It's an ArmyItem from armyData
+            const armyUnit = item.data as ArmyItem;
+            let maxLevel = 0;
+            for (let i = 0; i < armyUnit.levels.length; i++) {
+                if (armyUnit.levels[i] <= thLevel) {
+                    maxLevel = i + 1;
+                } else {
+                    break;
+                }
+            }
+            return maxLevel;
+        }
+    }, []);
+    
+    useEffect(() => {
+        const currentValues = getValues();
+        Object.entries(allData).forEach(([sectionTitle, categories]) => {
+            Object.values(categories).flat().forEach(item => {
+                if (item.name === "Town Hall") return;
+                
+                const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
+                const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
+                const currentValue = currentValues[fieldName] as number;
+
+                if (currentValue > maxLevel) {
+                    setValue(fieldName, maxLevel);
+                }
+            });
+        });
+    }, [townHallLevel, getValues, setValue, getMaxLevelForTownHall]);
+
 
     const onSubmit = async (data: SurveyFormValues) => {
         setIsLoading(true);
         console.log("Form Data:", data);
-
-        // Simulate a network request
         await new Promise(resolve => setTimeout(resolve, 1500));
-
         setIsLoading(false);
         toast({
             title: "Village Data Saved!",
@@ -146,12 +173,13 @@ export function VillageSurvey() {
                                         {items.map((item) => {
                                             const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
                                             const watchedValue = watch(fieldName);
+                                            const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
                                             
                                             return (
                                             <div key={fieldName} className="space-y-3">
                                                 <div className="flex justify-between items-center">
                                                     <Label htmlFor={fieldName.toString()}>{titleCase(item.name.replace(/_/g, ' '))}</Label>
-                                                    <span className="text-sm font-medium text-primary w-10 text-center">{watchedValue}</span>
+                                                    <span className="text-sm font-medium text-primary w-10 text-center">{watchedValue} / {maxLevel}</span>
                                                 </div>
                                                 <Controller
                                                     name={fieldName}
@@ -160,10 +188,11 @@ export function VillageSurvey() {
                                                         <Slider
                                                             id={fieldName.toString()}
                                                             min={0}
-                                                            max={item.maxLevel}
+                                                            max={maxLevel}
                                                             step={1}
                                                             value={[field.value as number]}
                                                             onValueChange={(value) => field.onChange(value[0])}
+                                                            disabled={maxLevel === 0 && item.name !== 'Town Hall'}
                                                         />
                                                     )}
                                                 />

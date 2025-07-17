@@ -1,74 +1,2575 @@
-
-[
-    {
-        "name": "Town Hall & Builder Hall",
-        "items": [
-            { "name": "Town Hall", "maxLevel": 16 },
-            { "name": "Builder Hall", "maxLevel": 10 }
+{
+    "buildings": [
+      {
+        "name": "Town Hall",
+        "category": "Other",
+        "village": "home",
+        "build": {
+          "cost": 0,
+          "resource": "Gold",
+          "time": 0,
+          "townHall": 1
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 1,
+            "hp": 1500,
+            "goldStorage": 1000,
+            "elixirStorage": 1000,
+            "darkElixirStorage": 0,
+            "upgrade": {
+              "cost": 1000,
+              "resource": "Gold",
+              "time": 60
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 1,
+            "hp": 1600,
+            "goldStorage": 2500,
+            "elixirStorage": 2500,
+            "darkElixirStorage": 0,
+            "upgrade": {
+              "cost": 4000,
+              "resource": "Gold",
+              "time": 3600
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 2,
+            "hp": 1850,
+            "goldStorage": 10000,
+            "elixirStorage": 10000,
+            "darkElixirStorage": 0,
+            "upgrade": {
+              "cost": 25000,
+              "resource": "Gold",
+              "time": 10800
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 3,
+            "hp": 2100,
+            "goldStorage": 25000,
+            "elixirStorage": 25000,
+            "darkElixirStorage": 0,
+            "upgrade": {
+              "cost": 100000,
+              "resource": "Gold",
+              "time": 86400
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 4,
+            "hp": 2400,
+            "goldStorage": 100000,
+            "elixirStorage": 100000,
+            "darkElixirStorage": 0,
+            "upgrade": {
+              "cost": 250000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 5,
+            "hp": 2800,
+            "goldStorage": 250000,
+            "elixirStorage": 250000,
+            "darkElixirStorage": 0,
+            "upgrade": {
+              "cost": 750000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 6,
+            "hp": 3200,
+            "goldStorage": 500000,
+            "elixirStorage": 500000,
+            "darkElixirStorage": 2500,
+            "upgrade": {
+              "cost": 1200000,
+              "resource": "Gold",
+              "time": 518400
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 7,
+            "hp": 3700,
+            "goldStorage": 1000000,
+            "elixirStorage": 1000000,
+            "darkElixirStorage": 10000,
+            "upgrade": {
+              "cost": 2000000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 8,
+            "hp": 4200,
+            "goldStorage": 1500000,
+            "elixirStorage": 1500000,
+            "darkElixirStorage": 20000,
+            "upgrade": {
+              "cost": 3000000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 9,
+            "hp": 5000,
+            "goldStorage": 2000000,
+            "elixirStorage": 2000000,
+            "darkElixirStorage": 40000,
+            "upgrade": {
+              "cost": 4000000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 10,
+            "hp": 6800,
+            "goldStorage": 2000000,
+            "elixirStorage": 2000000,
+            "darkElixirStorage": 50000,
+            "upgrade": {
+              "cost": 6000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 11,
+            "hp": 7500,
+            "weaponLevel": 1,
+            "dps": 150,
+            "goldStorage": 2500000,
+            "elixirStorage": 2500000,
+            "darkElixirStorage": 50000,
+            "upgrade": {
+              "cost": 9500000,
+              "resource": "Gold",
+              "time": 1296000
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 12,
+            "hp": 8200,
+            "weaponLevel": 1,
+            "dps": 200,
+            "goldStorage": 2500000,
+            "elixirStorage": 2500000,
+            "darkElixirStorage": 75000,
+            "upgrade": {
+              "cost": 12000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 13,
+            "hp": 8900,
+            "weaponLevel": 1,
+            "dps": 240,
+            "goldStorage": 2500000,
+            "elixirStorage": 2500000,
+            "darkElixirStorage": 100000,
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 15,
+            "townHall": 14,
+            "hp": 9600,
+            "weaponLevel": 1,
+            "dps": 280,
+            "goldStorage": 2500000,
+            "elixirStorage": 2500000,
+            "darkElixirStorage": 150000,
+            "upgrade": {
+              "cost": 18000000,
+              "resource": "Gold",
+              "time": 1814400
+            }
+          },
+          {
+            "level": 16,
+            "townHall": 15,
+            "hp": 10000,
+            "weaponLevel": 1,
+            "dps": 300,
+            "goldStorage": 2500000,
+            "elixirStorage": 2500000,
+            "darkElixirStorage": 200000
+          }
         ]
-    },
-    {
-        "name": "Resources",
-        "items": [
-            { "name": "Gold Storage", "maxLevel": 17 },
-            { "name": "Elixir Storage", "maxLevel": 17 },
-            { "name": "Dark Elixir Storage", "maxLevel": 11 },
-            { "name": "Gold Mine", "maxLevel": 15 },
-            { "name": "Elixir Collector", "maxLevel": 15 },
-            { "name": "Dark Elixir Drill", "maxLevel": 10 },
-            { "name": "Clan Castle", "maxLevel": 12 }
+      },
+      {
+        "name": "Cannon",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 250,
+          "resource": "Gold",
+          "time": 60,
+          "townHall": 1
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 1,
+            "hp": 420,
+            "dps": 9,
+            "upgrade": {
+              "cost": 1000,
+              "resource": "Gold",
+              "time": 60
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 1,
+            "hp": 450,
+            "dps": 11,
+            "upgrade": {
+              "cost": 2000,
+              "resource": "Gold",
+              "time": 1800
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 2,
+            "hp": 500,
+            "dps": 15,
+            "upgrade": {
+              "cost": 8000,
+              "resource": "Gold",
+              "time": 3600
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 3,
+            "hp": 550,
+            "dps": 19,
+            "upgrade": {
+              "cost": 16000,
+              "resource": "Gold",
+              "time": 7200
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 4,
+            "hp": 600,
+            "dps": 25,
+            "upgrade": {
+              "cost": 50000,
+              "resource": "Gold",
+              "time": 14400
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 5,
+            "hp": 650,
+            "dps": 31,
+            "upgrade": {
+              "cost": 100000,
+              "resource": "Gold",
+              "time": 28800
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 6,
+            "hp": 690,
+            "dps": 40,
+            "upgrade": {
+              "cost": 200000,
+              "resource": "Gold",
+              "time": 86400
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 7,
+            "hp": 730,
+            "dps": 48,
+            "upgrade": {
+              "cost": 400000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 8,
+            "hp": 780,
+            "dps": 56,
+            "upgrade": {
+              "cost": 800000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 8,
+            "hp": 880,
+            "dps": 65,
+            "upgrade": {
+              "cost": 1000000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 9,
+            "hp": 1000,
+            "dps": 75,
+            "upgrade": {
+              "cost": 1500000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 10,
+            "hp": 1170,
+            "dps": 86,
+            "upgrade": {
+              "cost": 2000000,
+              "resource": "Gold",
+              "time": 518400
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 10,
+            "hp": 1290,
+            "dps": 98,
+            "upgrade": {
+              "cost": 3000000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 11,
+            "hp": 1430,
+            "dps": 110,
+            "upgrade": {
+              "cost": 5000000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 15,
+            "townHall": 11,
+            "hp": 1580,
+            "dps": 125,
+            "upgrade": {
+              "cost": 7500000,
+              "resource": "Gold",
+              "time": 777600
+            }
+          },
+          {
+            "level": 16,
+            "townHall": 12,
+            "hp": 1750,
+            "dps": 138,
+            "upgrade": {
+              "cost": 9000000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 17,
+            "townHall": 12,
+            "hp": 1950,
+            "dps": 152,
+            "upgrade": {
+              "cost": 10500000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 18,
+            "townHall": 13,
+            "hp": 2150,
+            "dps": 168,
+            "upgrade": {
+              "cost": 12000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 19,
+            "townHall": 13,
+            "hp": 2300,
+            "dps": 180,
+            "upgrade": {
+              "cost": 14500000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 20,
+            "townHall": 14,
+            "hp": 2400,
+            "dps": 192,
+            "upgrade": {
+              "cost": 16800000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 21,
+            "townHall": 15,
+            "hp": 2500,
+            "dps": 205,
+            "upgrade": {
+              "cost": 19400000,
+              "resource": "Gold",
+              "time": 1684800
+            }
+          },
+          {
+            "level": 22,
+            "townHall": 16,
+            "hp": 2600,
+            "dps": 215
+          }
         ]
-    },
-    {
-        "name": "Army Buildings",
-        "items": [
-            { "name": "Army Camp", "maxLevel": 12 },
-            { "name": "Barracks", "maxLevel": 16 },
-            { "name": "Dark Barracks", "maxLevel": 11 },
-            { "name": "Laboratory", "maxLevel": 14 },
-            { "name": "Spell Factory", "maxLevel": 7 },
-            { "name": "Dark Spell Factory", "maxLevel": 6 },
-            { "name": "Workshop", "maxLevel": 7 },
-            { "name": "Pet House", "maxLevel": 9 }
+      },
+      {
+        "name": "Archer Tower",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 1000,
+          "resource": "Gold",
+          "time": 300,
+          "townHall": 2
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 2,
+            "hp": 380,
+            "dps": 11,
+            "upgrade": {
+              "cost": 2000,
+              "resource": "Gold",
+              "time": 1800
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 3,
+            "hp": 430,
+            "dps": 15,
+            "upgrade": {
+              "cost": 5000,
+              "resource": "Gold",
+              "time": 3600
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 4,
+            "hp": 480,
+            "dps": 19,
+            "upgrade": {
+              "cost": 20000,
+              "resource": "Gold",
+              "time": 7200
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 5,
+            "hp": 530,
+            "dps": 25,
+            "upgrade": {
+              "cost": 80000,
+              "resource": "Gold",
+              "time": 14400
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 5,
+            "hp": 580,
+            "dps": 30,
+            "upgrade": {
+              "cost": 120000,
+              "resource": "Gold",
+              "time": 28800
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 6,
+            "hp": 630,
+            "dps": 35,
+            "upgrade": {
+              "cost": 180000,
+              "resource": "Gold",
+              "time": 86400
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 7,
+            "hp": 680,
+            "dps": 42,
+            "upgrade": {
+              "cost": 360000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 8,
+            "hp": 730,
+            "dps": 48,
+            "upgrade": {
+              "cost": 720000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 8,
+            "hp": 790,
+            "dps": 56,
+            "upgrade": {
+              "cost": 1200000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 8,
+            "hp": 890,
+            "dps": 65,
+            "upgrade": {
+              "cost": 1500000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 9,
+            "hp": 1000,
+            "dps": 75,
+            "upgrade": {
+              "cost": 2500000,
+              "resource": "Gold",
+              "time": 518400
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 10,
+            "hp": 1170,
+            "dps": 86,
+            "upgrade": {
+              "cost": 3500000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 10,
+            "hp": 1290,
+            "dps": 98,
+            "upgrade": {
+              "cost": 5000000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 11,
+            "hp": 1430,
+            "dps": 110,
+            "upgrade": {
+              "cost": 7000000,
+              "resource": "Gold",
+              "time": 777600
+            }
+          },
+          {
+            "level": 15,
+            "townHall": 11,
+            "hp": 1580,
+            "dps": 125,
+            "upgrade": {
+              "cost": 8500000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 16,
+            "townHall": 12,
+            "hp": 1750,
+            "dps": 138,
+            "upgrade": {
+              "cost": 9500000,
+              "resource": "Gold",
+              "time": 950400
+            }
+          },
+          {
+            "level": 17,
+            "townHall": 12,
+            "hp": 1950,
+            "dps": 152,
+            "upgrade": {
+              "cost": 11000000,
+              "resource": "Gold",
+              "time": 1123200
+            }
+          },
+          {
+            "level": 18,
+            "townHall": 13,
+            "hp": 2150,
+            "dps": 168,
+            "upgrade": {
+              "cost": 12500000,
+              "resource": "Gold",
+              "time": 1296000
+            }
+          },
+          {
+            "level": 19,
+            "townHall": 13,
+            "hp": 2300,
+            "dps": 180,
+            "upgrade": {
+              "cost": 15000000,
+              "resource": "Gold",
+              "time": 1468800
+            }
+          },
+          {
+            "level": 20,
+            "townHall": 14,
+            "hp": 2400,
+            "dps": 192,
+            "upgrade": {
+              "cost": 17200000,
+              "resource": "Gold",
+              "time": 1641600
+            }
+          },
+          {
+            "level": 21,
+            "townHall": 15,
+            "hp": 2500,
+            "dps": 205,
+            "upgrade": {
+              "cost": 19800000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 22,
+            "townHall": 16,
+            "hp": 2600,
+            "dps": 215
+          }
         ]
-    },
-    {
-        "name": "Defenses",
-        "items": [
-            { "name": "Cannon", "maxLevel": 22 },
-            { "name": "Archer Tower", "maxLevel": 22 },
-            { "name": "Mortar", "maxLevel": 16 },
-            { "name": "Air Defense", "maxLevel": 15 },
-            { "name": "Wizard Tower", "maxLevel": 16 },
-            { "name": "Air Sweeper", "maxLevel": 8 },
-            { "name": "Hidden Tesla", "maxLevel": 14 },
-            { "name": "Bomb Tower", "maxLevel": 11 },
-            { "name": "X-Bow", "maxLevel": 11 },
-            { "name": "Inferno Tower", "maxLevel": 10 },
-            { "name": "Eagle Artillery", "maxLevel": 7 },
-            { "name": "Scattershot", "maxLevel": 5 },
-            { "name": "Spell Tower", "maxLevel": 4 },
-            { "name": "Monolith", "maxLevel": 3 },
-            { "name": "Wall", "maxLevel": 17 }
+      },
+      {
+        "name": "Mortar",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 8000,
+          "resource": "Gold",
+          "time": 28800,
+          "townHall": 3
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 3,
+            "hp": 400,
+            "dph": 5,
+            "upgrade": {
+              "cost": 32000,
+              "resource": "Gold",
+              "time": 86400
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 5,
+            "hp": 450,
+            "dph": 6,
+            "upgrade": {
+              "cost": 120000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 6,
+            "hp": 500,
+            "dph": 7,
+            "upgrade": {
+              "cost": 400000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 6,
+            "hp": 550,
+            "dph": 9,
+            "upgrade": {
+              "cost": 800000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 7,
+            "hp": 600,
+            "dph": 11,
+            "upgrade": {
+              "cost": 1600000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 8,
+            "hp": 650,
+            "dph": 13,
+            "upgrade": {
+              "cost": 3200000,
+              "resource": "Gold",
+              "time": 518400
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 9,
+            "hp": 700,
+            "dph": 15,
+            "upgrade": {
+              "cost": 5000000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 10,
+            "hp": 800,
+            "dph": 20,
+            "upgrade": {
+              "cost": 7000000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 11,
+            "hp": 950,
+            "dph": 25,
+            "upgrade": {
+              "cost": 8500000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 12,
+            "hp": 1100,
+            "dph": 30,
+            "upgrade": {
+              "cost": 10000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 12,
+            "hp": 1250,
+            "dph": 35,
+            "upgrade": {
+              "cost": 12000000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 13,
+            "hp": 1400,
+            "dph": 45,
+            "upgrade": {
+              "cost": 14000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 14,
+            "hp": 1550,
+            "dph": 55,
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1641600
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 15,
+            "hp": 1700,
+            "dph": 65,
+            "upgrade": {
+              "cost": 19000000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 15,
+            "townHall": 15,
+            "hp": 1850,
+            "dph": 75,
+            "upgrade": {
+              "cost": 20000000,
+              "resource": "Gold",
+              "time": 1761200
+            }
+          },
+          {
+            "level": 16,
+            "townHall": 16,
+            "hp": 2000,
+            "dph": 85
+          }
         ]
-    },
-    {
-        "name": "Traps",
-        "items": [
-            { "name": "Bomb", "maxLevel": 12 },
-            { "name": "Spring Trap", "maxLevel": 6 },
-            { "name": "Air Bomb", "maxLevel": 11 },
-            { "name": "Giant Bomb", "maxLevel": 10 },
-            { "name": "Seeking Air Mine", "maxLevel": 6 },
-            { "name": "Skeleton Trap", "maxLevel": 5 },
-            { "name": "Tornado Trap", "maxLevel": 4 }
+      },
+      {
+        "name": "Air Defense",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 22500,
+          "resource": "Gold",
+          "time": 21600,
+          "townHall": 4
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 4,
+            "hp": 800,
+            "dps": 80,
+            "upgrade": {
+              "cost": 72000,
+              "resource": "Gold",
+              "time": 86400
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 5,
+            "hp": 850,
+            "dps": 110,
+            "upgrade": {
+              "cost": 216000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 6,
+            "hp": 900,
+            "dps": 140,
+            "upgrade": {
+              "cost": 540000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 7,
+            "hp": 950,
+            "dps": 160,
+            "upgrade": {
+              "cost": 1080000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 7,
+            "hp": 1000,
+            "dps": 200,
+            "upgrade": {
+              "cost": 2160000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 8,
+            "hp": 1050,
+            "dps": 230,
+            "upgrade": {
+              "cost": 4320000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 9,
+            "hp": 1110,
+            "dps": 280,
+            "upgrade": {
+              "cost": 6480000,
+              "resource": "Gold",
+              "time": 777600
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 10,
+            "hp": 1170,
+            "dps": 320,
+            "upgrade": {
+              "cost": 7680000,
+              "resource": "Gold",
+              "time": 950400
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 11,
+            "hp": 1230,
+            "dps": 360,
+            "upgrade": {
+              "cost": 8600000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 12,
+            "hp": 1350,
+            "dps": 400,
+            "upgrade": {
+              "cost": 11000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 13,
+            "hp": 1450,
+            "dps": 480,
+            "upgrade": {
+              "cost": 15000000,
+              "resource": "Gold",
+              "time": 1468800
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 14,
+            "hp": 1600,
+            "dps": 520,
+            "upgrade": {
+              "cost": 17500000,
+              "resource": "Gold",
+              "time": 1641600
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 15,
+            "hp": 1750,
+            "dps": 560,
+            "upgrade": {
+              "cost": 19500000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 16,
+            "hp": 1900,
+            "dps": 600
+          }
         ]
-    },
-    {
-        "name": "Other",
-        "items": [
-            { "name": "Builders Hut", "maxLevel": 1 },
-            { "name": "Blacksmith", "maxLevel": 9 }
+      },
+      {
+        "name": "Wizard Tower",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 180000,
+          "resource": "Gold",
+          "time": 21600,
+          "townHall": 5
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 5,
+            "hp": 600,
+            "dph": 13,
+            "upgrade": {
+              "cost": 360000,
+              "resource": "Gold",
+              "time": 86400
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 6,
+            "hp": 660,
+            "dph": 16,
+            "upgrade": {
+              "cost": 720000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 7,
+            "hp": 720,
+            "dph": 20,
+            "upgrade": {
+              "cost": 1440000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 8,
+            "hp": 780,
+            "dph": 24,
+            "upgrade": {
+              "cost": 2160000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 8,
+            "hp": 840,
+            "dph": 32,
+            "upgrade": {
+              "cost": 2680000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 9,
+            "hp": 900,
+            "dph": 40,
+            "upgrade": {
+              "cost": 3960000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 9,
+            "hp": 1100,
+            "dph": 48,
+            "upgrade": {
+              "cost": 5300000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 10,
+            "hp": 1280,
+            "dph": 56,
+            "upgrade": {
+              "cost": 6800000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 11,
+            "hp": 1480,
+            "dph": 64,
+            "upgrade": {
+              "cost": 8000000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 12,
+            "hp": 1680,
+            "dph": 75,
+            "upgrade": {
+              "cost": 9200000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 12,
+            "hp": 1880,
+            "dph": 90,
+            "upgrade": {
+              "cost": 11000000,
+              "resource": "Gold",
+              "time": 1296000
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 13,
+            "hp": 2100,
+            "dph": 110,
+            "upgrade": {
+              "cost": 13500000,
+              "resource": "Gold",
+              "time": 1468800
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 14,
+            "hp": 2250,
+            "dph": 125,
+            "upgrade": {
+              "cost": 16200000,
+              "resource": "Gold",
+              "time": 1598400
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 15,
+            "hp": 2400,
+            "dph": 140,
+            "upgrade": {
+              "cost": 18500000,
+              "resource": "Gold",
+              "time": 1684800
+            }
+          },
+          {
+            "level": 15,
+            "townHall": 15,
+            "hp": 2500,
+            "dph": 150,
+            "upgrade": {
+              "cost": 20500000,
+              "resource": "Gold",
+              "time": 1771200
+            }
+          },
+          {
+            "level": 16,
+            "townHall": 16,
+            "hp": 2600,
+            "dph": 160
+          }
         ]
-    }
-]
+      },
+      {
+        "name": "Air Sweeper",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 500000,
+          "resource": "Gold",
+          "time": 86400,
+          "townHall": 6
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 6,
+            "hp": 750,
+            "pushStrength": 2.5,
+            "upgrade": {
+              "cost": 750000,
+              "resource": "Gold",
+              "time": 172800
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 7,
+            "hp": 800,
+            "pushStrength": 3.0,
+            "upgrade": {
+              "cost": 1200000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 8,
+            "hp": 850,
+            "pushStrength": 3.5,
+            "upgrade": {
+              "cost": 2400000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 8,
+            "hp": 900,
+            "pushStrength": 4.0,
+            "upgrade": {
+              "cost": 4800000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 9,
+            "hp": 950,
+            "pushStrength": 4.5,
+            "upgrade": {
+              "cost": 7200000,
+              "resource": "Gold",
+              "time": 518400
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 10,
+            "hp": 1000,
+            "pushStrength": 5.0,
+            "upgrade": {
+              "cost": 9600000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 11,
+            "hp": 1050,
+            "pushStrength": 5.5,
+            "upgrade": {
+              "cost": 12000000,
+              "resource": "Gold",
+              "time": 950400
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 13,
+            "hp": 1100,
+            "pushStrength": 6.0,
+            "upgrade": {
+              "cost": 15000000,
+              "resource": "Gold",
+              "time": 1296000
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 15,
+            "hp": 1150,
+            "pushStrength": 6.5
+          }
+        ]
+      },
+      {
+        "name": "Hidden Tesla",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 1000000,
+          "resource": "Gold",
+          "time": 172800,
+          "townHall": 7
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 7,
+            "hp": 600,
+            "dps": 34,
+            "upgrade": {
+              "cost": 1250000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 8,
+            "hp": 650,
+            "dps": 40,
+            "upgrade": {
+              "cost": 1500000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 8,
+            "hp": 700,
+            "dps": 48,
+            "upgrade": {
+              "cost": 2000000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 8,
+            "hp": 750,
+            "dps": 54,
+            "upgrade": {
+              "cost": 2500000,
+              "resource": "Gold",
+              "time": 518400
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 8,
+            "hp": 810,
+            "dps": 64,
+            "upgrade": {
+              "cost": 3000000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 8,
+            "hp": 870,
+            "dps": 75,
+            "upgrade": {
+              "cost": 3600000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 9,
+            "hp": 1000,
+            "dps": 90,
+            "upgrade": {
+              "cost": 4800000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 10,
+            "hp": 1200,
+            "dps": 99,
+            "upgrade": {
+              "cost": 6000000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 11,
+            "hp": 1400,
+            "dps": 115,
+            "upgrade": {
+              "cost": 8000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 12,
+            "hp": 1600,
+            "dps": 135,
+            "upgrade": {
+              "cost": 10000000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 13,
+            "hp": 1800,
+            "dps": 160,
+            "upgrade": {
+              "cost": 12000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 12,
+            "townHall": 14,
+            "hp": 2000,
+            "dps": 185,
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1684800
+            }
+          },
+          {
+            "level": 13,
+            "townHall": 15,
+            "hp": 2200,
+            "dps": 210,
+            "upgrade": {
+              "cost": 18000000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 14,
+            "townHall": 16,
+            "hp": 2400,
+            "dps": 235
+          }
+        ]
+      },
+      {
+        "name": "Bomb Tower",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 1000000,
+          "resource": "Gold",
+          "time": 172800,
+          "townHall": 8
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 8,
+            "hp": 800,
+            "dps": 24,
+            "deathDamage": 150,
+            "upgrade": {
+              "cost": 1500000,
+              "resource": "Gold",
+              "time": 259200
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 8,
+            "hp": 900,
+            "dps": 28,
+            "deathDamage": 175,
+            "upgrade": {
+              "cost": 2500000,
+              "resource": "Gold",
+              "time": 345600
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 9,
+            "hp": 1000,
+            "dps": 32,
+            "deathDamage": 225,
+            "upgrade": {
+              "cost": 4000000,
+              "resource": "Gold",
+              "time": 432000
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 10,
+            "hp": 1200,
+            "dps": 38,
+            "deathDamage": 275,
+            "upgrade": {
+              "cost": 5500000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 10,
+            "hp": 1400,
+            "dps": 42,
+            "deathDamage": 325,
+            "upgrade": {
+              "cost": 7000000,
+              "resource": "Gold",
+              "time": 777600
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 11,
+            "hp": 1600,
+            "dps": 48,
+            "deathDamage": 350,
+            "upgrade": {
+              "cost": 9000000,
+              "resource": "Gold",
+              "time": 950400
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 12,
+            "hp": 1800,
+            "dps": 56,
+            "deathDamage": 375,
+            "upgrade": {
+              "cost": 11000000,
+              "resource": "Gold",
+              "time": 1123200
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 13,
+            "hp": 2000,
+            "dps": 64,
+            "deathDamage": 400,
+            "upgrade": {
+              "cost": 14000000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 14,
+            "hp": 2200,
+            "dps": 72,
+            "deathDamage": 425,
+            "upgrade": {
+              "cost": 17000000,
+              "resource": "Gold",
+              "time": 1598400
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 15,
+            "hp": 2400,
+            "dps": 80,
+            "deathDamage": 450,
+            "upgrade": {
+              "cost": 20000000,
+              "resource": "Gold",
+              "time": 1771200
+            }
+          },
+          {
+            "level": 11,
+            "townHall": 16,
+            "hp": 2600,
+            "dps": 88,
+            "deathDamage": 475
+          }
+        ]
+      },
+      {
+        "name": "X-Bow",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 3000000,
+          "resource": "Gold",
+          "time": 604800,
+          "townHall": 9
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 9,
+            "hp": 1500,
+            "dps": 60,
+            "upgrade": {
+              "cost": 5000000,
+              "resource": "Gold",
+              "time": 691200
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 9,
+            "hp": 1800,
+            "dps": 70,
+            "upgrade": {
+              "cost": 6000000,
+              "resource": "Gold",
+              "time": 864000
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 9,
+            "hp": 2100,
+            "dps": 80,
+            "upgrade": {
+              "cost": 7000000,
+              "resource": "Gold",
+              "time": 950400
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 10,
+            "hp": 2500,
+            "dps": 110,
+            "upgrade": {
+              "cost": 8000000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 11,
+            "hp": 3000,
+            "dps": 130,
+            "upgrade": {
+              "cost": 9000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 12,
+            "hp": 3500,
+            "dps": 160,
+            "upgrade": {
+              "cost": 11000000,
+              "resource": "Gold",
+              "time": 1296000
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 13,
+            "hp": 4000,
+            "dps": 190,
+            "upgrade": {
+              "cost": 13000000,
+              "resource": "Gold",
+              "time": 1468800
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 14,
+            "hp": 4400,
+            "dps": 210,
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1598400
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 15,
+            "hp": 4700,
+            "dps": 225,
+            "upgrade": {
+              "cost": 19500000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 16,
+            "hp": 5000,
+            "dps": 240
+          }
+        ]
+      },
+      {
+        "name": "Inferno Tower",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 5000000,
+          "resource": "Gold",
+          "time": 432000,
+          "townHall": 10
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 10,
+            "hp": 1500,
+            "dps": { "single": "30-1000", "multi": 36 },
+            "upgrade": {
+              "cost": 6500000,
+              "resource": "Gold",
+              "time": 604800
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 10,
+            "hp": 1800,
+            "dps": { "single": "35-1250", "multi": 42 },
+            "upgrade": {
+              "cost": 8000000,
+              "resource": "Gold",
+              "time": 777600
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 10,
+            "hp": 2100,
+            "dps": { "single": "40-1550", "multi": 50 },
+            "upgrade": {
+              "cost": 9000000,
+              "resource": "Gold",
+              "time": 950400
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 11,
+            "hp": 2400,
+            "dps": { "single": "45-1750", "multi": 58 },
+            "upgrade": {
+              "cost": 10000000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 11,
+            "hp": 2700,
+            "dps": { "single": "50-2000", "multi": 66 },
+            "upgrade": {
+              "cost": 11000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 12,
+            "hp": 3000,
+            "dps": { "single": "55-2200", "multi": 75 },
+            "upgrade": {
+              "cost": 13000000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 13,
+            "hp": 3400,
+            "dps": { "single": "100-2500", "multi": 100 },
+            "upgrade": {
+              "cost": 15000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 8,
+            "townHall": 14,
+            "hp": 3700,
+            "dps": { "single": "110-2700", "multi": 110 },
+            "upgrade": {
+              "cost": 18000000,
+              "resource": "Gold",
+              "time": 1684800
+            }
+          },
+          {
+            "level": 9,
+            "townHall": 15,
+            "hp": 4000,
+            "dps": { "single": "120-2900", "multi": 120 },
+            "upgrade": {
+              "cost": 21000000,
+              "resource": "Gold",
+              "time": 1814400
+            }
+          },
+          {
+            "level": 10,
+            "townHall": 16,
+            "hp": 4300,
+            "dps": { "single": "130-3100", "multi": 130 }
+          }
+        ]
+      },
+      {
+        "name": "Eagle Artillery",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 8000000,
+          "resource": "Gold",
+          "time": 864000,
+          "townHall": 11
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 11,
+            "hp": 4000,
+            "dph": { "shot": 250, "shockwave": 20 },
+            "upgrade": {
+              "cost": 10000000,
+              "resource": "Gold",
+              "time": 1036800
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 11,
+            "hp": 4400,
+            "dph": { "shot": 300, "shockwave": 25 },
+            "upgrade": {
+              "cost": 12000000,
+              "resource": "Gold",
+              "time": 1209600
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 12,
+            "hp": 4800,
+            "dph": { "shot": 350, "shockwave": 30 },
+            "upgrade": {
+              "cost": 14000000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 13,
+            "hp": 5200,
+            "dph": { "shot": 425, "shockwave": 35 },
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 14,
+            "hp": 5600,
+            "dph": { "shot": 475, "shockwave": 40 },
+            "upgrade": {
+              "cost": 18000000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 6,
+            "townHall": 15,
+            "hp": 6000,
+            "dph": { "shot": 525, "shockwave": 45 },
+            "upgrade": {
+              "cost": 21000000,
+              "resource": "Gold",
+              "time": 1814400
+            }
+          },
+          {
+            "level": 7,
+            "townHall": 16,
+            "hp": 6400,
+            "dph": { "shot": 575, "shockwave": 50 }
+          }
+        ]
+      },
+      {
+        "name": "Scattershot",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 12000000,
+          "resource": "Gold",
+          "time": 1209600,
+          "townHall": 13
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 13,
+            "hp": 3000,
+            "dps": 125,
+            "upgrade": {
+              "cost": 14000000,
+              "resource": "Gold",
+              "time": 1382400
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 13,
+            "hp": 3500,
+            "dps": 150,
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 14,
+            "hp": 4000,
+            "dps": 175,
+            "upgrade": {
+              "cost": 18000000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 15,
+            "hp": 4500,
+            "dps": 200,
+            "upgrade": {
+              "cost": 20000000,
+              "resource": "Gold",
+              "time": 1814400
+            }
+          },
+          {
+            "level": 5,
+            "townHall": 16,
+            "hp": 5000,
+            "dps": 225
+          }
+        ]
+      },
+      {
+        "name": "Monolith",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 300000,
+          "resource": "Dark Elixir",
+          "time": 1512000,
+          "townHall": 15
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 15,
+            "hp": 7000,
+            "damage": { "base": 150, "percentHp": 12 },
+            "upgrade": {
+              "cost": 360000,
+              "resource": "Dark Elixir",
+              "time": 1684800
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 15,
+            "hp": 8000,
+            "damage": { "base": 200, "percentHp": 14 },
+            "upgrade": {
+              "cost": 400000,
+              "resource": "Dark Elixir",
+              "time": 1814400
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 16,
+            "hp": 9000,
+            "damage": { "base": 250, "percentHp": 16 }
+          }
+        ]
+      },
+      {
+        "name": "Spell Tower",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 14000000,
+          "resource": "Gold",
+          "time": 1382400,
+          "townHall": 15
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 15,
+            "hp": 2200,
+            "unlocks": "Rage Spell",
+            "upgrade": {
+              "cost": 16000000,
+              "resource": "Gold",
+              "time": 1555200
+            }
+          },
+          {
+            "level": 2,
+            "townHall": 15,
+            "hp": 2500,
+            "unlocks": "Poison Spell",
+            "upgrade": {
+              "cost": 18000000,
+              "resource": "Gold",
+              "time": 1728000
+            }
+          },
+          {
+            "level": 3,
+            "townHall": 15,
+            "hp": 2800,
+            "unlocks": "Invisibility Spell",
+            "upgrade": {
+              "cost": 21000000,
+              "resource": "Gold",
+              "time": 1814400
+            }
+          },
+          {
+            "level": 4,
+            "townHall": 16,
+            "hp": 3100,
+            "unlocks": "Spell effects are stronger"
+          }
+        ]
+      },
+      {
+        "name": "Wall",
+        "category": "Defenses",
+        "village": "home",
+        "build": {
+          "cost": 200,
+          "resource": "Gold",
+          "time": 0,
+          "townHall": 2
+        },
+        "levels": [
+          {
+            "level": 1,
+            "townHall": 2,
+            "hp": 300,
+            "upgrade": { "cost": 1000, "resource": "Gold", "time": 0 }
+          },
+          {
+            "level": 2,
+            "townHall": 2,
+            "hp": 500,
+            "upgrade": { "cost": 5000, "resource": "Gold", "time": 0 }
+          },
+          {
+            "level": 3,
+            "townHall": 3,
+            "hp": 700,
+            "upgrade": { "cost": 10000, "resource": "Gold", "time": 0 }
+          },
+          {
+            "level": 4,
+            "townHall": 4,
+            "hp": 900,
+            "upgrade": { "cost": 20000, "resource": "Gold", "time": 0 }
+          },
+          {
+            "level": 5,
+            "townHall": 5,
+            "hp": 1400,
+            "upgrade": { "cost": 30000, "resource": "Gold", "time": 0 }
+          },
+          {
+            "level": 6,
+            "townHall": 6,
+            "hp": 2000,
+            "upgrade": { "cost": 50000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 7,
+            "townHall": 7,
+            "hp": 2500,
+            "upgrade": { "cost": 75000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 8,
+            "townHall": 8,
+            "hp": 3000,
+            "upgrade": { "cost": 150000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 9,
+            "townHall": 9,
+            "hp": 4000,
+            "upgrade": { "cost": 250000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 10,
+            "townHall": 9,
+            "hp": 5500,
+            "upgrade": { "cost": 500000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 11,
+            "townHall": 10,
+            "hp": 7000,
+            "upgrade": { "cost": 1000000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 12,
+            "townHall": 11,
+            "hp": 8500,
+            "upgrade": { "cost": 2000000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 13,
+            "townHall": 12,
+            "hp": 10000,
+            "upgrade": { "cost": 3000000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 14,
+            "townHall": 13,
+            "hp": 11500,
+            "upgrade": { "cost": 5000000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 15,
+            "townHall": 14,
+            "hp": 12500,
+            "upgrade": { "cost": 7000000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 16,
+            "townHall": 15,
+            "hp": 13500,
+            "upgrade": { "cost": 8000000, "resource": "Gold or Elixir", "time": 0 }
+          },
+          {
+            "level": 17,
+            "townHall": 16,
+            "hp": 14500
+          }
+        ]
+      },
+      {
+        "name": "Bomb",
+        "category": "Traps",
+        "village": "home",
+        "build": { "cost": 400, "resource": "Gold", "time": 120, "townHall": 3 },
+        "levels": [
+          { "level": 1, "townHall": 3, "damage": 30, "upgrade": { "cost": 2000, "resource": "Gold", "time": 3600 } },
+          { "level": 2, "townHall": 5, "damage": 38, "upgrade": { "cost": 10000, "resource": "Gold", "time": 7200 } },
+          { "level": 3, "townHall": 6, "damage": 46, "upgrade": { "cost": 75000, "resource": "Gold", "time": 14400 } },
+          { "level": 4, "townHall": 7, "damage": 54, "upgrade": { "cost": 250000, "resource": "Gold", "time": 28800 } },
+          { "level": 5, "townHall": 8, "damage": 63, "upgrade": { "cost": 750000, "resource": "Gold", "time": 86400 } },
+          { "level": 6, "townHall": 9, "damage": 72, "upgrade": { "cost": 1000000, "resource": "Gold", "time": 172800 } },
+          { "level": 7, "townHall": 10, "damage": 92, "upgrade": { "cost": 1500000, "resource": "Gold", "time": 259200 } },
+          { "level": 8, "townHall": 11, "damage": 110, "upgrade": { "cost": 3000000, "resource": "Gold", "time": 345600 } },
+          { "level": 9, "townHall": 12, "damage": 130, "upgrade": { "cost": 5000000, "resource": "Gold", "time": 518400 } },
+          { "level": 10, "townHall": 13, "damage": 160, "upgrade": { "cost": 8000000, "resource": "Gold", "time": 777600 } },
+          { "level": 11, "townHall": 15, "damage": 190, "upgrade": { "cost": 15000000, "resource": "Gold", "time": 1036800 } },
+          { "level": 12, "townHall": 16, "damage": 220 }
+        ]
+      },
+      {
+        "name": "Spring Trap",
+        "category": "Traps",
+        "village": "home",
+        "build": { "cost": 2000, "resource": "Gold", "time": 3600, "townHall": 4 },
+        "levels": [
+          { "level": 1, "townHall": 4, "capacity": 15, "upgrade": { "cost": 20000, "resource": "Gold", "time": 14400 } },
+          { "level": 2, "townHall": 7, "capacity": 16, "upgrade": { "cost": 100000, "resource": "Gold", "time": 86400 } },
+          { "level": 3, "townHall": 9, "capacity": 17, "upgrade": { "cost": 300000, "resource": "Gold", "time": 259200 } },
+          { "level": 4, "townHall": 10, "capacity": 18, "upgrade": { "cost": 800000, "resource": "Gold", "time": 518400 } },
+          { "level": 5, "townHall": 11, "capacity": 19, "upgrade": { "cost": 2400000, "resource": "Gold", "time": 604800 } },
+          { "level": 6, "townHall": 13, "capacity": 20 }
+        ]
+      },
+      {
+        "name": "Giant Bomb",
+        "category": "Traps",
+        "village": "home",
+        "build": { "cost": 12500, "resource": "Gold", "time": 21600, "townHall": 6 },
+        "levels": [
+          { "level": 1, "townHall": 6, "damage": 125, "upgrade": { "cost": 75000, "resource": "Gold", "time": 86400 } },
+          { "level": 2, "townHall": 7, "damage": 175, "upgrade": { "cost": 375000, "resource": "Gold", "time": 172800 } },
+          { "level": 3, "townHall": 8, "damage": 225, "upgrade": { "cost": 750000, "resource": "Gold", "time": 259200 } },
+          { "level": 4, "townHall": 9, "damage": 250, "upgrade": { "cost": 1250000, "resource": "Gold", "time": 518400 } },
+          { "level": 5, "townHall": 10, "damage": 300, "upgrade": { "cost": 2500000, "resource": "Gold", "time": 691200 } },
+          { "level": 6, "townHall": 11, "damage": 325, "upgrade": { "cost": 4000000, "resource": "Gold", "time": 864000 } },
+          { "level": 7, "townHall": 12, "damage": 350, "upgrade": { "cost": 7000000, "resource": "Gold", "time": 1209600 } },
+          { "level": 8, "townHall": 13, "damage": 400, "upgrade": { "cost": 11000000, "resource": "Gold", "time": 1468800 } },
+          { "level": 9, "townHall": 15, "damage": 450, "upgrade": { "cost": 15000000, "resource": "Gold", "time": 1641600 } },
+          { "level": 10, "townHall": 16, "damage": 500 }
+        ]
+      },
+      {
+        "name": "Seeking Air Mine",
+        "category": "Traps",
+        "village": "home",
+        "build": { "cost": 15000, "resource": "Gold", "time": 21600, "townHall": 7 },
+        "levels": [
+          { "level": 1, "townHall": 7, "damage": 1500, "upgrade": { "cost": 400000, "resource": "Gold", "time": 259200 } },
+          { "level": 2, "townHall": 9, "damage": 1800, "upgrade": { "cost": 1400000, "resource": "Gold", "time": 518400 } },
+          { "level": 3, "townHall": 10, "damage": 2400, "upgrade": { "cost": 3400000, "resource": "Gold", "time": 864000 } },
+          { "level": 4, "townHall": 12, "damage": 2700, "upgrade": { "cost": 6400000, "resource": "Gold", "time": 1209600 } },
+          { "level": 5, "townHall": 15, "damage": 3000 }
+        ]
+      },
+      {
+        "name": "Skeleton Trap",
+        "category": "Traps",
+        "village": "home",
+        "build": { "cost": 6000, "resource": "Gold", "time": 3600, "townHall": 8 },
+        "levels": [
+          { "level": 1, "townHall": 8, "units": 2, "upgrade": { "cost": 25000, "resource": "Gold", "time": 28800 } },
+          { "level": 2, "townHall": 9, "units": 3, "upgrade": { "cost": 100000, "resource": "Gold", "time": 172800 } },
+          { "level": 3, "townHall": 10, "units": 4, "upgrade": { "cost": 1000000, "resource": "Gold", "time": 518400 } },
+          { "level": 4, "townHall": 12, "units": 5, "upgrade": { "cost": 2500000, "resource": "Gold", "time": 864000 } },
+          { "level": 5, "townHall": 15, "units": 6 }
+        ]
+      },
+      {
+        "name": "Tornado Trap",
+        "category": "Traps",
+        "village": "home",
+        "build": { "cost": 1800000, "resource": "Gold", "time": 604800, "townHall": 11 },
+        "levels": [
+          { "level": 1, "townHall": 11, "duration": 5, "upgrade": { "cost": 3600000, "resource": "Gold", "time": 864000 } },
+          { "level": 2, "townHall": 12, "duration": 6, "upgrade": { "cost": 5400000, "resource": "Gold", "time": 1209600 } },
+          { "level": 3, "townHall": 13, "duration": 7 }
+        ]
+      },
+      {
+        "name": "Builder's Hut",
+        "category": "Other",
+        "village": "home",
+        "build": { "cost": 250, "resource": "Gems", "time": 0, "townHall": 1 },
+        "levels": [
+          { "level": 1, "townHall": 1, "hp": 250, "upgrade": { "cost": 7500000, "resource": "Gold", "time": 864000 } },
+          { "level": 2, "townHall": 14, "hp": 1000, "repairDps": 70, "upgrade": { "cost": 9500000, "resource": "Gold", "time": 1209600 } },
+          { "level": 3, "townHall": 14, "hp": 1200, "repairDps": 80, "upgrade": { "cost": 12000000, "resource": "Gold", "time": 1468800 } },
+          { "level": 4, "townHall": 14, "hp": 1500, "repairDps": 90, "upgrade": { "cost": 18500000, "resource": "Gold", "time": 1641600 } },
+          { "level": 5, "townHall": 15, "hp": 1800, "repairDps": 100 }
+        ]
+      },
+      {
+        "name": "Barracks",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 200, "resource": "Elixir", "time": 60, "townHall": 1 },
+        "levels": [
+          { "level": 1, "townHall": 1, "hp": 250, "unlocks": "Barbarian", "upgrade": { "cost": 1000, "resource": "Elixir", "time": 300 } },
+          { "level": 2, "townHall": 1, "hp": 300, "unlocks": "Archer", "upgrade": { "cost": 10000, "resource": "Elixir", "time": 3600 } },
+          { "level": 3, "townHall": 2, "hp": 350, "unlocks": "Giant", "upgrade": { "cost": 25000, "resource": "Elixir", "time": 10800 } },
+          { "level": 4, "townHall": 2, "hp": 390, "unlocks": "Goblin", "upgrade": { "cost": 80000, "resource": "Elixir", "time": 21600 } },
+          { "level": 5, "townHall": 3, "hp": 430, "unlocks": "Wall Breaker", "upgrade": { "cost": 200000, "resource": "Elixir", "time": 86400 } },
+          { "level": 6, "townHall": 4, "hp": 470, "unlocks": "Balloon", "upgrade": { "cost": 500000, "resource": "Elixir", "time": 172800 } },
+          { "level": 7, "townHall": 5, "hp": 510, "unlocks": "Wizard", "upgrade": { "cost": 800000, "resource": "Elixir", "time": 259200 } },
+          { "level": 8, "townHall": 6, "hp": 550, "unlocks": "Healer", "upgrade": { "cost": 1000000, "resource": "Elixir", "time": 345600 } },
+          { "level": 9, "townHall": 7, "hp": 600, "unlocks": "Dragon", "upgrade": { "cost": 1500000, "resource": "Elixir", "time": 432000 } },
+          { "level": 10, "townHall": 8, "hp": 650, "unlocks": "P.E.K.K.A", "upgrade": { "cost": 2000000, "resource": "Elixir", "time": 518400 } },
+          { "level": 11, "townHall": 9, "hp": 700, "unlocks": "Baby Dragon", "upgrade": { "cost": 3000000, "resource": "Elixir", "time": 604800 } },
+          { "level": 12, "townHall": 10, "hp": 800, "unlocks": "Miner", "upgrade": { "cost": 4000000, "resource": "Elixir", "time": 691200 } },
+          { "level": 13, "townHall": 11, "hp": 900, "unlocks": "Electro Dragon", "upgrade": { "cost": 8000000, "resource": "Elixir", "time": 864000 } },
+          { "level": 14, "townHall": 12, "hp": 1000, "unlocks": "Yeti", "upgrade": { "cost": 10000000, "resource": "Elixir", "time": 950400 } },
+          { "level": 15, "townHall": 13, "hp": 1100, "unlocks": "Dragon Rider", "upgrade": { "cost": 12000000, "resource": "Elixir", "time": 1036800 } },
+          { "level": 16, "townHall": 14, "hp": 1200, "unlocks": "Electro Titan", "upgrade": { "cost": 15000000, "resource": "Elixir", "time": 1209600 } },
+          { "level": 17, "townHall": 16, "hp": 1300, "unlocks": "Root Rider" }
+        ]
+      },
+      {
+        "name": "Dark Barracks",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 250000, "resource": "Elixir", "time": 86400, "townHall": 7 },
+        "levels": [
+          { "level": 1, "townHall": 7, "hp": 250, "unlocks": "Minion", "upgrade": { "cost": 500000, "resource": "Elixir", "time": 172800 } },
+          { "level": 2, "townHall": 7, "hp": 300, "unlocks": "Hog Rider", "upgrade": { "cost": 1000000, "resource": "Elixir", "time": 259200 } },
+          { "level": 3, "townHall": 8, "hp": 350, "unlocks": "Valkyrie", "upgrade": { "cost": 1500000, "resource": "Elixir", "time": 345600 } },
+          { "level": 4, "townHall": 8, "hp": 400, "unlocks": "Golem", "upgrade": { "cost": 2250000, "resource": "Elixir", "time": 432000 } },
+          { "level": 5, "townHall": 9, "hp": 450, "unlocks": "Witch", "upgrade": { "cost": 3500000, "resource": "Elixir", "time": 604800 } },
+          { "level": 6, "townHall": 9, "hp": 500, "unlocks": "Lava Hound", "upgrade": { "cost": 4500000, "resource": "Elixir", "time": 691200 } },
+          { "level": 7, "townHall": 10, "hp": 550, "unlocks": "Bowler", "upgrade": { "cost": 6000000, "resource": "Elixir", "time": 864000 } },
+          { "level": 8, "townHall": 12, "hp": 650, "unlocks": "Ice Golem", "upgrade": { "cost": 9000000, "resource": "Elixir", "time": 1036800 } },
+          { "level": 9, "townHall": 13, "hp": 750, "unlocks": "Headhunter", "upgrade": { "cost": 11000000, "resource": "Elixir", "time": 1296000 } },
+          { "level": 10, "townHall": 15, "hp": 850, "unlocks": "Apprentice Warden", "upgrade": { "cost": 15000000, "resource": "Elixir", "time": 1555200 } },
+          { "level": 11, "townHall": 16, "hp": 950, "unlocks": "Druid of the Claw" }
+        ]
+      },
+      {
+        "name": "Army Camp",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 500, "resource": "Elixir", "time": 300, "townHall": 1 },
+        "levels": [
+          { "level": 1, "townHall": 1, "hp": 250, "capacity": 20, "upgrade": { "cost": 1000, "resource": "Elixir", "time": 3600 } },
+          { "level": 2, "townHall": 2, "hp": 300, "capacity": 30, "upgrade": { "cost": 5000, "resource": "Elixir", "time": 10800 } },
+          { "level": 3, "townHall": 3, "hp": 350, "capacity": 35, "upgrade": { "cost": 50000, "resource": "Elixir", "time": 21600 } },
+          { "level": 4, "townHall": 4, "hp": 400, "capacity": 40, "upgrade": { "cost": 100000, "resource": "Elixir", "time": 86400 } },
+          { "level": 5, "townHall": 5, "hp": 450, "capacity": 45, "upgrade": { "cost": 250000, "resource": "Elixir", "time": 172800 } },
+          { "level": 6, "townHall": 6, "hp": 500, "capacity": 50, "upgrade": { "cost": 750000, "resource": "Elixir", "time": 259200 } },
+          { "level": 7, "townHall": 9, "hp": 600, "capacity": 55, "upgrade": { "cost": 2250000, "resource": "Elixir", "time": 432000 } },
+          { "level": 8, "townHall": 10, "hp": 700, "capacity": 60, "upgrade": { "cost": 4500000, "resource": "Elixir", "time": 604800 } },
+          { "level": 9, "townHall": 11, "hp": 850, "capacity": 65, "upgrade": { "cost": 8000000, "resource": "Elixir", "time": 864000 } },
+          { "level": 10, "townHall": 12, "hp": 1000, "capacity": 70, "upgrade": { "cost": 10000000, "resource": "Elixir", "time": 1209600 } },
+          { "level": 11, "townHall": 13, "hp": 1150, "capacity": 75, "upgrade": { "cost": 14000000, "resource": "Elixir", "time": 1555200 } },
+          { "level": 12, "townHall": 15, "hp": 1300, "capacity": 80, "upgrade": { "cost": 18000000, "resource": "Elixir", "time": 1728000 } },
+          { "level": 13, "townHall": 16, "hp": 1450, "capacity": 85 }
+        ]
+      },
+      {
+        "name": "Laboratory",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 25000, "resource": "Elixir", "time": 21600, "townHall": 3 },
+        "levels": [
+          { "level": 1, "townHall": 3, "hp": 500, "upgrade": { "cost": 50000, "resource": "Elixir", "time": 86400 } },
+          { "level": 2, "townHall": 4, "hp": 550, "upgrade": { "cost": 100000, "resource": "Elixir", "time": 172800 } },
+          { "level": 3, "townHall": 5, "hp": 600, "upgrade": { "cost": 250000, "resource": "Elixir", "time": 259200 } },
+          { "level": 4, "townHall": 6, "hp": 650, "upgrade": { "cost": 500000, "resource": "Elixir", "time": 345600 } },
+          { "level": 5, "townHall": 7, "hp": 700, "upgrade": { "cost": 1000000, "resource": "Elixir", "time": 432000 } },
+          { "level": 6, "townHall": 8, "hp": 750, "upgrade": { "cost": 2000000, "resource": "Elixir", "time": 518400 } },
+          { "level": 7, "townHall": 9, "hp": 800, "upgrade": { "cost": 4000000, "resource": "Elixir", "time": 604800 } },
+          { "level": 8, "townHall": 10, "hp": 850, "upgrade": { "cost": 6000000, "resource": "Elixir", "time": 777600 } },
+          { "level": 9, "townHall": 11, "hp": 900, "upgrade": { "cost": 8000000, "resource": "Elixir", "time": 950400 } },
+          { "level": 10, "townHall": 12, "hp": 1000, "upgrade": { "cost": 10000000, "resource": "Elixir", "time": 1209600 } },
+          { "level": 11, "townHall": 13, "hp": 1100, "upgrade": { "cost": 12000000, "resource": "Elixir", "time": 1382400 } },
+          { "level": 12, "townHall": 14, "hp": 1200, "upgrade": { "cost": 15000000, "resource": "Elixir", "time": 1598400 } },
+          { "level": 13, "townHall": 15, "hp": 1300, "upgrade": { "cost": 17000000, "resource": "Elixir", "time": 1728000 } },
+          { "level": 14, "townHall": 16, "hp": 1400 }
+        ]
+      },
+      {
+        "name": "Blacksmith",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 750000, "resource": "Elixir", "time": 259200, "townHall": 7 },
+        "levels": [
+          { "level": 1, "townHall": 7, "hp": 500, "upgrade": { "cost": 1250000, "resource": "Elixir", "time": 345600 } },
+          { "level": 2, "townHall": 8, "hp": 600, "upgrade": { "cost": 1750000, "resource": "Elixir", "time": 432000 } },
+          { "level": 3, "townHall": 9, "hp": 700, "upgrade": { "cost": 2250000, "resource": "Elixir", "time": 518400 } },
+          { "level": 4, "townHall": 10, "hp": 800, "upgrade": { "cost": 2750000, "resource": "Elixir", "time": 604800 } },
+          { "level": 5, "townHall": 11, "hp": 900, "upgrade": { "cost": 3250000, "resource": "Elixir", "time": 691200 } },
+          { "level": 6, "townHall": 12, "hp": 1000, "upgrade": { "cost": 3750000, "resource": "Elixir", "time": 777600 } },
+          { "level": 7, "townHall": 13, "hp": 1100, "upgrade": { "cost": 4250000, "resource": "Elixir", "time": 864000 } },
+          { "level": 8, "townHall": 14, "hp": 1200, "upgrade": { "cost": 4750000, "resource": "Elixir", "time": 950400 } },
+          { "level": 9, "townHall": 15, "hp": 1300 }
+        ]
+      },
+      {
+        "name": "Spell Factory",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 200000, "resource": "Elixir", "time": 86400, "townHall": 5 },
+        "levels": [
+          { "level": 1, "townHall": 5, "hp": 400, "capacity": 2, "unlocks": "Lightning, Heal", "upgrade": { "cost": 400000, "resource": "Elixir", "time": 172800 } },
+          { "level": 2, "townHall": 6, "hp": 450, "capacity": 4, "unlocks": "Rage", "upgrade": { "cost": 800000, "resource": "Elixir", "time": 345600 } },
+          { "level": 3, "townHall": 8, "hp": 500, "capacity": 6, "unlocks": "Jump", "upgrade": { "cost": 1200000, "resource": "Elixir", "time": 432000 } },
+          { "level": 4, "townHall": 9, "hp": 550, "capacity": 8, "unlocks": "Freeze", "upgrade": { "cost": 2400000, "resource": "Elixir", "time": 518400 } },
+          { "level": 5, "townHall": 10, "hp": 600, "capacity": 10, "unlocks": "Clone", "upgrade": { "cost": 4800000, "resource": "Elixir", "time": 691200 } },
+          { "level": 6, "townHall": 13, "hp": 700, "capacity": 12, "unlocks": "Invisibility", "upgrade": { "cost": 9600000, "resource": "Elixir", "time": 1209600 } },
+          { "level": 7, "townHall": 15, "hp": 800, "capacity": 14, "unlocks": "Recall" }
+        ]
+      },
+      {
+        "name": "Dark Spell Factory",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 1500000, "resource": "Elixir", "time": 259200, "townHall": 8 },
+        "levels": [
+          { "level": 1, "townHall": 8, "hp": 350, "capacity": 1, "unlocks": "Poison", "upgrade": { "cost": 2000000, "resource": "Elixir", "time": 345600 } },
+          { "level": 2, "townHall": 8, "hp": 400, "capacity": 1, "unlocks": "Earthquake", "upgrade": { "cost": 2500000, "resource": "Elixir", "time": 518400 } },
+          { "level": 3, "townHall": 9, "hp": 450, "capacity": 1, "unlocks": "Haste", "upgrade": { "cost": 3500000, "resource": "Elixir", "time": 691200 } },
+          { "level": 4, "townHall": 9, "hp": 500, "capacity": 1, "unlocks": "Skeleton", "upgrade": { "cost": 4500000, "resource": "Elixir", "time": 864000 } },
+          { "level": 5, "townHall": 11, "hp": 550, "capacity": 1, "unlocks": "Bat" }
+        ]
+      },
+      {
+        "name": "Workshop",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 8000000, "resource": "Elixir", "time": 950400, "townHall": 12 },
+        "levels": [
+          { "level": 1, "townHall": 12, "hp": 1000, "unlocks": "Wall Wrecker", "upgrade": { "cost": 9000000, "resource": "Elixir", "time": 1036800 } },
+          { "level": 2, "townHall": 12, "hp": 1200, "unlocks": "Battle Blimp", "upgrade": { "cost": 10000000, "resource": "Elixir", "time": 1123200 } },
+          { "level": 3, "townHall": 12, "hp": 1400, "unlocks": "Stone Slammer", "upgrade": { "cost": 11000000, "resource": "Elixir", "time": 1209600 } },
+          { "level": 4, "townHall": 13, "hp": 1600, "unlocks": "Siege Barracks", "upgrade": { "cost": 12000000, "resource": "Elixir", "time": 1296000 } },
+          { "level": 5, "townHall": 13, "hp": 1800, "unlocks": "Log Launcher", "upgrade": { "cost": 15000000, "resource": "Elixir", "time": 1555200 } },
+          { "level": 6, "townHall": 14, "hp": 2000, "unlocks": "Flame Flinger", "upgrade": { "cost": 17000000, "resource": "Elixir", "time": 1684800 } },
+          { "level": 7, "townHall": 15, "hp": 2200, "unlocks": "Battle Drill", "upgrade": { "cost": 19000000, "resource": "Elixir", "time": 1814400 } },
+          { "level": 8, "townHall": 16, "hp": 2400, "unlocks": "" }
+        ]
+      },
+      {
+        "name": "Pet House",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 15000000, "resource": "Elixir", "time": 1296000, "townHall": 14 },
+        "levels": [
+          { "level": 1, "townHall": 14, "hp": 1000, "unlocks": "L.A.S.S.I", "upgrade": { "cost": 17000000, "resource": "Elixir", "time": 1468800 } },
+          { "level": 2, "townHall": 14, "hp": 1200, "unlocks": "Electro Owl", "upgrade": { "cost": 18000000, "resource": "Elixir", "time": 1598400 } },
+          { "level": 3, "townHall": 14, "hp": 1400, "unlocks": "Mighty Yak", "upgrade": { "cost": 19000000, "resource": "Elixir", "time": 1684800 } },
+          { "level": 4, "townHall": 14, "hp": 1600, "unlocks": "Unicorn", "upgrade": { "cost": 19500000, "resource": "Elixir", "time": 1728000 } },
+          { "level": 5, "townHall": 15, "hp": 1800, "unlocks": "Frosty", "upgrade": { "cost": 20000000, "resource": "Elixir", "time": 1771200 } },
+          { "level": 6, "townHall": 15, "hp": 2000, "unlocks": "Diggy", "upgrade": { "cost": 20500000, "resource": "Elixir", "time": 1814400 } },
+          { "level": 7, "townHall": 15, "hp": 2200, "unlocks": "Poison Lizard", "upgrade": { "cost": 21000000, "resource": "Elixir", "time": 1866240 } },
+          { "level": 8, "townHall": 15, "hp": 2400, "unlocks": "Phoenix", "upgrade": { "cost": 21500000, "resource": "Elixir", "time": 1900800 } },
+          { "level": 9, "townHall": 16, "hp": 2600, "unlocks": "Spirit Fox" }
+        ]
+      },
+      {
+        "name": "Clan Castle",
+        "category": "Army",
+        "village": "home",
+        "build": { "cost": 10000, "resource": "Gold", "time": 0, "townHall": 3 },
+        "levels": [
+          { "level": 1, "townHall": 3, "hp": 2000, "troopCapacity": 10, "spellCapacity": 1, "upgrade": { "cost": 10000, "resource": "Gold", "time": 3600 } },
+          { "level": 2, "townHall": 4, "hp": 2200, "troopCapacity": 15, "spellCapacity": 1, "upgrade": { "cost": 100000, "resource": "Gold", "time": 21600 } },
+          { "level": 3, "townHall": 7, "hp": 2400, "troopCapacity": 20, "spellCapacity": 1, "upgrade": { "cost": 600000, "resource": "Gold", "time": 172800 } },
+          { "level": 4, "townHall": 8, "hp": 2600, "troopCapacity": 25, "spellCapacity": 1, "upgrade": { "cost": 1200000, "resource": "Gold", "time": 345600 } },
+          { "level": 5, "townHall": 9, "hp": 2800, "troopCapacity": 30, "spellCapacity": 1, "upgrade": { "cost": 1800000, "resource": "Gold", "time": 518400 } },
+          { "level": 6, "townHall": 10, "hp": 3000, "troopCapacity": 35, "spellCapacity": 1, "upgrade": { "cost": 5000000, "resource": "Gold", "time": 604800 } },
+          { "level": 7, "townHall": 11, "hp": 3400, "troopCapacity": 35, "spellCapacity": 2, "upgrade": { "cost": 7000000, "resource": "Gold", "time": 777600 } },
+          { "level": 8, "townHall": 12, "hp": 3800, "troopCapacity": 40, "spellCapacity": 2, "upgrade": { "cost": 10000000, "resource": "Gold", "time": 1209600 } },
+          { "level": 9, "townHall": 13, "hp": 4300, "troopCapacity": 45, "spellCapacity": 2, "upgrade": { "cost": 12000000, "resource": "Gold", "time": 1382400 } },
+          { "level": 10, "townHall": 14, "hp": 4800, "troopCapacity": 45, "spellCapacity": 2, "upgrade": { "cost": 18000000, "resource": "Gold", "time": 1728000 } },
+          { "level": 11, "townHall": 15, "hp": 5200, "troopCapacity": 50, "spellCapacity": 3, "upgrade": { "cost": 20000000, "resource": "Gold", "time": 1814400 } },
+          { "level": 12, "townHall": 16, "hp": 5600, "troopCapacity": 50, "spellCapacity": 3 }
+        ]
+      },
+      {
+        "name": "Barbarian King Altar",
+        "category": "Heroes",
+        "village": "home",
+        "build": { "cost": 10000, "resource": "Dark Elixir", "time": 0, "townHall": 7 },
+        "levels": [ { "level": 1, "townHall": 7, "hp": 250 } ]
+      },
+      {
+        "name": "Archer Queen Altar",
+        "category": "Heroes",
+        "village": "home",
+        "build": { "cost": 10000, "resource": "Dark Elixir", "time": 0, "townHall": 9 },
+        "levels": [ { "level": 1, "townHall": 9, "hp": 250 } ]
+      },
+      {
+        "name": "Grand Warden Altar",
+        "category": "Heroes",
+        "village": "home",
+        "build": { "cost": 6000000, "resource": "Elixir", "time": 0, "townHall": 11 },
+        "levels": [ { "level": 1, "townHall": 11, "hp": 500 } ]
+      },
+      {
+        "name": "Royal Champion Altar",
+        "category": "Heroes",
+        "village": "home",
+        "build": { "cost": 120000, "resource": "Dark Elixir", "time": 0, "townHall": 13 },
+        "levels": [ { "level": 1, "townHall": 13, "hp": 500 } ]
+      }
+    ]
+  }

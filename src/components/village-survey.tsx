@@ -216,7 +216,7 @@ export function VillageSurvey() {
                                             const watchedValue = watch(fieldName);
                                             const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
                                             
-                                            if (!isUnlocked(item, townHallLevel)) return null;
+                                            if (item.name !== 'Town Hall' && !isUnlocked(item, townHallLevel)) return null;
                                             
                                             return (
                                             <div key={fieldName} className="space-y-3">

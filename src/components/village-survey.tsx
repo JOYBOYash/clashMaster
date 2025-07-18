@@ -51,17 +51,17 @@ type ProcessedItem = BuildingItem | ArmyItem;
 const allData: Record<string, Record<string, ProcessedItem[]>> = { "Village": {}, "Army": {} };
 const townHallData = villageData.buildings.find(item => item.name === "Town Hall") as BuildingItem;
 
-const filteredVillageBuildings = villageData.buildings.filter(item => item.name !== "Town Hall" && !item.name.includes("Altar"));
+const filteredVillageBuildings = villageData.buildings.filter(item => item.name !== "Town Hall");
+filteredVillageBuildings.forEach(item => {
+    if (!allData.Village[item.category]) allData.Village[item.category] = [];
+    allData.Village[item.category].push(item as BuildingItem);
+});
+
 const filteredArmyItems = armyData.filter(item => 
     item.village === "home" && 
     !item.name.startsWith("Super") && 
     item.category !== 'equipment'
 );
-
-filteredVillageBuildings.forEach(item => {
-    if (!allData.Village[item.category]) allData.Village[item.category] = [];
-    allData.Village[item.category].push(item as BuildingItem);
-});
 
 filteredArmyItems.forEach(item => {
     let categoryName = titleCase(item.category);

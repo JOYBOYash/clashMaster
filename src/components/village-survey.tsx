@@ -15,92 +15,18 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import { useState, useMemo, useCallback, useEffect } from "react";
-import { titleCase } from "@/lib/utils";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-
-import villageData from '@/lib/raw-defenses-buildings-resources-others.json';
-import armyData from '@/lib/raw-troops-heroes-equipment-spells.json';
-
-// Type definitions matching the JSON structure
-interface BuildingLevel {
-    level: number;
-    townHall: number;
-    [key: string]: any; // Allow other properties
-}
-
-interface BuildingItem {
-    name: string;
-    category: string;
-    village: string;
-    build: { townHall: number; [key: string]: any };
-    levels: BuildingLevel[];
-}
-
-interface ArmyItem {
-    name: string;
-    category: string;
-    village: string;
-    unlock: { hall?: number; buildingLevel?: number, resource?: string, [key: string]: any };
-    levels: number[] | BuildingLevel[];
-}
-
-type ProcessedItem = BuildingItem | ArmyItem;
-
-// Pre-filter and process data
-const allData: Record<string, Record<string, ProcessedItem[]>> = { "Village": {}, "Army": {} };
-const townHallData = villageData.buildings.find(item => item.name === "Town Hall") as BuildingItem;
-
-const filteredVillageBuildings = villageData.buildings.filter(item => item.name !== "Town Hall");
-filteredVillageBuildings.forEach(item => {
-    if (!allData.Village[item.category]) allData.Village[item.category] = [];
-    allData.Village[item.category].push(item as BuildingItem);
-});
-
-const filteredArmyItems = armyData.filter(item => 
-    item.village === "home" && 
-    !item.name.startsWith("Super") && 
-    item.category !== 'equipment'
-);
-
-filteredArmyItems.forEach(item => {
-    let categoryName = titleCase(item.category);
-    if (item.category === 'troop') {
-        categoryName = item.unlock.resource === 'Dark Elixir' ? 'Dark Elixir Troops' : 'Elixir Troops';
-    } else if(item.category === 'spell') {
-         categoryName = item.unlock.resource === 'Dark Elixir' ? 'Dark Spells' : 'Elixir Spells';
-    } else if (item.category === 'hero') {
-        categoryName = "Heroes";
-    }
-
-    if (!allData.Army[categoryName]) allData.Army[categoryName] = [];
-    allData.Army[categoryName].push(item as ArmyItem);
-});
+import { allEntities, isUnlocked, getMaxLevelForTownHall, Entity } from '@/lib/game-data';
+import { titleCase } from "@/lib/utils";
 
 const generateSchema = () => {
     const schemaShape: { [key: string]: z.ZodNumber } = {};
-    if (townHallData) {
-        schemaShape['town_hall'] = z.number().min(1).max(townHallData.levels.length);
-    }
-    Object.values(allData).forEach(section => {
-        Object.values(section).forEach(category => {
-            category.forEach(item => {
-                const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-                let maxLevel = Array.isArray(item.levels) ? item.levels.length : 0;
-                if (item.name === "Barbarian King") maxLevel = 100; // Special case for heroes if needed
-                schemaShape[fieldName] = z.number().min(0).max(maxLevel > 0 ? maxLevel : 100);
-            });
-        });
+    allEntities.forEach(item => {
+        const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        schemaShape[fieldName] = z.number().min(0).max(item.maxLevel);
     });
     return z.object(schemaShape);
-};
-
-const getMinThForCategory = (category: ProcessedItem[]): number => {
-    return Math.min(...category.map(item => {
-        if ('build' in item) return item.build.townHall;
-        if ('unlock' in item && item.unlock.hall) return item.unlock.hall;
-        return Infinity;
-    }));
 };
 
 export function VillageSurvey() {
@@ -109,91 +35,40 @@ export function VillageSurvey() {
 
     const surveySchema = useMemo(() => generateSchema(), []);
     type SurveyFormValues = z.infer<typeof surveySchema>;
-    
+
     const defaultValues = useMemo(() => {
-       const defaults: { [key: string]: number } = {'town_hall': 1};
-        Object.values(allData).forEach(section => {
-           Object.values(section).forEach(category => {
-               category.forEach(item => {
-                   const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-                   defaults[fieldName] = 0;
-               });
-           });
-       });
-       return defaults as SurveyFormValues;
+        const defaults: { [key: string]: number } = {};
+        allEntities.forEach(item => {
+            const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+            defaults[fieldName] = item.name === "Town Hall" ? 1 : 0;
+        });
+        return defaults as SurveyFormValues;
     }, []);
 
     const { control, handleSubmit, watch, setValue, getValues } = useForm<SurveyFormValues>({
         resolver: zodResolver(surveySchema),
         defaultValues,
     });
-    
-    const townHallLevel = watch('town_hall');
-    const barracksLevel = watch('barracks');
-    const darkBarracksLevel = watch('dark_barracks');
 
-    const isUnlocked = useCallback((item: ProcessedItem, thLevel: number): boolean => {
-        if (item.name === "Town Hall") return true;
+    const playerState = watch();
+    const townHallLevel = playerState.town_hall || 1;
 
-        const requiredTh = 'build' in item ? item.build.townHall : ('unlock' in item && item.unlock.hall ? item.unlock.hall : 1);
-        if (thLevel < requiredTh) return false;
-
-        if ('unlock' in item && item.unlock.buildingLevel) {
-            const buildingName = item.unlock.building?.toLowerCase().replace(/ /g, '_');
-            const userBuildingLevel = watch(buildingName as keyof SurveyFormValues) as number;
-            return userBuildingLevel >= item.unlock.buildingLevel;
-        }
-
-        return true;
-    }, [watch]);
-
-    const getMaxLevelForTownHall = useCallback((item: ProcessedItem, thLevel: number): number => {
-         if (item.name === "Town Hall") return (item as BuildingItem).levels.length;
-        if ('build' in item) { // Village buildings
-            const building = item as BuildingItem;
-            const availableLevels = building.levels.filter(l => l.townHall <= thLevel);
-            return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
-        } else if ('levels' in item) { // Army items
-            const armyUnit = item as ArmyItem;
-            // Handle heroes with simple level array
-            if (Array.isArray(armyUnit.levels) && armyUnit.levels.length > 0 && typeof armyUnit.levels[0] === 'number') {
-                let maxLevel = 0;
-                for (let i = 0; i < armyUnit.levels.length; i++) {
-                    if ((armyUnit.levels as number[])[i] <= thLevel) {
-                        maxLevel = i + 1;
-                    } else {
-                        break;
-                    }
-                }
-                return maxLevel;
-            // Handle troops/spells with complex level objects
-            } else if (Array.isArray(armyUnit.levels) && armyUnit.levels.length > 0) {
-                 const availableLevels = (armyUnit.levels as BuildingLevel[]).filter(l => l.townHall <= thLevel);
-                 return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
-            }
-        }
-        return 0;
-    }, []);
-    
     useEffect(() => {
         const currentValues = getValues();
-        Object.values(allData).forEach(section => {
-            Object.values(section).forEach(category => {
-                category.forEach(item => {
-                    const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
-                    const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
-                    const currentValue = currentValues[fieldName] as number;
-                    
-                    if (!isUnlocked(item, townHallLevel)) {
-                        if (currentValue !== 0) setValue(fieldName, 0);
-                    } else if (currentValue > maxLevel) {
-                        setValue(fieldName, maxLevel);
-                    }
-                });
-            });
-        });
-    }, [townHallLevel, barracksLevel, darkBarracksLevel, getValues, setValue, getMaxLevelForTownHall, isUnlocked]);
+        allEntities.forEach(entity => {
+            if (entity.name === "Town Hall") return;
 
+            const fieldName = entity.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
+            const maxLevel = getMaxLevelForTownHall(entity, townHallLevel);
+            const currentValue = currentValues[fieldName] as number;
+
+            if (!isUnlocked(entity, playerState)) {
+                 if (currentValue !== 0) setValue(fieldName, 0);
+            } else if (currentValue > maxLevel) {
+                setValue(fieldName, maxLevel);
+            }
+        });
+    }, [playerState, townHallLevel, getValues, setValue]);
 
     const onSubmit = async (data: SurveyFormValues) => {
         setIsLoading(true);
@@ -206,18 +81,32 @@ export function VillageSurvey() {
         });
     };
 
+    const categorizedEntities = useMemo(() => {
+        const categories: { [key: string]: Entity[] } = {};
+        allEntities.forEach(entity => {
+            if (entity.name === "Town Hall") return;
+            if (!categories[entity.category]) {
+                categories[entity.category] = [];
+            }
+            categories[entity.category].push(entity);
+        });
+        return Object.entries(categories).sort(([a], [b]) => a.localeCompare(b));
+    }, []);
+    
+    const townHallEntity = allEntities.find(e => e.name === "Town Hall")!;
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <Card className="shadow-lg border-primary/20">
+             <Card className="shadow-lg border-primary/20">
                 <CardHeader>
                     <CardTitle>Town Hall Level</CardTitle>
                     <CardDescription>Start by selecting your Town Hall level. This will determine what buildings and upgrades are available below.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                     <div className="space-y-3">
+                    <div className="space-y-3">
                         <div className="flex justify-between items-center">
                             <Label htmlFor="town_hall" className="text-lg">Town Hall</Label>
-                            <span className="text-lg font-medium text-primary w-24 text-center">{townHallLevel} / {townHallData.levels.length}</span>
+                            <span className="text-lg font-medium text-primary w-24 text-center">{townHallLevel} / {townHallEntity.maxLevel}</span>
                         </div>
                         <Controller
                             name="town_hall"
@@ -226,7 +115,7 @@ export function VillageSurvey() {
                                 <Slider
                                     id="town_hall"
                                     min={1}
-                                    max={townHallData.levels.length}
+                                    max={townHallEntity.maxLevel}
                                     step={1}
                                     value={[field.value]}
                                     onValueChange={(value) => field.onChange(value[0])}
@@ -237,57 +126,54 @@ export function VillageSurvey() {
                 </CardContent>
             </Card>
 
-            {Object.entries(allData).map(([sectionTitle, categories]) => (
-                <div key={sectionTitle}>
-                    <h2 className="text-2xl font-headline font-bold mb-4">{sectionTitle}</h2>
-                    <Accordion type="multiple" className="w-full space-y-2">
-                        {Object.entries(categories).sort(([a], [b]) => a.localeCompare(b)).map(([categoryName, items]) => {
-                            if (townHallLevel < getMinThForCategory(items)) return null;
+            <Accordion type="multiple" className="w-full space-y-2">
+                {categorizedEntities.map(([categoryName, items]) => {
+                     const isCategoryVisible = items.some(item => isUnlocked(item, playerState));
+                     if (!isCategoryVisible) return null;
 
-                            return (
-                                <AccordionItem value={categoryName} key={categoryName} className="border-b-0 rounded-lg bg-card/50 px-4">
-                                    <AccordionTrigger className="text-lg font-headline hover:no-underline">{categoryName}</AccordionTrigger>
-                                    <AccordionContent>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 pt-4">
-                                            {items.map((item) => {
-                                                if (!isUnlocked(item, townHallLevel)) return null;
+                    return (
+                        <AccordionItem value={categoryName} key={categoryName} className="border-b-0 rounded-lg bg-card/50 px-4">
+                            <AccordionTrigger className="text-lg font-headline hover:no-underline">{categoryName}</AccordionTrigger>
+                            <AccordionContent>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 pt-4">
+                                    {items.map((item) => {
+                                        if (!isUnlocked(item, playerState)) return null;
 
-                                                const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
-                                                const watchedValue = watch(fieldName);
-                                                const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
-                                                
-                                                return (
-                                                <div key={fieldName} className="space-y-3">
-                                                    <div className="flex justify-between items-center">
-                                                        <Label htmlFor={fieldName.toString()}>{titleCase(item.name.replace(/_/g, ' '))}</Label>
-                                                        <span className="text-sm font-medium text-primary w-16 text-center">{watchedValue} / {maxLevel}</span>
-                                                    </div>
-                                                    <Controller
-                                                        name={fieldName}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <Slider
-                                                                id={fieldName.toString()}
-                                                                min={0}
-                                                                max={maxLevel}
-                                                                step={1}
-                                                                value={[field.value as number]}
-                                                                onValueChange={(value) => field.onChange(value[0])}
-                                                                disabled={maxLevel === 0}
-                                                            />
-                                                        )}
-                                                    />
+                                        const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
+                                        const watchedValue = watch(fieldName);
+                                        const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
+
+                                        return (
+                                            <div key={fieldName} className="space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <Label htmlFor={fieldName.toString()}>{titleCase(item.name.replace(/_/g, ' '))}</Label>
+                                                    <span className="text-sm font-medium text-primary w-16 text-center">{watchedValue} / {maxLevel}</span>
                                                 </div>
-                                            )})}
-                                        </div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            )
-                        })}
-                    </Accordion>
-                </div>
-            ))}
-
+                                                <Controller
+                                                    name={fieldName}
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <Slider
+                                                            id={fieldName.toString()}
+                                                            min={0}
+                                                            max={maxLevel}
+                                                            step={1}
+                                                            value={[field.value as number]}
+                                                            onValueChange={(value) => field.onChange(value[0])}
+                                                            disabled={maxLevel === 0}
+                                                        />
+                                                    )}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    );
+                })}
+            </Accordion>
+            
             <div className="flex justify-end pt-6">
                 <Button type="submit" size="lg" disabled={isLoading}>
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -297,3 +183,5 @@ export function VillageSurvey() {
         </form>
     );
 }
+
+    

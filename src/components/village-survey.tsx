@@ -31,6 +31,7 @@ interface BuildingLevel {
 interface BuildingItem {
     name: string;
     category: string;
+    village: string;
     build: { townHall: number; [key: string]: any };
     levels: BuildingLevel[];
 }
@@ -38,54 +39,59 @@ interface BuildingItem {
 interface ArmyItem {
     name: string;
     category: string;
-    unlock: { hall: number; [key: string]: any };
-    levels: number[];
+    village: string;
+    unlock: { hall?: number; buildingLevel?: number, resource?: string, [key: string]: any };
+    levels: number[] | BuildingLevel[];
 }
 
-interface ProcessedItem {
-    name: string;
-    data: BuildingItem | ArmyItem;
-}
+type ProcessedItem = BuildingItem | ArmyItem;
 
-// Pre-filter hero altars
+// Pre-filter data
 const filteredVillageBuildings = villageData.buildings.filter(item => !item.name.includes("Altar"));
+const filteredArmyItems = armyData.filter(item => 
+    item.village === "home" && 
+    !item.name.startsWith("Super") && 
+    item.category !== 'equipment'
+);
+
 
 const allData: Record<string, Record<string, ProcessedItem[]>> = {
     "Village": {},
     "Army": {}
 };
 
+// Process Village Data
 filteredVillageBuildings.forEach(item => {
     if (!allData.Village[item.category]) {
         allData.Village[item.category] = [];
     }
-    allData.Village[item.category].push({ name: item.name, data: item as BuildingItem });
+    allData.Village[item.category].push(item as BuildingItem);
 });
 
-armyData.forEach(item => {
-    if (item.category === "equipment") return;
-    const categoryName = titleCase(item.category);
+// Process Army Data
+filteredArmyItems.forEach(item => {
+    let categoryName = titleCase(item.category);
+    if (item.category === 'troop') {
+        categoryName = item.unlock.resource === 'Dark Elixir' ? 'Dark Elixir Troops' : 'Elixir Troops';
+    } else if(item.category === 'spell') {
+         categoryName = item.unlock.resource === 'Dark Elixir' ? 'Dark Spells' : 'Elixir Spells';
+    }
+
     if (!allData.Army[categoryName]) {
         allData.Army[categoryName] = [];
     }
-    allData.Army[categoryName].push({ name: item.name, data: item as ArmyItem });
+    allData.Army[categoryName].push(item as ArmyItem);
 });
 
 
 const generateSchema = () => {
     const schemaShape: { [key: string]: z.ZodNumber } = {};
-    Object.values(allData).forEach(section => {
+    Object.values(allData).flat().forEach(section => {
         Object.values(section).flat().forEach(item => {
             const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-            let maxLevel = 0;
-            if ('build' in item.data) { // It's a BuildingItem
-                maxLevel = (item.data as BuildingItem).levels.length;
-            } else if ('dps' in item.data) { // It's a Hero item
-                 maxLevel = (item.data as any).dps.length;
-            } else { // It's a regular ArmyItem
-                maxLevel = (item.data as ArmyItem).levels.length;
-            }
-            schemaShape[fieldName] = z.number().min(0).max(maxLevel > 0 ? maxLevel : 100); // Set a high max for safety if 0
+            let maxLevel = Array.isArray(item.levels) ? item.levels.length : 0;
+            if (item.name === "Barbarian King") maxLevel = 100; // Special case for heroes
+            schemaShape[fieldName] = z.number().min(0).max(maxLevel > 0 ? maxLevel : 100);
         });
     });
     return z.object(schemaShape);
@@ -100,7 +106,7 @@ export function VillageSurvey() {
     
     const defaultValues = useMemo(() => {
        const defaults: { [key: string]: number } = {};
-       Object.values(allData).forEach(section => {
+        Object.values(allData).flat().forEach(section => {
            Object.values(section).flat().forEach(item => {
                const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
                defaults[fieldName] = 0;
@@ -115,59 +121,72 @@ export function VillageSurvey() {
     });
     
     const townHallLevel = watch('town_hall');
+    const barracksLevel = watch('barracks');
+    const darkBarracksLevel = watch('dark_barracks');
 
-    const isUnlockedAtTownHall = useCallback((item: ProcessedItem, thLevel: number): boolean => {
-        if (item.name === "Town Hall") return true;
-        if ('build' in item.data) { // BuildingItem
-            return item.data.build.townHall <= thLevel;
-        } else if ('unlock' in item.data) { // ArmyItem or Hero
-            return item.data.unlock.hall <= thLevel;
+
+    const isUnlocked = useCallback((item: ProcessedItem, thLevel: number): boolean => {
+        if ('build' in item) { // BuildingItem
+            return item.build.townHall <= thLevel;
+        } else if ('unlock' in item) { // ArmyItem
+            if (item.unlock.hall) {
+                return item.unlock.hall <= thLevel;
+            }
+            if (item.unlock.buildingLevel) {
+                 const requiredBuildingLevel = item.unlock.resource === 'Dark Elixir' ? darkBarracksLevel : barracksLevel;
+                 return item.unlock.buildingLevel <= requiredBuildingLevel;
+            }
         }
         return false;
-    }, []);
+    }, [barracksLevel, darkBarracksLevel]);
 
     const getMaxLevelForTownHall = useCallback((item: ProcessedItem, thLevel: number): number => {
-        if (!isUnlockedAtTownHall(item, thLevel)) return 0;
-        
-        if (item.name === "Town Hall") {
-             return (item.data as BuildingItem).levels.length;
+         if (item.name === "Town Hall") {
+             return (item as BuildingItem).levels.length;
         }
 
-        if ('build' in item.data) { // It's a BuildingItem from villageData
-            const building = item.data as BuildingItem;
+        if ('build' in item) { // It's a BuildingItem from villageData
+            const building = item as BuildingItem;
             const availableLevels = building.levels.filter(l => l.townHall <= thLevel);
             return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
         } else { // It's an ArmyItem from armyData
-            const armyUnit = item.data as ArmyItem;
-            // For heroes, levels array is TownHall requirements per level
-            let maxLevel = 0;
-            for (let i = 0; i < armyUnit.levels.length; i++) {
-                if (armyUnit.levels[i] <= thLevel) {
-                    maxLevel = i + 1;
-                } else {
-                    break;
+            const armyUnit = item as ArmyItem;
+            if (Array.isArray(armyUnit.levels) && typeof armyUnit.levels[0] === 'number') {
+                let maxLevel = 0;
+                for (let i = 0; i < armyUnit.levels.length; i++) {
+                    if ((armyUnit.levels as number[])[i] <= thLevel) {
+                        maxLevel = i + 1;
+                    } else {
+                        break;
+                    }
                 }
+                return maxLevel;
+            } else if (Array.isArray(armyUnit.levels)) { // Heroes with level objects
+                 const availableLevels = (armyUnit.levels as BuildingLevel[]).filter(l => l.townHall <= thLevel);
+                 return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
             }
-            return maxLevel;
         }
-    }, [isUnlockedAtTownHall]);
+        return 0;
+    }, []);
     
     useEffect(() => {
         const currentValues = getValues();
-        Object.entries(allData).forEach(([sectionTitle, categories]) => {
-            Object.values(categories).flat().forEach(item => {
+        Object.values(allData).flat().forEach(section => {
+            Object.values(section).flat().forEach(item => {
                 if (item.name === "Town Hall") return;
                 
                 const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
                 const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
                 const currentValue = currentValues[fieldName] as number;
-
-                if (currentValue > maxLevel) {
+                
+                if (!isUnlocked(item, townHallLevel)) {
+                    setValue(fieldName, 0);
+                } else if (currentValue > maxLevel) {
                     setValue(fieldName, maxLevel);
                 }
             });
         });
-    }, [townHallLevel, getValues, setValue, getMaxLevelForTownHall]);
+    }, [townHallLevel, barracksLevel, darkBarracksLevel, getValues, setValue, getMaxLevelForTownHall, isUnlocked]);
 
 
     const onSubmit = async (data: SurveyFormValues) => {
@@ -187,7 +206,7 @@ export function VillageSurvey() {
                 <div key={sectionTitle}>
                     <h2 className="text-2xl font-headline font-bold mb-4">{sectionTitle}</h2>
                     <Accordion type="multiple" className="w-full space-y-2">
-                        {Object.entries(categories).map(([categoryName, items]) => (
+                        {Object.entries(categories).sort(([a], [b]) => a.localeCompare(b)).map(([categoryName, items]) => (
                             <AccordionItem value={categoryName} key={categoryName} className="border-b-0 rounded-lg bg-card/50 px-4">
                                 <AccordionTrigger className="text-lg font-headline hover:no-underline">{categoryName}</AccordionTrigger>
                                 <AccordionContent>
@@ -196,9 +215,8 @@ export function VillageSurvey() {
                                             const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase() as keyof SurveyFormValues;
                                             const watchedValue = watch(fieldName);
                                             const maxLevel = getMaxLevelForTownHall(item, townHallLevel);
-                                            const isUnlocked = isUnlockedAtTownHall(item, townHallLevel);
-
-                                            if (!isUnlocked) return null;
+                                            
+                                            if (!isUnlocked(item, townHallLevel)) return null;
                                             
                                             return (
                                             <div key={fieldName} className="space-y-3">

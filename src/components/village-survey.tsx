@@ -69,7 +69,10 @@ filteredArmyItems.forEach(item => {
         categoryName = item.unlock.resource === 'Dark Elixir' ? 'Dark Elixir Troops' : 'Elixir Troops';
     } else if(item.category === 'spell') {
          categoryName = item.unlock.resource === 'Dark Elixir' ? 'Dark Spells' : 'Elixir Spells';
+    } else if (item.category === 'hero') {
+        categoryName = "Heroes";
     }
+
     if (!allData.Army[categoryName]) allData.Army[categoryName] = [];
     allData.Army[categoryName].push(item as ArmyItem);
 });
@@ -84,7 +87,7 @@ const generateSchema = () => {
             category.forEach(item => {
                 const fieldName = item.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
                 let maxLevel = Array.isArray(item.levels) ? item.levels.length : 0;
-                if (item.name === "Barbarian King") maxLevel = 100;
+                if (item.name === "Barbarian King") maxLevel = 100; // Special case for heroes if needed
                 schemaShape[fieldName] = z.number().min(0).max(maxLevel > 0 ? maxLevel : 100);
             });
         });
@@ -131,35 +134,40 @@ export function VillageSurvey() {
 
     const isUnlocked = useCallback((item: ProcessedItem, thLevel: number): boolean => {
         if (item.name === "Town Hall") return true;
-        if ('build' in item) return item.build.townHall <= thLevel;
-        if ('unlock' in item) {
-            if (item.unlock.hall && item.unlock.hall > thLevel) return false;
-            
-            if (item.unlock.buildingLevel) {
-                 const requiredBuildingLevel = item.unlock.resource === 'Dark Elixir' ? darkBarracksLevel : barracksLevel;
-                 return item.unlock.buildingLevel <= requiredBuildingLevel;
-            }
-            return true;
+
+        const requiredTh = 'build' in item ? item.build.townHall : ('unlock' in item && item.unlock.hall ? item.unlock.hall : 1);
+        if (thLevel < requiredTh) return false;
+
+        if ('unlock' in item && item.unlock.buildingLevel) {
+            const buildingName = item.unlock.building?.toLowerCase().replace(/ /g, '_');
+            const userBuildingLevel = watch(buildingName as keyof SurveyFormValues) as number;
+            return userBuildingLevel >= item.unlock.buildingLevel;
         }
-        return false;
-    }, [barracksLevel, darkBarracksLevel]);
+
+        return true;
+    }, [watch]);
 
     const getMaxLevelForTownHall = useCallback((item: ProcessedItem, thLevel: number): number => {
          if (item.name === "Town Hall") return (item as BuildingItem).levels.length;
-        if ('build' in item) {
+        if ('build' in item) { // Village buildings
             const building = item as BuildingItem;
             const availableLevels = building.levels.filter(l => l.townHall <= thLevel);
             return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
-        } else {
+        } else if ('levels' in item) { // Army items
             const armyUnit = item as ArmyItem;
-            if (Array.isArray(armyUnit.levels) && typeof armyUnit.levels[0] === 'number') {
+            // Handle heroes with simple level array
+            if (Array.isArray(armyUnit.levels) && armyUnit.levels.length > 0 && typeof armyUnit.levels[0] === 'number') {
                 let maxLevel = 0;
                 for (let i = 0; i < armyUnit.levels.length; i++) {
-                    if ((armyUnit.levels as number[])[i] <= thLevel) maxLevel = i + 1;
-                    else break;
+                    if ((armyUnit.levels as number[])[i] <= thLevel) {
+                        maxLevel = i + 1;
+                    } else {
+                        break;
+                    }
                 }
                 return maxLevel;
-            } else if (Array.isArray(armyUnit.levels)) {
+            // Handle troops/spells with complex level objects
+            } else if (Array.isArray(armyUnit.levels) && armyUnit.levels.length > 0) {
                  const availableLevels = (armyUnit.levels as BuildingLevel[]).filter(l => l.townHall <= thLevel);
                  return availableLevels.length > 0 ? Math.max(...availableLevels.map(l => l.level)) : 0;
             }

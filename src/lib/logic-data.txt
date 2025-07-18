@@ -1,0 +1,124 @@
+// ====== TYPES ======
+
+export type PlayerState = {
+  townHallLevel: number;
+  heroHallLevel: number;
+  blacksmithLevel: number;
+  spellFactoryLevel: number;
+  darkSpellFactoryLevel: number;
+  barracksLevel: number;
+  darkBarracksLevel: number;
+  armyCampLevel: number;
+};
+
+export type EntityLevel = {
+  level: number;
+  requiredHall: number;
+};
+
+export type Entity = {
+  name: string;
+  unlockBuilding: string;
+  unlockBuildingLevel: number;
+  unlockHallLevel: number;
+  levels: EntityLevel[];
+};
+
+// ====== CORE FILTER LOGIC ======
+
+export function isUnlocked(
+  player: PlayerState,
+  entity: Entity,
+  buildingLevels: Record<string, number>,
+): boolean {
+  const { unlockBuilding, unlockBuildingLevel, unlockHallLevel } = entity;
+  const playerBuildingLevel = buildingLevels[unlockBuilding] || 0;
+
+  return (
+    player.townHallLevel >= unlockHallLevel &&
+    playerBuildingLevel >= unlockBuildingLevel
+  );
+}
+
+export function getMaxLevel(
+  playerLevel: number,
+  entity: Entity,
+): number {
+  return (
+    entity.levels
+      .filter(levelData => levelData.requiredHall <= playerLevel)
+      .map(levelData => levelData.level)
+      .sort((a, b) => b - a)[0] || 0
+  );
+}
+
+// ====== DYNAMIC UNLOCKS BY CATEGORY ======
+
+export function getUnlockedEntities(
+  player: PlayerState,
+  entities: Entity[],
+  buildingLevels: Record<string, number>,
+  hallKey: keyof PlayerState
+) {
+  return entities
+    .filter(entity => isUnlocked(player, entity, buildingLevels))
+    .map(entity => ({
+      name: entity.name,
+      maxLevel: getMaxLevel(player[hallKey], entity)
+    }));
+}
+
+// ====== MAIN FUNCTION TO HANDLE ENTIRE PROGRESSION ======
+
+export function getPlayerProgress(
+  player: PlayerState,
+  data: {
+    buildings: Entity[];
+    troops: Entity[];
+    spells: Entity[];
+    heroes: Entity[];
+    pets: Entity[];
+    equipments: Entity[];
+    defenses: Entity[];
+  },
+) {
+  const buildingLevels: Record<string, number> = {
+    "Barracks": player.barracksLevel,
+    "Dark Barracks": player.darkBarracksLevel,
+    "Spell Factory": player.spellFactoryLevel,
+    "Dark Spell Factory": player.darkSpellFactoryLevel,
+    "Blacksmith": player.blacksmithLevel,
+    "Hero Hall": player.heroHallLevel,
+  };
+
+  return {
+    buildings: getUnlockedEntities(player, data.buildings, buildingLevels, "townHallLevel"),
+    troops: getUnlockedEntities(player, data.troops, buildingLevels, "townHallLevel"),
+    spells: getUnlockedEntities(player, data.spells, buildingLevels, "spellFactoryLevel"),
+    heroes: getUnlockedEntities(player, data.heroes, buildingLevels, "heroHallLevel"),
+    pets: getUnlockedEntities(player, data.pets, buildingLevels, "heroHallLevel"),
+    equipments: getUnlockedEntities(player, data.equipments, buildingLevels, "blacksmithLevel"),
+    defenses: getUnlockedEntities(player, data.defenses, buildingLevels, "townHallLevel"),
+  };
+}
+
+// ====== FRONTEND INPUT MAPPING FLOW ======
+
+/*
+Frontend Form Structure:
+
+1. Town Hall Level [Select or Input Number]
+2. Hero Hall Level [Select or Input Number]
+3. Blacksmith Level [Select or Input Number]
+4. Spell Factory Level [Select or Input Number]
+5. Dark Spell Factory Level [Select or Input Number]
+6. Barracks Level [Select or Input Number]
+7. Dark Barracks Level [Select or Input Number]
+8. Army Camp Level [Select or Input Number]
+
+➡️ On each input change, update PlayerState
+➡️ Call getPlayerProgress(playerState, allEntities)
+➡️ Display unlocked items and max levels dynamically
+*/
+
+    

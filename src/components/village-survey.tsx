@@ -133,11 +133,13 @@ export function VillageSurvey() {
         if (item.name === "Town Hall") return true;
         if ('build' in item) return item.build.townHall <= thLevel;
         if ('unlock' in item) {
-            if (item.unlock.hall) return item.unlock.hall <= thLevel;
+            if (item.unlock.hall && item.unlock.hall > thLevel) return false;
+            
             if (item.unlock.buildingLevel) {
                  const requiredBuildingLevel = item.unlock.resource === 'Dark Elixir' ? darkBarracksLevel : barracksLevel;
                  return item.unlock.buildingLevel <= requiredBuildingLevel;
             }
+            return true;
         }
         return false;
     }, [barracksLevel, darkBarracksLevel]);

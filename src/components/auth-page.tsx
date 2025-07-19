@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,6 +25,7 @@ type FormValues = z.infer<typeof formSchema>;
 export const AuthPage = () => {
   const { signUp, signIn, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
   const [formLoading, setFormLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('sign-in');
 
@@ -40,7 +42,7 @@ export const AuthPage = () => {
     try {
       await signIn(data.email, data.password);
       toast({ title: 'Sign In Successful', description: 'Welcome back!' });
-      // The root page will handle redirection
+      router.push('/dashboard');
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -56,8 +58,8 @@ export const AuthPage = () => {
     setFormLoading(true);
     try {
       await signUp(data.email, data.password);
-      toast({ title: 'Sign Up Successful', description: 'Welcome! You can now sign in.' });
-      setActiveTab('sign-in');
+      toast({ title: 'Sign Up Successful', description: 'Welcome! Please link your village.' });
+      router.push('/dashboard');
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
         toast({
@@ -79,10 +81,6 @@ export const AuthPage = () => {
   };
   
   const isLoading = formLoading || authLoading;
-
-  if (!authLoading && user) {
-    // Redirection is handled by the root page. This component doesn't need to do anything.
-  }
 
   return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

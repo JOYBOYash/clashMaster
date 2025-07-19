@@ -23,29 +23,20 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (authLoading) return;
+      if (!user) {
+        // If user is not logged in, redirect them to the sign-in page
+        router.replace('/sign-in');
+        return;
+      }
+      
       setLoading(true);
       
       let data = null;
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
 
-      if (user) {
-        // Logged-in user: Fetch exclusively from Firestore
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists() && userDocSnap.data().playerData) {
-          data = userDocSnap.data().playerData;
-          // Clear session storage to avoid conflicts
-          if (typeof window !== 'undefined') {
-            sessionStorage.removeItem('playerData');
-          }
-        }
-      } else {
-        // Not logged-in: Fallback to sessionStorage
-        if (typeof window !== 'undefined') {
-          const savedData = sessionStorage.getItem('playerData');
-          if (savedData) {
-            data = JSON.parse(savedData);
-          }
-        }
+      if (userDocSnap.exists() && userDocSnap.data().playerData) {
+        data = userDocSnap.data().playerData;
       }
       
       setPlayerData(data);
@@ -53,7 +44,7 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, [user, authLoading]);
+  }, [user, authLoading, router]);
 
   if (loading || authLoading) {
     return <LoadingSpinner />;
@@ -62,10 +53,10 @@ export default function DashboardPage() {
   if (!playerData) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
-        <p className="text-lg text-muted-foreground mb-4">No player data found. Please search for a player first.</p>
+        <p className="text-lg text-muted-foreground mb-4">No player data found. Please link your village first.</p>
         <Button onClick={() => router.push('/survey')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Search
+          Link Your Village
         </Button>
       </div>
     );

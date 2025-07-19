@@ -18,21 +18,6 @@ const clashClient = new Client();
 
 const PlayerDataSchema = z.any(); // Using z.any() for now, can be refined later.
 
-// A self-invoking async function to log in at startup.
-(async () => {
-    if (!email || !password) {
-        console.warn('Clash of Clans email or password not set in .env file. API calls may fail.');
-        return;
-    }
-    try {
-        await clashClient.login({ email, password, keyName: 'probuilder-dev' });
-        console.log('Successfully logged into Clash of Clans API on startup.');
-    } catch (error) {
-        console.error('Failed to login to Clash of Clans API on startup. Will retry on first request.', error);
-    }
-})();
-
-
 const getPlayerFlow = ai.defineFlow(
     {
         name: 'getPlayerFlow',
@@ -45,13 +30,7 @@ const getPlayerFlow = ai.defineFlow(
         }
 
         try {
-            // Ensure the client is logged in before making a request.
-            if (!clashClient.isLoggedIn) {
-                console.log('Client not logged in, attempting to login...');
-                await clashClient.login({ email, password, keyName: 'probuilder-dev' });
-                console.log('Successfully logged into Clash of Clans API.');
-            }
-            
+            await clashClient.login({ email, password, keyName: 'probuilder-dev' });
             const player = await clashClient.players.get(playerTag);
             return player;
         } catch (error: any) {
@@ -62,16 +41,7 @@ const getPlayerFlow = ai.defineFlow(
             if (error.status === 404) {
                  throw new Error(`Player with tag ${playerTag} not found.`);
             }
-            // Add a final attempt to log in if other errors occur, as the session might have expired.
-             try {
-                console.log('Final attempt to login and fetch data...');
-                await clashClient.login({ email, password, keyName: 'probuilder-dev' });
-                const player = await clashClient.players.get(playerTag);
-                return player;
-            } catch (loginError: any) {
-                 console.error('Failed to login and fetch player data on retry:', loginError);
-                 throw new Error('Failed to login and fetch player data. Please check your credentials and network.');
-            }
+            throw new Error('Failed to login and fetch player data. Please check your credentials and network.');
         }
     }
 );

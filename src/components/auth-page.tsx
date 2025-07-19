@@ -2,6 +2,10 @@
 "use client";
 
 import { useState } from 'react';
+<<<<<<< HEAD
+=======
+import { useRouter } from 'next/navigation';
+>>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,6 +28,10 @@ type FormValues = z.infer<typeof formSchema>;
 export const AuthPage = () => {
   const { signUp, signIn, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+<<<<<<< HEAD
+=======
+  const router = useRouter();
+>>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
   const [formLoading, setFormLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('sign-in');
 

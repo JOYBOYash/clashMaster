@@ -37,7 +37,6 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
     "class-variance-authority": "^0.7.1",
-    "clash-of-clans-api": "^0.5.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-autoplay": "^8.6.0",
@@ -47,6 +46,7 @@
     "gsap": "^3.12.5",
     "lucide-react": "^0.475.0",
     "next": "15.3.3",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
@@ -59,6 +59,7 @@
   "devDependencies": {
     "@opentelemetry/exporter-jaeger": "^1.27.0",
     "@types/node": "^20",
+    "@types/node-fetch": "^2.6.11",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "genkit-cli": "^1.13.0",

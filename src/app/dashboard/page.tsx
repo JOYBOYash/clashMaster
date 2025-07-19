@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// This page has been removed.
-export default function DashboardPage() {
-  return null;
-=======
 
 'use client';
 
@@ -75,5 +70,5 @@ export default function DashboardPage() {
       <TroopAndHeroGrids playerData={playerData} />
     </div>
   );
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
+
 }

@@ -101,8 +101,8 @@ export default {
           },
         },
         'spin-slow': {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
         },
         'shine': {
           '0%': { transform: 'translateX(-100%) skewX(-12deg)' },

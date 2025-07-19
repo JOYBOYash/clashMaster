@@ -54,8 +54,8 @@ const getPlayerFlow = ai.defineFlow(
             return player;
         } catch (error: any) {
             console.error("Full error details:", error);
-            // Re-throw the error to be caught by the client-side component
-            throw error;
+            // Re-throw a new, clean error to be caught by the client-side component
+            throw new Error(error.message || 'An unexpected error occurred while fetching player data.');
         }
     }
 );

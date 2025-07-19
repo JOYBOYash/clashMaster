@@ -1,17 +1,10 @@
 
-"use client";
+'use client';
 
-import { useAuth } from '@/context/auth-context';
 import { LandingPage } from '@/components/landing-page';
-import { LoadingSpinner } from '@/components/loading-spinner';
 
 export default function RootPage() {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  // Always show the landing page, regardless of login state.
+  // The landing page is now accessible to both logged-in and guest users.
+  // The header will provide navigation for logged-in users.
   return <LandingPage />;
 }

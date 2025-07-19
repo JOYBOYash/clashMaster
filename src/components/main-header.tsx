@@ -20,25 +20,23 @@ import { appLogoPath } from "@/lib/image-paths";
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
-  const homeHref = '/';
+  const homeHref = user ? '/' : '/'; // Always go to landing page
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <Link href={homeHref} className="mr-8 flex items-center space-x-2">
+        <Link href={homeHref} className="mr-8 flex items-center">
           <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
-          <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
-            ProBuilder
-          </h1>
+          <span className="sr-only">ProBuilder Home</span>
         </Link>
         
-        <MainNav />
+        {user && <MainNav />}
         
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="icon" className="rounded-full">
+                <Button variant="outline" size="icon" className="rounded-full">
                   <CircleUser className="h-5 w-5" />
                   <span className="sr-only">Toggle user menu</span>
                 </Button>

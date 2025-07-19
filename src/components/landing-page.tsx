@@ -10,10 +10,7 @@ import { FeatureCard } from './feature-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-<<<<<<< HEAD
-=======
 import { MainHeader } from './main-header';
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
 
 const features = [
   {
@@ -56,11 +53,7 @@ const features = [
 
 export function LandingPage() {
   const [fanAvatar, setFanAvatar] = useState(heroAvatarAssets[0]);
-<<<<<<< HEAD
-  const { user } = useAuth();
-=======
   const { user, loading: authLoading } = useAuth();
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
   
   useScrollAnimation();
 
@@ -70,11 +63,8 @@ export function LandingPage() {
 
   return (
     <div className='w-full'>
-<<<<<<< HEAD
-=======
       {/* Show the header on the landing page if the user is not logged in */}
       {!user && !authLoading && <MainHeader />}
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
        <div className='relative w-full'>
 
           {/* Hero Section */}
@@ -186,21 +176,11 @@ export function LandingPage() {
                           unoptimized
                       />
                     </div>
-<<<<<<< HEAD
-                    {!user && (
-=======
                     {!user && !authLoading && (
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Button asChild size="lg" className="text-lg font-bold shadow-lg">
                                 <Link href="/sign-in">Get Started for Free</Link>
                             </Button>
-<<<<<<< HEAD
-                             <Button asChild size="lg" variant="outline" className="text-lg font-bold shadow-lg">
-                                <Link href="/sign-in">Take Survey</Link>
-                            </Button>
-=======
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
                         </div>
                     )}
                     <div className="mt-10 flex items-center justify-center gap-4 text-muted-foreground font-body">
@@ -301,5 +281,3 @@ export function LandingPage() {
     </div>
   );
 }
-
-    

@@ -1,6 +1,5 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import fetch from 'node-fetch';
 
 const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   const { path } = req.query;

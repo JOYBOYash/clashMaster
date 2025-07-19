@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -21,8 +22,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function SurveyPage() {
   const [loading, setLoading] = useState(false);
-  const [playerData, setPlayerData] = useState<any | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -30,13 +31,17 @@ export default function SurveyPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
-    setPlayerData(null);
     try {
       const result = await getPlayer(data.playerTag);
-      setPlayerData(result);
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('playerData', JSON.stringify(result));
+      }
       toast({ title: 'Player Found!', description: `Successfully fetched data for ${result.name}.` });
+      router.push('/dashboard');
     } catch (error: any) {
-      setPlayerData(null);
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('playerData');
+      }
       toast({
         variant: 'destructive',
         title: 'Error Fetching Player',
@@ -72,20 +77,6 @@ export default function SurveyPage() {
           </form>
         </CardContent>
       </Card>
-
-      {playerData && (
-        <Card className="w-full max-w-md mt-8">
-            <CardHeader>
-                <CardTitle>{playerData.name}</CardTitle>
-                <CardDescription>Town Hall {playerData.townHallLevel} &bull; Level {playerData.expLevel}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <pre className="p-4 bg-muted rounded-md overflow-x-auto text-xs">
-                    {JSON.stringify(playerData, null, 2)}
-                </pre>
-            </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

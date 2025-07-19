@@ -12,14 +12,10 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
 
-  // All navigation links removed as per the new simplified structure.
   const routes = [
-     { href: '/survey', label: 'Take Survey' },
+     { href: '/dashboard', label: 'Dashboard' },
+     { href: '/survey', label: 'Find Player' },
   ];
-
-  if (routes.length === 0) {
-    return null; // Return null to render nothing
-  }
 
   return (
     <nav
@@ -27,7 +23,7 @@ export function MainNav({
       {...props}
     >
       {routes.map((route) => {
-        if (route.label === 'Take Survey') {
+        if (route.label === 'Find Player') {
           return (
             <Button key={route.href} asChild variant="outline" size="sm">
               <Link href={route.href}>

@@ -6,15 +6,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
-  onAuthStateChanged,
   type User
 } from 'firebase/auth';
-<<<<<<< HEAD
-import { auth } from '@/lib/firebase';
-=======
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
 
 interface AuthContextType {
   user: User | null;
@@ -30,20 +25,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
-=======
   const [hasPlayerData, setHasPlayerData] = useState<boolean | null>(null);
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       if (user) {
         setUser(user);
-<<<<<<< HEAD
-      } else {
-        setUser(null);
-=======
         // Check for player data when user is authenticated
         const userDocRef = doc(db, 'users', user.uid);
         const userDocSnap = await getDoc(userDocRef);
@@ -51,7 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         setHasPlayerData(null);
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
       }
       setLoading(false);
     });
@@ -69,14 +56,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-<<<<<<< HEAD
-    window.location.href = '/';
-=======
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('playerData');
       window.location.href = '/';
     }
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
   };
 
   const value = {
@@ -85,10 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signUp,
     signIn,
     signOut,
-<<<<<<< HEAD
-=======
     hasPlayerData
->>>>>>> fd5258aa9186144357a3d0ca6b8f875a4375fbb4
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

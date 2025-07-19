@@ -14,7 +14,8 @@ export function MainNav({
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
-     { href: '/survey', label: 'Find Player' },
+     // The survey is now part of the initial user flow, not a main navigation item.
+     // { href: '/survey', label: 'Find Player' },
   ];
 
   return (
@@ -22,29 +23,18 @@ export function MainNav({
       className={cn("hidden items-center space-x-4 md:flex lg:space-x-6", className)}
       {...props}
     >
-      {routes.map((route) => {
-        if (route.label === 'Find Player') {
-          return (
-            <Button key={route.href} asChild variant="outline" size="sm">
-              <Link href={route.href}>
-                {route.label}
-              </Link>
-            </Button>
-          )
-        }
-        return (
-          <Link
-            key={route.href}
-            href={route.href}
-            className={cn(
-              "text-sm font-medium transition-colors hover:text-primary",
-              pathname.startsWith(route.href) ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            {route.label}
-          </Link>
-        )
-      })}
+      {routes.map((route) => (
+        <Link
+          key={route.href}
+          href={route.href}
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            pathname.startsWith(route.href) ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          {route.label}
+        </Link>
+      ))}
     </nav>
   );
 }

@@ -34,42 +34,31 @@ export default function SurveyPage() {
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Not Logged In',
+        description: 'You must be logged in to link a player account.',
+      });
+      return;
+    }
+    
     setLoading(true);
     try {
       const result = await getPlayer(data.playerTag);
       
-      // Save to session storage for immediate use
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('playerData', JSON.stringify(result));
-      }
+      // Save to Firestore for the logged-in user
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(userDocRef, { 
+        playerTag: data.playerTag,
+        playerData: result 
+      }, { merge: true });
       
-      // If user is logged in, save to Firestore
-      if (user) {
-        try {
-          const userDocRef = doc(db, 'users', user.uid);
-          await setDoc(userDocRef, { 
-            playerTag: data.playerTag,
-            playerData: result 
-          }, { merge: true });
-          toast({ title: 'Player Found & Saved!', description: `Successfully synced data for ${result.name} to your profile.` });
-        } catch (dbError) {
-          console.error("Firestore write error:", dbError);
-          toast({
-            variant: 'destructive',
-            title: 'Could Not Save Data',
-            description: 'Player data was found but could not be saved to your profile.',
-          });
-        }
-      } else {
-        toast({ title: 'Player Found!', description: `Successfully fetched data for ${result.name}.` });
-      }
+      toast({ title: 'Village Linked!', description: `Successfully synced data for ${result.name} to your profile.` });
 
       router.push('/dashboard');
 
     } catch (error: any) {
-      if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('playerData');
-      }
       toast({
         variant: 'destructive',
         title: 'Error Fetching Player',
@@ -84,8 +73,8 @@ export default function SurveyPage() {
     <div className="flex flex-col items-center justify-start py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Find Your Village</CardTitle>
-          <CardDescription>Enter your Clash of Clans player tag to sync your progress. Make sure your current IP address is whitelisted in your developer account.</CardDescription>
+          <CardTitle>Link Your Village</CardTitle>
+          <CardDescription>Enter your Clash of Clans player tag to sync your progress with your ProBuilder account. Make sure your current IP address is whitelisted in your developer account.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -100,7 +89,7 @@ export default function SurveyPage() {
               ) : (
                 <Search className="mr-2 h-4 w-4" />
               )}
-              Find Player
+              Link Account
             </Button>
           </form>
         </CardContent>

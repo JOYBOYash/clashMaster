@@ -97,7 +97,7 @@ export function LandingPage() {
                     </p>
                     <div className="relative w-[300px] h-[350px] md:w-[400px] md:h-[500px] my-4 flex items-center justify-center">
                       <div 
-                        className="absolute inset-0 w-full h-full bg-no-repeat bg-center animate-spin-slow"
+                        className="absolute inset-0 w-full h-full bg-no-repeat bg-center animate-spin-rays"
                         style={{
                           backgroundImage: `
                             conic-gradient(from 90deg at 50% 50%,
@@ -135,7 +135,7 @@ export function LandingPage() {
                         }}
                       >
                       </div>
-                      <div className="absolute inset-0 w-full h-full animate-spin-slow [animation-direction:reverse] bg-no-repeat bg-center"
+                      <div className="absolute inset-0 w-full h-full animate-spin-rays [animation-direction:reverse] bg-no-repeat bg-center"
                           style={{
                              backgroundImage: `
                               conic-gradient(from 270deg at 50% 50%,

@@ -10,9 +10,11 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { Client } from 'clashofclans.js';
 
+const apiToken = process.env.CLASH_OF_CLANS_API_TOKEN;
+
 // Initialize the client with your API token.
 const clashClient = new Client({
-    token: process.env.CLASH_OF_CLANS_API_TOKEN!,
+    token: apiToken,
 });
 
 const PlayerDataSchema = z.any(); // Using z.any() for now, can be refined later.
@@ -24,6 +26,10 @@ const getPlayerFlow = ai.defineFlow(
         outputSchema: PlayerDataSchema,
     },
     async (playerTag) => {
+        if (!apiToken) {
+            throw new Error('The CLASH_OF_CLANS_API_TOKEN is not configured in your .env file.');
+        }
+        
         try {
             // In v2.8.0, getPlayer is an async method on the client instance.
             const player = await clashClient.players.get(playerTag);
@@ -34,7 +40,7 @@ const getPlayerFlow = ai.defineFlow(
             if (error.status === 404) {
                  throw new Error(`Player with tag ${playerTag} not found.`);
             }
-            throw new Error('Failed to fetch player data from the API.');
+            throw new Error('Failed to fetch player data from the API. This could be due to an invalid API token or a network issue.');
         }
     }
 );

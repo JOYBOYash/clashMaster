@@ -39,8 +39,8 @@ export const AuthPage = () => {
     setFormLoading(true);
     try {
       await signIn(data.email, data.password);
-      toast({ title: 'Sign In Successful', description: 'Welcome back!' });
-      window.location.href = '/'; // Redirect to landing page on successful sign-in
+      toast({ title: 'Sign In Successful', description: 'Welcome back! Please link your account.' });
+      window.location.href = '/survey'; // Redirect to survey page on successful sign-in
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -56,8 +56,8 @@ export const AuthPage = () => {
     setFormLoading(true);
     try {
       await signUp(data.email, data.password);
-      toast({ title: 'Sign Up Successful', description: 'Welcome! You can now sign in.' });
-      setActiveTab('sign-in');
+      toast({ title: 'Sign Up Successful', description: 'Welcome! Please link your account.' });
+      window.location.href = '/survey'; // Redirect to survey page on successful sign-up
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
         toast({
@@ -81,7 +81,7 @@ export const AuthPage = () => {
   const isLoading = formLoading || authLoading;
 
   if (!authLoading && user) {
-    window.location.href = '/';
+    window.location.href = '/survey';
   }
 
   return (

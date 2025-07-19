@@ -1,0 +1,13 @@
+diff --git a/node_modules/clashofclans.js/package.json b/node_modules/clashofclans.js/package.json
+index 62c6488..2412853 100644
+--- a/node_modules/clashofclans.js/package.json
++++ b/node_modules/clashofclans.js/package.json
+@@ -62,7 +62,7 @@
+       "import": "./dist/index.mjs",
+       "require": "./dist/index.js"
+     },
+-    "./api/": "./dist/types/api.d.ts",
++    "./api/": "./dist/types/api/",
+     "./events/": "./dist/types/events.d.ts",
+     "./node_modules/clashofclans.js/dist/types/events": "./dist/types/events.d.ts",
+     "./node_modules/clashofclans.js/dist/types/rest": "./dist/types/rest.d.ts",

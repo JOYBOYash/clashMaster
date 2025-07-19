@@ -44,15 +44,8 @@ const getPlayerFlow = ai.defineFlow(
             throw new Error('The CLASH_OF_CLANS_EMAIL and/or CLASH_OF_CLANS_PASSWORD are not configured in your .env file.');
         }
 
-        // Check if the client is ready
-        if (!clashClient.isReady()) {
-            try {
-                // Attempt to re-login if not ready
-                 await clashClient.login({ email, password, keyName: 'probuilder-dev' });
-            } catch (e) {
-                 throw new Error('Could not log in to the Clash of Clans API. Please check your credentials in the .env file.');
-            }
-        }
+        // The client will automatically handle re-login if needed.
+        // No need to check clashClient.isReady()
         
         try {
             const player = await clashClient.players.get(playerTag);
@@ -61,6 +54,9 @@ const getPlayerFlow = ai.defineFlow(
             console.error("Error fetching player data:", error);
             if (error.status === 404) {
                  throw new Error(`Player with tag ${playerTag} not found.`);
+            }
+            if (error.status === 403) {
+                throw new Error('Could not log in to the Clash of Clans API. Please check your credentials in the .env file and ensure your developer account IP is whitelisted.');
             }
             throw new Error('Failed to fetch player data from the API. This could be due to an invalid API token or a network issue.');
         }

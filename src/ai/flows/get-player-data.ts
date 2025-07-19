@@ -18,18 +18,17 @@ const clashClient = new Client();
 
 const PlayerDataSchema = z.any(); // Using z.any() for now, can be refined later.
 
-// A self-invoking async function to log in and handle top-level errors.
-// This was removed as it was likely causing the issue. The client will login on demand.
+// A self-invoking async function to log in at startup.
 (async () => {
     if (!email || !password) {
-        console.warn('Clash of Clans email or password not set in .env file. API calls will fail.');
+        console.warn('Clash of Clans email or password not set in .env file. API calls may fail.');
         return;
     }
     try {
         await clashClient.login({ email, password, keyName: 'probuilder-dev' });
         console.log('Successfully logged into Clash of Clans API on startup.');
     } catch (error) {
-        console.error('Failed to login to Clash of Clans API on startup:', error);
+        console.error('Failed to login to Clash of Clans API on startup. Will retry on first request.', error);
     }
 })();
 
@@ -46,30 +45,33 @@ const getPlayerFlow = ai.defineFlow(
         }
 
         try {
-            // The client will automatically handle login if needed.
+            // Ensure the client is logged in before making a request.
+            if (!clashClient.isLoggedIn) {
+                console.log('Client not logged in, attempting to login...');
+                await clashClient.login({ email, password, keyName: 'probuilder-dev' });
+                console.log('Successfully logged into Clash of Clans API.');
+            }
+            
             const player = await clashClient.players.get(playerTag);
             return player;
         } catch (error: any) {
             console.error("Error fetching player data:", error);
-            if (error.status === 404) {
-                 throw new Error(`Player with tag ${playerTag} not found.`);
-            }
             if (error.status === 403) {
                 throw new Error('Could not log in to the Clash of Clans API. Please check your credentials in the .env file and ensure your developer account IP is whitelisted.');
             }
-            // Add a check to see if the client is not logged in and attempt to log in.
-            if (!clashClient.isLoggedIn) {
-                 try {
-                    await clashClient.login({ email, password, keyName: 'probuilder-dev' });
-                    console.log('Successfully logged into Clash of Clans API.');
-                    const player = await clashClient.players.get(playerTag);
-                    return player;
-                } catch (loginError: any) {
-                     console.error('Failed to login to Clash of Clans API:', loginError);
-                     throw new Error('Failed to login and fetch player data. Please check your credentials.');
-                }
+            if (error.status === 404) {
+                 throw new Error(`Player with tag ${playerTag} not found.`);
             }
-            throw new Error('Failed to fetch player data from the API. This could be due to an invalid API token or a network issue.');
+            // Add a final attempt to log in if other errors occur, as the session might have expired.
+             try {
+                console.log('Final attempt to login and fetch data...');
+                await clashClient.login({ email, password, keyName: 'probuilder-dev' });
+                const player = await clashClient.players.get(playerTag);
+                return player;
+            } catch (loginError: any) {
+                 console.error('Failed to login and fetch player data on retry:', loginError);
+                 throw new Error('Failed to login and fetch player data. Please check your credentials and network.');
+            }
         }
     }
 );

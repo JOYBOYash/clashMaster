@@ -13,6 +13,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search } from 'lucide-react';
 import { getPlayer } from '@/lib/coc-api';
+import { useAuth } from '@/context/auth-context';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const formSchema = z.object({
   playerTag: z.string().min(4, { message: 'Player tag is required.' }).refine(val => val.startsWith('#'), { message: 'Player tag must start with #' }),
@@ -24,6 +27,7 @@ export default function SurveyPage() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -33,11 +37,35 @@ export default function SurveyPage() {
     setLoading(true);
     try {
       const result = await getPlayer(data.playerTag);
+      
+      // Save to session storage for immediate use
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('playerData', JSON.stringify(result));
       }
-      toast({ title: 'Player Found!', description: `Successfully fetched data for ${result.name}.` });
+      
+      // If user is logged in, save to Firestore
+      if (user) {
+        try {
+          const userDocRef = doc(db, 'users', user.uid);
+          await setDoc(userDocRef, { 
+            playerTag: data.playerTag,
+            playerData: result 
+          }, { merge: true });
+          toast({ title: 'Player Found & Saved!', description: `Successfully synced data for ${result.name} to your profile.` });
+        } catch (dbError) {
+          console.error("Firestore write error:", dbError);
+          toast({
+            variant: 'destructive',
+            title: 'Could Not Save Data',
+            description: 'Player data was found but could not be saved to your profile.',
+          });
+        }
+      } else {
+        toast({ title: 'Player Found!', description: `Successfully fetched data for ${result.name}.` });
+      }
+
       router.push('/dashboard');
+
     } catch (error: any) {
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('playerData');

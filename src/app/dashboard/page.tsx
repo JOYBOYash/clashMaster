@@ -10,23 +10,48 @@ import { TroopAndHeroGrids } from '@/components/dashboard/troop-hero-grids';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/context/auth-context';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function DashboardPage() {
   const [playerData, setPlayerData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedData = sessionStorage.getItem('playerData');
-      if (savedData) {
-        setPlayerData(JSON.parse(savedData));
-      }
-      setLoading(false);
-    }
-  }, []);
+    const fetchData = async () => {
+      // Don't do anything until Firebase auth is resolved
+      if (authLoading) return;
 
-  if (loading) {
+      let data = null;
+
+      // 1. If user is logged in, try fetching from Firestore
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists() && userDocSnap.data().playerData) {
+          data = userDocSnap.data().playerData;
+        }
+      }
+
+      // 2. If no data from Firestore, fall back to sessionStorage
+      if (!data && typeof window !== 'undefined') {
+        const savedData = sessionStorage.getItem('playerData');
+        if (savedData) {
+          data = JSON.parse(savedData);
+        }
+      }
+
+      setPlayerData(data);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [user, authLoading]);
+
+  if (loading || authLoading) {
     return <LoadingSpinner />;
   }
 
@@ -36,7 +61,7 @@ export default function DashboardPage() {
         <p className="text-lg text-muted-foreground mb-4">No player data found. Please search for a player first.</p>
         <Button onClick={() => router.push('/survey')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Survey
+          Back to Search
         </Button>
       </div>
     );

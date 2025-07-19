@@ -9,7 +9,8 @@ import { useAuth } from "@/context/auth-context";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const isSignInPage = usePathname() === '/sign-in';
+  const pathname = usePathname();
+  const isSignInPage = pathname === '/sign-in';
 
   // Show the header for any logged-in user, unless they are on the sign-in page.
   const showHeader = user && !isSignInPage;
@@ -25,7 +26,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
           "w-full h-full",
           // The landing page and sign-in page are full-width.
           // The dashboard gets a container.
-          !isSignInPage && user && usePathname() === '/dashboard' && "container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+          !isSignInPage && user && pathname === '/dashboard' && "container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         )}>
             {children}
         </div>

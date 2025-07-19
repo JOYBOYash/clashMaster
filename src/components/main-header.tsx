@@ -20,7 +20,7 @@ import { appLogoPath } from "@/lib/image-paths";
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
-  const homeHref = '/';
+  const homeHref = user ? '/' : '/'; // Always go to landing page
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -32,7 +32,7 @@ export function MainHeader() {
           </h1>
         </Link>
         
-        <MainNav />
+        {user && <MainNav />}
         
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user ? (

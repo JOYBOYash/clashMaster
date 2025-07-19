@@ -10,6 +10,7 @@ import { FeatureCard } from './feature-card';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import { MainHeader } from './main-header';
 
 const features = [
   {
@@ -52,7 +53,7 @@ const features = [
 
 export function LandingPage() {
   const [fanAvatar, setFanAvatar] = useState(heroAvatarAssets[0]);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   
   useScrollAnimation();
 
@@ -62,6 +63,8 @@ export function LandingPage() {
 
   return (
     <div className='w-full'>
+      {/* Show the header on the landing page if the user is not logged in */}
+      {!user && !authLoading && <MainHeader />}
        <div className='relative w-full'>
 
           {/* Hero Section */}
@@ -173,13 +176,10 @@ export function LandingPage() {
                           unoptimized
                       />
                     </div>
-                    {!user && (
+                    {!user && !authLoading && (
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Button asChild size="lg" className="text-lg font-bold shadow-lg">
                                 <Link href="/sign-in">Get Started for Free</Link>
-                            </Button>
-                             <Button asChild size="lg" variant="outline" className="text-lg font-bold shadow-lg">
-                                <Link href="/sign-in">Take Survey</Link>
                             </Button>
                         </div>
                     )}
@@ -281,5 +281,3 @@ export function LandingPage() {
     </div>
   );
 }
-
-    

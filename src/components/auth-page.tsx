@@ -40,7 +40,7 @@ export const AuthPage = () => {
     try {
       await signIn(data.email, data.password);
       toast({ title: 'Sign In Successful', description: 'Welcome back!' });
-      window.location.href = '/'; // Redirect to landing page on successful sign-in
+      // The root page will handle redirection
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -81,7 +81,7 @@ export const AuthPage = () => {
   const isLoading = formLoading || authLoading;
 
   if (!authLoading && user) {
-    window.location.href = '/';
+    // Redirection is handled by the root page. This component doesn't need to do anything.
   }
 
   return (

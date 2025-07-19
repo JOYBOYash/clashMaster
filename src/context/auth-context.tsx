@@ -9,7 +9,8 @@ import {
   onAuthStateChanged,
   type User
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +18,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
   signOut: () => Promise<void>;
+  hasPlayerData: boolean | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,14 +26,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasPlayerData, setHasPlayerData] = useState<boolean | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       if (user) {
         setUser(user);
+        // Check for player data when user is authenticated
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        setHasPlayerData(userDocSnap.exists() && !!userDocSnap.data().playerData);
       } else {
         setUser(null);
+        setHasPlayerData(null);
       }
       setLoading(false);
     });
@@ -51,8 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await firebaseSignOut(auth);
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('playerData');
+      window.location.href = '/';
     }
-    window.location.href = '/';
   };
 
   const value = {
@@ -61,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signUp,
     signIn,
     signOut,
+    hasPlayerData
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

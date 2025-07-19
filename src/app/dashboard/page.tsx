@@ -22,28 +22,32 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Don't do anything until Firebase auth is resolved
       if (authLoading) return;
-
+      setLoading(true);
+      
       let data = null;
 
-      // 1. If user is logged in, try fetching from Firestore
       if (user) {
+        // Logged-in user: Fetch exclusively from Firestore
         const userDocRef = doc(db, 'users', user.uid);
         const userDocSnap = await getDoc(userDocRef);
         if (userDocSnap.exists() && userDocSnap.data().playerData) {
           data = userDocSnap.data().playerData;
+          // Clear session storage to avoid conflicts
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('playerData');
+          }
+        }
+      } else {
+        // Not logged-in: Fallback to sessionStorage
+        if (typeof window !== 'undefined') {
+          const savedData = sessionStorage.getItem('playerData');
+          if (savedData) {
+            data = JSON.parse(savedData);
+          }
         }
       }
-
-      // 2. If no data from Firestore, fall back to sessionStorage
-      if (!data && typeof window !== 'undefined') {
-        const savedData = sessionStorage.getItem('playerData');
-        if (savedData) {
-          data = JSON.parse(savedData);
-        }
-      }
-
+      
       setPlayerData(data);
       setLoading(false);
     };

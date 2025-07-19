@@ -49,6 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('playerData');
+    }
     window.location.href = '/';
   };
 

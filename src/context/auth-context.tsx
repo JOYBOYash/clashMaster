@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
+  onAuthStateChanged,
   type User
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';

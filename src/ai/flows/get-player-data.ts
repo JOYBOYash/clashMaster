@@ -25,7 +25,7 @@ const clashClient = new Client();
     const password = process.env.CLASH_OF_CLANS_PASSWORD;
 
     if (!email || !password) {
-      console.warn('Clash of Clans email or password not set in .env. API calls will fail.');
+      console.warn('Clash of Clans email or password not set in .env. API calls may fail.');
       return;
     }
     
@@ -53,7 +53,8 @@ const getPlayerFlow = ai.defineFlow(
   async (playerTag) => {
     try {
       // Ensure we are logged in before making a request
-      if (!clashClient.isLoggedIn) {
+      if (!clashClient.isLoggedIn()) {
+         console.log('Not logged in, attempting to log in now...');
          await clashClient.login({ 
              email: process.env.CLASH_OF_CLANS_EMAIL!, 
              password: process.env.CLASH_OF_CLANS_PASSWORD! 

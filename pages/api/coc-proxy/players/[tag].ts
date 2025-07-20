@@ -14,9 +14,9 @@ const cocPlayerProxy = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ reason: 'Bad Request: Missing or invalid player tag.' });
   }
 
-  // The tag is already encoded by the client, but we ensure it's a valid string.
-  // The final URL needs the tag to be encoded to handle the '#' character.
-  const cocUrl = `https://api.clashofclans.com/v1/players/${tag}`;
+  // The tag from the query string is already decoded by Next.js.
+  // We need to re-encode it for the final API call.
+  const cocUrl = `https://api.clashofclans.com/v1/players/${encodeURIComponent(tag)}`;
   console.log(`[PROXY] Forwarding request to: ${cocUrl}`);
 
   try {

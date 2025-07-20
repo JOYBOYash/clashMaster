@@ -9,14 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer
+  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, Rock, FlaskConical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
+import { useRouter } from 'next/navigation';
 
 const SectionTitle = ({ icon: Icon, title }: { icon: React.ElementType, title: string }) => (
-  <div className="flex items-center gap-3 mb-4">
+  <div className="flex items-center gap-3 mb-6">
     <Icon className="w-8 h-8 text-primary" />
     <h2 className="text-3xl font-headline">{title}</h2>
   </div>
@@ -92,25 +93,26 @@ const HeroCard = ({ hero }: { hero: any }) => {
   );
 };
 
-const TroopCard = ({ item }: { item: any }) => {
+const TroopSpellCard = ({ item }: { item: any }) => {
   const isMaxed = item.level === item.maxLevel;
   const imagePath = getImagePath(item.name);
 
   return (
     <div className={cn(
-      "bg-card/50 p-3 rounded-xl flex flex-col items-center border text-center relative aspect-square justify-center transition-all hover:shadow-lg hover:-translate-y-1",
-      isMaxed && "border-amber-400/60 bg-amber-400/10 shadow-amber-400/10"
+      "relative bg-card/60 aspect-square rounded-xl border-2 border-transparent p-2 flex flex-col items-center justify-center transition-all duration-200 hover:shadow-lg hover:-translate-y-1 hover:border-primary/50",
+      isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-amber-400/10"
     )}>
-        {isMaxed && <Badge variant="default" className="absolute top-1.5 right-1.5 text-xs px-1.5 py-0.5 h-auto bg-amber-500 text-white shadow-md z-10">MAX</Badge>}
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20">
-            <Image src={imagePath} alt={item.name} fill className="object-contain" unoptimized />
-        </div>
-        <p className="font-bold text-sm font-headline mt-2 flex-grow">{item.name}</p>
-        <div className="w-full mt-2 px-1">
-            <p className="text-lg font-bold text-primary">Lvl {item.level}</p>
-            <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5 mt-1" />
-            <p className="text-xs text-center text-muted-foreground mt-1">{item.level}/{item.maxLevel}</p>
-        </div>
+      {isMaxed && <Badge variant="default" className="absolute top-1 right-1 text-xs px-1 py-0.5 h-auto bg-amber-500 text-white shadow-md z-10">MAX</Badge>}
+      
+      <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-grow">
+        <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
+      </div>
+
+      <div className="w-full text-center mt-2">
+        <p className="font-headline text-sm truncate">{item.name}</p>
+        <p className="font-bold text-lg text-primary">Lvl {item.level}</p>
+        <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5 mt-1" />
+      </div>
     </div>
   );
 };
@@ -136,17 +138,43 @@ const AchievementCard = ({ achievement }: { achievement: any }) => (
   </div>
 );
 
+const CategoryGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[] }) => {
+  if (items.length === 0) return null;
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <Icon className="w-5 h-5 text-muted-foreground" />
+        <h4 className="text-xl font-headline text-foreground/80">{title}</h4>
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+        {items.map((item: any) => <TroopSpellCard key={item.name} item={item} />)}
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [player, setPlayer] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const playerData = localStorage.getItem('playerData');
     if (playerData) {
-      setPlayer(JSON.parse(playerData));
+      try {
+        setPlayer(JSON.parse(playerData));
+      } catch (error) {
+        console.error("Failed to parse player data from localStorage", error);
+        localStorage.removeItem('playerData');
+        router.push('/survey');
+      }
+    } else {
+        router.push('/survey');
     }
-  }, []);
+    setLoading(false);
+  }, [router]);
 
-  if (!player) {
+  if (loading || !player) {
     return <LoadingSpinner />;
   }
 
@@ -160,7 +188,13 @@ export default function DashboardPage() {
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name.includes('Machine') || h.name.includes('Copter'));
   
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
+  const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
+  const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
+  const superTroops = troops.filter((t: any) => t.name.startsWith('Super') && t.isActive);
+
   const homeSpells = spells.filter((s: any) => s.village === 'home');
+  const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
+  const darkElixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir');
 
   const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
 
@@ -203,7 +237,7 @@ export default function DashboardPage() {
             </div>
             {league && (
               <div className="flex flex-col items-center justify-center">
-                <Image src={league.icon.url} alt={league.name} width={48} height={48} unoptimized />
+                <Image src={league.icon.url} alt={league.name} width={64} height={64} unoptimized />
                 <p className="text-xs text-muted-foreground mt-1 text-center truncate">{league.name}</p>
               </div>
             )}
@@ -226,19 +260,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-              <h3 className="text-2xl font-headline mb-4">Troops</h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                {homeTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
-              </div>
-          </div>
-          <div>
-              <h3 className="text-2xl font-headline mb-4">Spells</h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                {homeSpells.map((item: any) => <TroopCard key={item.name} item={item} />)}
-              </div>
-          </div>
+        <div className="space-y-6">
+            <h3 className="text-2xl font-headline mb-4">Army</h3>
+             <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
+             <CategoryGrid title="Dark Elixir Troops" icon={Rock} items={darkElixirTroops} />
+             <CategoryGrid title="Super Troops" icon={Star} items={superTroops} />
+        </div>
+        
+         <div className="space-y-6">
+            <h3 className="text-2xl font-headline mb-4">Spells</h3>
+             <CategoryGrid title="Elixir Spells" icon={Droplets} items={elixirSpells} />
+             <CategoryGrid title="Dark Elixir Spells" icon={Rock} items={darkElixirSpells} />
         </div>
       </div>
       
@@ -260,8 +292,8 @@ export default function DashboardPage() {
 
         <div>
             <h3 className="text-2xl font-headline mb-4">Troops</h3>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-              {builderTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+              {builderTroops.map((item: any) => <TroopSpellCard key={item.name} item={item} />)}
             </div>
         </div>
       </div>
@@ -280,5 +312,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

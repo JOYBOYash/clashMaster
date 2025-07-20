@@ -42,6 +42,8 @@ const itemImageMap: Record<string, string> = {
   'Earthquake Boots': '/assets/_hero_equipment/bk/earthquake-boots.png',
   'Vampstache': '/assets/_hero_equipment/bk/vampstache.png',
   'Archer Puppet': '/assets/_hero_equipment/aq/archer-puppet.png',
+  'Action Figure': '/assets/_hero_equipment/aq/action-figure.png',
+  'Magic Mirror': '/assets/_hero_equipment/aq/magic-mirror.png',
   'Invisibility Vial': '/assets/_hero_equipment/aq/invisibility-vial.png',
   'Giant Arrow': '/assets/_hero_equipment/aq/giant-arrow.png',
   'Healer Puppet': '/assets/_hero_equipment/aq/healer-puppet.png',
@@ -53,6 +55,8 @@ const itemImageMap: Record<string, string> = {
   'Royal Gem': '/assets/_hero_equipment/rc/royal-gem.png',
   'Hog Rider Puppet': '/assets/_hero_equipment/rc/hog-rider-puppet.png',
   'Haste Vial': '/assets/_hero_equipment/rc/haste-vial.png',
+  'Henchmen': '/assets/_hero_equipment/mp/heenchman.png',
+  'Iron Pants': '/assets/_hero_equipment/mp/iron-pants.png',
 
   // _troops
   'Barbarian': '/assets/_troops/elixer/barbarian.png',
@@ -83,18 +87,18 @@ const itemImageMap: Record<string, string> = {
   'Bowler': '/assets/_troops/dark-elixer/bowler.png',
   'Apprentice Warden': '/assets/_troops/dark-elixer/apprentice_warden.png',
   // Builder Base _troops
-  'Raged Barbarian': '/assets/_troops/barbarian.png',
-  'Sneaky Archer': '/assets/_troops/archer.png',
-  'Boxer Giant': '/assets/_troops/giant.png',
-  'Beta Minion': '/assets/_troops/minion.png',
-  'Bomber': '/assets/_troops/wall_breaker.png', // Using wall breaker as proxy
-  'Baby Dragon': '/assets/_troops/baby_dragon.png',
-  'Cannon Cart': '/assets/_troops/cannon-cart.png',
-  'Night Witch': '/assets/_troops/witch.png',
-  'Drop Ship': '/assets/_troops/drop-ship.png',
-  'Power P.E.K.K.A': '/assets/_troops/pekka.png',
-  'Hog Glider': '/assets/_troops/hog-glider.png',
-  'Electrofire Wizard': '/assets/_troops/electro-wizard.png',
+  'Raged Barbarian': '/assets/_bbtroops/rage-barbarian.png',
+  'Sneaky Archer': '/assets/_bbtroops/sneaky-archer.png',
+  'Boxer Giant': '/assets/_bbtroops/boxer-giant.png',
+  'Beta Minion': '/assets/_bbtroops/beta-minion.png',
+  'Bomber': '/assets/_bbtroops/bomber.png', // Using wall breaker as proxy
+  'Baby Dragon': '/assets/_bbtroops/baby-dragon.png',
+  'Cannon Cart': '/assets/_bbtroops/cannon-cart.png',
+  'Night Witch': '/assets/_bbtroops/night-witch.png',
+  'Drop Ship': '/assets/_bbtroops/drop-ship.png',
+  'Power P.E.K.K.A': '/assets/_bbtroops/power-PEKKA.png',
+  'Hog Glider': '/assets/_bbtroops/hog-glider.png',
+  'Electrofire Wizard': '/assets/_bbtroops/electrofire-wizard.png',
 
 
   // Spells

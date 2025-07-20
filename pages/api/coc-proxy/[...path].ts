@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { path } = req.query;
+  const { path, tag } = req.query;
   const apiToken = process.env.CLASH_OF_CLANS_API_TOKEN;
 
   if (!apiToken) {
@@ -10,9 +10,13 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ reason: 'API token not configured on server.' });
   }
 
-  // The path from the query is already an array of segments, correctly decoded.
-  // The client will pre-encode the player tag, so we just join the segments back.
-  const cocPath = (path as string[]).join('/');
+  if (!path || !tag) {
+    return res.status(400).json({ reason: 'Bad Request: Missing path or tag parameter.' });
+  }
+
+  // The 'path' query will be an array of segments if there are slashes, or a string if not.
+  const basePath = Array.isArray(path) ? path.join('/') : path;
+  const cocPath = `${basePath}/${encodeURIComponent(tag as string)}`;
 
   const cocUrl = `https://api.clashofclans.com/v1/${cocPath}`;
   console.log(`[PROXY] Forwarding request to: ${cocUrl}`);

@@ -4,14 +4,9 @@
  */
 
 export async function getPlayer(playerTag: string) {
-  // The player tag from the game includes a '#', which needs to be handled in the URL.
-  // We encode it here on the client-side to ensure the proxy receives it correctly.
-  const pathSegment = `players/${encodeURIComponent(playerTag)}`;
-  
-  // NOTE: The /api/coc-proxy path here is a special Next.js convention.
-  // We are proxying the request through our own Next.js server to avoid CORS issues
-  // and to hide the API token from the client's network requests.
-  const url = `/api/coc-proxy/${pathSegment}`;
+  // Pass the tag as a query parameter to avoid issues with the '#' character in the URL path.
+  const path = 'players';
+  const url = `/api/coc-proxy/${path}?tag=${playerTag}`;
   
   try {
     const response = await fetch(url);
@@ -25,6 +20,10 @@ export async function getPlayer(playerTag: string) {
       } catch (e) {
         // If the response isn't JSON, use the status text.
         errorDetails = response.statusText;
+      }
+
+      if (response.status === 400) {
+        throw new Error(`API request failed with status ${response.status}: Bad Request: ${errorDetails}`);
       }
 
       if (response.status === 403) {

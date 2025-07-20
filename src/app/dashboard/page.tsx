@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { 
   Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords
 } from 'lucide-react';
+import { cn, getImagePath } from '@/lib/utils';
 
 // Component to display a single stat
 const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementType, title: string, value: string | number, footer?: string }) => (
@@ -29,9 +30,18 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 
 // Component for Hero display
 const HeroCard = ({ hero }: { hero: any }) => {
+  const isMaxed = hero.level === hero.maxLevel;
   const equipment = hero.equipment && hero.equipment.length > 0 ? hero.equipment : [];
+
   return (
-    <div className="bg-card/50 p-4 rounded-lg flex flex-col items-center border">
+    <div className={cn(
+      "bg-card/50 p-4 rounded-lg flex flex-col items-center border relative",
+      isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
+    )}>
+      {isMaxed && <Badge className="absolute -top-2 -right-2 bg-amber-500 text-white shadow-md">MAX</Badge>}
+      <div className="relative w-24 h-24 mb-2">
+        <Image src={getImagePath(hero.name, 'hero')} alt={hero.name} fill className="object-contain" unoptimized />
+      </div>
       <h4 className="font-bold text-sm font-headline">{hero.name}</h4>
       <p className="text-lg font-bold text-primary">Level {hero.level}</p>
       <div className="w-full mt-2">
@@ -51,16 +61,29 @@ const HeroCard = ({ hero }: { hero: any }) => {
 };
 
 // Component for Troop/Spell display
-const TroopCard = ({ item }: { item: any }) => (
-  <div className="bg-card/50 p-3 rounded-lg flex flex-col items-center border text-center">
-    <p className="font-bold text-xs font-headline flex-grow">{item.name}</p>
-    <p className="text-md font-bold text-primary mt-1">Level {item.level}</p>
-    <div className="w-full mt-2">
-      <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5" />
-      <p className="text-xs text-center text-muted-foreground mt-1">{item.level}/{item.maxLevel}</p>
+const TroopCard = ({ item }: { item: any }) => {
+  const isMaxed = item.level === item.maxLevel;
+  const itemType = item.housingSpace ? 'troop' : 'spell';
+
+  return (
+    <div className={cn(
+      "bg-card/50 p-2 rounded-lg flex flex-col items-center border text-center relative aspect-square justify-center",
+      isMaxed && "border-amber-400/60 bg-amber-400/10"
+    )}>
+        {isMaxed && <Badge variant="default" className="absolute top-1 right-1 text-xs px-1.5 py-0.5 h-auto bg-amber-500 text-white shadow-md">MAX</Badge>}
+        <div className="relative w-12 h-12">
+            <Image src={getImagePath(item.name, itemType)} alt={item.name} fill className="object-contain" unoptimized />
+        </div>
+        <p className="font-bold text-xs font-headline mt-2 flex-grow">{item.name}</p>
+        <p className="text-md font-bold text-primary mt-1">Level {item.level}</p>
+        <div className="w-full mt-2 px-1">
+            <Progress value={(item.level / item.maxLevel) * 100} className="h-1" />
+            <p className="text-xs text-center text-muted-foreground mt-1">{item.level}/{item.maxLevel}</p>
+        </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 // Component for Achievement display
 const AchievementCard = ({ achievement }: { achievement: any }) => (

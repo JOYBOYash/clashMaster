@@ -5,43 +5,46 @@ import { Client } from 'clashofclans.js';
 // Initialize the client.
 // We use a singleton pattern to ensure the client is initialized only once.
 let cocClient: Client | null = null;
-let clientLoginPromise: Promise<void> | null = null;
+let clientLoginPromise: Promise<Client> | null = null;
 
-async function getClient() {
+async function getClient(): Promise<Client> {
+    // If we have a logged-in client, return it.
     if (cocClient && cocClient.isLoggedIn()) {
         return cocClient;
     }
 
     // If login is already in progress, wait for it to complete.
     if (clientLoginPromise) {
-        await clientLoginPromise;
-        return cocClient!;
-    }
-    
-    cocClient = new Client();
-    const email = process.env.CLASH_OF_CLANS_DEVELOPER_EMAIL;
-    const password = process.env.CLASH_OF_CLANS_DEVELOPER_PASSWORD;
-
-    if (!email || !password) {
-        throw new Error('Clash of Clans developer credentials are not set in .env file.');
+        return clientLoginPromise;
     }
 
-    clientLoginPromise = cocClient.login({
-        email,
-        password,
-        keyName: 'probuilder-dynamic-key' // A unique name for the key
-    });
-    
-    try {
-        await clientLoginPromise;
-    } finally {
-        // Reset the promise so the next call can attempt a login if this one failed.
-        clientLoginPromise = null;
-    }
-    
-    return cocClient;
+    // Start a new login process.
+    clientLoginPromise = (async () => {
+        const newClient = new Client();
+        const email = process.env.CLASH_OF_CLANS_DEVELOPER_EMAIL;
+        const password = process.env.CLASH_OF_CLANS_DEVELOPER_PASSWORD;
+
+        if (!email || !password) {
+            throw new Error('Clash of Clans developer credentials are not set in .env file.');
+        }
+
+        try {
+            await newClient.login({
+                email,
+                password,
+                keyName: 'probuilder-dynamic-key' // A unique name for the key
+            });
+            cocClient = newClient; // Store the successfully logged-in client.
+            return newClient;
+        } catch (error) {
+            clientLoginPromise = null; // Reset promise on failure to allow retries.
+            console.error('[PROXY] Clash of Clans login failed:', error);
+            throw new Error('Failed to login to Clash of Clans API. Check credentials.');
+        }
+    })();
+
+    return clientLoginPromise;
 }
-
 
 const cocPlayerProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   const { tag } = req.query;

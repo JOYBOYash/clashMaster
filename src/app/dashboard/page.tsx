@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, Rock, FlaskConical
+  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, FlaskConical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath } from '@/lib/image-paths';
@@ -263,14 +263,14 @@ export default function DashboardPage() {
         <div className="space-y-6">
             <h3 className="text-2xl font-headline mb-4">Army</h3>
              <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
-             <CategoryGrid title="Dark Elixir Troops" icon={Rock} items={darkElixirTroops} />
+             <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
              <CategoryGrid title="Super Troops" icon={Star} items={superTroops} />
         </div>
         
          <div className="space-y-6">
             <h3 className="text-2xl font-headline mb-4">Spells</h3>
              <CategoryGrid title="Elixir Spells" icon={Droplets} items={elixirSpells} />
-             <CategoryGrid title="Dark Elixir Spells" icon={Rock} items={darkElixirSpells} />
+             <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
         </div>
       </div>
       
@@ -312,3 +312,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

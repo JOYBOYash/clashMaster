@@ -33,9 +33,13 @@ export default function SurveyPage() {
     setLoading(true);
     try {
       const result = await getPlayer(data.playerTag);
+      
+      // Store the player data in localStorage
       localStorage.setItem('playerData', JSON.stringify(result));
 
       toast({ title: 'Player Found!', description: `Successfully synced data for ${result.name}.` });
+      
+      // Redirect to the dashboard
       router.push('/dashboard');
 
     } catch (error: any) {

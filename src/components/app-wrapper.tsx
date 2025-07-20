@@ -6,10 +6,35 @@ import { MainHeader } from "./main-header";
 import { Toaster } from "./ui/toaster";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
+import { useEffect } from "react";
+import { getPlayer } from "@/lib/coc-api";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const isSignInPage = usePathname() === '/sign-in';
+
+  useEffect(() => {
+    const refreshPlayerData = async () => {
+      const storedData = localStorage.getItem('playerData');
+      if (storedData) {
+        try {
+          const player = JSON.parse(storedData);
+          if (player.tag) {
+            console.log(`Refreshing data for ${player.tag}...`);
+            const updatedPlayer = await getPlayer(player.tag);
+            localStorage.setItem('playerData', JSON.stringify(updatedPlayer));
+            console.log('Player data refreshed.');
+          }
+        } catch (error) {
+          console.error("Failed to refresh player data:", error);
+        }
+      }
+    };
+    if (user) {
+      refreshPlayerData();
+    }
+  }, [user]);
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">

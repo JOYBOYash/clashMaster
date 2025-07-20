@@ -8,16 +8,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { 
-  Trophy, Star, ArrowUpFromDot, ArrowDownToDot, Shield, Swords, Axe,
-  HeartHandshake, Gem, BarChart3, Medal, SwordsIcon, Home, Castle
+  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords
 } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
 
 // Component to display a single stat
 const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementType, title: string, value: string | number, footer?: string }) => (
@@ -96,6 +88,7 @@ export default function DashboardPage() {
   const [player, setPlayer] = useState<any | null>(null);
 
   useEffect(() => {
+    // This now runs only on the client, preventing the hydration error
     const playerData = localStorage.getItem('playerData');
     if (playerData) {
       setPlayer(JSON.parse(playerData));
@@ -133,7 +126,7 @@ export default function DashboardPage() {
                   <p className="font-bold font-headline text-sm">{clan.name}</p>
                   <p className="text-xs text-muted-foreground">Level {clan.level}</p>
                 </div>
-                <Image src={clan.badge.url} alt={clan.name} width={48} height={48} className="drop-shadow-lg" />
+                <Image src={clan.badge.url} alt={clan.name} width={48} height={48} className="drop-shadow-lg" unoptimized/>
               </div>
             )}
           </div>
@@ -147,7 +140,7 @@ export default function DashboardPage() {
             <div className="flex flex-col items-center">
                 <Castle className="w-5 h-5 text-muted-foreground" />
                 <p className="text-sm font-bold">Builder Hall</p>
-                <p className="text-lg font-headline text-primary">{builderHallLevel}</p>
+                <p className="text-lg font-headline text-primary">{builderHallLevel || 'N/A'}</p>
             </div>
             <div className="flex flex-col items-center">
                 <Medal className="w-5 h-5 text-muted-foreground" />
@@ -155,7 +148,7 @@ export default function DashboardPage() {
                 <p className="text-lg font-headline text-primary">{expLevel}</p>
             </div>
             {league && <div className="flex flex-col items-center">
-                <Image src={league.icon.url} alt={league.name} width={24} height={24} />
+                <Image src={league.icon.url} alt={league.name} width={24} height={24} unoptimized/>
                 <p className="text-sm font-bold">League</p>
                 <p className="text-lg font-headline text-primary text-center truncate">{league.name}</p>
             </div>}
@@ -165,7 +158,7 @@ export default function DashboardPage() {
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard icon={Trophy} title="Home Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
-        <StatCard icon={Swords} title="Builder Trophies" value={builderBaseTrophies} footer={`Best: ${bestBuilderBaseTrophies}`} />
+        <StatCard icon={Swords} title="Builder Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
         <StatCard icon={Star} title="War Stars" value={warStars} />
         <StatCard icon={HeartHandshake} title="Donations" value={donations} footer={`Received: ${received}`} />
       </div>

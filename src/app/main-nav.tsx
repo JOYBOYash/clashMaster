@@ -5,16 +5,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
+  const [hasPlayerData, setHasPlayerData] = useState(false);
+
+  useEffect(() => {
+    const data = localStorage.getItem('playerData');
+    setHasPlayerData(!!data);
+  }, [pathname]); // Re-check when route changes
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
-     { href: '/survey', label: 'Take Survey' },
+     // Conditionally show the survey link
+     ...(!hasPlayerData ? [{ href: '/survey', label: 'Take Survey' }] : [])
   ];
 
   return (

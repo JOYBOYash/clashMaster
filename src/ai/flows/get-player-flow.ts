@@ -43,7 +43,12 @@ const getPlayerFlow = ai.defineFlow(
     try {
       // Use the clashofclans.js client to fetch player data
       const data = await cocClient.getPlayer(playerTag);
-      return data;
+
+      // The 'data' object is a complex class instance. We need to convert it
+      // to a plain JSON object before sending it to the client to avoid serialization issues.
+      const serializableData = JSON.parse(JSON.stringify(data));
+      
+      return serializableData;
     } catch (error: any) {
       // Handle potential errors, such as invalid tags or API issues
       if (error.status === 404) {

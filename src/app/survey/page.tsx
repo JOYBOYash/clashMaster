@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search } from 'lucide-react';
-import { getPlayer } from '@/lib/coc-api';
+import { getPlayer } from '@/ai/flows/get-player-flow';
 
 const formSchema = z.object({
   playerTag: z.string().min(4, { message: 'Player tag is required.' }).refine(val => val.startsWith('#'), { message: 'Player tag must start with #' }),
@@ -51,7 +51,7 @@ export default function SurveyPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Find Your Village</CardTitle>
-          <CardDescription>Enter your Clash of Clans player tag to sync your progress. Make sure your current IP address is whitelisted in your developer account.</CardDescription>
+          <CardDescription>Enter your Clash of Clans player tag to sync your progress. Your server IP must be whitelisted in your developer account.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

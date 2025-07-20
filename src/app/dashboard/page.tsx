@@ -3,17 +3,25 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords
+  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath } from '@/lib/image-paths';
+import { Separator } from '@/components/ui/separator';
 
-// Component to display a single stat
+const SectionTitle = ({ icon: Icon, title }: { icon: React.ElementType, title: string }) => (
+  <div className="flex items-center gap-3 mb-4">
+    <Icon className="w-8 h-8 text-primary" />
+    <h2 className="text-3xl font-headline">{title}</h2>
+  </div>
+);
+
 const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementType, title: string, value: string | number, footer?: string }) => (
   <Card className="text-center transition-all hover:border-primary/50">
     <CardHeader className="pb-2">
@@ -29,45 +37,64 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
   </Card>
 );
 
-// Component for Hero display
-const HeroCard = ({ hero }: { hero: any }) => {
+const HeroCard = ({ hero, equipment }: { hero: any, equipment: any[] }) => {
   const isMaxed = hero.level === hero.maxLevel;
-  const equipment = hero.equipment && hero.equipment.length > 0 ? hero.equipment : [];
-  const imagePath = getImagePath(hero.name);
-
+  const heroImage = getImagePath(hero.name);
+  const heroEquipment = equipment.filter(e => e.village === hero.village);
 
   return (
     <div className={cn(
-      "bg-card/50 p-4 rounded-lg flex flex-col items-center border relative",
+      "relative bg-card shadow-lg border border-border/20 overflow-hidden rounded-xl",
+      "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
       isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
     )}>
-      {isMaxed && <Badge className="absolute -top-2 -right-2 bg-amber-500 text-white shadow-md">MAX</Badge>}
-      <div className="relative w-24 h-24 mb-2">
-        <Image src={imagePath} alt={hero.name} fill className="object-contain" unoptimized />
+      {isMaxed && <Badge className="absolute top-2 right-2 bg-amber-500 text-white shadow-md z-10">MAX</Badge>}
+      
+      <div className="relative w-full h-48">
+        <Image src={heroImage} alt={hero.name} fill className="object-cover object-center" unoptimized />
+        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent"></div>
       </div>
-      <h4 className="font-bold text-sm font-headline">{hero.name}</h4>
-      <p className="text-lg font-bold text-primary">Level {hero.level}</p>
-      <div className="w-full mt-2">
-        <Progress value={(hero.level / hero.maxLevel) * 100} className="h-2" />
-        <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
-      </div>
-      <div className="mt-4 space-y-2 w-full">
-        {equipment.map((e: any, i: number) => (
-          <div key={i} className="text-xs flex justify-between items-center bg-background p-1.5 rounded-md">
-            <span>{e.name}</span>
-            <Badge variant="secondary">Lvl {e.level}</Badge>
+      
+      <div className="p-4 relative -mt-12 z-10">
+        <div className="flex justify-between items-end">
+          <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm">{hero.name}</h3>
+          <div className="bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-xl font-bold font-headline shadow-lg">
+            {hero.level}
           </div>
-        ))}
+        </div>
+        <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
+        <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
+
+        {heroEquipment.length > 0 && (
+          <>
+            <Separator className="my-3" />
+            <div className="flex items-center justify-center gap-3">
+              <TooltipProvider>
+                {heroEquipment.map((equip, index) => (
+                  <Tooltip key={index}>
+                    <TooltipTrigger asChild>
+                      <div className="w-12 h-12 bg-muted/50 rounded-lg p-1.5 border border-border/50 flex items-center justify-center transition-all hover:scale-110 hover:border-primary/50">
+                        <Image src={getImagePath(equip.name)} alt={equip.name} width={40} height={40} unoptimized />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="font-bold">{equip.name}</p>
+                      <p className="text-sm text-muted-foreground">Level {equip.level}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </TooltipProvider>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-// Component for Troop/Spell display
 const TroopCard = ({ item }: { item: any }) => {
   const isMaxed = item.level === item.maxLevel;
   const imagePath = getImagePath(item.name);
-
 
   return (
     <div className={cn(
@@ -88,8 +115,6 @@ const TroopCard = ({ item }: { item: any }) => {
   );
 };
 
-
-// Component for Achievement display
 const AchievementCard = ({ achievement }: { achievement: any }) => (
   <div className="bg-card/50 p-3 rounded-lg border text-sm flex flex-col justify-between">
     <div>
@@ -110,12 +135,10 @@ const AchievementCard = ({ achievement }: { achievement: any }) => (
   </div>
 );
 
-
 export default function DashboardPage() {
   const [player, setPlayer] = useState<any | null>(null);
 
   useEffect(() => {
-    // This now runs only on the client, preventing the hydration error
     const playerData = localStorage.getItem('playerData');
     if (playerData) {
       setPlayer(JSON.parse(playerData));
@@ -129,18 +152,21 @@ export default function DashboardPage() {
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
     builderBaseTrophies, bestBuilderBaseTrophies, warStars, attackWins, defenseWins,
-    donations, received, clanCapitalContributions, clan, league, achievements,
-    heroes, troops, spells, heroEquipment
+    donations, received, clan, league, achievements, heroes, troops, spells, heroEquipment
   } = player;
 
-  const homeHeroes = heroes.filter((h: any) => h.village === 'home');
+  const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Minion Prince');
+  const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase');
+  
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
   const homeSpells = spells.filter((s: any) => s.village === 'home');
 
+  const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
+
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-12 pb-12">
       {/* Header */}
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden shadow-2xl">
         <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <h1 className="text-4xl font-headline text-primary">{name}</h1>
@@ -182,37 +208,63 @@ export default function DashboardPage() {
         </div>
       </Card>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={Trophy} title="Home Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
-        <StatCard icon={Swords} title="Builder Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
-        <StatCard icon={Star} title="War Stars" value={warStars} />
-        <StatCard icon={HeartHandshake} title="Donations" value={donations} footer={`Received: ${received}`} />
-      </div>
+      {/* Home Village Section */}
+      <div className="space-y-8">
+        <SectionTitle icon={Axe} title="Home Village" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatCard icon={Trophy} title="Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
+          <StatCard icon={Star} title="War Stars" value={warStars} />
+          <StatCard icon={HeartHandshake} title="Donations" value={donations} footer={`Received: ${received}`} />
+        </div>
+        
+        <div>
+          <h3 className="text-2xl font-headline mb-4">Heroes</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} equipment={heroEquipment} />)}
+          </div>
+        </div>
 
-      {/* Heroes Section */}
-      <div>
-        <h2 className="text-2xl font-headline mb-4">Heroes</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div>
+              <h3 className="text-2xl font-headline mb-4">Troops</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {homeTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
+              </div>
+          </div>
+          <div>
+              <h3 className="text-2xl font-headline mb-4">Spells</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {homeSpells.map((item: any) => <TroopCard key={item.name} item={item} />)}
+              </div>
+          </div>
         </div>
       </div>
       
-      {/* Troops & Spells Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-            <h2 className="text-2xl font-headline mb-4">Troops</h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-              {homeTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
-            </div>
+      <Separator className="my-12" />
+
+      {/* Builder Base Section */}
+      <div className="space-y-8">
+        <SectionTitle icon={Hammer} title="Builder Base" />
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
         </div>
+        
         <div>
-            <h2 className="text-2xl font-headline mb-4">Spells</h2>
+          <h3 className="text-2xl font-headline mb-4">Heroes</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {builderHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} equipment={heroEquipment} />)}
+          </div>
+        </div>
+
+        <div>
+            <h3 className="text-2xl font-headline mb-4">Troops</h3>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-              {homeSpells.map((item: any) => <TroopCard key={item.name} item={item} />)}
+              {builderTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
             </div>
         </div>
       </div>
+
+       <Separator className="my-12" />
 
        {/* Achievements Section */}
       <div>

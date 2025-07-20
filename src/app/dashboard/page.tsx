@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
@@ -153,18 +153,47 @@ const CategoryGrid = ({ title, icon: Icon, items }: { title: string, icon: React
   );
 }
 
+const preloadImages = (urls: string[]) => {
+  const promises = urls.map(url => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.src = url;
+      img.onload = resolve;
+      img.onerror = reject;
+    });
+  });
+  return Promise.all(promises);
+};
+
+
 export default function DashboardPage() {
   const [player, setPlayer] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFullyLoaded, setIsFullyLoaded] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
+  const loadData = useCallback(async () => {
     const playerData = localStorage.getItem('playerData');
     if (playerData) {
       try {
-        setPlayer(JSON.parse(playerData));
+        const parsedPlayer = JSON.parse(playerData);
+        setPlayer(parsedPlayer);
+        
+        // Gather all image URLs to preload
+        const imageUrls = [
+          parsedPlayer.clan?.badge?.url,
+          parsedPlayer.league?.icon?.url,
+          ...parsedPlayer.heroes.map((h: any) => getImagePath(h.name)),
+          ...parsedPlayer.heroes.flatMap((h: any) => h.equipment?.map((e: any) => getImagePath(e.name)) || []),
+          ...parsedPlayer.troops.map((t: any) => getImagePath(t.name)),
+          ...parsedPlayer.spells.map((s: any) => getImagePath(s.name)),
+        ].filter(Boolean); // Filter out any undefined/null URLs
+
+        await preloadImages(imageUrls);
+        setIsFullyLoaded(true);
+
       } catch (error) {
-        console.error("Failed to parse player data from localStorage", error);
+        console.error("Failed to parse or preload player data", error);
         localStorage.removeItem('playerData');
         router.push('/survey');
       }
@@ -174,8 +203,13 @@ export default function DashboardPage() {
     setLoading(false);
   }, [router]);
 
-  if (loading || !player) {
-    return <LoadingSpinner />;
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+
+  if (loading || !isFullyLoaded) {
+    return <LoadingSpinner show={true} />;
   }
 
   const {
@@ -184,13 +218,13 @@ export default function DashboardPage() {
     donations, received, clan, league, achievements, heroes, troops, spells
   } = player;
 
-  const homeHeroes = heroes.filter((h: any) => h.village === 'home' && !h.name.includes('Machine') && !h.name.includes('Copter'));
-  const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name.includes('Machine') || h.name.includes('Copter'));
+  const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
+  const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
   const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
-  const superTroops = troops.filter((t: any) => t.name.startsWith('Super') && t.isActive);
+  const superTroops = troops.filter((t: any) => t.village === 'home' && t.isActive);
 
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
@@ -199,7 +233,7 @@ export default function DashboardPage() {
   const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
 
   return (
-    <div className="space-y-12 pb-12">
+    <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
       {/* Header */}
       <Card className="overflow-hidden shadow-2xl">
         <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -312,5 +346,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

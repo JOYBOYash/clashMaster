@@ -2,6 +2,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { Button } from './ui/button';
+import { RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const trivia = [
   "Did you know? The P.E.K.K.A's armor is so heavy that the Spring Trap doesn't affect her.",
@@ -18,25 +21,52 @@ const trivia = [
   "The Royal Champion's spear can pierce a Town Hall from one end to the other."
 ];
 
-export function LoadingSpinner() {
-  const [randomTrivia, setRandomTrivia] = useState('');
+export function LoadingSpinner({ show }: { show: boolean }) {
+  const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(show);
 
   useEffect(() => {
-    // Select a random trivia question on the client-side to avoid hydration mismatch
-    setRandomTrivia(trivia[Math.floor(Math.random() * trivia.length)]);
+    // Select a random trivia question on mount
+    setCurrentTriviaIndex(Math.floor(Math.random() * trivia.length));
   }, []);
 
+  useEffect(() => {
+    // Control visibility with a fade effect
+    if (!show) {
+      // Start fade out
+      const timer = setTimeout(() => setIsVisible(false), 500); // Wait for fade-out to complete
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(true);
+    }
+  }, [show]);
+
+  const nextTrivia = () => {
+    setCurrentTriviaIndex((prevIndex) => (prevIndex + 1) % trivia.length);
+  };
+  
+  if (!isVisible) {
+    return null;
+  }
+
   return (
-    <div className="fixed inset-0 flex flex-col justify-center items-center bg-background/90 backdrop-blur-sm z-50">
+    <div className={cn(
+      "fixed inset-0 flex flex-col justify-center items-center bg-background/90 backdrop-blur-sm z-50 transition-opacity duration-500",
+      show ? "opacity-100" : "opacity-0"
+    )}>
       <div className="text-center p-8 max-w-md">
-        <p className="text-lg text-foreground/80 mb-6 italic">
-          {randomTrivia || "Loading interesting facts..."}
+        <p className="text-lg text-foreground/80 mb-6 italic min-h-[6em]">
+          {trivia[currentTriviaIndex] || "Loading interesting facts..."}
         </p>
-        <div className="flex justify-center items-center space-x-2">
+        <div className="flex justify-center items-center space-x-2 mb-6">
           <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
           <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
           <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
         </div>
+         <Button variant="outline" size="sm" onClick={nextTrivia}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Next Tip
+        </Button>
       </div>
     </div>
   );

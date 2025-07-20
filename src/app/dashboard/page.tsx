@@ -155,14 +155,16 @@ const CategoryGrid = ({ title, icon: Icon, items }: { title: string, icon: React
 
 const preloadImages = (urls: string[]) => {
   const promises = urls.map(url => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const img = new window.Image();
       img.src = url;
       img.onload = resolve;
-      img.onerror = reject;
+      img.onerror = resolve; // Resolve even on error to not block the page
     });
   });
-  return Promise.all(promises);
+  // Use allSettled to wait for all promises to resolve or reject.
+  // This prevents one failed image from blocking the entire page load.
+  return Promise.allSettled(promises);
 };
 
 
@@ -346,3 +348,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

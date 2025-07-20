@@ -37,10 +37,10 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
   </Card>
 );
 
-const HeroCard = ({ hero, equipment }: { hero: any, equipment: any[] }) => {
+const HeroCard = ({ hero }: { hero: any }) => {
   const isMaxed = hero.level === hero.maxLevel;
   const heroImage = getImagePath(hero.name);
-  const heroEquipment = equipment.filter(e => e.village === hero.village);
+  const heroEquipment = hero.equipment || [];
 
   return (
     <div className={cn(
@@ -70,7 +70,7 @@ const HeroCard = ({ hero, equipment }: { hero: any, equipment: any[] }) => {
             <Separator className="my-3" />
             <div className="flex items-center justify-center gap-3">
               <TooltipProvider>
-                {heroEquipment.map((equip, index) => (
+                {heroEquipment.map((equip: any, index: number) => (
                   <Tooltip key={index}>
                     <TooltipTrigger asChild>
                       <div className="w-12 h-12 bg-muted/50 rounded-lg p-1.5 border border-border/50 flex items-center justify-center transition-all hover:scale-110 hover:border-primary/50">
@@ -152,10 +152,10 @@ export default function DashboardPage() {
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
     builderBaseTrophies, bestBuilderBaseTrophies, warStars, attackWins, defenseWins,
-    donations, received, clan, league, achievements, heroes, troops, spells, heroEquipment
+    donations, received, clan, league, achievements, heroes, troops, spells
   } = player;
 
-  const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Minion Prince');
+  const homeHeroes = heroes.filter((h: any) => h.village === 'home');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase');
   
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
@@ -220,7 +220,7 @@ export default function DashboardPage() {
         <div>
           <h3 className="text-2xl font-headline mb-4">Heroes</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} equipment={heroEquipment} />)}
+            {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
           </div>
         </div>
 
@@ -252,7 +252,7 @@ export default function DashboardPage() {
         <div>
           <h3 className="text-2xl font-headline mb-4">Heroes</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {builderHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} equipment={heroEquipment} />)}
+            {builderHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
           </div>
         </div>
 

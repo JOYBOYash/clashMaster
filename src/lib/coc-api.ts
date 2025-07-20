@@ -4,10 +4,10 @@
  */
 
 export async function getPlayer(playerTag: string) {
-  // Pass the tag as a query parameter to avoid issues with the '#' character in the URL path.
+  // The player tag is encoded to ensure '#' and other special characters are handled correctly in the URL path.
   const path = 'players';
-  const url = `/api/coc-proxy/${path}?tag=${playerTag}`;
-  
+  const url = `/api/coc-proxy/${path}/${encodeURIComponent(playerTag)}`;
+
   try {
     const response = await fetch(url);
 

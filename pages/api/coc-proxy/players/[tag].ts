@@ -9,7 +9,7 @@ let clientLoginPromise: Promise<Client> | null = null;
 
 async function getClient(): Promise<Client> {
     // If we have a logged-in client, return it.
-    if (cocClient && cocClient.isLoggedIn()) {
+    if (cocClient) {
         return cocClient;
     }
 

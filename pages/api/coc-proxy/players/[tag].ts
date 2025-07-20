@@ -26,7 +26,8 @@ const cocPlayerProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     
     console.log(`[PROXY] Fetching player with tag: ${tag}`);
-    const playerData = await client.players.get(tag);
+    // Corrected method call from client.players.get(tag) to client.getPlayer(tag)
+    const playerData = await client.getPlayer(tag);
     
     res.status(200).json(playerData);
 

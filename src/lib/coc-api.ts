@@ -4,13 +4,15 @@
  */
 
 export async function getPlayer(playerTag: string) {
-  // The player tag from the game includes a '#', but it needs to be URL-encoded for the API URL.
-  const encodedPlayerTag = encodeURIComponent(playerTag);
+  // The player tag from the game includes a '#', which needs to be handled carefully in URLs.
+  // We will pass the raw tag to our proxy and let the server handle the final encoding.
+  // Example: #GU82PJVGJ becomes players/%23GU82PJVGJ on the server-side.
+  const pathSegment = `players/${playerTag}`;
   
   // NOTE: The /api/coc-proxy path here is a special Next.js convention.
   // We are proxying the request through our own Next.js server to avoid CORS issues
   // and to hide the API token from the client's network requests.
-  const url = `/api/coc-proxy/players/${encodedPlayerTag}`;
+  const url = `/api/coc-proxy/${pathSegment}`;
   
   try {
     const response = await fetch(url);

@@ -1,6 +1,5 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import fetch from 'node-fetch';
 
 const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   const { path } = req.query;
@@ -11,8 +10,15 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ reason: 'API token not configured on server.' });
   }
 
-  const pathSegments = (path as string[]).join('/');
-  const cocUrl = `https://api.clashofclans.com/v1/${pathSegments}`;
+  // The path array will contain the segments, e.g., ['players', '#GU82PJVGJ']
+  // We need to encode the player tag specifically, which is the last segment.
+  const pathSegments = (path as string[]);
+  if (pathSegments.length > 1) {
+    pathSegments[pathSegments.length - 1] = encodeURIComponent(pathSegments[pathSegments.length - 1]);
+  }
+  const cocPath = pathSegments.join('/');
+
+  const cocUrl = `https://api.clashofclans.com/v1/${cocPath}`;
   console.log(`[PROXY] Forwarding request to: ${cocUrl}`);
 
   try {

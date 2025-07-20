@@ -27,7 +27,7 @@ export async function getPlayer(playerTag: string) {
       }
 
       if (response.status === 403) {
-        throw new Error(`API request forbidden: ${errorDetails}. Please check your API token and ensure your current IP address is whitelisted in your Clash of Clans developer account.`);
+        throw new Error(`API request forbidden: ${errorDetails}. Please check your API token and ensure your server's IP address is whitelisted in your Clash of Clans developer account. For cloud environments, you may need to whitelist '0.0.0.0/0'.`);
       }
       if (response.status === 404) {
         throw new Error(`Player with tag "${playerTag}" not found. Please check the tag and try again.`);

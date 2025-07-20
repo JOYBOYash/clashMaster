@@ -5,8 +5,7 @@
 
 export async function getPlayer(playerTag: string) {
   // The player tag is encoded to ensure '#' and other special characters are handled correctly in the URL path.
-  const path = 'players';
-  const url = `/api/coc-proxy/${path}/${encodeURIComponent(playerTag)}`;
+  const url = `/api/coc-proxy/players/${encodeURIComponent(playerTag)}`;
 
   try {
     const response = await fetch(url);
@@ -27,13 +26,12 @@ export async function getPlayer(playerTag: string) {
       }
 
       if (response.status === 403) {
-
-         if (errorDetails.includes('invalidIp')) {
+        if (errorDetails.includes('invalidIp')) {
           throw new Error(`IP Address Not Allowed by API. FIX: Go to developer.clashofclans.com, select your key, and add this server's IP to the allowed list. For cloud hosting, use 0.0.0.0/0 to allow all IPs.`);
         }
         throw new Error(`API request forbidden: ${errorDetails}. Please check that your API token in the .env file is correct.`);
-
       }
+
       if (response.status === 404) {
         throw new Error(`Player with tag "${playerTag}" not found. Please check the tag and try again.`);
       }

@@ -10,13 +10,9 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ reason: 'API token not configured on server.' });
   }
 
-  // The path array will contain the segments, e.g., ['players', '#GU82PJVGJ']
-  // We need to encode the player tag specifically, which is the last segment.
-  const pathSegments = (path as string[]);
-  if (pathSegments.length > 1 && pathSegments[0] === 'players') {
-    pathSegments[pathSegments.length - 1] = encodeURIComponent(pathSegments[pathSegments.length - 1]);
-  }
-  const cocPath = pathSegments.join('/');
+  // The path from the query is already an array of segments, correctly decoded.
+  // The client will pre-encode the player tag, so we just join the segments back.
+  const cocPath = (path as string[]).join('/');
 
   const cocUrl = `https://api.clashofclans.com/v1/${cocPath}`;
   console.log(`[PROXY] Forwarding request to: ${cocUrl}`);

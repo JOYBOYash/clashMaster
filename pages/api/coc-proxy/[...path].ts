@@ -1,5 +1,6 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
+import fetch from 'node-fetch';
 
 const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   const { path } = req.query;
@@ -29,8 +30,6 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         data = JSON.parse(responseBody);
     } catch (e) {
-        // If parsing fails, it might be a plain text error message from the API.
-        // We'll wrap it in a 'reason' object to match the expected error format.
         data = { reason: responseBody.trim() };
     }
 

@@ -25,12 +25,13 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const responseBody = await apiResponse.text();
-    // Try to parse as JSON, but fall back to text if it fails
     let data;
     try {
         data = JSON.parse(responseBody);
-    } catch {
-        data = { reason: responseBody };
+    } catch (e) {
+        // If parsing fails, it might be a plain text error message from the API.
+        // We'll wrap it in a 'reason' object to match the expected error format.
+        data = { reason: responseBody.trim() };
     }
 
     res.status(apiResponse.status).json(data);

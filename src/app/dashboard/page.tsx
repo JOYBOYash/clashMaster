@@ -98,22 +98,23 @@ const TroopCard = ({ item }: { item: any }) => {
 
   return (
     <div className={cn(
-      "bg-card/50 p-2 rounded-lg flex flex-col items-center border text-center relative aspect-square justify-center",
-      isMaxed && "border-amber-400/60 bg-amber-400/10"
+      "bg-card/50 p-3 rounded-xl flex flex-col items-center border text-center relative aspect-square justify-center transition-all hover:shadow-lg hover:-translate-y-1",
+      isMaxed && "border-amber-400/60 bg-amber-400/10 shadow-amber-400/10"
     )}>
-        {isMaxed && <Badge variant="default" className="absolute top-1 right-1 text-xs px-1.5 py-0.5 h-auto bg-amber-500 text-white shadow-md">MAX</Badge>}
-        <div className="relative w-12 h-12">
+        {isMaxed && <Badge variant="default" className="absolute top-1.5 right-1.5 text-xs px-1.5 py-0.5 h-auto bg-amber-500 text-white shadow-md z-10">MAX</Badge>}
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20">
             <Image src={imagePath} alt={item.name} fill className="object-contain" unoptimized />
         </div>
-        <p className="font-bold text-xs font-headline mt-2 flex-grow">{item.name}</p>
-        <p className="text-md font-bold text-primary mt-1">Level {item.level}</p>
+        <p className="font-bold text-sm font-headline mt-2 flex-grow">{item.name}</p>
         <div className="w-full mt-2 px-1">
-            <Progress value={(item.level / item.maxLevel) * 100} className="h-1" />
+            <p className="text-lg font-bold text-primary">Lvl {item.level}</p>
+            <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5 mt-1" />
             <p className="text-xs text-center text-muted-foreground mt-1">{item.level}/{item.maxLevel}</p>
         </div>
     </div>
   );
 };
+
 
 const AchievementCard = ({ achievement }: { achievement: any }) => (
   <div className="bg-card/50 p-3 rounded-lg border text-sm flex flex-col justify-between">
@@ -155,8 +156,8 @@ export default function DashboardPage() {
     donations, received, clan, league, achievements, heroes, troops, spells
   } = player;
 
-  const homeHeroes = heroes.filter((h: any) => h.village === 'home');
-  const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase');
+  const homeHeroes = heroes.filter((h: any) => h.village === 'home' && !h.name.includes('Machine') && !h.name.includes('Copter'));
+  const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name.includes('Machine') || h.name.includes('Copter'));
   
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
   const homeSpells = spells.filter((s: any) => s.village === 'home');
@@ -184,7 +185,7 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-        <div className="p-4 bg-card grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div className="p-4 bg-card grid grid-cols-2 md:grid-cols-4 gap-4 text-center items-center">
             <div className="flex flex-col items-center">
                 <Home className="w-5 h-5 text-muted-foreground" />
                 <p className="text-sm font-bold">Town Hall</p>
@@ -200,11 +201,12 @@ export default function DashboardPage() {
                 <p className="text-sm font-bold">XP Level</p>
                 <p className="text-lg font-headline text-primary">{expLevel}</p>
             </div>
-            {league && <div className="flex flex-col items-center">
-                <Image src={league.icon.url} alt={league.name} width={24} height={24} unoptimized/>
-                <p className="text-sm font-bold">League</p>
-                <p className="text-lg font-headline text-primary text-center truncate">{league.name}</p>
-            </div>}
+            {league && (
+              <div className="flex flex-col items-center justify-center">
+                <Image src={league.icon.url} alt={league.name} width={48} height={48} unoptimized />
+                <p className="text-xs text-muted-foreground mt-1 text-center truncate">{league.name}</p>
+              </div>
+            )}
         </div>
       </Card>
 
@@ -227,13 +229,13 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
               <h3 className="text-2xl font-headline mb-4">Troops</h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {homeTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
               </div>
           </div>
           <div>
               <h3 className="text-2xl font-headline mb-4">Spells</h3>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {homeSpells.map((item: any) => <TroopCard key={item.name} item={item} />)}
               </div>
           </div>
@@ -258,7 +260,7 @@ export default function DashboardPage() {
 
         <div>
             <h3 className="text-2xl font-headline mb-4">Troops</h3>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {builderTroops.map((item: any) => <TroopCard key={item.name} item={item} />)}
             </div>
         </div>
@@ -278,3 +280,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

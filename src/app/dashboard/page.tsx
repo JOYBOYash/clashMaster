@@ -10,7 +10,8 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { 
   Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords
 } from 'lucide-react';
-import { cn, getImagePath } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { getImagePath } from '@/lib/image-paths';
 
 // Component to display a single stat
 const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementType, title: string, value: string | number, footer?: string }) => (
@@ -32,6 +33,8 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 const HeroCard = ({ hero }: { hero: any }) => {
   const isMaxed = hero.level === hero.maxLevel;
   const equipment = hero.equipment && hero.equipment.length > 0 ? hero.equipment : [];
+  const imagePath = getImagePath(hero.name);
+
 
   return (
     <div className={cn(
@@ -40,7 +43,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
     )}>
       {isMaxed && <Badge className="absolute -top-2 -right-2 bg-amber-500 text-white shadow-md">MAX</Badge>}
       <div className="relative w-24 h-24 mb-2">
-        <Image src={getImagePath(hero.name, 'hero')} alt={hero.name} fill className="object-contain" unoptimized />
+        <Image src={imagePath} alt={hero.name} fill className="object-contain" unoptimized />
       </div>
       <h4 className="font-bold text-sm font-headline">{hero.name}</h4>
       <p className="text-lg font-bold text-primary">Level {hero.level}</p>
@@ -63,7 +66,8 @@ const HeroCard = ({ hero }: { hero: any }) => {
 // Component for Troop/Spell display
 const TroopCard = ({ item }: { item: any }) => {
   const isMaxed = item.level === item.maxLevel;
-  const itemType = item.housingSpace ? 'troop' : 'spell';
+  const imagePath = getImagePath(item.name);
+
 
   return (
     <div className={cn(
@@ -72,7 +76,7 @@ const TroopCard = ({ item }: { item: any }) => {
     )}>
         {isMaxed && <Badge variant="default" className="absolute top-1 right-1 text-xs px-1.5 py-0.5 h-auto bg-amber-500 text-white shadow-md">MAX</Badge>}
         <div className="relative w-12 h-12">
-            <Image src={getImagePath(item.name, itemType)} alt={item.name} fill className="object-contain" unoptimized />
+            <Image src={imagePath} alt={item.name} fill className="object-contain" unoptimized />
         </div>
         <p className="font-bold text-xs font-headline mt-2 flex-grow">{item.name}</p>
         <p className="text-md font-bold text-primary mt-1">Level {item.level}</p>

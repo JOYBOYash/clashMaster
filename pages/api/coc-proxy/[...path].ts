@@ -13,7 +13,7 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   // The path array will contain the segments, e.g., ['players', '#GU82PJVGJ']
   // We need to encode the player tag specifically, which is the last segment.
   const pathSegments = (path as string[]);
-  if (pathSegments.length > 1) {
+  if (pathSegments.length > 1 && pathSegments[0] === 'players') {
     pathSegments[pathSegments.length - 1] = encodeURIComponent(pathSegments[pathSegments.length - 1]);
   }
   const cocPath = pathSegments.join('/');
@@ -36,6 +36,7 @@ const cocApiProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         data = JSON.parse(responseBody);
     } catch (e) {
+        // If the API returns a non-JSON error (like a simple string for 'invalidIp'), wrap it.
         data = { reason: responseBody.trim() };
     }
 

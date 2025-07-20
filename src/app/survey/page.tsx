@@ -36,7 +36,9 @@ export default function SurveyPage() {
       setPlayerData(result);
       toast({ title: 'Player Found!', description: `Successfully fetched data for ${result.name}.` });
     } catch (error: any) {
-      setPlayerData(null); // Clear data on error
+
+      setPlayerData(null);
+
       toast({
         variant: 'destructive',
         title: 'Error Fetching Player',

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Progress } from './ui/progress';
 
 const trivia = [
   "Did you know? The P.E.K.K.A's armor is so heavy that the Spring Trap doesn't affect her.",
@@ -21,20 +22,17 @@ const trivia = [
   "The Royal Champion's spear can pierce a Town Hall from one end to the other."
 ];
 
-export function LoadingSpinner({ show }: { show: boolean }) {
+export function LoadingSpinner({ show, progress, total }: { show: boolean, progress?: number, total?: number }) {
   const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(show);
 
   useEffect(() => {
-    // Select a random trivia question on mount
     setCurrentTriviaIndex(Math.floor(Math.random() * trivia.length));
   }, []);
 
   useEffect(() => {
-    // Control visibility with a fade effect
     if (!show) {
-      // Start fade out
-      const timer = setTimeout(() => setIsVisible(false), 500); // Wait for fade-out to complete
+      const timer = setTimeout(() => setIsVisible(false), 500);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(true);
@@ -49,20 +47,34 @@ export function LoadingSpinner({ show }: { show: boolean }) {
     return null;
   }
 
+  const showProgress = typeof progress === 'number' && typeof total === 'number' && total > 0;
+  const loadedCount = Math.round((progress / 100) * total);
+
   return (
     <div className={cn(
       "fixed inset-0 flex flex-col justify-center items-center bg-background/90 backdrop-blur-sm z-50 transition-opacity duration-500",
       show ? "opacity-100" : "opacity-0"
     )}>
-      <div className="text-center p-8 max-w-md">
+      <div className="text-center p-8 max-w-md w-full">
         <p className="text-lg text-foreground/80 mb-6 italic min-h-[6em]">
           {trivia[currentTriviaIndex] || "Loading interesting facts..."}
         </p>
-        <div className="flex justify-center items-center space-x-2 mb-6">
-          <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-          <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-          <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
-        </div>
+
+        {showProgress ? (
+          <div className="mb-6">
+            <Progress value={progress} className="w-full h-2.5" />
+            <p className="text-sm text-muted-foreground mt-2">
+              Loading assets... ({loadedCount} / {total})
+            </p>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center space-x-2 mb-6">
+            <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
+            <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
+            <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+          </div>
+        )}
+
          <Button variant="outline" size="sm" onClick={nextTrivia}>
           <RefreshCw className="mr-2 h-4 w-4" />
           Next Tip
@@ -71,3 +83,5 @@ export function LoadingSpinner({ show }: { show: boolean }) {
     </div>
   );
 }
+
+    

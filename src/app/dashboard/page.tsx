@@ -153,17 +153,25 @@ const CategoryGrid = ({ title, icon: Icon, items }: { title: string, icon: React
   );
 }
 
-const preloadImages = (urls: string[]) => {
+const preloadImages = (urls: string[], onProgress: (progress: number) => void) => {
+  let loadedCount = 0;
+  const totalImages = urls.length;
+  onProgress(0);
+
   const promises = urls.map(url => {
     return new Promise((resolve) => {
       const img = new window.Image();
       img.src = url;
-      img.onload = resolve;
-      img.onerror = resolve; // Resolve even on error to not block the page
+      const onDone = () => {
+        loadedCount++;
+        onProgress((loadedCount / totalImages) * 100);
+        resolve(true);
+      };
+      img.onload = onDone;
+      img.onerror = onDone; // Resolve even on error to not block the page
     });
   });
-  // Use allSettled to wait for all promises to resolve or reject.
-  // This prevents one failed image from blocking the entire page load.
+
   return Promise.allSettled(promises);
 };
 
@@ -171,6 +179,8 @@ const preloadImages = (urls: string[]) => {
 export default function DashboardPage() {
   const [player, setPlayer] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [totalImages, setTotalImages] = useState(0);
   const [isFullyLoaded, setIsFullyLoaded] = useState(false);
   const router = useRouter();
 
@@ -181,7 +191,6 @@ export default function DashboardPage() {
         const parsedPlayer = JSON.parse(playerData);
         setPlayer(parsedPlayer);
         
-        // Gather all image URLs to preload
         const imageUrls = [
           parsedPlayer.clan?.badge?.url,
           parsedPlayer.league?.icon?.url,
@@ -189,9 +198,11 @@ export default function DashboardPage() {
           ...parsedPlayer.heroes.flatMap((h: any) => h.equipment?.map((e: any) => getImagePath(e.name)) || []),
           ...parsedPlayer.troops.map((t: any) => getImagePath(t.name)),
           ...parsedPlayer.spells.map((s: any) => getImagePath(s.name)),
-        ].filter(Boolean); // Filter out any undefined/null URLs
+        ].filter(Boolean);
 
-        await preloadImages(imageUrls);
+        setTotalImages(imageUrls.length);
+
+        await preloadImages(imageUrls, setLoadingProgress);
         setIsFullyLoaded(true);
 
       } catch (error) {
@@ -211,7 +222,7 @@ export default function DashboardPage() {
 
 
   if (loading || !isFullyLoaded) {
-    return <LoadingSpinner show={true} />;
+    return <LoadingSpinner show={true} progress={loadingProgress} total={totalImages} />;
   }
 
   const {
@@ -348,5 +359,7 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
 
     

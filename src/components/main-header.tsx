@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { CircleUser, LogOut } from 'lucide-react';
+import { CircleUser, LogOut, Menu } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from './ui/button';
 import { MainNav } from '../app/main-nav';
@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
@@ -33,6 +34,22 @@ export function MainHeader() {
         </Link>
         
         <MainNav />
+
+        <div className="md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+               <div className="flex flex-col gap-4 py-4">
+                  <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Dashboard</Link>
+                  <Link href="/survey" className="text-muted-foreground hover:text-foreground">Survey</Link>
+               </div>
+            </SheetContent>
+          </Sheet>
+        </div>
         
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user ? (

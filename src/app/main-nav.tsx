@@ -12,14 +12,10 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
 
-  // All navigation links removed as per the new simplified structure.
   const routes = [
+     { href: '/dashboard', label: 'Dashboard' },
      { href: '/survey', label: 'Take Survey' },
   ];
-
-  if (routes.length === 0) {
-    return null; // Return null to render nothing
-  }
 
   return (
     <nav

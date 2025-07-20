@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Search } from 'lucide-react';
 import { getPlayer } from '@/lib/coc-api';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   playerTag: z.string().min(4, { message: 'Player tag is required.' }).refine(val => val.startsWith('#'), { message: 'Player tag must start with #' }),
@@ -21,8 +22,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function SurveyPage() {
   const [loading, setLoading] = useState(false);
-  const [playerData, setPlayerData] = useState<any | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -30,15 +31,14 @@ export default function SurveyPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
-    setPlayerData(null);
     try {
       const result = await getPlayer(data.playerTag);
-      setPlayerData(result);
-      toast({ title: 'Player Found!', description: `Successfully fetched data for ${result.name}.` });
+      localStorage.setItem('playerData', JSON.stringify(result));
+
+      toast({ title: 'Player Found!', description: `Successfully synced data for ${result.name}.` });
+      router.push('/dashboard');
+
     } catch (error: any) {
-
-      setPlayerData(null);
-
       toast({
         variant: 'destructive',
         title: 'Error Fetching Player',
@@ -74,20 +74,6 @@ export default function SurveyPage() {
           </form>
         </CardContent>
       </Card>
-
-      {playerData && (
-        <Card className="w-full max-w-md mt-8">
-            <CardHeader>
-                <CardTitle>{playerData.name}</CardTitle>
-                <CardDescription>Town Hall {playerData.townHallLevel} &bull; Level {playerData.expLevel}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <pre className="p-4 bg-muted rounded-md overflow-x-auto text-xs">
-                    {JSON.stringify(playerData, null, 2)}
-                </pre>
-            </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

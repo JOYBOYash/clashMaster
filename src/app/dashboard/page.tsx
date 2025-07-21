@@ -139,7 +139,7 @@ const AchievementCard = ({ achievement }: { achievement: any }) => (
 );
 
 const CategoryGrid = ({ title, icon: Icon, items }: { title: string, icon: React.ElementType, items: any[] }) => {
-  if (items.length === 0) return null;
+  if (!items || items.length === 0) return null;
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
@@ -203,6 +203,7 @@ export default function DashboardPage() {
           ...parsedPlayer.heroes.flatMap((h: any) => h.equipment?.map((e: any) => getImagePath(e.name)) || []),
           ...parsedPlayer.troops.map((t: any) => getImagePath(t.name)),
           ...parsedPlayer.spells.map((s: any) => getImagePath(s.name)),
+          ...(parsedPlayer.siegeMachines || []).map((s: any) => getImagePath(s.name)),
         ].filter(Boolean);
 
         setTotalImages(imageUrls.length);
@@ -233,7 +234,7 @@ export default function DashboardPage() {
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
     builderBaseTrophies, bestBuilderBaseTrophies, warStars, attackWins, defenseWins,
-    donations, received, clan, league, achievements, heroes, troops, spells
+    donations, received, clan, league, achievements, heroes, troops, spells, siegeMachines
   } = player;
 
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
@@ -242,13 +243,14 @@ export default function DashboardPage() {
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
   const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
-  const superTroops = troops.filter((t: any) => t.village === 'home' && t.isActive);
-
+  
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
   const darkElixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir');
 
   const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
+
+  const homeSiegeMachines = siegeMachines?.filter((s: any) => s.village === 'home') ?? [];
 
   return (
     <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
@@ -316,13 +318,17 @@ export default function DashboardPage() {
             <h3 className="text-2xl font-headline mb-4">Army</h3>
              <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
              <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
-             <CategoryGrid title="Super Troops" icon={Star} items={superTroops} />
         </div>
         
          <div className="space-y-6">
             <h3 className="text-2xl font-headline mb-4">Spells</h3>
              <CategoryGrid title="Elixir Spells" icon={Droplets} items={elixirSpells} />
              <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
+        </div>
+
+        <div className="space-y-6">
+            <h3 className="text-2xl font-headline mb-4">Siege Machines</h3>
+            <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
         </div>
       </div>
       
@@ -364,5 +370,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

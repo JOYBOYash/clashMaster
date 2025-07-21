@@ -240,11 +240,12 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
-  const superTroops = troops.filter((t: any) => t.village === 'home' && t.name.startsWith('Super'));
+  const homeTroops = troops.filter((t: any) => t.village === 'home');
+  const superTroops = homeTroops.filter((t: any) => t.name.startsWith('Super'));
+  const regularTroops = homeTroops.filter((t: any) => !t.name.startsWith('Super'));
   
-  const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
-  const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
+  const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
+  const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');

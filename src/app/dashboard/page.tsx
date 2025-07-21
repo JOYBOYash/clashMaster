@@ -158,6 +158,11 @@ const preloadImages = (urls: string[], onProgress: (progress: number) => void) =
   const totalImages = urls.length;
   onProgress(0);
 
+  if (totalImages === 0) {
+    onProgress(100);
+    return Promise.resolve([]);
+  }
+
   const promises = urls.map(url => {
     return new Promise((resolve) => {
       const img = new window.Image();
@@ -359,3 +364,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

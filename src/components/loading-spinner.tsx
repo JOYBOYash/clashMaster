@@ -7,7 +7,8 @@ import { Button } from './ui/button';
 import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from './ui/progress';
-import { heroAvatarAssets } from '@/lib/image-paths';
+import { heroAvatarAssets, carouselImageAssets, appLogoPath } from '@/lib/image-paths';
+import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 
 const trivia = [
   "Did you know? The P.E.K.K.A's armor is so heavy that the Spring Trap doesn't affect her.",
@@ -60,46 +61,82 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
 
   return (
     <div className={cn(
-      "fixed inset-0 flex flex-col justify-center items-center bg-background/90 backdrop-blur-sm z-50 transition-opacity duration-500",
+      "fixed inset-0 z-50 flex flex-col md:flex-row transition-opacity duration-500",
+      "bg-gradient-to-br from-[#1a2a2d] via-[#121e20] to-[#0c1416]", // Dark, moody gradient
       show ? "opacity-100" : "opacity-0"
     )}>
-      <div className="text-center p-8 max-w-md w-full flex flex-col items-center">
-        
-        <div className="flex items-center gap-4 mb-6">
-          <div className="relative w-24 h-24 shrink-0">
-             <Image 
-                src={currentAvatar}
-                alt="Hero Avatar"
-                fill
-                className="object-contain drop-shadow-lg"
-                unoptimized
-              />
+      {/* Left side: Hero Carousel */}
+      <div className="relative w-full md:w-1/2 h-1/2 md:h-full flex items-center justify-center p-8">
+        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-transparent via-black/30 to-black/80 z-10"></div>
+        <Carousel className="w-full h-full" autoplay>
+          <CarouselContent>
+            {carouselImageAssets.map((item, index) => (
+              <CarouselItem key={index} className="p-0">
+                <div className="relative w-full h-full">
+                  <Image
+                      src={item.src}
+                      alt={item.alt}
+                      fill
+                      className="object-contain object-bottom drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+                      priority
+                      unoptimized
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
+
+      {/* Right side: Content */}
+      <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center md:items-start p-8 md:p-16 relative z-20">
+        <div className="flex flex-col items-center md:items-start max-w-lg w-full text-center md:text-left">
+          
+          <Image src={appLogoPath} alt="ProBuilder Logo" width={80} height={80} unoptimized className="mb-4 drop-shadow-lg" />
+          
+          <div className="flex items-start gap-4 mb-8 w-full">
+            <div className="relative w-20 h-20 shrink-0 mt-2 hidden sm:block">
+              <Image 
+                  src={currentAvatar}
+                  alt="Hero Avatar"
+                  fill
+                  className="object-contain drop-shadow-lg"
+                  unoptimized
+                />
+            </div>
+            <div className="flex-grow">
+              <p className="text-sm font-bold text-primary tracking-widest">TIP</p>
+              <p className="text-lg text-slate-200/90 italic min-h-[5em]">
+                "{trivia[currentTriviaIndex] || "Loading interesting facts..."}"
+              </p>
+            </div>
           </div>
-          <p className="text-lg text-foreground/80 italic min-h-[6em] text-left">
-            "{trivia[currentTriviaIndex] || "Loading interesting facts..."}"
-          </p>
+          
+          {showProgress ? (
+            <div className="w-full mb-6">
+              <Progress value={progress} className="w-full h-2.5 bg-slate-700/50" />
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-muted-foreground mt-2">
+                  Syncing Village Data...
+                </p>
+                 <p className="text-sm text-muted-foreground mt-2 font-mono">
+                  {loadedCount} / {total}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center items-center space-x-2 mb-6 w-full">
+              <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
+              <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
+              <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+            </div>
+          )}
+
+          <Button variant="outline" size="sm" onClick={nextTrivia} className="bg-transparent border-slate-600/80 text-slate-300 hover:bg-slate-700/50 hover:text-white">
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Next Tip
+          </Button>
         </div>
-
-
-        {showProgress ? (
-          <div className="w-full mb-6">
-            <Progress value={progress} className="w-full h-2.5" />
-            <p className="text-sm text-muted-foreground mt-2">
-              Loading assets... ({loadedCount} / {total})
-            </p>
-          </div>
-        ) : (
-          <div className="flex justify-center items-center space-x-2 mb-6">
-            <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.3s]"></div>
-            <div className="w-3 h-3 bg-primary rounded-full animate-pulse [animation-delay:-0.15s]"></div>
-            <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
-          </div>
-        )}
-
-         <Button variant="outline" size="sm" onClick={nextTrivia}>
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Next Tip
-        </Button>
       </div>
     </div>
   );

@@ -31,6 +31,7 @@ const itemImageMap: Record<string, string> = {
   'Barbarian King': '/assets/_hero/barbarian-king.png',
   'Archer Queen': '/assets/_hero/archer-queen.png',
   'Grand Warden': '/assets/_hero/grand-warden.png',
+  'Minion Prince': '/assets/_hero/minion-prince.png',
   'Royal Champion': '/assets/_hero/royal-champion.png',
   'Battle Machine': '/assets/_hero/battle-machine.png',
   'Battle Copter': '/assets/_hero/battle-copter.png',

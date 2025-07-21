@@ -2,10 +2,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from './ui/progress';
+import { heroAvatarAssets } from '@/lib/image-paths';
 
 const trivia = [
   "Did you know? The P.E.K.K.A's armor is so heavy that the Spring Trap doesn't affect her.",
@@ -19,15 +21,20 @@ const trivia = [
   "The Healer once tried to heal a broken heart. It didn't work.",
   "Minions are made of pure Dark Elixir and a hint of mischief.",
   "The Grand Warden can float because he simply forgot how gravity works.",
-  "The Royal Champion's spear can pierce a Town Hall from one end to the other."
+  "The Royal Champion's spear can pierce a Town Hall from one end to the other.",
+  "Never underestimate an angry Barbarian. Or a happy one. Just... be careful with Barbarians.",
+  "Giants love a good spa day. All that smashing is tough on the muscles.",
+  "The Builder's favorite song is 'We Will Rock You'.",
 ];
 
 export function LoadingSpinner({ show, progress, total }: { show: boolean, progress?: number, total?: number }) {
   const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0);
+  const [currentAvatar, setCurrentAvatar] = useState(heroAvatarAssets[0]);
   const [isVisible, setIsVisible] = useState(show);
 
   useEffect(() => {
     setCurrentTriviaIndex(Math.floor(Math.random() * trivia.length));
+    setCurrentAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
   }, []);
 
   useEffect(() => {
@@ -41,6 +48,7 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
 
   const nextTrivia = () => {
     setCurrentTriviaIndex((prevIndex) => (prevIndex + 1) % trivia.length);
+    setCurrentAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
   };
   
   if (!isVisible) {
@@ -55,13 +63,26 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
       "fixed inset-0 flex flex-col justify-center items-center bg-background/90 backdrop-blur-sm z-50 transition-opacity duration-500",
       show ? "opacity-100" : "opacity-0"
     )}>
-      <div className="text-center p-8 max-w-md w-full">
-        <p className="text-lg text-foreground/80 mb-6 italic min-h-[6em]">
-          {trivia[currentTriviaIndex] || "Loading interesting facts..."}
-        </p>
+      <div className="text-center p-8 max-w-md w-full flex flex-col items-center">
+        
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative w-24 h-24 shrink-0">
+             <Image 
+                src={currentAvatar}
+                alt="Hero Avatar"
+                fill
+                className="object-contain drop-shadow-lg"
+                unoptimized
+              />
+          </div>
+          <p className="text-lg text-foreground/80 italic min-h-[6em] text-left">
+            "{trivia[currentTriviaIndex] || "Loading interesting facts..."}"
+          </p>
+        </div>
+
 
         {showProgress ? (
-          <div className="mb-6">
+          <div className="w-full mb-6">
             <Progress value={progress} className="w-full h-2.5" />
             <p className="text-sm text-muted-foreground mt-2">
               Loading assets... ({loadedCount} / {total})
@@ -83,5 +104,3 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
     </div>
   );
 }
-
-    

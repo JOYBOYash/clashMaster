@@ -241,8 +241,8 @@ export default function DashboardPage() {
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const homeTroops = troops.filter((t: any) => t.village === 'home');
-  const superTroops = homeTroops.filter((t: any) => t.name.startsWith('Super'));
-  const regularTroops = homeTroops.filter((t: any) => !t.name.startsWith('Super'));
+  const superTroops = homeTroops.filter((t: any) => t.superTroopIsActive);
+  const regularTroops = homeTroops.filter((t: any) => !t.name.startsWith('Super') && !t.superTroopIsActive);
   
   const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
@@ -331,7 +331,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-6">
-            <h3 className="text-2xl font-headline mb-4">Siege Machines</h3>
             <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
         </div>
       </div>
@@ -374,3 +373,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

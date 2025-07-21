@@ -91,10 +91,10 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
           
           <div className="flex items-start gap-4 mb-8 w-full min-h-[10rem] md:min-h-[12rem]">
             <div className="flex-grow">
-              <p className="font-headline text-2xl md:text-3xl lg:text-4xl text-primary drop-shadow-sm">
-                <span className="text-6xl lg:text-7xl opacity-50">“</span>
-                {trivia[currentTriviaIndex] || "Loading interesting facts..."}
-                <span className="text-6xl lg:text-7xl opacity-50">”</span>
+              <p className="font-headline text-2xl md:text-3xl lg:text-4xl">
+                <span className="text-6xl lg:text-7xl opacity-50 text-primary">“</span>
+                <span className="text-foreground">{trivia[currentTriviaIndex] || "Loading interesting facts..."}</span>
+                <span className="text-6xl lg:text-7xl opacity-50 text-primary">”</span>
               </p>
             </div>
           </div>

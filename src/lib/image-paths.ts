@@ -129,7 +129,15 @@ const itemImageMap: Record<string, string> = {
   'Power P.E.K.K.A': '/assets/_bbtroops/power-PEKKA.png',
   'Hog Glider': '/assets/_bbtroops/hog-glider.png',
   'Electrofire Wizard': '/assets/_bbtroops/electrofire-wizard.png',
-  // Builder base baby dragon uses the same image as home village one, so it's already covered.
+
+  // Siege Machines
+  'Wall Wrecker': '/assets/_siege/wall-wrecker.png',
+  'Battle Blimp': '/assets/_siege/battle-blimp.png',
+  'Stone Slammer': '/assets/_siege/stone-slammer.png',
+  'Siege Barracks': '/assets/_siege/siege-barracks.png',
+  'Log Launcher': '/assets/_siege/log-launcher.png',
+  'Flame Flinger': '/assets/_siege/flame-flinger.png',
+  'Battle Drill': '/assets/_siege/battle-drill.png',
 
   'Default': '/assets/buildings/default.png',
 };

@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
@@ -43,6 +43,9 @@ export function MainHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                </SheetHeader>
                <div className="flex flex-col gap-4 py-4">
                   <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Dashboard</Link>
                   <Link href="/survey" className="text-muted-foreground hover:text-foreground">Survey</Link>

@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from './ui/progress';
-import { heroAvatarAssets, appLogoPath } from '@/lib/image-paths';
+import { heroAvatarAssets } from '@/lib/image-paths';
 
 const trivia = [
   "Did you know? The P.E.K.K.A's armor is so heavy that the Spring Trap doesn't affect her.",
@@ -72,7 +72,8 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
 
       {/* Left side: Hero Avatar */}
       <div className="relative w-full md:w-1/2 h-1/2 md:h-full flex items-center justify-center p-8 overflow-hidden">
-         <div className="relative w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] md:w-[450px] md:h-[450px]">
+         <div className="absolute inset-0 bg-muted/20 skew-x-[-15deg] -translate-x-1/2 md:translate-x-0"></div>
+         <div className="relative w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[550px] md:h-[550px]">
             <Image
                 src={currentAvatar}
                 alt="Hero Avatar"
@@ -88,12 +89,12 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
       <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center md:items-start p-8 md:p-16 relative z-10">
         <div className="flex flex-col items-center md:items-start max-w-lg w-full text-center md:text-left">
           
-          <Image src={appLogoPath} alt="ProBuilder Logo" width={80} height={80} unoptimized className="mb-4 drop-shadow-lg" />
-          
           <div className="flex items-start gap-4 mb-8 w-full min-h-[10rem] md:min-h-[12rem]">
             <div className="flex-grow">
               <p className="font-headline text-2xl md:text-3xl lg:text-4xl text-primary drop-shadow-sm">
-                "{trivia[currentTriviaIndex] || "Loading interesting facts..."}"
+                <span className="text-6xl lg:text-7xl opacity-50">“</span>
+                {trivia[currentTriviaIndex] || "Loading interesting facts..."}
+                <span className="text-6xl lg:text-7xl opacity-50">”</span>
               </p>
             </div>
           </div>

@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, FlaskConical
+  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, FlaskConical, BrainCircuit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath } from '@/lib/image-paths';
@@ -241,6 +241,8 @@ export default function DashboardPage() {
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const homeTroops = troops.filter((t: any) => t.village === 'home' && !t.name.startsWith('Super'));
+  const superTroops = troops.filter((t: any) => t.village === 'home' && t.name.startsWith('Super'));
+  
   const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
@@ -249,7 +251,7 @@ export default function DashboardPage() {
   const darkElixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir');
 
   const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
-
+  
   const homeSiegeMachines = siegeMachines?.filter((s: any) => s.village === 'home') ?? [];
 
   return (
@@ -315,9 +317,10 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-6">
-            <h3 className="text-2xl font-headline mb-4">Army</h3>
+             <h3 className="text-2xl font-headline mb-4">Army</h3>
              <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
              <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
+             <CategoryGrid title="Super Troops" icon={BrainCircuit} items={superTroops} />
         </div>
         
          <div className="space-y-6">

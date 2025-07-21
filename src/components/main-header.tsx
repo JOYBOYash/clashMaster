@@ -18,10 +18,25 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
   const homeHref = '/';
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasPlayerData, setHasPlayerData] = useState(false);
+
+  useEffect(() => {
+    const data = localStorage.getItem('playerData');
+    setHasPlayerData(!!data);
+  }, [pathname]);
+
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -36,7 +51,7 @@ export function MainHeader() {
         <MainNav />
 
         <div className="md:hidden">
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu />
@@ -47,8 +62,10 @@ export function MainHeader() {
                   <SheetTitle className="sr-only">Main Menu</SheetTitle>
                 </SheetHeader>
                <div className="flex flex-col gap-4 py-4">
-                  <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Dashboard</Link>
-                  <Link href="/survey" className="text-muted-foreground hover:text-foreground">Survey</Link>
+                  <Link href="/dashboard" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Dashboard</Link>
+                  {!hasPlayerData && (
+                    <Link href="/survey" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Survey</Link>
+                  )}
                </div>
             </SheetContent>
           </Sheet>

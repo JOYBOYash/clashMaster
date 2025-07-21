@@ -53,6 +53,10 @@ const itemImageMap: Record<string, string> = {
   'Royal Gem': '/assets/_hero_equipment/rc/royal-gem.png',
   'Hog Rider Puppet': '/assets/_hero_equipment/rc/hog-rider-puppet.png',
   'Haste Vial': '/assets/_hero_equipment/rc/haste-vial.png',
+  'Action Figure': '/assets/_hero_equipment/aq/action-figure.png',
+  'Magic Mirror': '/assets/_hero_equipment/aq/magic-mirror.png',
+  'Henchmen Puppet': '/assets/_hero_equipment/mp/heenchman.png',
+  'Metal Pants': '/assets/_hero_equipment/mp/iron-pants.png',
 
   // Elixir Troops
   'Barbarian': '/assets/_troops/elixer/barbarian.png',
@@ -102,7 +106,7 @@ const itemImageMap: Record<string, string> = {
   
   // Elixir Spells
   'Lightning Spell': '/assets/_spells/elixer/lightning_spell.png',
-  'Healing Spell': '/assets/_spells/elixer/healing_spell.png',
+  'Healing Spell': '/assets/_spells/elixer/heal_spell.png',
   'Rage Spell': '/assets/_spells/elixer/rage_spell.png',
   'Jump Spell': '/assets/_spells/elixer/jump_spell.png',
   'Freeze Spell': '/assets/_spells/elixer/freeze_spell.png',

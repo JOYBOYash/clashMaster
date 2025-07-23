@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { getImagePath, getHallImagePath } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const SectionTitle = ({ icon: Icon, title }: { icon: React.ElementType, title: string }) => (
   <div className="flex items-center gap-3 mb-6">
@@ -301,64 +302,75 @@ export default function DashboardPage() {
             )}
         </div>
       </Card>
-
-      {/* Home Village Section */}
-      <div className="space-y-8">
-        <SectionTitle icon={Axe} title="Home Village" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <StatCard icon={Trophy} title="Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
-          <StatCard icon={Star} title="War Stars" value={warStars} />
-          <StatCard icon={HeartHandshake} title="Donations" value={donations} footer={`Received: ${received}`} />
-        </div>
-        
-        <div>
-          <h3 className="text-2xl font-headline mb-4">Heroes</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-             <h3 className="text-2xl font-headline mb-4">Army</h3>
-             <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
-             <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
-             <CategoryGrid title="Super Troops" icon={BrainCircuit} items={superTroops} />
-        </div>
-        
-         <div className="space-y-6">
-            <h3 className="text-2xl font-headline mb-4">Spells</h3>
-             <CategoryGrid title="Elixir Spells" icon={Droplets} items={elixirSpells} />
-             <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
-        </div>
-
-        <div className="space-y-6">
-            <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
-        </div>
-      </div>
       
-      <Separator className="my-12" />
+      <Tabs defaultValue="home" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="home">
+            <Axe className="mr-2" /> Home Village
+          </TabsTrigger>
+          <TabsTrigger value="builder">
+            <Hammer className="mr-2" /> Builder Base
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="home">
+            <Card className="mt-4">
+                <CardContent className="pt-6 space-y-8">
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <StatCard icon={Trophy} title="Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
+                        <StatCard icon={Star} title="War Stars" value={warStars} />
+                        <StatCard icon={HeartHandshake} title="Donations" value={donations} footer={`Received: ${received}`} />
+                    </div>
+                    
+                    <div>
+                        <h3 className="text-2xl font-headline mb-4">Heroes</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
+                        </div>
+                    </div>
 
-      {/* Builder Base Section */}
-      <div className="space-y-8">
-        <SectionTitle icon={Hammer} title="Builder Base" />
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
-        </div>
-        
-        <div>
-          <h3 className="text-2xl font-headline mb-4">Heroes</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {builderHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
-          </div>
-        </div>
+                    <div className="space-y-6">
+                        <h3 className="text-2xl font-headline mb-4">Army</h3>
+                        <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
+                        <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
+                        <CategoryGrid title="Super Troops" icon={BrainCircuit} items={superTroops} />
+                    </div>
+                    
+                    <div className="space-y-6">
+                        <h3 className="text-2xl font-headline mb-4">Spells</h3>
+                        <CategoryGrid title="Elixir Spells" icon={Droplets} items={elixirSpells} />
+                        <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
+                    </div>
 
-        <div>
-            <h3 className="text-2xl font-headline mb-4">Troops</h3>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-              {builderTroops.map((item: any) => <TroopSpellCard key={item.name} item={item} />)}
-            </div>
-        </div>
-      </div>
+                    <div className="space-y-6">
+                        <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
+                    </div>
+                </CardContent>
+            </Card>
+        </TabsContent>
+        <TabsContent value="builder">
+            <Card className="mt-4">
+                <CardContent className="pt-6 space-y-8">
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
+                    </div>
+                    
+                    <div>
+                        <h3 className="text-2xl font-headline mb-4">Heroes</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {builderHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 className="text-2xl font-headline mb-4">Troops</h3>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                        {builderTroops.map((item: any) => <TroopSpellCard key={item.name} item={item} />)}
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </TabsContent>
+      </Tabs>
 
        <Separator className="my-12" />
 
@@ -374,3 +386,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

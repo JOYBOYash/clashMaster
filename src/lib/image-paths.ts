@@ -159,3 +159,9 @@ const itemImageMap: Record<string, string> = {
 export const getImagePath = (itemName: string): string => {
 return itemImageMap[itemName] || itemImageMap['Default'];
 };
+
+export const getHallImagePath = (type: 'townHall' | 'builderHall', level: number) => {
+  if (!level || level < 1) return '';
+  const typeName = type === 'townHall' ? 'town_hall' : 'builder_hall';
+  return `/assets/_halls/${typeName}_${level}.png`;
+}

@@ -12,7 +12,7 @@ import {
   Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, FlaskConical, BrainCircuit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getImagePath } from '@/lib/image-paths';
+import { getImagePath, getHallImagePath } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 
@@ -197,6 +197,8 @@ export default function DashboardPage() {
         setPlayer(parsedPlayer);
         
         const imageUrls = [
+          getHallImagePath('townHall', parsedPlayer.townHallLevel),
+          getHallImagePath('builderHall', parsedPlayer.builderHallLevel),
           parsedPlayer.clan?.badge?.url,
           parsedPlayer.league?.icon?.url,
           ...parsedPlayer.heroes.map((h: any) => getImagePath(h.name)),
@@ -240,12 +242,11 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const homeTroops = troops.filter((t: any) => t.village === 'home');
-  const superTroops = homeTroops.filter((t: any) => t.superTroopIsActive);
-  const regularTroops = homeTroops.filter((t: any) => !t.name.startsWith('Super') && !t.superTroopIsActive);
+  const homeTroops = troops.filter((t: any) => t.village === 'home' && t.superTroopIsActive === undefined);
+  const superTroops = troops.filter((t: any) => t.superTroopIsActive);
   
-  const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
-  const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
+  const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !t.superTroopIsActive);
+  const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !t.superTroopIsActive);
   
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
@@ -276,16 +277,16 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-        <div className="p-4 bg-card grid grid-cols-2 md:grid-cols-4 gap-4 text-center items-center">
-            <div className="flex flex-col items-center">
-                <Home className="w-5 h-5 text-muted-foreground" />
-                <p className="text-sm font-bold">Town Hall</p>
-                <p className="text-lg font-headline text-primary">{townHallLevel}</p>
+        <div className="p-4 bg-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center items-center">
+            <div className="flex flex-col items-center justify-center space-y-2">
+                <h3 className="font-headline text-lg">Town Hall {townHallLevel}</h3>
+                <Image src={getHallImagePath('townHall', townHallLevel)} alt={`Town Hall ${townHallLevel}`} width={128} height={128} unoptimized />
             </div>
-            <div className="flex flex-col items-center">
-                <Castle className="w-5 h-5 text-muted-foreground" />
-                <p className="text-sm font-bold">Builder Hall</p>
-                <p className="text-lg font-headline text-primary">{builderHallLevel || 'N/A'}</p>
+             <div className="flex flex-col items-center justify-center space-y-2">
+                <h3 className="font-headline text-lg">Builder Hall {builderHallLevel}</h3>
+                {builderHallLevel > 0 ? (
+                  <Image src={getHallImagePath('builderHall', builderHallLevel)} alt={`Builder Hall ${builderHallLevel}`} width={128} height={128} unoptimized />
+                ) : <div className="w-[128px] h-[128px] flex items-center justify-center text-muted-foreground">N/A</div> }
             </div>
             <div className="flex flex-col items-center">
                 <Medal className="w-5 h-5 text-muted-foreground" />
@@ -373,5 +374,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

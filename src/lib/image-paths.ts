@@ -162,6 +162,8 @@ return itemImageMap[itemName] || itemImageMap['Default'];
 
 export const getHallImagePath = (type: 'townHall' | 'builderHall', level: number) => {
   if (!level || level < 1) return '';
-  const typeName = type === 'townHall' ? 'town_hall' : 'builder_hall';
-  return `/assets/_halls/${typeName}_${level}.png`;
+  if (type === 'townHall') {
+    return `/assets/_halls/_town-halls/th_${level}.png`;
+  }
+  return `/assets/_halls/_builder_halls/bh_${level}.png`;
 }

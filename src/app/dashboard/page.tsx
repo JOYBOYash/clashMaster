@@ -9,20 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Home, Medal, Swords, Axe, Hammer, Droplets, FlaskConical, BrainCircuit
+  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, BrainCircuit, Medal, Swords
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath, getHallImagePath } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-const SectionTitle = ({ icon: Icon, title }: { icon: React.ElementType, title: string }) => (
-  <div className="flex items-center gap-3 mb-6">
-    <Icon className="w-8 h-8 text-primary" />
-    <h2 className="text-3xl font-headline">{title}</h2>
-  </div>
-);
 
 const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementType, title: string, value: string | number, footer?: string }) => (
   <Card className="text-center transition-all hover:border-primary/50">
@@ -260,7 +253,7 @@ export default function DashboardPage() {
   return (
     <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
       {/* Header */}
-      <Card className="overflow-hidden shadow-2xl">
+      <Card className="overflow-hidden shadow-2xl" no-hover>
         <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <h1 className="text-4xl font-headline text-primary">{name}</h1>
@@ -313,7 +306,7 @@ export default function DashboardPage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="home">
-            <Card className="mt-4">
+            <Card no-hover className="mt-4">
                 <CardContent className="pt-6 space-y-8">
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <StatCard icon={Trophy} title="Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
@@ -348,7 +341,7 @@ export default function DashboardPage() {
             </Card>
         </TabsContent>
         <TabsContent value="builder">
-            <Card className="mt-4">
+            <Card no-hover className="mt-4">
                 <CardContent className="pt-6 space-y-8">
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
@@ -386,5 +379,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

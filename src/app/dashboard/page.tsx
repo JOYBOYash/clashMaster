@@ -33,40 +33,64 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 );
 
 const HeroCard = ({ hero }: { hero: any }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const isMaxed = hero.level === hero.maxLevel;
   const heroImage = getImagePath(hero.name);
   const heroEquipment = hero.equipment || [];
 
   return (
-    <div className={cn(
-      "relative bg-card shadow-lg border border-border/20 overflow-hidden rounded-xl",
-      "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
-      isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
-    )}>
-      {isMaxed && <Badge className="absolute top-2 right-2 bg-amber-500 text-white shadow-md z-10">MAX</Badge>}
+    <div
+      className={cn(
+        "relative bg-card shadow-lg border border-border/20 overflow-hidden rounded-xl group",
+        "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
+        isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="absolute top-2 right-2 z-20">
+        <div className={cn(
+          "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg",
+          "transition-all duration-300",
+          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+        )}>
+          {hero.level}
+        </div>
+      </div>
       
-      <div className="relative w-full h-48">
-        <Image src={heroImage} alt={hero.name} fill className="object-cover object-center" unoptimized />
+      <div className="relative w-full h-48 md:h-56">
+        <Image 
+          src={heroImage} 
+          alt={hero.name} 
+          fill 
+          className={cn(
+            "object-cover object-top transition-transform duration-300 ease-in-out",
+            "group-hover:scale-110"
+          )} 
+          unoptimized 
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent"></div>
       </div>
       
-      <div className="p-4 relative -mt-12 z-10">
-        <div className="flex justify-between items-end">
-          <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm">{hero.name}</h3>
-          <div className="bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-xl font-bold font-headline shadow-lg">
-            {hero.level}
-          </div>
+      <div className="p-4 relative -mt-16 z-10">
+        <div 
+            className={cn(
+                "transition-opacity duration-300",
+                isHovered ? "opacity-0" : "opacity-100"
+            )}
+        >
+            <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
+            <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
+            <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
         </div>
-        <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
-        <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
 
         {heroEquipment.length > 0 && (
           <>
             <Separator className="my-3" />
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 h-12">
               <TooltipProvider>
                 {heroEquipment.map((equip: any, index: number) => (
-                  <Tooltip key={index}>
+                  <Tooltip key={index} delayDuration={0}>
                     <TooltipTrigger asChild>
                       <div className="w-12 h-12 bg-muted/50 rounded-lg p-1.5 border border-border/50 flex items-center justify-center transition-all hover:scale-110 hover:border-primary/50">
                         <Image src={getImagePath(equip.name)} alt={equip.name} width={40} height={40} unoptimized />
@@ -87,30 +111,34 @@ const HeroCard = ({ hero }: { hero: any }) => {
   );
 };
 
+
 const TroopSpellCard = ({ item }: { item: any }) => {
-  const isMaxed = item.level === item.maxLevel;
-  const imagePath = getImagePath(item.name);
-
-  return (
-    <div className={cn(
-      "relative bg-card/60 aspect-square rounded-xl border-2 border-transparent p-2 flex flex-col items-center justify-center transition-all duration-200 hover:shadow-lg hover:-translate-y-1 hover:border-primary/50",
-      isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-amber-400/10"
-    )}>
-      {isMaxed && <Badge variant="default" className="absolute top-1 right-1 text-xs px-1 py-0.5 h-auto bg-amber-500 text-white shadow-md z-10">MAX</Badge>}
-      
-      <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-grow">
-        <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
+    const isMaxed = item.level === item.maxLevel;
+    const imagePath = getImagePath(item.name);
+  
+    return (
+      <div className={cn(
+        "relative group bg-card/60 aspect-square rounded-xl border border-border/20 p-2 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:shadow-primary/20",
+        isMaxed && "border-amber-400/60 bg-amber-400/10 shadow-amber-400/10"
+      )}>
+        <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-grow transition-transform duration-300 group-hover:scale-110">
+          <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
+        </div>
+  
+        <div className="w-full text-center mt-2">
+          <p className="font-headline text-sm truncate">{item.name}</p>
+          <div className="relative h-6 mt-1 flex items-center justify-center">
+            {/* Level and progress shown on hover */}
+            <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+              <p className="font-bold text-lg text-primary leading-tight">Lvl {item.level}</p>
+              <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5" />
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div className="w-full text-center mt-2">
-        <p className="font-headline text-sm truncate">{item.name}</p>
-        <p className="font-bold text-lg text-primary">Lvl {item.level}</p>
-        <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5 mt-1" />
-      </div>
-    </div>
-  );
-};
-
+    );
+  };
+  
 
 const AchievementCard = ({ achievement }: { achievement: any }) => (
   <div className="bg-card/50 p-3 rounded-lg border text-sm flex flex-col justify-between">
@@ -140,7 +168,7 @@ const CategoryGrid = ({ title, icon: Icon, items }: { title: string, icon: React
         <Icon className="w-5 h-5 text-muted-foreground" />
         <h4 className="text-xl font-headline text-foreground/80">{title}</h4>
       </div>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3">
         {items.map((item: any) => <TroopSpellCard key={item.name} item={item} />)}
       </div>
     </div>
@@ -236,11 +264,13 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const homeTroops = troops.filter((t: any) => t.village === 'home' && t.superTroopIsActive === undefined);
+  const homeTroops = troops.filter((t: any) => t.village === 'home');
   const superTroops = troops.filter((t: any) => t.superTroopIsActive);
   
-  const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !t.superTroopIsActive);
-  const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !t.superTroopIsActive);
+  const regularTroops = homeTroops.filter((t: any) => !t.superTroopIsActive && t.name !== 'Siege Machine' && !t.name.includes('Wrecker') && !t.name.includes('Blimp') && !t.name.includes('Slammer') && !t.name.includes('Barracks') && !t.name.includes('Launcher') && !t.name.includes('Flinger') && !t.name.includes('Drill'));
+
+  const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
+  const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
@@ -248,7 +278,7 @@ export default function DashboardPage() {
 
   const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
   
-  const homeSiegeMachines = siegeMachines?.filter((s: any) => s.village === 'home') ?? [];
+  const homeSiegeMachines = siegeMachines ?? [];
 
   return (
     <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
@@ -288,18 +318,23 @@ export default function DashboardPage() {
             <Hammer className="mr-2" /> Builder Base
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="home">
             <Card no-hover className="mt-4">
                 <CardContent className="pt-6 space-y-8">
-                     <div className="p-4 bg-card grid grid-cols-1 md:grid-cols-2 gap-4 text-center items-center rounded-lg mb-6">
+                     <div className="p-6 bg-card/50 grid grid-cols-1 md:grid-cols-2 gap-6 text-center items-center rounded-xl mb-6 border-2 border-border/20 shadow-inner">
                         <div className="flex flex-col items-center justify-center space-y-2">
-                            <h3 className="font-headline text-lg">Town Hall {townHallLevel}</h3>
-                            <Image src={getHallImagePath('townHall', townHallLevel)} alt={`Town Hall ${townHallLevel}`} width={128} height={128} unoptimized />
+                            <h3 className="font-headline text-2xl">Town Hall {townHallLevel}</h3>
+                            <div className="relative w-40 h-40 md:w-48 md:h-48">
+                                <Image src={getHallImagePath('townHall', townHallLevel)} alt={`Town Hall ${townHallLevel}`} fill className="object-contain" unoptimized />
+                            </div>
                         </div>
                         {league && (
                           <div className="flex flex-col items-center justify-center">
-                            <Image src={league.icon.url} alt={league.name} width={96} height={96} unoptimized />
-                            <p className="text-sm text-muted-foreground mt-1 text-center truncate">{league.name}</p>
+                            <div className="relative w-32 h-32 md:w-40 md:h-40">
+                                <Image src={league.icon.url} alt={league.name} fill className="object-contain" unoptimized />
+                            </div>
+                            <p className="text-lg font-bold text-muted-foreground mt-2 text-center truncate">{league.name}</p>
                           </div>
                         )}
                     </div>
@@ -312,7 +347,7 @@ export default function DashboardPage() {
                     
                     <div>
                         <h3 className="text-2xl font-headline mb-4">Heroes</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                             {homeHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
                         </div>
                     </div>
@@ -351,14 +386,14 @@ export default function DashboardPage() {
                     
                     <div>
                         <h3 className="text-2xl font-headline mb-4">Heroes</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {builderHeroes.map((hero: any) => <HeroCard key={hero.name} hero={hero} />)}
                         </div>
                     </div>
 
                     <div>
                         <h3 className="text-2xl font-headline mb-4">Troops</h3>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3">
                         {builderTroops.map((item: any) => <TroopSpellCard key={item.name} item={item} />)}
                         </div>
                     </div>
@@ -381,5 +416,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

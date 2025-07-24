@@ -48,8 +48,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
       <div className="absolute top-2 right-2 z-20">
         <div className={cn(
           "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg",
-          "transition-all duration-300 opacity-0 scale-90",
-          "group-hover:opacity-100 group-hover:scale-100"
+          "transition-all duration-300"
         )}>
           {hero.level}
         </div>
@@ -72,8 +71,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
       <div className="p-4 relative -mt-16 z-10">
         <div 
             className={cn(
-                "transition-opacity duration-300",
-                "group-hover:opacity-40"
+                "transition-opacity duration-300"
             )}
         >
             <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>

@@ -108,33 +108,35 @@ const TroopSpellCard = ({ item }: { item: any }) => {
     const isSiege = item.category === 'SiegeMachine';
   
     return (
-      <div className={cn(
-        "relative group bg-card/60 aspect-[4/5] rounded-xl border border-border/20 p-2 flex flex-col justify-end transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:shadow-primary/20",
-        isMaxed && "border-amber-400/60 bg-amber-400/10 shadow-amber-400/10"
-      )}>
-        {/* Conditional Icon */}
+      <div
+        className={cn(
+          "group relative aspect-[4/5] w-full max-w-sm mx-auto overflow-hidden rounded-lg transition-all duration-300",
+          "bg-[hsl(var(--hero-card-bg))] border-2 border-transparent",
+          "hover:scale-105 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50",
+          isMaxed && "border-amber-400/30 shadow-amber-400/10"
+        )}
+      >
+        {/* Decorative Borders */}
+        <div className="absolute inset-0 rounded-lg border-2 border-[hsl(var(--hero-card-border-secondary))] pointer-events-none"></div>
+        <div className="absolute inset-2 rounded-sm border border-[hsl(var(--hero-card-border))] pointer-events-none"></div>
+
+         {/* Conditional Icon */}
         {(isSuper || isSiege) && (
             <div className="absolute top-2 right-2 bg-black/30 p-1.5 rounded-full z-10">
                 {isSuper && <Flame className="w-4 h-4 text-orange-400" />}
                 {isSiege && <Castle className="w-4 h-4 text-stone-400" />}
             </div>
         )}
-        
-        {/* Image */}
-        <div className="relative flex-grow mb-2 transition-transform duration-300 group-hover:scale-110">
-          <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
-        </div>
   
-        {/* Name Plate */}
-        <div className="relative text-center py-1 bg-black/50 rounded-md">
-           <p className="font-headline text-sm truncate text-white/90">{item.name}</p>
-        </div>
+        <div className="relative z-10 flex flex-col h-full p-2">
+            <div className="relative flex-grow my-2 transition-transform duration-300 group-hover:scale-110">
+                <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
+            </div>
 
-        {/* Hover Content */}
-        <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-transparent rounded-b-xl">
-            <div className="text-center text-white">
-                <p className="font-bold text-lg text-primary leading-tight">Lvl {item.level}</p>
-                <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5 mt-1" />
+            <div className="text-center">
+                <h3 className="font-headline text-lg text-foreground/90 text-shadow-custom truncate">{item.name}</h3>
+                <p className="font-bold text-base text-primary leading-tight">Lvl {item.level}</p>
+                <Progress value={(item.level / item.maxLevel) * 100} className="mt-2 h-1 bg-black/20" />
             </div>
         </div>
       </div>
@@ -269,7 +271,7 @@ export default function DashboardPage() {
   const allHomeTroops = troops.filter((t: any) => t.village === 'home');
 
   const regularTroops = allHomeTroops.filter((t: any) => !t.name.startsWith('Super') && t.category !== 'SiegeMachine');
-  const superTroops = allHomeTroops.filter((t: any) => t.name.startsWith('Super'));
+  const superTroops = allHomeTroops.filter((t: any) => t.name.startsWith('Super') && t.level > 0);
   const homeSiegeMachines = siegeMachines ?? [];
 
   const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');

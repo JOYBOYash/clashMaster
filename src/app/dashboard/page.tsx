@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, BrainCircuit, Medal, Swords
+  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath, getHallImagePath } from '@/lib/image-paths';
@@ -40,54 +40,49 @@ const HeroCard = ({ hero }: { hero: any }) => {
   return (
     <div
       className={cn(
-        "relative bg-card shadow-lg border border-border/20 overflow-hidden rounded-xl group",
-        "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
-        isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
+        "group relative aspect-[3/5] w-full max-w-sm mx-auto overflow-hidden rounded-lg transition-all duration-300",
+        "bg-[hsl(var(--hero-card-bg))] border-2 border-transparent",
+        "hover:scale-105 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50"
       )}
     >
-      <div className={cn(
-          "absolute top-2 right-2 z-20 transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-90"
-      )}>
-        <div className={cn(
-          "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg"
-        )}>
-          {hero.level}
-        </div>
-      </div>
-      
-      <div className="relative w-full h-48 md:h-56">
-        <Image 
-          src={heroImage} 
-          alt={hero.name} 
-          fill 
-          className={cn(
-            "object-cover object-top transition-transform duration-300 ease-in-out",
-            "group-hover:scale-110"
-          )} 
-          unoptimized 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent"></div>
-      </div>
-      
-      <div className="p-4 relative -mt-16 z-10">
-        <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
-        <div className="h-9"> {/* Wrapper to prevent layout shift */}
-          <div className="h-full">
-              <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
-              <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
-          </div>
+      {/* Decorative Border */}
+      <div className="absolute inset-0 rounded-lg border-2 border-[hsl(var(--hero-card-border-secondary))] pointer-events-none"></div>
+      <div className="absolute inset-2 rounded-sm border border-[hsl(var(--hero-card-border))] pointer-events-none"></div>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col h-full p-3">
+        {/* Header */}
+        <div className="flex justify-between items-center text-primary/70">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-50">
+            <path d="M12 2L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 2ZM12 4.03L19 6.22V11C19 15.45 15.89 19.43 12 20.92C8.11 19.43 5 15.45 5 11V6.22L12 4.03Z" fill="currentColor"/>
+          </svg>
+          <p className="font-headline text-2xl font-bold text-shadow-custom">{hero.level}</p>
         </div>
 
-        {heroEquipment.length > 0 && (
-          <>
-            <Separator className="my-3" />
-            <div className="flex items-center justify-center gap-3 h-12">
-              <TooltipProvider>
-                {heroEquipment.map((equip: any, index: number) => (
-                  <Tooltip key={index} delayDuration={0}>
+        {/* Image Container */}
+        <div className="relative flex-grow my-2">
+          <Image
+            src={heroImage}
+            alt={hero.name}
+            fill
+            className="object-contain object-bottom drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
+            unoptimized
+          />
+        </div>
+
+        {/* Footer */}
+        <div className="text-center">
+          <h3 className="font-headline text-2xl md:text-3xl text-foreground/90 text-shadow-custom tracking-wider">{hero.name}</h3>
+          <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-1.5 bg-black/20" />
+          
+          {heroEquipment.length > 0 && (
+            <div className="grid grid-cols-4 gap-2 mt-3">
+              {heroEquipment.slice(0, 4).map((equip: any, index: number) => (
+                <TooltipProvider key={index}>
+                  <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <div className="w-12 h-12 bg-muted/50 rounded-lg p-1.5 border border-border/50 flex items-center justify-center transition-all hover:scale-110 hover:border-primary/50">
-                        <Image src={getImagePath(equip.name)} alt={equip.name} width={40} height={40} unoptimized />
+                      <div className="aspect-square bg-black/20 rounded-md p-1 border border-[hsl(var(--hero-card-border))] transition-all hover:border-primary/80 hover:scale-105">
+                        <Image src={getImagePath(equip.name)} alt={equip.name} width={48} height={48} unoptimized className="w-full h-full object-contain" />
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -95,11 +90,11 @@ const HeroCard = ({ hero }: { hero: any }) => {
                       <p className="text-sm text-muted-foreground">Level {equip.level}</p>
                     </TooltipContent>
                   </Tooltip>
-                ))}
-              </TooltipProvider>
+                </TooltipProvider>
+              ))}
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
@@ -121,8 +116,8 @@ const TroopSpellCard = ({ item }: { item: any }) => {
   
         <div className="w-full text-center mt-2">
           <p className="font-headline text-sm truncate">{item.name}</p>
-          <div className="relative h-6 mt-1 flex items-center justify-center transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-            <div className="absolute inset-0">
+          <div className="relative h-6 mt-1 flex items-center justify-center">
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <p className="font-bold text-lg text-primary leading-tight">Lvl {item.level}</p>
               <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5" />
             </div>
@@ -257,8 +252,9 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const homeTroops = troops.filter((t: any) => t.village === 'home' && t.category !== 'SiegeMachine' && !t.name.startsWith('Super'));
-  
+  const regularTroops = troops.filter((t: any) => !t.name.startsWith('Super') && t.category !== 'SiegeMachine');
+
+  const homeTroops = regularTroops.filter((t: any) => t.village === 'home');
   const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
@@ -266,7 +262,7 @@ export default function DashboardPage() {
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
   const darkElixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir');
 
-  const builderTroops = troops.filter((t: any) => t.village === 'builderBase');
+  const builderTroops = regularTroops.filter((t: any) => t.village === 'builderBase');
   
   const homeSiegeMachines = siegeMachines ?? [];
 

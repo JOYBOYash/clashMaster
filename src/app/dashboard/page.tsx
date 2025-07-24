@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal
+  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal, Flame
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath, getHallImagePath } from '@/lib/image-paths';
@@ -104,24 +104,38 @@ const HeroCard = ({ hero }: { hero: any }) => {
 const TroopSpellCard = ({ item }: { item: any }) => {
     const isMaxed = item.level === item.maxLevel;
     const imagePath = getImagePath(item.name);
+    const isSuper = item.name.startsWith('Super');
+    const isSiege = item.category === 'SiegeMachine';
   
     return (
       <div className={cn(
-        "relative group bg-card/60 aspect-square rounded-xl border border-border/20 p-2 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:shadow-primary/20",
+        "relative group bg-card/60 aspect-[4/5] rounded-xl border border-border/20 p-2 flex flex-col justify-end transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:shadow-primary/20",
         isMaxed && "border-amber-400/60 bg-amber-400/10 shadow-amber-400/10"
       )}>
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-grow transition-transform duration-300 group-hover:scale-110">
+        {/* Conditional Icon */}
+        {(isSuper || isSiege) && (
+            <div className="absolute top-2 right-2 bg-black/30 p-1.5 rounded-full z-10">
+                {isSuper && <Flame className="w-4 h-4 text-orange-400" />}
+                {isSiege && <Castle className="w-4 h-4 text-stone-400" />}
+            </div>
+        )}
+        
+        {/* Image */}
+        <div className="relative flex-grow mb-2 transition-transform duration-300 group-hover:scale-110">
           <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
         </div>
   
-        <div className="w-full text-center mt-2">
-          <p className="font-headline text-sm truncate">{item.name}</p>
-          <div className="relative h-6 mt-1 flex items-center justify-center">
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="font-bold text-lg text-primary leading-tight">Lvl {item.level}</p>
-              <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5" />
+        {/* Name Plate */}
+        <div className="relative text-center py-1 bg-black/50 rounded-md">
+           <p className="font-headline text-sm truncate text-white/90">{item.name}</p>
+        </div>
+
+        {/* Hover Content */}
+        <div className="absolute inset-x-0 bottom-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-transparent rounded-b-xl">
+            <div className="text-center text-white">
+                <p className="font-bold text-lg text-primary leading-tight">Lvl {item.level}</p>
+                <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5 mt-1" />
             </div>
-          </div>
         </div>
       </div>
     );
@@ -252,19 +266,21 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const regularTroops = troops.filter((t: any) => !t.name.startsWith('Super') && t.category !== 'SiegeMachine');
+  const allHomeTroops = troops.filter((t: any) => t.village === 'home');
 
-  const homeTroops = regularTroops.filter((t: any) => t.village === 'home');
-  const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
-  const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
+  const regularTroops = allHomeTroops.filter((t: any) => !t.name.startsWith('Super') && t.category !== 'SiegeMachine');
+  const superTroops = allHomeTroops.filter((t: any) => t.name.startsWith('Super'));
+  const homeSiegeMachines = siegeMachines ?? [];
+
+  const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
+  const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
   const darkElixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir');
 
-  const builderTroops = regularTroops.filter((t: any) => t.village === 'builderBase');
+  const builderTroops = troops.filter((t: any) => t.village === 'builderBase' && !t.name.startsWith('Super'));
   
-  const homeSiegeMachines = siegeMachines ?? [];
 
   return (
     <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
@@ -342,6 +358,7 @@ export default function DashboardPage() {
                         <h3 className="text-2xl font-headline mb-4">Army</h3>
                         <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
                         <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
+                        <CategoryGrid title="Super Troops" icon={Flame} items={superTroops} />
                     </div>
                     
                     <div className="space-y-6">
@@ -350,11 +367,9 @@ export default function DashboardPage() {
                         <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
                     </div>
 
-                    {homeSiegeMachines.length > 0 && (
-                        <div className="space-y-6">
-                            <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
-                        </div>
-                    )}
+                    <div className="space-y-6">
+                        <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
+                    </div>
                 </CardContent>
             </Card>
         </TabsContent>
@@ -403,3 +418,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

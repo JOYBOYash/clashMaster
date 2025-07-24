@@ -26,6 +26,12 @@ export const carouselImageAssets = [
 { src: '/assets/_login_carousel/RC_SideProfile.png', alt: 'Royal Champion' },
 ];
 
+export const superTroopNames = [
+  'Super Barbarian', 'Super Archer', 'Sneaky Goblin', 'Super Wall Breaker',
+  'Super Giant', 'Rocket Balloon', 'Inferno Dragon', 'Super Valkyrie',
+  'Super Witch', 'Ice Hound', 'Super Bowler', 'Super Dragon', 'Super Minion'
+];
+
 const itemImageMap: Record<string, string> = {
 // Heroes
 'Barbarian King': '/assets/_hero/barbarian-king.png',

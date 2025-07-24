@@ -12,7 +12,7 @@ import {
   Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal, Flame
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getImagePath, getHallImagePath } from '@/lib/image-paths';
+import { getImagePath, getHallImagePath, superTroopNames } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -104,7 +104,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
 const TroopSpellCard = ({ item }: { item: any }) => {
     const isMaxed = item.level === item.maxLevel;
     const imagePath = getImagePath(item.name);
-    const isSuper = item.name.startsWith('Super');
+    const isSuper = superTroopNames.includes(item.name);
     const isSiege = item.category === 'SiegeMachine';
   
     return (
@@ -261,17 +261,16 @@ export default function DashboardPage() {
 
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
-    builderBaseTrophies, bestBuilderBaseTrophies, warStars, attackWins, defenseWins,
-    donations, received, clan, league, achievements, heroes, troops, spells, siegeMachines
+    warStars, attackWins, defenseWins, donations, received, clan, league, achievements, heroes, troops, spells, siegeMachines
   } = player;
 
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const allHomeTroops = troops.filter((t: any) => t.village === 'home');
-
-  const regularTroops = allHomeTroops.filter((t: any) => !t.name.startsWith('Super') && t.category !== 'SiegeMachine');
-  const superTroops = allHomeTroops.filter((t: any) => t.name.startsWith('Super') && t.level > 0);
+  const regularTroops = allHomeTroops.filter((t: any) => !superTroopNames.includes(t.name));
+  const superTroops = allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0);
+  
   const homeSiegeMachines = siegeMachines ?? [];
 
   const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
@@ -281,7 +280,7 @@ export default function DashboardPage() {
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
   const darkElixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir');
 
-  const builderTroops = troops.filter((t: any) => t.village === 'builderBase' && !t.name.startsWith('Super'));
+  const builderTroops = troops.filter((t: any) => t.village === 'builderBase' && !superTroopNames.includes(t.name));
   
 
   return (

@@ -260,8 +260,10 @@ export default function DashboardPage() {
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
     warStars, attackWins, defenseWins, donations, received, clan, league, achievements, heroes, troops, spells, 
-    siegeMachines, builderBaseTrophies = 0, bestBuilderBaseTrophies = 0
+    builderBaseTrophies = 0, bestBuilderBaseTrophies = 0
   } = player;
+
+  const siegeMachines = player.siegeMachines || [];
 
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
@@ -418,5 +420,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

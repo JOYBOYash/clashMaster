@@ -69,11 +69,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
       </div>
       
       <div className="p-4 relative -mt-16 z-10">
-        <div 
-            className={cn(
-                "transition-opacity duration-300"
-            )}
-        >
+        <div >
             <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
             <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
             <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
@@ -258,8 +254,8 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const homeTroops = troops.filter((t: any) => t.village === 'home');
-  const regularTroops = homeTroops.filter((t: any) => !t.superTroopIsActive && t.category !== 'SiegeMachine');
+  const homeTroops = troops.filter((t: any) => t.village === 'home' && t.category !== 'SiegeMachine');
+  const regularTroops = homeTroops.filter((t: any) => !t.superTroopIsActive);
 
   const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
@@ -407,3 +403,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

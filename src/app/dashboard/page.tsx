@@ -33,7 +33,6 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 );
 
 const HeroCard = ({ hero }: { hero: any }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const isMaxed = hero.level === hero.maxLevel;
   const heroImage = getImagePath(hero.name);
   const heroEquipment = hero.equipment || [];
@@ -45,14 +44,12 @@ const HeroCard = ({ hero }: { hero: any }) => {
         "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
         isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="absolute top-2 right-2 z-20">
         <div className={cn(
           "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg",
-          "transition-all duration-300",
-          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+          "transition-all duration-300 opacity-0 scale-90",
+          "group-hover:opacity-100 group-hover:scale-100"
         )}>
           {hero.level}
         </div>
@@ -76,7 +73,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
         <div 
             className={cn(
                 "transition-opacity duration-300",
-                isHovered ? "opacity-0" : "opacity-100"
+                "group-hover:opacity-40"
             )}
         >
             <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
@@ -121,15 +118,14 @@ const TroopSpellCard = ({ item }: { item: any }) => {
         "relative group bg-card/60 aspect-square rounded-xl border border-border/20 p-2 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 hover:shadow-primary/20",
         isMaxed && "border-amber-400/60 bg-amber-400/10 shadow-amber-400/10"
       )}>
-        <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-grow transition-transform duration-300 group-hover:scale-110">
+        <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-grow transition-transform duration-300 group-hover:scale-110">
           <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
         </div>
   
         <div className="w-full text-center mt-2">
           <p className="font-headline text-sm truncate">{item.name}</p>
-          <div className="relative h-6 mt-1 flex items-center justify-center">
-            {/* Level and progress shown on hover */}
-            <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+          <div className="relative h-6 mt-1 flex items-center justify-center transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+            <div className="absolute inset-0">
               <p className="font-bold text-lg text-primary leading-tight">Lvl {item.level}</p>
               <Progress value={(item.level / item.maxLevel) * 100} className="h-1.5" />
             </div>
@@ -265,9 +261,7 @@ export default function DashboardPage() {
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const homeTroops = troops.filter((t: any) => t.village === 'home');
-  const superTroops = troops.filter((t: any) => t.superTroopIsActive);
-  
-  const regularTroops = homeTroops.filter((t: any) => !t.superTroopIsActive && t.name !== 'Siege Machine' && !t.name.includes('Wrecker') && !t.name.includes('Blimp') && !t.name.includes('Slammer') && !t.name.includes('Barracks') && !t.name.includes('Launcher') && !t.name.includes('Flinger') && !t.name.includes('Drill'));
+  const regularTroops = homeTroops.filter((t: any) => !t.superTroopIsActive && t.category !== 'SiegeMachine');
 
   const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
@@ -356,7 +350,6 @@ export default function DashboardPage() {
                         <h3 className="text-2xl font-headline mb-4">Army</h3>
                         <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
                         <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
-                        <CategoryGrid title="Super Troops" icon={BrainCircuit} items={superTroops} />
                     </div>
                     
                     <div className="space-y-6">

@@ -115,7 +115,7 @@ const itemImageMap: Record<string, string> = {
 
 // Elixir Spells
 'Lightning Spell': '/assets/_spells/elixer/lightning_spell.png',
-'Healing Spell': '/assets/_spells/elixer/healing_spell.png',
+'Healing Spell': '/assets/_spells/elixer/heal_spell.png',
 'Rage Spell': '/assets/_spells/elixer/rage_spell.png',
 'Jump Spell': '/assets/_spells/elixer/jump_spell.png',
 'Freeze Spell': '/assets/_spells/elixer/freeze_spell.png',

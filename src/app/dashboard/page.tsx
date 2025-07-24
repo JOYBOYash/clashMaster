@@ -36,12 +36,9 @@ const HeroCard = ({ hero }: { hero: any }) => {
   const isMaxed = hero.level === hero.maxLevel;
   const heroImage = getImagePath(hero.name);
   const heroEquipment = hero.equipment || [];
-  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "relative bg-card shadow-lg border border-border/20 overflow-hidden rounded-xl group",
         "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
@@ -49,8 +46,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
       )}
     >
       <div className={cn(
-          "absolute top-2 right-2 z-20 transition-all duration-300",
-          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+          "absolute top-2 right-2 z-20 transition-all duration-300 opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-90"
       )}>
         <div className={cn(
           "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg"
@@ -74,16 +70,12 @@ const HeroCard = ({ hero }: { hero: any }) => {
       </div>
       
       <div className="p-4 relative -mt-16 z-10">
-        <div className={cn("transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-100")}>
-            <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
-        </div>
+        <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
         <div className="h-9"> {/* Wrapper to prevent layout shift */}
-            {!isHovered && (
-                <div className="h-full">
-                    <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
-                    <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
-                </div>
-            )}
+          <div className="h-full">
+              <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
+              <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
+          </div>
         </div>
 
         {heroEquipment.length > 0 && (
@@ -265,11 +257,10 @@ export default function DashboardPage() {
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
-  const homeTroops = troops.filter((t: any) => t.village === 'home' && t.category !== 'SiegeMachine');
-  const regularTroops = homeTroops.filter((t: any) => !t.superTroopIsActive);
-
-  const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
-  const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
+  const homeTroops = troops.filter((t: any) => t.village === 'home' && t.category !== 'SiegeMachine' && !t.name.startsWith('Super'));
+  
+  const elixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Elixir');
+  const darkElixirTroops = homeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
   const homeSpells = spells.filter((s: any) => s.village === 'home');
   const elixirSpells = homeSpells.filter((s: any) => s.upgradeResource === 'Elixir');
@@ -363,9 +354,11 @@ export default function DashboardPage() {
                         <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
                     </div>
 
-                    <div className="space-y-6">
-                        <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
-                    </div>
+                    {homeSiegeMachines.length > 0 && (
+                        <div className="space-y-6">
+                            <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </TabsContent>

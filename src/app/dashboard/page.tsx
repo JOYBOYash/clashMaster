@@ -269,8 +269,8 @@ export default function DashboardPage() {
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const allHomeTroops = troops.filter((t: any) => t.village === 'home');
-  const regularTroops = allHomeTroops.filter((t: any) => !superTroopNames.includes(t.name));
   const superTroops = allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0);
+  const regularTroops = allHomeTroops.filter((t: any) => !superTroopNames.includes(t.name));
   
   const homeSiegeMachines = siegeMachines ?? [];
 

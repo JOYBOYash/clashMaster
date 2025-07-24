@@ -36,19 +36,24 @@ const HeroCard = ({ hero }: { hero: any }) => {
   const isMaxed = hero.level === hero.maxLevel;
   const heroImage = getImagePath(hero.name);
   const heroEquipment = hero.equipment || [];
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "relative bg-card shadow-lg border border-border/20 overflow-hidden rounded-xl group",
         "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
         isMaxed && "border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-400/10"
       )}
     >
-      <div className="absolute top-2 right-2 z-20">
+      <div className={cn(
+          "absolute top-2 right-2 z-20 transition-all duration-300",
+          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+      )}>
         <div className={cn(
-          "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg",
-          "transition-all duration-300"
+          "bg-primary/90 text-primary-foreground rounded-full px-4 py-1 text-2xl font-bold font-headline shadow-lg"
         )}>
           {hero.level}
         </div>
@@ -69,10 +74,16 @@ const HeroCard = ({ hero }: { hero: any }) => {
       </div>
       
       <div className="p-4 relative -mt-16 z-10">
-        <div >
+        <div className={cn("transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-100")}>
             <h3 className="font-headline text-2xl text-foreground/90 drop-shadow-sm truncate">{hero.name}</h3>
-            <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
-            <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
+        </div>
+        <div className="h-9"> {/* Wrapper to prevent layout shift */}
+            {!isHovered && (
+                <div className="h-full">
+                    <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-2" />
+                    <p className="text-xs text-center text-muted-foreground mt-1">{hero.level}/{hero.maxLevel}</p>
+                </div>
+            )}
         </div>
 
         {heroEquipment.length > 0 && (
@@ -403,5 +414,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

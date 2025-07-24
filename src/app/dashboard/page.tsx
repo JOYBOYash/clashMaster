@@ -255,9 +255,15 @@ export default function DashboardPage() {
       {/* Header */}
       <Card className="overflow-hidden shadow-2xl" no-hover>
         <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4">
-          <div>
-            <h1 className="text-4xl font-headline text-primary">{name}</h1>
-            <p className="text-lg text-muted-foreground font-mono">{tag}</p>
+          <div className="flex items-center gap-4">
+             <div className="flex flex-col items-center">
+                <Medal className="w-8 h-8 text-muted-foreground" />
+                <p className="text-2xl font-headline text-primary">{expLevel}</p>
+            </div>
+            <div>
+                <h1 className="text-4xl font-headline text-primary">{name}</h1>
+                <p className="text-lg text-muted-foreground font-mono">{tag}</p>
+            </div>
           </div>
           <div className="flex items-start gap-4">
              {clan && (
@@ -270,29 +276,6 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
-        </div>
-        <div className="p-4 bg-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center items-center">
-            <div className="flex flex-col items-center justify-center space-y-2">
-                <h3 className="font-headline text-lg">Town Hall {townHallLevel}</h3>
-                <Image src={getHallImagePath('townHall', townHallLevel)} alt={`Town Hall ${townHallLevel}`} width={128} height={128} unoptimized />
-            </div>
-             <div className="flex flex-col items-center justify-center space-y-2">
-                <h3 className="font-headline text-lg">Builder Hall {builderHallLevel}</h3>
-                {builderHallLevel > 0 ? (
-                  <Image src={getHallImagePath('builderHall', builderHallLevel)} alt={`Builder Hall ${builderHallLevel}`} width={128} height={128} unoptimized />
-                ) : <div className="w-[128px] h-[128px] flex items-center justify-center text-muted-foreground">N/A</div> }
-            </div>
-            <div className="flex flex-col items-center">
-                <Medal className="w-5 h-5 text-muted-foreground" />
-                <p className="text-sm font-bold">XP Level</p>
-                <p className="text-lg font-headline text-primary">{expLevel}</p>
-            </div>
-            {league && (
-              <div className="flex flex-col items-center justify-center">
-                <Image src={league.icon.url} alt={league.name} width={64} height={64} unoptimized />
-                <p className="text-xs text-muted-foreground mt-1 text-center truncate">{league.name}</p>
-              </div>
-            )}
         </div>
       </Card>
       
@@ -308,6 +291,19 @@ export default function DashboardPage() {
         <TabsContent value="home">
             <Card no-hover className="mt-4">
                 <CardContent className="pt-6 space-y-8">
+                     <div className="p-4 bg-card grid grid-cols-1 md:grid-cols-2 gap-4 text-center items-center rounded-lg mb-6">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                            <h3 className="font-headline text-lg">Town Hall {townHallLevel}</h3>
+                            <Image src={getHallImagePath('townHall', townHallLevel)} alt={`Town Hall ${townHallLevel}`} width={128} height={128} unoptimized />
+                        </div>
+                        {league && (
+                          <div className="flex flex-col items-center justify-center">
+                            <Image src={league.icon.url} alt={league.name} width={96} height={96} unoptimized />
+                            <p className="text-sm text-muted-foreground mt-1 text-center truncate">{league.name}</p>
+                          </div>
+                        )}
+                    </div>
+
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <StatCard icon={Trophy} title="Trophies" value={trophies} footer={`Best: ${bestTrophies}`} />
                         <StatCard icon={Star} title="War Stars" value={warStars} />
@@ -343,7 +339,13 @@ export default function DashboardPage() {
         <TabsContent value="builder">
             <Card no-hover className="mt-4">
                 <CardContent className="pt-6 space-y-8">
-                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="p-4 bg-card grid grid-cols-1 md:grid-cols-2 gap-4 text-center items-center rounded-lg mb-6">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                           <h3 className="font-headline text-lg">Builder Hall {builderHallLevel}</h3>
+                           {builderHallLevel > 0 ? (
+                             <Image src={getHallImagePath('builderHall', builderHallLevel)} alt={`Builder Hall ${builderHallLevel}`} width={128} height={128} unoptimized />
+                           ) : <div className="w-[128px] h-[128px] flex items-center justify-center text-muted-foreground">N/A</div> }
+                       </div>
                         <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
                     </div>
                     
@@ -379,3 +381,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

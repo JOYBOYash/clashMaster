@@ -28,8 +28,8 @@ export const carouselImageAssets = [
 
 export const superTroopNames = [
   'Super Barbarian', 'Super Archer', 'Sneaky Goblin', 'Super Wall Breaker',
-  'Super Giant', 'Rocket Balloon', 'Inferno Dragon', 'Super Valkyrie',
-  'Super Witch', 'Ice Hound', 'Super Bowler', 'Super Dragon', 'Super Minion'
+  'Super Giant', 'Super Wizard', 'Super Yeti','Super Hog Rider', 'Super Miner', 'Rocket Balloon', 'Inferno Dragon', 'Super Valkyrie',
+  'Super Witch', 'Ice Hound', 'Super Bowler', 'Super Dragon', 'Super Minion', 'Super Yeti'
 ];
 
 const itemImageMap: Record<string, string> = {
@@ -118,7 +118,10 @@ const itemImageMap: Record<string, string> = {
 'Super Bowler': '/assets/_troops/super/super-bowler.png',
 'Super Dragon': '/assets/_troops/super/super-dragon.png',
 'Super Minion': '/assets/_troops/super/super-minion.png',
-
+'Super Hog Rider': '/assets/_troops/super/super-hog-rider.png',
+'Super Miner': '/assets/_troops/super/super-miner.png',
+'Super Yeti': '/assets/_troops/super/super-yeti.png',
+'Super Wizard': '/assets/_troops/super/super-wizard.png',
 // Elixir Spells
 'Lightning Spell': '/assets/_spells/elixer/lightning_spell.png',
 'Healing Spell': '/assets/_spells/elixer/heal_spell.png',

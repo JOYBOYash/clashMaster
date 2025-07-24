@@ -103,7 +103,7 @@ const TroopSpellCard = ({ item }: { item: any }) => {
     const isMaxed = item.level === item.maxLevel;
     const imagePath = getImagePath(item.name);
     const isSuper = superTroopNames.includes(item.name);
-    const isSiege = item.village === 'home' && (item.name.includes('Wrecker') || item.name.includes('Blimp') || item.name.includes('Slammer') || item.name.includes('Barracks') || item.name.includes('Launcher') || item.name.includes('Flinger') || item.name.includes('Drill'));
+    const isSiege = ['Wall Wrecker', 'Battle Blimp', 'Stone Slammer', 'Siege Barracks', 'Log Launcher', 'Flame Flinger', 'Battle Drill'].includes(item.name);
   
     return (
       <div

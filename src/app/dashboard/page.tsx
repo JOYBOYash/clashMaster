@@ -33,8 +33,6 @@ const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementTyp
 );
 
 const HeroCard = ({ hero }: { hero: any }) => {
-  const isMaxed = hero.level === hero.maxLevel;
-  const heroImage = getImagePath(hero.name);
   const heroEquipment = hero.equipment || [];
 
   return (
@@ -62,7 +60,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
         {/* Image Container */}
         <div className="relative flex-grow my-2">
           <Image
-            src={heroImage}
+            src={getImagePath(hero.name)}
             alt={hero.name}
             fill
             className="object-contain object-bottom drop-shadow-2xl transition-transform duration-300 group-hover:scale-105"
@@ -72,7 +70,7 @@ const HeroCard = ({ hero }: { hero: any }) => {
 
         {/* Footer */}
         <div className="text-center">
-          <h3 className="font-headline text-2xl md:text-3xl text-foreground/90 text-shadow-custom tracking-wider">{hero.name}</h3>
+           <h3 className="font-headline text-2xl md:text-3xl text-foreground/90 text-shadow-custom tracking-wider">{hero.name}</h3>
           <Progress value={(hero.level / hero.maxLevel) * 100} className="mt-2 h-1.5 bg-black/20" />
           
           {heroEquipment.length > 0 && (
@@ -261,7 +259,8 @@ export default function DashboardPage() {
 
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
-    warStars, attackWins, defenseWins, donations, received, clan, league, achievements, heroes, troops, spells, siegeMachines
+    warStars, attackWins, defenseWins, donations, received, clan, league, achievements, heroes, troops, spells, 
+    siegeMachines, builderBaseTrophies = 0, bestBuilderBaseTrophies = 0
   } = player;
 
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
@@ -384,7 +383,7 @@ export default function DashboardPage() {
                              <Image src={getHallImagePath('builderHall', builderHallLevel)} alt={`Builder Hall ${builderHallLevel}`} width={128} height={128} unoptimized />
                            ) : <div className="w-[128px] h-[128px] flex items-center justify-center text-muted-foreground">N/A</div> }
                        </div>
-                        <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies || 0} footer={`Best: ${bestBuilderBaseTrophies || 0}`} />
+                        <StatCard icon={Swords} title="Trophies" value={builderBaseTrophies} footer={`Best: ${bestBuilderBaseTrophies}`} />
                     </div>
                     
                     <div>
@@ -419,3 +418,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

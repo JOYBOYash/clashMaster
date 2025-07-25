@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { getImagePath } from '@/lib/image-paths';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BookOpen, ShieldQuestion } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ArmyCompositionCard = ({ composition }: { composition: any }) => {
     return (
@@ -94,6 +95,7 @@ const StrategyCard = ({ strategy }: { strategy: any }) => {
 
 export default function CookbookPage() {
     const { user } = useAuth();
+    const { toast } = useToast();
     const [compositions, setCompositions] = useState<any[]>([]);
     const [strategies, setStrategies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -107,12 +109,28 @@ export default function CookbookPage() {
         async function fetchData() {
             setLoading(true);
             try {
-                const [comps, strats] = await Promise.all([
-                    getSavedArmyCompositions(user.uid),
-                    getSavedStrategies(user.uid)
+                const compsPromise = getSavedArmyCompositions(user.uid);
+                const stratsPromise = getSavedStrategies(user.uid);
+
+                const [compsResult, stratsResult] = await Promise.allSettled([
+                    compsPromise,
+                    stratsPromise
                 ]);
-                setCompositions(comps);
-                setStrategies(strats);
+
+                if (compsResult.status === 'fulfilled') {
+                    setCompositions(compsResult.value);
+                } else {
+                    console.error("Failed to fetch army compositions:", compsResult.reason);
+                     toast({ variant: "destructive", title: "Error", description: "Could not load saved armies." });
+                }
+
+                if (stratsResult.status === 'fulfilled') {
+                    setStrategies(stratsResult.value);
+                } else {
+                    console.error("Failed to fetch saved strategies:", stratsResult.reason);
+                    toast({ variant: "destructive", title: "Error", description: "Could not load saved strategies." });
+                }
+
             } catch (error) {
                 console.error("Failed to fetch cookbook data:", error);
             } finally {
@@ -121,7 +139,7 @@ export default function CookbookPage() {
         }
 
         fetchData();
-    }, [user]);
+    }, [user, toast]);
 
     if (loading) {
         return <LoadingSpinner show={true} />;

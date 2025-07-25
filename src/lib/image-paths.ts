@@ -168,6 +168,7 @@ const itemImageMap: Record<string, string> = {
 'Flame Flinger': '/assets/_siege_machines/flane-flinger.png',
 'Battle Drill': '/assets/_siege_machines/battle-drill.png',
 
+
 'Default': '/assets/buildings/default.png',
 };
 

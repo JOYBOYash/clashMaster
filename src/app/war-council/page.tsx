@@ -163,8 +163,8 @@ export default function WarCouncilPage() {
         const maxTroopSpace = (player.armyCamps || []).reduce((acc: number, camp: any) => acc + (armyCampData[camp.level] || 0), 0);
         
         let maxSpellSpace = 0;
-        const spellFactory = player.buildings.find((b: any) => b.name === 'Spell Factory');
-        const darkSpellFactory = player.buildings.find((b: any) => b.name === 'Dark Spell Factory');
+        const spellFactory = player.buildings?.find((b: any) => b.name === 'Spell Factory');
+        const darkSpellFactory = player.buildings?.find((b: any) => b.name === 'Dark Spell Factory');
         if(spellFactory) maxSpellSpace += spellFactoryData[spellFactory.level] || 0;
         if(darkSpellFactory) maxSpellSpace += darkSpellFactoryData[darkSpellFactory.level] || 0;
         if(player.clan) maxSpellSpace += player.clan.spellCapacity || 0;
@@ -464,5 +464,3 @@ export default function WarCouncilPage() {
         </div>
     );
 }
-
-    

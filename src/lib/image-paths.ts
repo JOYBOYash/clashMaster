@@ -32,6 +32,12 @@ export const superTroopNames = [
   'Super Witch', 'Ice Hound', 'Super Bowler', 'Super Dragon', 'Super Minion', 'Super Yeti'
 ];
 
+export const siegeMachineNames = [
+  'Wall Wrecker', 'Battle Blimp', 'Stone Slammer', 'Siege Barracks', 
+  'Log Launcher', 'Flame Flinger', 'Battle Drill', 'Troop Launcher'
+];
+
+
 const itemImageMap: Record<string, string> = {
 // Heroes
 'Barbarian King': '/assets/_hero/barbarian-king.png',

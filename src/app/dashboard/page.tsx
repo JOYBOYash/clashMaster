@@ -12,7 +12,7 @@ import {
   Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal, Flame
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getImagePath, getHallImagePath, superTroopNames } from '@/lib/image-paths';
+import { getImagePath, getHallImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -103,7 +103,7 @@ const TroopSpellCard = ({ item }: { item: any }) => {
     const isMaxed = item.level === item.maxLevel;
     const imagePath = getImagePath(item.name);
     const isSuper = superTroopNames.includes(item.name);
-    const isSiege = ['Wall Wrecker', 'Battle Blimp', 'Stone Slammer', 'Siege Barracks', 'Log Launcher', 'Flame Flinger', 'Battle Drill'].includes(item.name);
+    const isSiege = siegeMachineNames.includes(item.name);
   
     return (
       <div
@@ -229,7 +229,6 @@ export default function DashboardPage() {
           ...parsedPlayer.heroes.flatMap((h: any) => h.equipment?.map((e: any) => getImagePath(e.name)) || []),
           ...parsedPlayer.troops.map((t: any) => getImagePath(t.name)),
           ...parsedPlayer.spells.map((s: any) => getImagePath(s.name)),
-          ...(parsedPlayer.siegeMachines || []).map((s: any) => getImagePath(s.name)),
         ].filter(Boolean);
 
         setTotalImages(imageUrls.length);
@@ -259,21 +258,20 @@ export default function DashboardPage() {
 
   const {
     name, tag, townHallLevel, builderHallLevel, expLevel, trophies, bestTrophies,
-    warStars, attackWins, defenseWins, donations, received, clan, league, achievements, heroes, troops, spells, 
-    builderBaseTrophies = 0, bestBuilderBaseTrophies = 0
+    warStars, attackWins, defenseWins, donations, received, clan, league, achievements, heroes, troops, spells
   } = player;
-
-  const siegeMachines = player.siegeMachines || [];
+  
+  const builderBaseTrophies = player.builderBaseTrophies ?? 0;
+  const bestBuilderBaseTrophies = player.bestBuilderBaseTrophies ?? 0;
 
   const homeHeroes = heroes.filter((h: any) => h.village === 'home' && h.name !== 'Battle Machine' && h.name !== 'Battle Copter');
   const builderHeroes = heroes.filter((h: any) => h.village === 'builderBase' || h.name === 'Battle Machine' || h.name === 'Battle Copter');
   
   const allHomeTroops = troops.filter((t: any) => t.village === 'home');
   const superTroops = allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0);
-  const regularTroops = allHomeTroops.filter((t: any) => !superTroopNames.includes(t.name));
+  const homeSiegeMachines = allHomeTroops.filter((t: any) => siegeMachineNames.includes(t.name));
+  const regularTroops = allHomeTroops.filter((t: any) => !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name));
   
-  const homeSiegeMachines = siegeMachines ?? [];
-
   const elixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Elixir');
   const darkElixirTroops = regularTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir');
   
@@ -361,6 +359,7 @@ export default function DashboardPage() {
                         <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
                         <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
                         <CategoryGrid title="Super Troops" icon={Flame} items={superTroops} />
+                        <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
                     </div>
                     
                     <div className="space-y-6">
@@ -369,9 +368,6 @@ export default function DashboardPage() {
                         <CategoryGrid title="Dark Elixir Spells" icon={FlaskConical} items={darkElixirSpells} />
                     </div>
 
-                    <div className="space-y-6">
-                        <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
-                    </div>
                 </CardContent>
             </Card>
         </TabsContent>
@@ -420,5 +416,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

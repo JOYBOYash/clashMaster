@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings } from 'lucide-react';
+import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle } from 'lucide-react';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { getImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: boolean;[key: string]: any }) => {
     const isSuper = superTroopNames.includes(item.name);
@@ -74,6 +75,30 @@ const CompositionUnitCard = ({ item, count, onRemove }: { item: any; count: numb
         </div>
     );
 };
+
+const StrategyStep = ({ step }: { step: any }) => {
+    const hasImage = step.unitName && step.unitName !== 'General';
+    const imagePath = hasImage ? getImagePath(step.unitName) : '';
+
+    return (
+        <div className="flex items-start gap-4 py-3">
+            {hasImage && (
+                 <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
+                    <Image src={imagePath} alt={step.unitName} fill className="object-contain" unoptimized />
+                </div>
+            )}
+            {!hasImage && (
+                 <div className="shrink-0 w-16 h-16 flex items-center justify-center bg-black/20 rounded-md border border-border">
+                    <CheckCircle className="w-8 h-8 text-primary/50" />
+                 </div>
+            )}
+            <div className="flex-grow">
+                <h5 className="font-bold font-headline">{step.title}</h5>
+                <p className="text-sm text-muted-foreground">{step.description}</p>
+            </div>
+        </div>
+    )
+}
 
 
 export default function WarCouncilPage() {
@@ -444,11 +469,35 @@ export default function WarCouncilPage() {
                     <div className="mt-4 p-4 bg-muted/50 rounded-lg min-h-[10rem] text-left">
                         {aiLoading && <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-primary" /> <p className="ml-2 text-muted-foreground">AI is thinking...</p></div>}
                         {aiResult && (
-                            <div className="space-y-4 prose prose-sm dark:prose-invert max-w-none">
-                                <h3 className="font-headline text-xl text-primary">{aiResult.armyName}</h3>
-                                <div><h4 className="font-bold">Strategy</h4><p>{aiResult.strategy}</p></div>
-                                <div><h4 className="font-bold">Strengths</h4><p>{aiResult.strengths}</p></div>
-                                <div><h4 className="font-bold">Weaknesses</h4><p>{aiResult.weaknesses}</p></div>
+                           <div className="space-y-4">
+                                <h3 className="font-headline text-2xl text-primary text-center">{aiResult.armyName}</h3>
+                                <p className="text-sm text-center text-muted-foreground max-w-2xl mx-auto">{aiResult.strategySummary}</p>
+
+                                <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+                                {aiResult.phases.map((phase, index) => (
+                                     <AccordionItem key={index} value={`item-${index}`}>
+                                        <AccordionTrigger className="text-lg font-headline text-foreground/90">{phase.phaseName}</AccordionTrigger>
+                                        <AccordionContent>
+                                            <div className="divide-y divide-border">
+                                                {phase.steps.map((step, stepIndex) => (
+                                                    <StrategyStep key={stepIndex} step={step} />
+                                                ))}
+                                            </div>
+                                        </AccordionContent>
+                                     </AccordionItem>
+                                ))}
+                                </Accordion>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                                    <div>
+                                        <h4 className="font-bold font-headline text-lg mb-2 text-green-400">Strengths</h4>
+                                        <p className="text-sm text-muted-foreground">{aiResult.strengths}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold font-headline text-lg mb-2 text-red-400">Weaknesses</h4>
+                                        <p className="text-sm text-muted-foreground">{aiResult.weaknesses}</p>
+                                    </div>
+                                </div>
                             </div>
                         )}
                         {!aiLoading && !aiResult && <p className="text-muted-foreground text-center">AI suggestions will appear here...</p>}
@@ -458,7 +507,3 @@ export default function WarCouncilPage() {
         </div>
     );
 }
-
-    
-
-    

@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle } from 'lucide-react';
+import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle, Bookmark } from 'lucide-react';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { getImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useAuth } from '@/context/auth-context';
+import { saveArmyComposition, saveAIStrategy } from '@/lib/firebase-service';
 
 const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: boolean;[key: string]: any }) => {
     const isSuper = superTroopNames.includes(item.name);
@@ -102,12 +105,14 @@ const StrategyStep = ({ step }: { step: any }) => {
 
 
 export default function WarCouncilPage() {
+    const { user } = useAuth();
     const [player, setPlayer] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
     const [maxTroopSpace, setMaxTroopSpace] = useState(300);
     const [maxSpellSpace, setMaxSpellSpace] = useState(11);
+    const [armyNameToSave, setArmyNameToSave] = useState('');
 
     const [availableUnits, setAvailableUnits] = useState<any>({
         heroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], siegeMachines: [], elixirSpells: [], darkElixirSpells: []
@@ -364,6 +369,53 @@ export default function WarCouncilPage() {
         }
     };
 
+    const handleSaveArmy = async () => {
+        if (!user) {
+            toast({ variant: 'destructive', title: 'Not Signed In', description: 'You must be signed in to save an army.' });
+            return;
+        }
+         if (!armyNameToSave) {
+            toast({ variant: 'destructive', title: 'Name Required', description: 'Please enter a name for your army.' });
+            return;
+        }
+        
+        const composition = {
+            name: armyNameToSave,
+            troops: Object.values(army).map(({unit, quantity}) => ({ name: unit.name, level: unit.level, quantity })),
+            spells: Object.values(spells).map(({unit, quantity}) => ({ name: unit.name, level: unit.level, quantity })),
+            heroes: heroes.map(h => ({ name: h.name, level: h.level })),
+            siegeMachine: siegeMachine ? { name: siegeMachine.name, level: siegeMachine.level } : null,
+            townHallLevel: player.townHallLevel,
+        };
+
+        try {
+            await saveArmyComposition(user.uid, composition);
+            toast({ title: 'Army Saved!', description: `"${armyNameToSave}" has been saved to your cookbook.`});
+        } catch (error) {
+            console.error("Failed to save army:", error);
+            toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save army to your cookbook.'});
+        }
+    };
+
+    const handleSaveStrategy = async () => {
+        if (!user) {
+            toast({ variant: 'destructive', title: 'Not Signed In', description: 'You must be signed in to save a strategy.' });
+            return;
+        }
+        if (!aiResult) {
+            toast({ variant: 'destructive', title: 'No Strategy', description: 'Generate a strategy before saving.' });
+            return;
+        }
+
+        try {
+            await saveAIStrategy(user.uid, aiResult);
+            toast({ title: 'Strategy Saved!', description: `"${aiResult.armyName}" strategy saved.` });
+        } catch (error) {
+            console.error("Failed to save strategy:", error);
+            toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save the AI strategy.' });
+        }
+    };
+
     if (loading) return <LoadingSpinner show={true} />;
     if (!player) return (
         <Alert variant="destructive">
@@ -387,9 +439,34 @@ export default function WarCouncilPage() {
             <Card><CardHeader><CardTitle>War Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <Card className="sticky top-20">
+                <Card className="sticky top-20" no-hover>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
+                         <div className="flex justify-between items-center">
+                            <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
+                            
+                             <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0}><Bookmark className="mr-2 h-4 w-4" /> Save Army</Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                    <AlertDialogTitle>Save Army Composition</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Give this army a name to save it to your cookbook for later.
+                                    </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <div className="py-4">
+                                        <Label htmlFor="army-name">Army Name</Label>
+                                        <Input id="army-name" placeholder="e.g., Queen Charge Hybrid" value={armyNameToSave} onChange={(e) => setArmyNameToSave(e.target.value)} />
+                                    </div>
+                                    <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleSaveArmy}>Save</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2 rounded-lg border bg-card/50 p-4">
@@ -417,7 +494,7 @@ export default function WarCouncilPage() {
                 </Card>
 
                 <div className="space-y-4">
-                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver}>
+                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver} no-hover>
                         <CardHeader>
                             <CardTitle>Unit Selection</CardTitle>
                             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -458,7 +535,12 @@ export default function WarCouncilPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><BrainCircuit className="w-6 h-6 text-primary" /><span>AI Strategy</span></CardTitle>
+                    <div className="flex justify-between items-center">
+                        <CardTitle className="flex items-center gap-2"><BrainCircuit className="w-6 h-6 text-primary" /><span>AI Strategy</span></CardTitle>
+                        {aiResult && (
+                            <Button variant="outline" size="sm" onClick={handleSaveStrategy}><Bookmark className="mr-2 h-4 w-4" /> Save Strategy</Button>
+                        )}
+                    </div>
                     <CardDescription>Get a customized attack plan for the army you've built.</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">

@@ -22,6 +22,7 @@ export function MainNav({
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
      { href: '/war-council', label: 'War Council' },
+     { href: '/cookbook', label: 'Cookbook' },
   ];
 
   if (!hasPlayerData) {

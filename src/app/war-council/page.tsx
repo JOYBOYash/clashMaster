@@ -113,6 +113,7 @@ export default function WarCouncilPage() {
     const [maxTroopSpace, setMaxTroopSpace] = useState(300);
     const [maxSpellSpace, setMaxSpellSpace] = useState(11);
     const [armyNameToSave, setArmyNameToSave] = useState('');
+    const [loadedArmyId, setLoadedArmyId] = useState<string | null>(null);
 
     const [availableUnits, setAvailableUnits] = useState<any>({
         heroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], siegeMachines: [], elixirSpells: [], darkElixirSpells: []
@@ -132,6 +133,7 @@ export default function WarCouncilPage() {
     const loadComposition = useCallback((composition: any) => {
         if (!composition || !availableUnits || availableUnits.heroes.length === 0) return;
 
+        setLoadedArmyId(composition.id || null);
         const allPlayerUnits = [
             ...availableUnits.heroes, ...availableUnits.elixirTroops, ...availableUnits.darkElixirTroops,
             ...availableUnits.superTroops, ...availableUnits.siegeMachines, ...availableUnits.elixirSpells,
@@ -152,8 +154,8 @@ export default function WarCouncilPage() {
         });
         setSpells(newSpells);
         
+        let availableHeroes = [...availableUnits.heroes];
         const newHeroes: any[] = [];
-        const availableHeroes = [...availableUnits.heroes];
         composition.heroes?.forEach((hero: any) => {
             const heroIndex = availableHeroes.findIndex(h => h.name === hero.name);
             if (heroIndex !== -1) {
@@ -163,6 +165,10 @@ export default function WarCouncilPage() {
         setHeroes(newHeroes);
 
         let availableSiegeMachines = [...availableUnits.siegeMachines];
+         if (siegeMachine) {
+            availableSiegeMachines.push(siegeMachine);
+        }
+
         if (composition.siegeMachine) {
             const smIndex = availableSiegeMachines.findIndex((s:any) => s.name === composition.siegeMachine.name);
             if (smIndex !== -1) {
@@ -176,7 +182,7 @@ export default function WarCouncilPage() {
         setAvailableUnits((prev: any) => ({ ...prev, heroes: availableHeroes, siegeMachines: availableSiegeMachines }));
         toast({ title: "Army Loaded", description: `"${composition.name}" is ready.` });
 
-    }, [availableUnits, toast]);
+    }, [availableUnits, toast, siegeMachine]);
 
     useEffect(() => {
         const playerData = localStorage.getItem('playerData');
@@ -224,7 +230,7 @@ export default function WarCouncilPage() {
 
     useEffect(() => {
         const compositionToLoad = localStorage.getItem('loadArmyComposition');
-        if (compositionToLoad && availableUnits.heroes.length > 0) { // Check if units are ready
+        if (compositionToLoad && availableUnits.heroes.length > 0) {
             try {
                 const parsedComp = JSON.parse(compositionToLoad);
                 loadComposition(parsedComp);
@@ -234,7 +240,7 @@ export default function WarCouncilPage() {
                 localStorage.removeItem('loadArmyComposition');
             }
         }
-    }, [availableUnits, loadComposition]);
+    }, [availableUnits.heroes, loadComposition]);
 
 
     const currentTroopSpace = useMemo(() => {
@@ -261,6 +267,7 @@ export default function WarCouncilPage() {
     };
     
     const removeFromArmy = useCallback((name: string) => {
+        setLoadedArmyId(null);
         setArmy(prev => {
             const newArmy = { ...prev };
             if (newArmy[name]) {
@@ -274,6 +281,7 @@ export default function WarCouncilPage() {
     }, []);
     
     const removeFromSpells = useCallback((name: string) => {
+        setLoadedArmyId(null);
          setSpells(prev => {
             const newSpells = { ...prev };
             if (newSpells[name]) {
@@ -287,6 +295,7 @@ export default function WarCouncilPage() {
     }, []);
     
     const removeFromHeroes = useCallback((name: string) => {
+        setLoadedArmyId(null);
         const heroToRemove = heroes.find(h => h.name === name);
         if (heroToRemove) {
             setHeroes(prev => prev.filter(h => h.name !== name));
@@ -295,6 +304,7 @@ export default function WarCouncilPage() {
     }, [heroes]);
     
     const removeSiegeMachine = useCallback(() => {
+        setLoadedArmyId(null);
         if(siegeMachine) {
             setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine].sort((a,b) => a.name.localeCompare(b.name))}));
             setSiegeMachine(null);
@@ -303,6 +313,7 @@ export default function WarCouncilPage() {
 
 
     const addUnit = useCallback((itemData: any) => {
+        setLoadedArmyId(null);
         const { name } = itemData;
 
         if (isUnitType(itemData, 'troop')) {
@@ -357,6 +368,8 @@ export default function WarCouncilPage() {
         const itemData = JSON.parse(e.dataTransfer.getData('item'));
         const { name, origin, category } = itemData;
         
+        setLoadedArmyId(null);
+
         // This is a simple implementation. For a full 'remove' functionality via drag,
         // you might want a dedicated drop zone for removal.
         if (dropZoneType === 'selection') {
@@ -453,7 +466,8 @@ export default function WarCouncilPage() {
         };
 
         try {
-            await saveArmyComposition(user.uid, composition);
+            const savedId = await saveArmyComposition(user.uid, composition);
+            setLoadedArmyId(savedId);
             toast({ title: 'Army Saved!', description: `"${armyNameToSave}" has been saved to your cookbook.`});
         } catch (error) {
             console.error("Failed to save army:", error);
@@ -510,7 +524,9 @@ export default function WarCouncilPage() {
                             
                              <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0}><Bookmark className="mr-2 h-4 w-4" /> Save Army</Button>
+                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 || !!loadedArmyId}>
+                                        <Bookmark className="mr-2 h-4 w-4" /> Save Army
+                                    </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>

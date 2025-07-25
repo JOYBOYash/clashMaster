@@ -285,7 +285,7 @@ export default function DashboardPage() {
   return (
     <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
       {/* Header */}
-      <Card className="overflow-hidden shadow-2xl" no-hover>
+      <Card no-hover>
         <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4">
           <div className="flex items-center gap-4">
              <div className="flex flex-col items-center">
@@ -358,6 +358,7 @@ export default function DashboardPage() {
                         <h3 className="text-2xl font-headline mb-4">Army</h3>
                         <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
                         <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
+                        <CategoryGrid title="Super Troops" icon={Flame} items={superTroops} />
                         <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
                     </div>
                     

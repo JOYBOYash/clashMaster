@@ -22,8 +22,11 @@ export function MainNav({
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
      { href: '/war-council', label: 'War Council' },
-     { href: '/survey', label: 'Survey' }
   ];
+
+  if (!hasPlayerData) {
+      routes.push({ href: '/survey', label: 'Survey' });
+  }
 
   return (
     <nav
@@ -32,11 +35,6 @@ export function MainNav({
     >
       <ul className="flex items-center justify-center h-full gap-2">
         {routes.map((route) => {
-           // Don't show Survey if data exists
-          if (route.href === '/survey' && hasPlayerData) {
-            return null;
-          }
-
           const isActive = pathname.startsWith(route.href);
 
           return (

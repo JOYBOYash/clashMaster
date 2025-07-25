@@ -76,20 +76,36 @@ const TroopSpellCard = ({ item, ...props }: { item: any, [key: string]: any }) =
     );
 };
 
-const SectionHeader = ({ title, icon, capacity, current, isOpen, onToggle }: any) => (
-    <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-2">
-            {icon}
-            <h4 className="font-headline text-lg">{title}</h4>
-        </div>
-        <div className="flex items-center gap-4">
-            <span className="text-sm font-mono text-muted-foreground">{current}/{capacity}</span>
-            <Button variant="ghost" size="sm" onClick={onToggle}>
-                {isOpen ? <ChevronUp /> : <ChevronDown />}
-            </Button>
-        </div>
-    </div>
-);
+const UnitCategory = ({ title, icon, items, type, isOpen, onToggle }: any) => {
+    if (!items || items.length === 0) return null;
+    
+    const handleDragStart = (e: React.DragEvent, item: any, type: string) => {
+        e.dataTransfer.setData('item', JSON.stringify({ ...item, type }));
+    };
+
+    return (
+        <Collapsible open={isOpen} onOpenChange={onToggle} className="space-y-2 border-b">
+            <CollapsibleTrigger asChild>
+                 <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/50 cursor-pointer">
+                    {icon}
+                    <h4 className="font-headline text-lg flex-grow">{title}</h4>
+                    <Button variant="ghost" size="icon" className="w-8 h-8">
+                        {isOpen ? <ChevronUp className="w-5 h-5"/> : <ChevronDown className="w-5 h-5"/>}
+                    </Button>
+                </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-4">
+                    {items.map((item: any) => (
+                       type === 'hero' 
+                       ? <HeroCard key={item.name} hero={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, item, type)} />
+                       : <TroopSpellCard key={item.name} item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, item, type)} />
+                    ))}
+                </div>
+            </CollapsibleContent>
+        </Collapsible>
+    );
+};
 
 
 export default function WarCouncilPage() {
@@ -109,13 +125,13 @@ export default function WarCouncilPage() {
 
     // Collapsible sections state
     const [openSections, setOpenSections] = useState({
-        elixirTroops: true,
-        darkElixirTroops: true,
-        superTroops: true,
-        elixirSpells: true,
-        darkElixirSpells: true,
         heroes: true,
-        siegeMachines: true,
+        elixirTroops: false,
+        darkElixirTroops: false,
+        superTroops: false,
+        siegeMachines: false,
+        elixirSpells: false,
+        darkElixirSpells: false,
     });
     
     const toggleSection = (section: keyof typeof openSections) => {
@@ -142,42 +158,44 @@ export default function WarCouncilPage() {
         darkElixirSpells,
     } = useMemo(() => {
         if (!player) {
-            return {
-                maxTroopSpace: 0,
-                maxSpellSpace: 0,
-                homeHeroes: [],
-                elixirTroops: [],
-                darkElixirTroops: [],
-                superTroops: [],
-                homeSiegeMachines: [],
-                elixirSpells: [],
-                darkElixirSpells: [],
-            };
+            return { maxTroopSpace: 0, maxSpellSpace: 0, homeHeroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], homeSiegeMachines: [], elixirSpells: [], darkElixirSpells: [] };
         }
     
-        const townHall = player.townHallLevel;
-        const armyCampData: { [key: number]: number } = { 1: 20, 2: 30, 3: 35, 4: 40, 5: 45, 6: 50, 7: 55, 8: 60, 9: 65, 10: 70, 11: 75, 12: 80 };
-        const spellFactoryData: { [key: number]: number } = { 1: 2, 2: 4, 3: 6, 4: 8, 5: 10, 6: 11, 7: 11 };
-        const darkSpellFactoryData: { [key: number]: number } = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
-    
-        const maxTroopSpace = (player.armyCamps || []).reduce((acc: number, camp: any) => acc + (armyCampData[camp.level] || 0), 0);
+        const armyCampLevels: { [key: number]: number } = { 1: 20, 2: 30, 3: 35, 4: 40, 5: 45, 6: 50, 7: 55, 8: 60, 9: 65, 10: 70, 11: 75, 12: 80, 13: 85 };
+        const spellFactoryLevels: { [key: number]: number } = { 1: 2, 2: 4, 3: 6, 4: 8, 5: 10, 6: 11, 7: 12 };
+        const darkSpellFactoryLevels: { [key: number]: number } = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
         
-        let maxSpellSpace = 0;
-        const spellFactory = player.buildings?.find((b: any) => b.name === 'Spell Factory');
-        const darkSpellFactory = player.buildings?.find((b: any) => b.name === 'Dark Spell Factory');
-        if(spellFactory) maxSpellSpace += spellFactoryData[spellFactory.level] || 0;
-        if(darkSpellFactory) maxSpellSpace += darkSpellFactoryData[darkSpellFactory.level] || 0;
-        if(player.clan) maxSpellSpace += player.clan.spellCapacity || 0;
+        let totalTroopSpace = 0;
+        if(player.townHallLevel >= 1) { // Clan castle troops
+            const clanCastle = player.buildings?.find((b: any) => b.name === 'Clan Castle');
+            if (clanCastle) {
+                totalTroopSpace += clanCastle.troopCapacity || 0;
+            }
+        }
+        (player.armyCamps || []).forEach((camp: any) => {
+            totalTroopSpace += armyCampLevels[camp.level] || 0;
+        });
 
+        let totalSpellSpace = 0;
+        const spellFactory = player.buildings?.find((b: any) => b.name === 'Spell Factory');
+        if (spellFactory) totalSpellSpace += spellFactoryLevels[spellFactory.level] || 0;
+        
+        const darkSpellFactory = player.buildings?.find((b: any) => b.name === 'Dark Spell Factory');
+        if (darkSpellFactory) totalSpellSpace += darkSpellFactoryLevels[darkSpellFactory.level] || 0;
+
+        const clanCastle = player.buildings?.find((b: any) => b.name === 'Clan Castle');
+        if (clanCastle) {
+            totalSpellSpace += clanCastle.spellCapacity || 0;
+        }
 
         const allHomeTroops = player.troops.filter((t: any) => t.village === 'home');
-        const homeHeroes = player.heroes.filter((h: any) => h.village === 'home');
-        const homeSpells = player.spells.filter((s: any) => s.village === 'home');
-        
+        const homeHeroes = player.heroes.filter((h: any) => h.village === 'home' && h.level > 0);
+        const homeSpells = player.spells.filter((s: any) => s.village === 'home' && s.level > 0);
+
         return {
-            maxTroopSpace,
-            maxSpellSpace,
-            homeHeroes: homeHeroes.filter((h: any) => h.level > 0),
+            maxTroopSpace: totalTroopSpace,
+            maxSpellSpace: totalSpellSpace,
+            homeHeroes,
             elixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)),
             darkElixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !superTroopNames.includes(t.name)),
             superTroops: allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0),
@@ -187,18 +205,18 @@ export default function WarCouncilPage() {
         };
     }, [player]);
 
-    const currentTroopSpace = useMemo(() => army.reduce((acc, t) => acc + t.housingSpace, 0), [army]);
-    const currentSpellSpace = useMemo(() => spells.reduce((acc, s) => acc + s.housingSpace, 0), [spells]);
+    const currentTroopSpace = useMemo(() => army.reduce((acc, t) => acc + (t.housingSpace || 0), 0), [army]);
+    const currentSpellSpace = useMemo(() => spells.reduce((acc, s) => acc + (s.housingSpace || 0), 0), [spells]);
 
-    const handleDragStart = (e: React.DragEvent, item: any, type: string) => {
-        e.dataTransfer.setData('item', JSON.stringify({ ...item, type }));
-    };
-    
     const handleDrop = (e: React.DragEvent, dropZoneType: string) => {
         e.preventDefault();
         const itemData = JSON.parse(e.dataTransfer.getData('item'));
+        const itemType = itemData.type;
 
-        if (itemData.type !== dropZoneType) return;
+        if (itemType !== dropZoneType) {
+            toast({ variant: 'destructive', title: 'Invalid Drop', description: `Cannot place a ${itemType} in the ${dropZoneType} slot.` });
+            return;
+        }
 
         if(dropZoneType === 'troop') {
             if (currentTroopSpace + itemData.housingSpace <= maxTroopSpace) {
@@ -290,32 +308,6 @@ export default function WarCouncilPage() {
         </Alert>
     );
 
-    const UnitCategory = ({ title, icon, items, type, isOpen, onToggle }: any) => {
-        if (!items || items.length === 0) return null;
-        return (
-            <Collapsible open={isOpen} onOpenChange={onToggle} className="space-y-2">
-                <CollapsibleTrigger asChild>
-                     <div className="flex items-center gap-2 mb-2 p-2 rounded-lg hover:bg-muted/50 cursor-pointer">
-                        {icon}
-                        <h4 className="font-headline text-lg flex-grow">{title}</h4>
-                        <Button variant="ghost" size="sm">
-                            {isOpen ? <ChevronUp /> : <ChevronDown />}
-                        </Button>
-                    </div>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                        {items.map((item: any) => (
-                           type === 'hero' 
-                           ? <HeroCard key={item.name} hero={item} draggable onDragStart={(e) => handleDragStart(e, item, type)} />
-                           : <TroopSpellCard key={item.name} item={item} draggable onDragStart={(e) => handleDragStart(e, item, type)} />
-                        ))}
-                    </div>
-                </CollapsibleContent>
-            </Collapsible>
-        );
-    };
-
     return (
         <div className="space-y-8">
             <Card>
@@ -325,7 +317,7 @@ export default function WarCouncilPage() {
                 </CardHeader>
             </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 {/* Left Column: Army Composition */}
                 <div className="space-y-6">
                     <Card className="sticky top-20">
@@ -409,16 +401,16 @@ export default function WarCouncilPage() {
                      <Card>
                         <CardHeader>
                             <CardTitle>Unit Selection</CardTitle>
-                            <CardDescription>Drag your forces to the composition panel on the left.</CardDescription>
+                            <CardDescription>Click to expand a category, then drag your forces to the composition panel on the left.</CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <UnitCategory title="Heroes" icon={<Sparkles />} items={homeHeroes} type="hero" isOpen={openSections.heroes} onToggle={() => toggleSection('heroes')} />
-                            <UnitCategory title="Elixir Troops" icon={<Droplets />} items={elixirTroops} type="troop" isOpen={openSections.elixirTroops} onToggle={() => toggleSection('elixirTroops')} />
-                            <UnitCategory title="Dark Elixir Troops" icon={<FlaskConical />} items={darkElixirTroops} type="troop" isOpen={openSections.darkElixirTroops} onToggle={() => toggleSection('darkElixirTroops')}/>
-                            <UnitCategory title="Super Troops" icon={<Sparkles />} items={superTroops} type="troop" isOpen={openSections.superTroops} onToggle={() => toggleSection('superTroops')} />
-                            <UnitCategory title="Siege Machines" icon={<Castle />} items={homeSiegeMachines} type="siege" isOpen={openSections.siegeMachines} onToggle={() => toggleSection('siegeMachines')} />
-                            <UnitCategory title="Elixir Spells" icon={<Droplets />} items={elixirSpells} type="spell" isOpen={openSections.elixirSpells} onToggle={() => toggleSection('elixirSpells')} />
-                            <UnitCategory title="Dark Elixir Spells" icon={<FlaskConical />} items={darkElixirSpells} type="spell" isOpen={openSections.darkElixirSpells} onToggle={() => toggleSection('darkElixirSpells')} />
+                        <CardContent className="space-y-1">
+                            <UnitCategory title="Heroes" icon={<Sparkles className="text-amber-400"/>} items={homeHeroes} type="hero" isOpen={openSections.heroes} onToggle={() => toggleSection('heroes')} />
+                            <UnitCategory title="Elixir Troops" icon={<Droplets className="text-pink-400"/>} items={elixirTroops} type="troop" isOpen={openSections.elixirTroops} onToggle={() => toggleSection('elixirTroops')} />
+                            <UnitCategory title="Dark Elixir Troops" icon={<FlaskConical className="text-purple-400"/>} items={darkElixirTroops} type="troop" isOpen={openSections.darkElixirTroops} onToggle={() => toggleSection('darkElixirTroops')}/>
+                            <UnitCategory title="Super Troops" icon={<Sparkles className="text-orange-500" />} items={superTroops} type="troop" isOpen={openSections.superTroops} onToggle={() => toggleSection('superTroops')} />
+                            <UnitCategory title="Siege Machines" icon={<Castle className="text-stone-500"/>} items={homeSiegeMachines} type="siege" isOpen={openSections.siegeMachines} onToggle={() => toggleSection('siegeMachines')} />
+                            <UnitCategory title="Elixir Spells" icon={<Droplets className="text-pink-400"/>} items={elixirSpells} type="spell" isOpen={openSections.elixirSpells} onToggle={() => toggleSection('elixirSpells')} />
+                            <UnitCategory title="Dark Elixir Spells" icon={<FlaskConical className="text-purple-400"/>} items={darkElixirSpells} type="spell" isOpen={openSections.darkElixirSpells} onToggle={() => toggleSection('darkElixirSpells')} />
                         </CardContent>
                     </Card>
                 </div>
@@ -439,7 +431,7 @@ export default function WarCouncilPage() {
                         Generate Attack Plan
                     </Button>
                     <div className="mt-4 p-4 bg-muted/50 rounded-lg min-h-[10rem] text-left">
-                        {aiLoading && <p className="text-muted-foreground text-center">AI is thinking...</p>}
+                        {aiLoading && <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-primary" /> <p className="ml-2 text-muted-foreground">AI is thinking...</p></div>}
                         {aiResult && (
                             <div className="space-y-4 prose prose-sm dark:prose-invert max-w-none">
                                 <h3 className="font-headline text-xl text-primary">{aiResult.armyName}</h3>
@@ -464,3 +456,4 @@ export default function WarCouncilPage() {
         </div>
     );
 }
+

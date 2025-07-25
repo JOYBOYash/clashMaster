@@ -21,7 +21,7 @@ export function MainNav({
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
-     // Conditionally show the survey link
+     { href: '/war-council', label: 'War Council' },
      ...(!hasPlayerData ? [{ href: '/survey', label: 'Take Survey' }] : [])
   ];
 
@@ -31,9 +31,9 @@ export function MainNav({
       {...props}
     >
       {routes.map((route) => {
-        if (route.label === 'Take Survey') {
+        if (route.label === 'Take Survey' || route.label === 'War Council') {
           return (
-            <Button key={route.href} asChild variant="outline" size="sm">
+            <Button key={route.href} asChild variant="outline" size="sm" className={cn(pathname.startsWith(route.href) && "border-primary text-primary")}>
               <Link href={route.href}>
                 {route.label}
               </Link>

@@ -63,6 +63,7 @@ export function MainHeader() {
                 </SheetHeader>
                <div className="flex flex-col gap-4 py-4">
                   <Link href="/dashboard" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Dashboard</Link>
+                  <Link href="/war-council" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>War Council</Link>
                   {!hasPlayerData && (
                     <Link href="/survey" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Survey</Link>
                   )}

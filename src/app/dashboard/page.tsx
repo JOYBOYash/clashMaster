@@ -358,7 +358,6 @@ export default function DashboardPage() {
                         <h3 className="text-2xl font-headline mb-4">Army</h3>
                         <CategoryGrid title="Elixir Troops" icon={Droplets} items={elixirTroops} />
                         <CategoryGrid title="Dark Elixir Troops" icon={FlaskConical} items={darkElixirTroops} />
-                        <CategoryGrid title="Super Troops" icon={Flame} items={superTroops} />
                         <CategoryGrid title="Siege Machines" icon={Castle} items={homeSiegeMachines} />
                     </div>
                     

@@ -11,50 +11,77 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import Image from 'next/image';
 import { getImagePath } from '@/lib/image-paths';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BookOpen, ShieldQuestion } from 'lucide-react';
+import { BookOpen, ShieldQuestion, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const ArmyCompositionCard = ({ composition }: { composition: any }) => {
+    const router = useRouter();
+    const { toast } = useToast();
+
+    const handleLoadArmy = () => {
+        localStorage.setItem('loadArmyComposition', JSON.stringify(composition));
+        toast({
+            title: "Army Loaded",
+            description: `"${composition.name}" is ready in the War Council.`,
+        });
+        router.push('/war-council');
+    };
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>{composition.name}</CardTitle>
-                <CardDescription>Town Hall {composition.townHallLevel}</CardDescription>
+                <div className="flex justify-between items-start">
+                    <div>
+                        <CardTitle>{composition.name}</CardTitle>
+                        <CardDescription>Town Hall {composition.townHallLevel}</CardDescription>
+                    </div>
+                     <Button variant="outline" size="sm" onClick={handleLoadArmy}>
+                        <UploadCloud className="mr-2 h-4 w-4" /> Load
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div>
-                    <h4 className="font-bold mb-2">Heroes</h4>
-                    <div className="flex flex-wrap gap-2">
-                        {composition.heroes.map((hero: any) => (
-                            <div key={hero.name} className="flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs">
-                                <Image src={getImagePath(hero.name)} alt={hero.name} width={24} height={24} unoptimized/>
-                                <span>{hero.name} (Lvl {hero.level})</span>
-                            </div>
-                        ))}
+                {composition.heroes.length > 0 && (
+                     <div>
+                        <h4 className="font-bold mb-2">Heroes</h4>
+                        <div className="flex flex-wrap gap-2">
+                            {composition.heroes.map((hero: any) => (
+                                <div key={hero.name} className="flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs">
+                                    <Image src={getImagePath(hero.name)} alt={hero.name} width={24} height={24} unoptimized/>
+                                    <span>{hero.name} (Lvl {hero.level})</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-                 <div>
-                    <h4 className="font-bold mb-2">Troops</h4>
-                    <div className="flex flex-wrap gap-2">
-                        {composition.troops.map((troop: any) => (
-                             <div key={troop.name} className="flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs">
-                                <Image src={getImagePath(troop.name)} alt={troop.name} width={24} height={24} unoptimized/>
-                                <span>{troop.quantity}x {troop.name} (Lvl {troop.level})</span>
-                            </div>
-                        ))}
+                )}
+                 {composition.troops.length > 0 && (
+                    <div>
+                        <h4 className="font-bold mb-2">Troops</h4>
+                        <div className="flex flex-wrap gap-2">
+                            {composition.troops.map((troop: any) => (
+                                 <div key={troop.name} className="flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs">
+                                    <Image src={getImagePath(troop.name)} alt={troop.name} width={24} height={24} unoptimized/>
+                                    <span>{troop.quantity}x {troop.name} (Lvl {troop.level})</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-                 <div>
-                    <h4 className="font-bold mb-2">Spells</h4>
-                    <div className="flex flex-wrap gap-2">
-                        {composition.spells.map((spell: any) => (
-                             <div key={spell.name} className="flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs">
-                                <Image src={getImagePath(spell.name)} alt={spell.name} width={24} height={24} unoptimized/>
-                                <span>{spell.quantity}x {spell.name} (Lvl {spell.level})</span>
-                            </div>
-                        ))}
+                )}
+                 {composition.spells.length > 0 && (
+                    <div>
+                        <h4 className="font-bold mb-2">Spells</h4>
+                        <div className="flex flex-wrap gap-2">
+                            {composition.spells.map((spell: any) => (
+                                 <div key={spell.name} className="flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs">
+                                    <Image src={getImagePath(spell.name)} alt={spell.name} width={24} height={24} unoptimized/>
+                                    <span>{spell.quantity}x {spell.name} (Lvl {spell.level})</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                 )}
                 {composition.siegeMachine && (
                      <div>
                         <h4 className="font-bold mb-2">Siege Machine</h4>
@@ -69,6 +96,26 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
     )
 }
 
+const StrategyStep = ({ step }: { step: any }) => {
+    const hasImage = step.unitName && step.unitName !== 'General';
+    const imagePath = hasImage ? getImagePath(step.unitName) : '';
+
+    return (
+        <div className="flex items-start gap-4 py-3">
+            {hasImage && (
+                 <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
+                    <Image src={imagePath} alt={step.unitName} fill className="object-contain" unoptimized />
+                </div>
+            )}
+            <div className="flex-grow">
+                <h5 className="font-bold font-headline">{step.title}</h5>
+                <p className="text-sm text-muted-foreground">{step.description}</p>
+            </div>
+        </div>
+    )
+}
+
+
 const StrategyCard = ({ strategy }: { strategy: any }) => {
     return (
         <Card>
@@ -77,7 +124,26 @@ const StrategyCard = ({ strategy }: { strategy: any }) => {
                  <CardDescription>{strategy.strategySummary}</CardDescription>
             </CardHeader>
             <CardContent>
-                 <Accordion type="single" collapsible className="w-full">
+                 <Accordion type="multiple" className="w-full">
+                    <AccordionItem value="phases">
+                        <AccordionTrigger>Attack Plan</AccordionTrigger>
+                        <AccordionContent>
+                             <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+                                {strategy.phases.map((phase: any, index: number) => (
+                                     <AccordionItem key={index} value={`item-${index}`}>
+                                        <AccordionTrigger className="text-lg font-headline text-foreground/90">{phase.phaseName}</AccordionTrigger>
+                                        <AccordionContent>
+                                            <div className="divide-y divide-border">
+                                                {phase.steps.map((step: any, stepIndex: number) => (
+                                                    <StrategyStep key={stepIndex} step={step} />
+                                                ))}
+                                            </div>
+                                        </AccordionContent>
+                                     </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="strengths">
                         <AccordionTrigger>Strengths</AccordionTrigger>
                         <AccordionContent>{strategy.strengths}</AccordionContent>
@@ -179,7 +245,7 @@ export default function CookbookPage() {
                 </TabsContent>
                 <TabsContent value="strategies">
                      {strategies.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                             {strategies.map(strat => <StrategyCard key={strat.id} strategy={strat} />)}
                         </div>
                     ) : (

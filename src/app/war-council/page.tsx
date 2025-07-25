@@ -517,7 +517,7 @@ export default function WarCouncilPage() {
             <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <Card className="sticky top-20" no-hover>
+                <Card className="sticky top-20">
                     <CardHeader>
                          <div className="flex justify-between items-center">
                             <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
@@ -574,7 +574,7 @@ export default function WarCouncilPage() {
                 </Card>
 
                 <div className="space-y-4">
-                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver} no-hover>
+                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver}>
                         <CardHeader>
                             <CardTitle>Unit Selection</CardTitle>
                             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -589,7 +589,7 @@ export default function WarCouncilPage() {
                             </Select>
                         </CardHeader>
                         <CardContent className="space-y-1">
-                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-4 max-h-[50vh] overflow-y-auto">
+                             <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 gap-2 pb-4 max-h-[50vh] overflow-y-auto">
                                 {availableUnits[selectedCategory]?.map((item: any) => (
                                     <div
                                         key={item.name}

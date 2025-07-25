@@ -31,10 +31,10 @@ export function MainNav({
 
   return (
     <nav
-      className={cn("hidden md:flex items-center justify-center h-full", className)}
+      className={cn("hidden mx-4 md:flex items-center mx-4 justify-center h-full", className)}
       {...props}
     >
-      <ul className="flex items-center justify-center h-full gap-2">
+      <ul className="flex items-center justify-center gap-2 h-full gap-2">
         {routes.map((route) => {
           const isActive = pathname.startsWith(route.href);
 

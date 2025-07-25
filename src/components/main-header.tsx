@@ -73,7 +73,7 @@ export function MainHeader() {
 
         {/* Desktop Logo and Nav */}
         <div className="hidden md:flex flex-1 items-center gap-6">
-          <Link href={homeHref} className="flex items-center space-x-2">
+          <Link href={homeHref} className="flex items-center  mx-4 p-2 space-x-2">
             <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
             <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
               ProBuilder

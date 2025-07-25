@@ -26,7 +26,7 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
             title: "Army Loaded",
             description: `"${composition.name}" is ready in the Council.`,
         });
-        router.push('/war-council');
+        router.push('/council');
     };
 
     return (
@@ -235,9 +235,9 @@ export default function CookbookPage() {
             </Card>
 
             <Tabs defaultValue="armies" className="w-full">
-                <TabsList>
-                    <TabsTrigger value="armies" className="flex-1"><BookOpen className="mr-2"/> Saved Armies</TabsTrigger>
-                    <TabsTrigger value="strategies" className="flex-1"><ShieldQuestion className="mr-2"/> Saved Strategies</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="armies"><BookOpen className="mr-2"/> Saved Armies</TabsTrigger>
+                    <TabsTrigger value="strategies"><ShieldQuestion className="mr-2"/> Saved Strategies</TabsTrigger>
                 </TabsList>
                 <TabsContent value="armies">
                     {compositions.length > 0 ? (

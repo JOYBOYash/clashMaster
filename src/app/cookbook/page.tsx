@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'use-state';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions, getSavedStrategies } from '@/lib/firebase-service';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -172,4 +172,3 @@ export default function CookbookPage() {
         </div>
     );
 }
-

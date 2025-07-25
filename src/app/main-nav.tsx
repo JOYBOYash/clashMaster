@@ -21,7 +21,7 @@ export function MainNav({
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
-     { href: '/war-council', label: 'War Council' },
+     { href: '/war-council', label: 'Council' },
      { href: '/cookbook', label: 'Cookbook' },
   ];
 
@@ -48,6 +48,9 @@ export function MainNav({
                   )}
                 >
                   {route.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_10px_hsl(var(--primary))]"></span>
+                  )}
                 </Link>
              </li>
           );

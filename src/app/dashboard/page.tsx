@@ -312,11 +312,11 @@ export default function DashboardPage() {
       </Card>
       
       <Tabs defaultValue="home" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="home">
+        <TabsList>
+          <TabsTrigger value="home" className="flex-1">
             <Axe className="mr-2" /> Home Village
           </TabsTrigger>
-          <TabsTrigger value="builder">
+          <TabsTrigger value="builder" className="flex-1">
             <Hammer className="mr-2" /> Builder Base
           </TabsTrigger>
         </TabsList>

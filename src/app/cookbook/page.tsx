@@ -11,7 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import Image from 'next/image';
 import { getImagePath } from '@/lib/image-paths';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BookOpen, ShieldQuestion, UploadCloud } from 'lucide-react';
+import { BookOpen, ShieldQuestion, UploadCloud, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -24,7 +24,7 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
         localStorage.setItem('loadArmyComposition', JSON.stringify(composition));
         toast({
             title: "Army Loaded",
-            description: `"${composition.name}" is ready in the War Council.`,
+            description: `"${composition.name}" is ready in the Council.`,
         });
         router.push('/war-council');
     };
@@ -106,6 +106,11 @@ const StrategyStep = ({ step }: { step: any }) => {
                  <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
                     <Image src={imagePath} alt={step.unitName} fill className="object-contain" unoptimized />
                 </div>
+            )}
+             {!hasImage && (
+                 <div className="shrink-0 w-16 h-16 flex items-center justify-center bg-black/20 rounded-md border border-border">
+                    <CheckCircle className="w-8 h-8 text-primary/50" />
+                 </div>
             )}
             <div className="flex-grow">
                 <h5 className="font-bold font-headline">{step.title}</h5>
@@ -230,9 +235,9 @@ export default function CookbookPage() {
             </Card>
 
             <Tabs defaultValue="armies" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="armies"><BookOpen className="mr-2"/> Saved Armies</TabsTrigger>
-                    <TabsTrigger value="strategies"><ShieldQuestion className="mr-2"/> Saved Strategies</TabsTrigger>
+                <TabsList>
+                    <TabsTrigger value="armies" className="flex-1"><BookOpen className="mr-2"/> Saved Armies</TabsTrigger>
+                    <TabsTrigger value="strategies" className="flex-1"><ShieldQuestion className="mr-2"/> Saved Strategies</TabsTrigger>
                 </TabsList>
                 <TabsContent value="armies">
                     {compositions.length > 0 ? (

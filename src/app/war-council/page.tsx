@@ -514,7 +514,7 @@ export default function WarCouncilPage() {
     
     return (
         <div className="space-y-8">
-            <Card><CardHeader><CardTitle>War Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
+            <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <Card className="sticky top-20" no-hover>
@@ -669,5 +669,3 @@ export default function WarCouncilPage() {
         </div>
     );
 }
-
-    

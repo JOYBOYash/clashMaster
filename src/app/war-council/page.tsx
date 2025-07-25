@@ -130,7 +130,7 @@ export default function WarCouncilPage() {
     const pressTimer = useRef<NodeJS.Timeout>();
 
     const loadComposition = useCallback((composition: any) => {
-        if (!composition || !availableUnits) return;
+        if (!composition || !availableUnits || availableUnits.heroes.length === 0) return;
 
         const allPlayerUnits = [
             ...availableUnits.heroes, ...availableUnits.elixirTroops, ...availableUnits.darkElixirTroops,
@@ -151,7 +151,7 @@ export default function WarCouncilPage() {
             if (unitData) newSpells[spell.name] = { unit: unitData, quantity: spell.quantity };
         });
         setSpells(newSpells);
-
+        
         const newHeroes: any[] = [];
         const availableHeroes = [...availableUnits.heroes];
         composition.heroes?.forEach((hero: any) => {
@@ -162,28 +162,26 @@ export default function WarCouncilPage() {
         });
         setHeroes(newHeroes);
 
+        let availableSiegeMachines = [...availableUnits.siegeMachines];
         if (composition.siegeMachine) {
-            const smIndex = availableUnits.siegeMachines.findIndex((s:any) => s.name === composition.siegeMachine.name);
+            const smIndex = availableSiegeMachines.findIndex((s:any) => s.name === composition.siegeMachine.name);
             if (smIndex !== -1) {
-                setSiegeMachine(availableUnits.siegeMachines[smIndex]);
-                setAvailableUnits((prev: any) => ({
-                    ...prev,
-                    siegeMachines: prev.siegeMachines.filter((s:any) => s.name !== composition.siegeMachine.name)
-                }));
+                setSiegeMachine(availableSiegeMachines[smIndex]);
+                availableSiegeMachines.splice(smIndex, 1);
             }
         } else {
             setSiegeMachine(null);
         }
 
-        setAvailableUnits((prev: any) => ({ ...prev, heroes: availableHeroes }));
+        setAvailableUnits((prev: any) => ({ ...prev, heroes: availableHeroes, siegeMachines: availableSiegeMachines }));
+        toast({ title: "Army Loaded", description: `"${composition.name}" is ready.` });
 
-    }, [availableUnits]);
+    }, [availableUnits, toast]);
 
     useEffect(() => {
         const playerData = localStorage.getItem('playerData');
         const savedTroopSpace = localStorage.getItem('maxTroopSpace');
         const savedSpellSpace = localStorage.getItem('maxSpellSpace');
-        const compositionToLoad = localStorage.getItem('loadArmyComposition');
 
         if (playerData) {
             setPlayer(JSON.parse(playerData));
@@ -193,16 +191,6 @@ export default function WarCouncilPage() {
         }
         if (savedSpellSpace) {
             setMaxSpellSpace(parseInt(savedSpellSpace, 10));
-        }
-        if (compositionToLoad) {
-             try {
-                const parsedComp = JSON.parse(compositionToLoad);
-                // We'll call loadComposition in a later useEffect when availableUnits is ready
-            } catch (e) {
-                console.error("Failed to parse composition to load:", e);
-            } finally {
-                localStorage.removeItem('loadArmyComposition');
-            }
         }
         setLoading(false);
     }, []);
@@ -236,7 +224,7 @@ export default function WarCouncilPage() {
 
     useEffect(() => {
         const compositionToLoad = localStorage.getItem('loadArmyComposition');
-        if (compositionToLoad && availableUnits.heroes.length > 0) {
+        if (compositionToLoad && availableUnits.heroes.length > 0) { // Check if units are ready
             try {
                 const parsedComp = JSON.parse(compositionToLoad);
                 loadComposition(parsedComp);
@@ -665,3 +653,5 @@ export default function WarCouncilPage() {
         </div>
     );
 }
+
+    

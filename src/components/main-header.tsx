@@ -39,17 +39,10 @@ export function MainHeader() {
 
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        <Link href={homeHref} className="mr-8 flex items-center space-x-2">
-          <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
-          <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
-            ProBuilder
-          </h1>
-        </Link>
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center px-4">
         
-        <MainNav />
-
+        {/* Mobile Menu */}
         <div className="md:hidden">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -59,7 +52,12 @@ export function MainHeader() {
             </SheetTrigger>
             <SheetContent side="left">
                 <SheetHeader>
-                  <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                   <Link href={homeHref} className="flex items-center space-x-2" onClick={handleLinkClick}>
+                      <Image src={appLogoPath} alt="ProBuilder Logo" width={28} height={28} unoptimized />
+                      <h1 className={cn("text-xl font-bold text-primary font-headline")}>
+                        ProBuilder
+                      </h1>
+                    </Link>
                 </SheetHeader>
                <div className="flex flex-col gap-4 py-4">
                   <Link href="/dashboard" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Dashboard</Link>
@@ -70,6 +68,18 @@ export function MainHeader() {
                </div>
             </SheetContent>
           </Sheet>
+        </div>
+
+        {/* Desktop Logo and Nav */}
+        <div className="hidden md:flex flex-1 items-center gap-6">
+          <Link href={homeHref} className="flex items-center space-x-2">
+            <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
+            <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
+              ProBuilder
+            </h1>
+          </Link>
+          <div className="h-8 w-px bg-primary/30"></div>
+          <MainNav />
         </div>
         
         <div className="flex flex-1 items-center justify-end space-x-4">
@@ -104,6 +114,7 @@ export function MainHeader() {
           )}
         </div>
       </div>
+       <div className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
     </header>
   );
 }

@@ -18,30 +18,30 @@
   }
   
   :root {
-    --background: 36 33% 92%; /* off-white parchment */
-    --foreground: 27 39% 20%; /* darker brown */
-    --card: 42 40% 96%; /* light parchment */
-    --card-foreground: 20 20% 15%;
-    --popover: 40 40% 96%;
-    --popover-foreground: 20 20% 10%;
-    --primary: 39 85% 55%; /* warm gold */
-    --primary-foreground: 0 0% 10%;
-    --secondary: 30 25% 75%; /* dusty parchment */
-    --secondary-foreground: 27 20% 25%;
-    --muted: 42 25% 85%;
-    --muted-foreground: 25 15% 40%;
-    --accent: 45 100% 50%; /* rich gold */
+    --background: 222 28% 10%;
+    --foreground: 210 35% 90%;
+    --card: 220 25% 16%;
+    --card-foreground: 210 30% 88%;
+    --popover: 220 25% 16%;
+    --popover-foreground: 210 30% 88%;
+    --primary: 42 90% 60%;
+    --primary-foreground: 220 20% 10%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 210 30% 90%;
+    --muted: 220 15% 25%;
+    --muted-foreground: 210 30% 65%;
+    --accent: 45 100% 55%;
     --accent-foreground: 0 0% 10%;
-    --destructive: 0 84% 60%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 42 25% 75%;
-    --input: 40 25% 90%;
-    --ring: 42 85% 50%;
-    --chart-1: 10 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 220 15% 25%;
+    --input: 220 15% 25%;
+    --ring: 42 90% 55%;
+    --chart-1: 40 100% 60%;
+    --chart-2: 15 90% 60%;
+    --chart-3: 60 100% 65%;
+    --chart-4: 250 75% 70%;
+    --chart-5: 340 75% 60%;
     --radius: 0.75rem;
 
     /* Custom Hero Card Colors */
@@ -51,19 +51,19 @@
   }
 
   .dark {
-    --background: 222 28% 10%; /* deep dark navy */
+    --background: 222 28% 10%;
     --foreground: 210 35% 90%;
     --card: 220 25% 16%;
     --card-foreground: 210 30% 88%;
     --popover: 220 25% 16%;
     --popover-foreground: 210 30% 88%;
-    --primary: 42 90% 60%; /* gold-yellow */
+    --primary: 42 90% 60%;
     --primary-foreground: 220 20% 10%;
     --secondary: 220 15% 20%;
     --secondary-foreground: 210 30% 90%;
     --muted: 220 15% 25%;
     --muted-foreground: 210 30% 65%;
-    --accent: 45 100% 55%; /* gold glow */
+    --accent: 45 100% 55%;
     --accent-foreground: 0 0% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;

@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, ChevronDown, ChevronUp, Users } from 'lucide-react';
+import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck } from 'lucide-react';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { getImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
@@ -15,8 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Re-usable card components from dashboard
-const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: boolean, [key: string]: any }) => {
+const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: boolean;[key: string]: any }) => {
     const isSuper = superTroopNames.includes(item.name);
     const isSiege = siegeMachineNames.includes(item.name);
     
@@ -64,21 +63,16 @@ export default function WarCouncilPage() {
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
-    // Available units state, separated by category
     const [availableUnits, setAvailableUnits] = useState<any>({
         heroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], siegeMachines: [], elixirSpells: [], darkElixirSpells: []
     });
     
-    // Army composition state
     const [army, setArmy] = useState<any[]>([]);
     const [spells, setSpells] = useState<any[]>([]);
     const [heroes, setHeroes] = useState<any[]>([]);
     const [siegeMachine, setSiegeMachine] = useState<any | null>(null);
-
-    // Unit selection state
     const [selectedCategory, setSelectedCategory] = useState('heroes');
 
-    // AI state
     const [aiLoading, setAiLoading] = useState(false);
     const [aiResult, setAiResult] = useState<SuggestWarArmyOutput | null>(null);
 
@@ -92,10 +86,24 @@ export default function WarCouncilPage() {
 
     const { maxTroopSpace, maxSpellSpace } = useMemo(() => {
         if (!player) return { maxTroopSpace: 0, maxSpellSpace: 0 };
-        const clanCastle = player.buildings?.find((b: any) => b.name === 'Clan Castle');
+    
+        const findBuilding = (name: string) => (player.buildings || []).filter((b: any) => b.name === name);
+    
+        const armyCamps = findBuilding('Army Camp');
+        const clanCastle = findBuilding('Clan Castle')[0];
+        const spellFactory = findBuilding('Spell Factory')[0];
+        const darkSpellFactory = findBuilding('Dark Spell Factory')[0];
+    
+        const troopSpace = armyCamps.reduce((acc: number, camp: any) => acc + (camp.troopCapacity || 0), 0) + (clanCastle?.troopCapacity || 0);
+        
+        let spellSpace = 0;
+        if(spellFactory) spellSpace += spellFactory.spellCapacity || 0;
+        if(darkSpellFactory) spellSpace += darkSpellFactory.spellCapacity || 0;
+        if(clanCastle) spellSpace += clanCastle.spellCapacity || 0;
+    
         return {
-            maxTroopSpace: (player.armyCamps || []).reduce((acc: number, camp: any) => acc + camp.troopCapacity, 0) + (clanCastle?.troopCapacity || 0),
-            maxSpellSpace: (player.spellFactories || []).reduce((acc: number, factory: any) => acc + factory.spellCapacity, 0) + (clanCastle?.spellCapacity || 0),
+            maxTroopSpace: troopSpace,
+            maxSpellSpace: spellSpace,
         };
     }, [player]);
 
@@ -117,37 +125,77 @@ export default function WarCouncilPage() {
         });
     }, [player]);
 
-    const currentTroopSpace = useMemo(() => army.reduce((acc, t) => acc + (t.housingSpace || 0), 0), [army]);
+    const currentTroopSpace = useMemo(() => army.reduce((acc, t) => acc + (t.housingSpace || 0), 0) + (siegeMachine?.housingSpace || 0), [army, siegeMachine]);
     const currentSpellSpace = useMemo(() => spells.reduce((acc, s) => acc + (s.housingSpace || 0), 0), [spells]);
 
-    const handleDragStart = (e: React.DragEvent, item: any, origin: string) => {
-        e.dataTransfer.setData('item', JSON.stringify({ ...item, origin }));
+    const handleDragStart = (e: React.DragEvent, item: any, origin: string, category: string) => {
+        e.dataTransfer.setData('item', JSON.stringify({ ...item, origin, category }));
     };
+
+    const isUnitType = (item: any, type: 'hero' | 'spell' | 'siege' | 'troop') => {
+        const name = item.name;
+        if (type === 'hero') return availableUnits.heroes.some((h:any) => h.name === name) || heroes.some((h:any) => h.name === name);
+        if (type === 'spell') return availableUnits.elixirSpells.some((s:any) => s.name === name) || availableUnits.darkElixirSpells.some((s:any) => s.name === name) || spells.some((s:any) => s.name === name);
+        if (type === 'siege') return siegeMachineNames.includes(name);
+        if (type === 'troop') {
+            return !siegeMachineNames.includes(name) && !isUnitType(item, 'hero') && !isUnitType(item, 'spell');
+        }
+        return false;
+    };
+    
+    const removeFromArmy = useCallback((name: string) => {
+        const itemIndex = army.findIndex(i => i.name === name);
+        if (itemIndex > -1) {
+            setArmy(prev => prev.filter((_, i) => i !== itemIndex));
+        }
+    }, [army]);
+    
+    const removeFromSpells = useCallback((name: string) => {
+        const itemIndex = spells.findIndex(i => i.name === name);
+        if(itemIndex > -1) {
+            setSpells(prev => prev.filter((_, i) => i !== itemIndex));
+        }
+    }, [spells]);
+    
+    const removeFromHeroes = useCallback((name: string) => {
+        const heroToRemove = heroes.find(h => h.name === name);
+        if (heroToRemove) {
+            setHeroes(prev => prev.filter(h => h.name !== name));
+            setAvailableUnits((prev:any) => ({ ...prev, heroes: [...prev.heroes, heroToRemove] }));
+        }
+    }, [heroes]);
+    
+    const removeSiegeMachine = useCallback(() => {
+        if(siegeMachine) {
+            setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine]}));
+            setSiegeMachine(null);
+        }
+    }, [siegeMachine]);
+
 
     const handleDrop = (e: React.DragEvent, dropZoneType: string) => {
         e.preventDefault();
         const itemData = JSON.parse(e.dataTransfer.getData('item'));
-        const { type, name, origin } = itemData;
+        const { name, origin, category } = itemData;
 
         // If dragging from composition back to selection
         if (dropZoneType === 'selection') {
             if (origin === 'composition') {
-                 if (type === 'hero') removeFromHeroes(name);
-                 else if (type === 'siege') removeSiegeMachine();
-                 else if (type === 'spell') removeFromSpells(army.findIndex(i => i.name === name)); // This needs index
-                 else removeFromArmy(army.findIndex(i => i.name === name)); // This needs index
+                 if (isUnitType(itemData, 'hero')) removeFromHeroes(name);
+                 else if (isUnitType(itemData, 'siege')) removeSiegeMachine();
+                 else if (isUnitType(itemData, 'spell')) removeFromSpells(name);
+                 else removeFromArmy(name);
             }
             return;
         }
-
-        const unitType = siegeMachineNames.includes(name) ? 'siege'
-            : superTroopNames.includes(name) ? 'troop'
-            : type === 'hero' ? 'hero'
-            : type === 'spell' ? 'spell'
-            : 'troop';
         
-        if (unitType !== dropZoneType) {
-            toast({ variant: 'destructive', title: 'Invalid Drop', description: `Cannot place a ${unitType} in the ${dropZoneType} slot.` });
+        const unitIsHero = isUnitType(itemData, 'hero');
+        const unitIsSpell = isUnitType(itemData, 'spell');
+        const unitIsSiege = isUnitType(itemData, 'siege');
+        const unitIsTroop = isUnitType(itemData, 'troop');
+
+        if ( (dropZoneType === 'hero' && !unitIsHero) || (dropZoneType === 'spell' && !unitIsSpell) || (dropZoneType === 'siege' && !unitIsSiege) || (dropZoneType === 'troop' && !unitIsTroop) ) {
+            toast({ variant: 'destructive', title: 'Invalid Drop', description: `Cannot place that unit in this slot.` });
             return;
         }
 
@@ -160,40 +208,21 @@ export default function WarCouncilPage() {
         } else if (dropZoneType === 'hero') {
             if (heroes.length < 4 && !heroes.find(h => h.name === name)) {
                 setHeroes(prev => [...prev, itemData]);
-                setAvailableUnits(prev => ({...prev, heroes: prev.heroes.filter((h:any) => h.name !== name)}));
+                setAvailableUnits((prev: any) => ({...prev, heroes: prev.heroes.filter((h:any) => h.name !== name)}));
             } else {
                 toast({ variant: 'destructive', title: 'Hero already added or slots are full.' });
             }
         } else if (dropZoneType === 'siege') {
-            if (siegeMachine) { // Swap
-                 setAvailableUnits(prev => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine]}));
+            if (siegeMachine) {
+                 setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine]}));
             }
             setSiegeMachine(itemData);
-            setAvailableUnits(prev => ({...prev, siegeMachines: prev.siegeMachines.filter((s:any) => s.name !== name)}));
+            setAvailableUnits((prev: any) => ({...prev, siegeMachines: prev.siegeMachines.filter((s:any) => s.name !== name)}));
         }
     };
     
     const handleDragOver = (e: React.DragEvent) => e.preventDefault();
     
-    const removeFromArmy = (index: number) => setArmy(prev => prev.filter((_, i) => i !== index));
-    const removeFromSpells = (index: number) => setSpells(prev => prev.filter((_, i) => i !== index));
-    
-    const removeFromHeroes = (name: string) => {
-        const heroToRemove = heroes.find(h => h.name === name);
-        if (heroToRemove) {
-            setHeroes(prev => prev.filter(h => h.name !== name));
-            setAvailableUnits(prev => ({ ...prev, heroes: [...prev.heroes, heroToRemove] }));
-        }
-    };
-    
-    const removeSiegeMachine = () => {
-        if(siegeMachine) {
-            setAvailableUnits(prev => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine]}));
-            setSiegeMachine(null);
-        }
-    };
-
-
     const handleGeneratePlan = async () => {
         if (army.length === 0 && heroes.length === 0) {
             toast({ variant: 'destructive', title: 'Cannot generate plan', description: 'Please add some units to your army.' });
@@ -205,16 +234,18 @@ export default function WarCouncilPage() {
         const troopCounts = army.reduce((acc, troop) => ({ ...acc, [troop.name]: (acc[troop.name] || 0) + 1 }), {});
         const spellCounts = spells.reduce((acc, spell) => ({ ...acc, [spell.name]: (acc[spell.name] || 0) + 1 }), {});
 
+        const getUnitLevel = (collection: any[], name: string) => collection.find(u => u.name === name)?.level || 0;
+
         const input: SuggestWarArmyInput = {
             townHallLevel: player.townHallLevel,
             troops: Object.entries(troopCounts).map(([name, quantity]) => ({
                 name,
-                level: army.find(t => t.name === name)!.level,
+                level: getUnitLevel(player.troops, name),
                 quantity: quantity as number,
             })),
             spells: Object.entries(spellCounts).map(([name, quantity]) => ({
                 name,
-                level: spells.find(s => s.name === name)!.level,
+                level: getUnitLevel(player.spells, name),
                 quantity: quantity as number,
             })),
             heroes: heroes.map(h => ({ name: h.name, level: h.level })),
@@ -246,8 +277,8 @@ export default function WarCouncilPage() {
         { value: 'darkElixirTroops', label: 'Dark Elixir Troops', icon: <FlaskConical className="text-purple-400"/> },
         { value: 'superTroops', label: 'Super Troops', icon: <Sparkles className="text-orange-500" /> },
         { value: 'siegeMachines', label: 'Siege Machines', icon: <Castle className="text-stone-500"/> },
-        { value: 'elixirSpells', label: 'Elixir Spells', icon: <Droplets className="text-pink-400"/> },
-        { value: 'darkElixirSpells', label: 'Dark Elixir Spells', icon: <FlaskConical className="text-purple-400"/> },
+        { value: 'elixirSpells', label: 'Elixir Spells', icon: <SpellCheck className="text-sky-400"/> },
+        { value: 'darkElixirSpells', label: 'Dark Elixir Spells', icon: <SpellCheck className="text-indigo-400"/> },
     ];
     
     return (
@@ -255,20 +286,18 @@ export default function WarCouncilPage() {
             <Card><CardHeader><CardTitle>War Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                {/* Left Column: Army Composition */}
-                <div className="space-y-6"><Card className="sticky top-20">
-                    <CardHeader><CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle><CardDescription>Drag units from the right panel and drop them here.</CardDescription></CardHeader>
+                <Card className="sticky top-20">
+                    <CardHeader><CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle></CardHeader>
                     <CardContent className="space-y-4">
-                        <div onDrop={(e) => handleDrop(e, 'troop')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg">Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-5 md:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{army.map((item, index) => (<div key={index} className="relative group"><UnitCard item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, type: 'troop', index }, 'composition')}/><button onClick={() => removeFromArmy(index)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
-                        <div onDrop={(e) => handleDrop(e, 'spell')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg">Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-5 md:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{spells.map((item, index) => (<div key={index} className="relative group"><UnitCard item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, type: 'spell', index }, 'composition')} /><button onClick={() => removeFromSpells(index)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                        <div onDrop={(e) => handleDrop(e, 'troop')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><Users /> Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{army.map((item, index) => (<div key={`${item.name}-${index}`} className="relative group"><UnitCard item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, type: 'troop', index }, 'composition', 'army')}/><button onClick={() => removeFromArmy(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                        <div onDrop={(e) => handleDrop(e, 'spell')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{spells.map((item, index) => (<div key={`${item.name}-${index}`} className="relative group"><UnitCard item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, type: 'spell', index }, 'composition', 'spells')} /><button onClick={() => removeFromSpells(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div onDrop={(e) => handleDrop(e, 'hero')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item, index) => (<div key={index} className="relative group"><UnitCard item={item} isHero draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, type: 'hero' }, 'composition')} /><button onClick={() => removeFromHeroes(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
-                            <div onDrop={(e) => handleDrop(e, 'siege')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group"><UnitCard item={siegeMachine} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...siegeMachine, type: 'siege' }, 'composition')} /><button onClick={removeSiegeMachine} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
+                            <div onDrop={(e) => handleDrop(e, 'hero')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group"><UnitCard item={item} isHero draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'composition', 'heroes')} /><button onClick={() => removeFromHeroes(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                            <div onDrop={(e) => handleDrop(e, 'siege')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group"><UnitCard item={siegeMachine} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, siegeMachine, 'composition', 'siege')} /><button onClick={removeSiegeMachine} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
                         </div>
                     </CardContent>
-                </Card></div>
+                </Card>
 
-                {/* Right Column: Unit Selection */}
                 <div className="space-y-4">
                      <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver}>
                         <CardHeader>
@@ -285,14 +314,14 @@ export default function WarCouncilPage() {
                             </Select>
                         </CardHeader>
                         <CardContent className="space-y-1 min-h-[20rem]">
-                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-4">
+                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-4 max-h-[50vh] overflow-y-auto">
                                 {availableUnits[selectedCategory]?.map((item: any) => (
                                     <UnitCard
                                         key={item.name}
                                         item={item}
                                         isHero={selectedCategory === 'heroes'}
                                         draggable
-                                        onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, type: selectedCategory.replace(/s$/, '') }, 'selection')}
+                                        onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'selection', selectedCategory)}
                                     />
                                 ))}
                             </div>
@@ -301,7 +330,6 @@ export default function WarCouncilPage() {
                 </div>
             </div>
 
-            {/* AI Suggestion Section */}
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2"><BrainCircuit className="w-6 h-6 text-primary" /><span>AI Strategy</span></CardTitle>
@@ -329,6 +357,5 @@ export default function WarCouncilPage() {
         </div>
     );
 }
-
 
     

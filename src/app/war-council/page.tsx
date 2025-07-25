@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck } from 'lucide-react';
+import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings } from 'lucide-react';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { getImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
@@ -14,6 +14,8 @@ import { suggestWarArmy, type SuggestWarArmyInput, type SuggestWarArmyOutput } f
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: boolean;[key: string]: any }) => {
     const isSuper = superTroopNames.includes(item.name);
@@ -63,6 +65,9 @@ export default function WarCouncilPage() {
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
+    const [maxTroopSpace, setMaxTroopSpace] = useState(300);
+    const [maxSpellSpace, setMaxSpellSpace] = useState(11);
+
     const [availableUnits, setAvailableUnits] = useState<any>({
         heroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], siegeMachines: [], elixirSpells: [], darkElixirSpells: []
     });
@@ -78,29 +83,29 @@ export default function WarCouncilPage() {
 
     useEffect(() => {
         const playerData = localStorage.getItem('playerData');
+        const savedTroopSpace = localStorage.getItem('maxTroopSpace');
+        const savedSpellSpace = localStorage.getItem('maxSpellSpace');
+
         if (playerData) {
             setPlayer(JSON.parse(playerData));
+        }
+        if (savedTroopSpace) {
+            setMaxTroopSpace(parseInt(savedTroopSpace, 10));
+        }
+        if (savedSpellSpace) {
+            setMaxSpellSpace(parseInt(savedSpellSpace, 10));
         }
         setLoading(false);
     }, []);
 
-    const { maxTroopSpace, maxSpellSpace } = useMemo(() => {
-        if (!player) return { maxTroopSpace: 0, maxSpellSpace: 0 };
-    
-        const troopSpaceFromCamps = (player.armyCamps || []).reduce((acc: number, camp: any) => acc + (camp.troopCapacity || 0), 0);
-        const troopSpaceFromCastle = player.clanCastle?.troopCapacity || 0;
-        const totalTroopSpace = troopSpaceFromCamps + troopSpaceFromCastle;
-    
-        const spellSpaceFromFactory = player.spellFactory?.spellCapacity || 0;
-        const spellSpaceFromDarkFactory = player.darkSpellFactory?.spellCapacity || 0;
-        const spellSpaceFromCastle = player.clanCastle?.spellCapacity || 0;
-        const totalSpellSpace = spellSpaceFromFactory + spellSpaceFromDarkFactory + spellSpaceFromCastle;
-        
-        return {
-            maxTroopSpace: totalTroopSpace,
-            maxSpellSpace: totalSpellSpace,
-        };
-    }, [player]);
+    useEffect(() => {
+        localStorage.setItem('maxTroopSpace', maxTroopSpace.toString());
+    }, [maxTroopSpace]);
+
+    useEffect(() => {
+        localStorage.setItem('maxSpellSpace', maxSpellSpace.toString());
+    }, [maxSpellSpace]);
+
 
     useEffect(() => {
         if (!player) return;
@@ -113,7 +118,7 @@ export default function WarCouncilPage() {
             heroes: homeHeroes,
             elixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)),
             darkElixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !superTroopNames.includes(t.name)),
-            superTroops: allHomeTroops.filter((t: any) => superTroopNames.includes(t.name)),
+            superTroops: allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0),
             siegeMachines: allHomeTroops.filter((t: any) => siegeMachineNames.includes(t.name)),
             elixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Elixir'),
             darkElixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir'),
@@ -171,7 +176,6 @@ export default function WarCouncilPage() {
         const itemData = JSON.parse(e.dataTransfer.getData('item'));
         const { name, origin, category, index } = itemData;
 
-        // If dragging from composition back to selection panel
         if (dropZoneType === 'selection') {
             if (origin === 'composition') {
                  if (isUnitType(itemData, 'hero')) removeFromHeroes(name);
@@ -280,8 +284,24 @@ export default function WarCouncilPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <Card className="sticky top-20">
-                    <CardHeader><CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle></CardHeader>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
+                    </CardHeader>
                     <CardContent className="space-y-4">
+                        <div className="space-y-2 rounded-lg border bg-card/50 p-4">
+                             <h4 className="font-headline text-lg flex items-center gap-2"><Settings />Capacity Settings</h4>
+                             <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label htmlFor="troop-space">Troop Space</Label>
+                                    <Input id="troop-space" type="number" value={maxTroopSpace} onChange={e => setMaxTroopSpace(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="spell-space">Spell Space</Label>
+                                    <Input id="spell-space" type="number" value={maxSpellSpace} onChange={e => setMaxSpellSpace(parseInt(e.target.value) || 0)} />
+                                </div>
+                             </div>
+                        </div>
+
                         <div onDrop={(e) => handleDrop(e, 'troop')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><Users /> Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{army.map((item, index) => (<div key={`${item.name}-${index}`} className="relative group"><UnitCard item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, index }, 'composition', item.category)}/><button onClick={() => removeFromArmy(item.name, index)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
                         <div onDrop={(e) => handleDrop(e, 'spell')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{spells.map((item, index) => (<div key={`${item.name}-${index}`} className="relative group"><UnitCard item={item} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, { ...item, index }, 'composition', item.category)} /><button onClick={() => removeFromSpells(item.name, index)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -350,3 +370,5 @@ export default function WarCouncilPage() {
         </div>
     );
 }
+
+    

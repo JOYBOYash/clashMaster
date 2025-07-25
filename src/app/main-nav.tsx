@@ -47,9 +47,6 @@ export function MainNav({
                   )}
                 >
                   {route.label}
-                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_10px_theme(colors.primary)]"></span>
-                  )}
                 </Link>
              </li>
           );

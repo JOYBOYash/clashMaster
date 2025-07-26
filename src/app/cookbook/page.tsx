@@ -26,7 +26,7 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
             title: "Army Loaded",
             description: `"${composition.name}" is ready in the Council.`,
         });
-        router.push('/council');
+        router.push('/war-council');
     };
 
     return (
@@ -40,6 +40,7 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
                      <Button variant="outline" size="sm" onClick={handleLoadArmy} className="shrink-0">
                         <UploadCloud className="mr-2 h-4 w-4" />
                         <span className="hidden sm:inline">Load</span>
+                         <span className="inline sm:hidden">Load</span>
                     </Button>
                 </div>
             </CardHeader>

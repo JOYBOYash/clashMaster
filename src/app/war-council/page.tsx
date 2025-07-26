@@ -240,7 +240,7 @@ export default function WarCouncilPage() {
                 localStorage.removeItem('loadArmyComposition');
             }
         }
-    }, [availableUnits.heroes, loadComposition]);
+    }, [availableUnits, loadComposition]);
 
 
     const currentTroopSpace = useMemo(() => {
@@ -314,7 +314,7 @@ export default function WarCouncilPage() {
 
     const addUnit = useCallback((itemData: any) => {
         setLoadedArmyId(null);
-        const { name } = itemData;aaaa
+        const { name } = itemData;
 
         if (isUnitType(itemData, 'troop')) {
             if (currentTroopSpace + itemData.housingSpace > maxTroopSpace) {
@@ -517,7 +517,7 @@ export default function WarCouncilPage() {
             <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <Card className="sticky top-20">
+                <Card className="sticky top-20" no-hover>
                     <CardHeader>
                          <div className="flex justify-between items-center">
                             <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
@@ -551,7 +551,7 @@ export default function WarCouncilPage() {
                     <CardContent className="space-y-4">
                         <div className="space-y-2 rounded-lg border bg-card/50 p-4">
                              <h4 className="font-headline text-lg flex items-center gap-2"><Settings />Capacity Settings</h4>
-                             <div className="grid grid-cols-2 gap-4">
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <Label htmlFor="troop-space">Troop Space</Label>
                                     <Input id="troop-space" type="number" value={maxTroopSpace} onChange={e => setMaxTroopSpace(parseInt(e.target.value) || 0)} />
@@ -567,14 +567,14 @@ export default function WarCouncilPage() {
                         <div onDrop={(e) => handleDrop(e, 'spell')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div onDrop={(e) => handleDrop(e, 'hero')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group"><UnitCard item={item} isHero draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'composition', 'heroes')} /><button onClick={() => removeFromHeroes(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                            <div onDrop={(e) => handleDrop(e, 'hero')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group"><UnitCard item={item} isHero draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'composition', 'heroes')} /><button onClick={() => removeFromHeroes(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
                             <div onDrop={(e) => handleDrop(e, 'siege')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group"><UnitCard item={siegeMachine} draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, siegeMachine, 'composition', 'siegeMachines')} /><button onClick={removeSiegeMachine} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
                         </div>
                     </CardContent>
                 </Card>
 
                 <div className="space-y-4">
-                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver}>
+                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver} no-hover>
                         <CardHeader>
                             <CardTitle>Unit Selection</CardTitle>
                             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -589,7 +589,7 @@ export default function WarCouncilPage() {
                             </Select>
                         </CardHeader>
                         <CardContent className="space-y-1">
-                             <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-4 gap-2 pb-4 max-h-[50vh] overflow-y-auto">
+                             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pb-4 max-h-[50vh] overflow-y-auto">
                                 {availableUnits[selectedCategory]?.map((item: any) => (
                                     <div
                                         key={item.name}

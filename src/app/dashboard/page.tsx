@@ -9,13 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
-  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal, Flame
+  Trophy, Star, HeartHandshake, Castle, Axe, Hammer, Droplets, FlaskConical, Swords, Medal, Flame, Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getImagePath, getHallImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const StatCard = ({ icon: Icon, title, value, footer }: { icon: React.ElementType, title: string, value: string | number, footer?: string }) => (
   <Card className="text-center transition-all hover:border-primary/50">
@@ -106,38 +108,44 @@ const TroopSpellCard = ({ item }: { item: any }) => {
     const isSiege = siegeMachineNames.includes(item.name);
   
     return (
-      <div
-        className={cn(
-          "group relative aspect-[4/5] w-full max-w-sm mx-auto overflow-hidden rounded-lg transition-all duration-300",
-          "bg-[hsl(var(--hero-card-bg))] border-2 border-transparent",
-          "hover:scale-105 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50",
-          isMaxed && "border-amber-400/30 shadow-amber-400/10"
-        )}
-      >
-        {/* Decorative Borders */}
-        <div className="absolute inset-0 rounded-lg border-2 border-[hsl(var(--hero-card-border-secondary))] pointer-events-none"></div>
-        <div className="absolute inset-2 rounded-sm border border-[hsl(var(--hero-card-border))] pointer-events-none"></div>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              className={cn(
+                "group relative aspect-square w-full max-w-sm mx-auto overflow-hidden rounded-lg transition-all duration-300",
+                "bg-[hsl(var(--hero-card-bg))] border-2 border-transparent",
+                "hover:scale-105 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50",
+                isMaxed && "border-amber-400/30 shadow-amber-400/10"
+              )}
+            >
+              <div className="absolute inset-0 rounded-lg border-2 border-[hsl(var(--hero-card-border-secondary))] pointer-events-none"></div>
+              <div className="absolute inset-2 rounded-sm border border-[hsl(var(--hero-card-border))] pointer-events-none"></div>
+              
+              <div className="absolute top-1 right-1 bg-black/30 p-1 px-1.5 rounded-full z-10 text-xs font-bold text-primary leading-tight">
+                Lvl {item.level}
+              </div>
 
-         {/* Conditional Icon */}
-        {(isSuper || isSiege) && (
-            <div className="absolute top-2 right-2 bg-black/30 p-1.5 rounded-full z-10">
-                {isSuper && <Flame className="w-4 h-4 text-orange-400" />}
-                {isSiege && <Castle className="w-4 h-4 text-stone-400" />}
+              {(isSuper || isSiege) && (
+                  <div className="absolute top-1 left-1 bg-black/30 p-1.5 rounded-full z-10">
+                      {isSuper && <Flame className="w-3 h-3 text-orange-400" />}
+                      {isSiege && <Castle className="w-3 h-3 text-stone-400" />}
+                  </div>
+              )}
+        
+              <div className="relative z-0 flex flex-col h-full p-2">
+                  <div className="relative flex-grow my-2 transition-transform duration-300 group-hover:scale-110">
+                      <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
+                  </div>
+                  <Progress value={(item.level / item.maxLevel) * 100} className="h-0.5 bg-black/20" />
+              </div>
             </div>
-        )}
-  
-        <div className="relative z-10 flex flex-col h-full p-2">
-            <div className="relative flex-grow my-2 transition-transform duration-300 group-hover:scale-110">
-                <Image src={imagePath} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
-            </div>
-
-            <div className="text-center">
-                <h3 className="font-headline text-lg text-foreground/90 text-shadow-custom truncate">{item.name}</h3>
-                <p className="font-bold text-base text-primary leading-tight">Lvl {item.level}</p>
-                <Progress value={(item.level / item.maxLevel) * 100} className="mt-2 h-1 bg-black/20" />
-            </div>
-        </div>
-      </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-bold">{item.name}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     );
   };
   
@@ -286,7 +294,13 @@ export default function DashboardPage() {
     <div className={cn("space-y-12 pb-12 transition-opacity duration-500", isFullyLoaded ? 'opacity-100' : 'opacity-0')}>
       {/* Header */}
       <Card no-hover>
-        <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div className="bg-muted/30 p-6 flex flex-col sm:flex-row justify-between items-start gap-4 relative">
+           <Button asChild variant="outline" size="icon" className="absolute top-4 right-4">
+              <Link href="/">
+                <Home />
+                <span className="sr-only">Back to Home</span>
+              </Link>
+           </Button>
           <div className="flex items-center gap-4">
              <div className="flex flex-col items-center">
                 <Medal className="w-8 h-8 text-muted-foreground" />
@@ -416,3 +430,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

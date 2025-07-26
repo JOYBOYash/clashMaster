@@ -6,11 +6,19 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { probuilderAvatar } from '@/lib/image-paths';
 import { Home } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export default function NotFound() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-background items-center justify-center text-center p-4">
-      <div className="relative w-48 h-48 mb-8 animate-float">
+      <div className={cn("relative w-48 h-48 mb-8", isMounted && "animate-float")}>
         <Image
           src={probuilderAvatar}
           alt="ProBuilder AI Assistant"

@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
@@ -52,6 +52,8 @@ export function MainHeader() {
             </SheetTrigger>
             <SheetContent side="left">
                 <SheetHeader>
+                  <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                  <SheetDescription className="sr-only">Navigate through the main sections of the app.</SheetDescription>
                    <Link href={homeHref} className="flex items-center space-x-2" onClick={handleLinkClick}>
                       <Image src={appLogoPath} alt="ProBuilder Logo" width={28} height={28} unoptimized />
                       <h1 className={cn("text-xl font-bold text-primary font-headline")}>

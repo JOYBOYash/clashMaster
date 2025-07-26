@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle, Bookmark } from 'lucide-react';
@@ -128,12 +128,11 @@ export default function WarCouncilPage() {
     const [aiLoading, setAiLoading] = useState(false);
     const [aiResult, setAiResult] = useState<SuggestWarArmyOutput | null>(null);
 
-    const pressTimer = useRef<NodeJS.Timeout>();
-
     const loadComposition = useCallback((composition: any) => {
         if (!composition || !availableUnits || availableUnits.heroes.length === 0) return;
 
         setLoadedArmyId(composition.id || null);
+        
         const allPlayerUnits = [
             ...availableUnits.heroes, ...availableUnits.elixirTroops, ...availableUnits.darkElixirTroops,
             ...availableUnits.superTroops, ...availableUnits.siegeMachines, ...availableUnits.elixirSpells,
@@ -177,11 +176,11 @@ export default function WarCouncilPage() {
         } else {
             setSiegeMachine(null);
         }
-
+        
         setAvailableUnits((prev: any) => ({ ...prev, heroes: availableHeroes, siegeMachines: availableSiegeMachines.filter(s => s.name !== composition.siegeMachine?.name) }));
         toast({ title: "Army Loaded", description: `"${composition.name}" is ready.` });
 
-    }, [availableUnits, toast, siegeMachine]);
+    }, [availableUnits, siegeMachine, toast]);
 
     useEffect(() => {
         const playerData = localStorage.getItem('playerData');
@@ -251,15 +250,58 @@ export default function WarCouncilPage() {
     const currentSpellSpace = useMemo(() => {
         return Object.values(spells).reduce((acc, { unit, quantity }) => acc + (unit.housingSpace * quantity), 0);
     }, [spells]);
+    
+    const isHero = (item: any) => (availableUnits.heroes || []).some((h: any) => h.name === item.name);
+    const isSiegeMachine = (item: any) => (availableUnits.siegeMachines || []).some((s: any) => s.name === item.name);
+    const isSpell = (item: any) => (availableUnits.elixirSpells || []).concat(availableUnits.darkElixirSpells || []).some((s: any) => s.name === item.name);
 
-    const isUnitType = (item: any, type: 'hero' | 'spell' | 'siege' | 'troop') => {
-        const category = selectedCategory;
-        if (type === 'hero') return category === 'heroes';
-        if (type === 'spell') return category === 'elixirSpells' || category === 'darkElixirSpells';
-        if (type === 'siege') return category === 'siegeMachines';
-        if (type === 'troop') return category === 'elixirTroops' || category === 'darkElixirTroops' || category === 'superTroops';
-        return false;
-    };
+    const addUnit = useCallback((itemData: any) => {
+        setLoadedArmyId(null);
+        const { name } = itemData;
+
+        if (isHero(itemData)) {
+            if (heroes.length < 4 && !heroes.find(h => h.name === name)) {
+                setHeroes(prev => [...prev, itemData]);
+                setAvailableUnits((prev: any) => ({...prev, heroes: prev.heroes.filter((h:any) => h.name !== name)}));
+            } else {
+                toast({ variant: 'destructive', title: 'Hero already added or slots are full.' });
+            }
+        } else if (isSiegeMachine(itemData)) {
+            if (siegeMachine) {
+                 setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine].sort((a,b) => a.name.localeCompare(b.name))}));
+            }
+            setSiegeMachine(itemData);
+            setAvailableUnits((prev: any) => ({...prev, siegeMachines: prev.siegeMachines.filter((s:any) => s.name !== name)}));
+        } else if (isSpell(itemData)) {
+             if (currentSpellSpace + itemData.housingSpace > maxSpellSpace) {
+                toast({ variant: 'destructive', title: 'Spell space full!' });
+                return;
+            }
+            setSpells(prev => {
+                const newSpells = { ...prev };
+                if (newSpells[name]) {
+                    newSpells[name].quantity += 1;
+                } else {
+                    newSpells[name] = { unit: itemData, quantity: 1 };
+                }
+                return newSpells;
+            });
+        } else { // It's a troop
+            if (currentTroopSpace + itemData.housingSpace > maxTroopSpace) {
+                toast({ variant: 'destructive', title: 'Troop space full!' });
+                return;
+            }
+            setArmy(prev => {
+                const newArmy = { ...prev };
+                if (newArmy[name]) {
+                    newArmy[name].quantity += 1;
+                } else {
+                    newArmy[name] = { unit: itemData, quantity: 1 };
+                }
+                return newArmy;
+            });
+        }
+    }, [currentTroopSpace, currentSpellSpace, maxTroopSpace, maxSpellSpace, toast, heroes, siegeMachine, availableUnits]);
     
     const removeFromArmy = useCallback((name: string) => {
         setLoadedArmyId(null);
@@ -305,56 +347,6 @@ export default function WarCouncilPage() {
             setSiegeMachine(null);
         }
     }, [siegeMachine]);
-
-
-    const addUnit = useCallback((itemData: any) => {
-        setLoadedArmyId(null);
-        const { name } = itemData;
-
-        if (isUnitType(itemData, 'hero')) {
-            if (heroes.length < 4 && !heroes.find(h => h.name === name)) {
-                setHeroes(prev => [...prev, itemData]);
-                setAvailableUnits((prev: any) => ({...prev, heroes: prev.heroes.filter((h:any) => h.name !== name)}));
-            } else {
-                toast({ variant: 'destructive', title: 'Hero already added or slots are full.' });
-            }
-        } else if (isUnitType(itemData, 'siege')) {
-            if (siegeMachine) {
-                 setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine].sort((a,b) => a.name.localeCompare(b.name))}));
-            }
-            setSiegeMachine(itemData);
-            setAvailableUnits((prev: any) => ({...prev, siegeMachines: prev.siegeMachines.filter((s:any) => s.name !== name)}));
-        } else if (isUnitType(itemData, 'troop')) {
-            if (currentTroopSpace + itemData.housingSpace > maxTroopSpace) {
-                toast({ variant: 'destructive', title: 'Troop space full!' });
-                return false;
-            }
-            setArmy(prev => {
-                const newArmy = { ...prev };
-                if (newArmy[name]) {
-                    newArmy[name].quantity += 1;
-                } else {
-                    newArmy[name] = { unit: itemData, quantity: 1 };
-                }
-                return newArmy;
-            });
-        } else if (isUnitType(itemData, 'spell')) {
-             if (currentSpellSpace + itemData.housingSpace > maxSpellSpace) {
-                toast({ variant: 'destructive', title: 'Spell space full!' });
-                return false;
-            }
-            setSpells(prev => {
-                const newSpells = { ...prev };
-                if (newSpells[name]) {
-                    newSpells[name].quantity += 1;
-                } else {
-                    newSpells[name] = { unit: itemData, quantity: 1 };
-                }
-                return newSpells;
-            });
-        }
-        return true;
-    }, [currentTroopSpace, currentSpellSpace, maxTroopSpace, maxSpellSpace, toast, heroes, siegeMachine, selectedCategory]);
     
     const handleGeneratePlan = async () => {
         if (Object.keys(army).length === 0 && heroes.length === 0) {
@@ -458,98 +450,98 @@ export default function WarCouncilPage() {
     ];
     
     return (
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8">
             <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
-            <div className="flex flex-col gap-8 items-start">
-                <Card className="w-full" no-hover>
-                    <CardHeader>
-                         <div className="flex justify-between items-center">
-                            <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
-                            
-                             <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 || !!loadedArmyId}>
-                                        <Bookmark className="mr-2 h-4 w-4" /> Save Army
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>Save Army Composition</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        Give this army a name to save it to your cookbook for later.
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <div className="py-4">
-                                        <Label htmlFor="army-name">Army Name</Label>
-                                        <Input id="army-name" placeholder="e.g., Queen Charge Hybrid" value={armyNameToSave} onChange={(e) => setArmyNameToSave(e.target.value)} />
-                                    </div>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={handleSaveArmy}>Save</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-
-                        </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2 rounded-lg border bg-card/50 p-4">
-                             <h4 className="font-headline text-lg flex items-center gap-2"><Settings />Capacity Settings</h4>
-                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor="troop-space">Troop Space</Label>
-                                    <Input id="troop-space" type="number" value={maxTroopSpace} onChange={e => setMaxTroopSpace(parseInt(e.target.value) || 0)} />
-                                </div>
-                                <div>
-                                    <Label htmlFor="spell-space">Spell Space</Label>
-                                    <Input id="spell-space" type="number" value={maxSpellSpace} onChange={e => setMaxSpellSpace(parseInt(e.target.value) || 0)} />
-                                </div>
-                             </div>
-                        </div>
-
-                        <div><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><Users /> Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{Object.values(army).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromArmy(unit.name)} />))}</div></div>
-                        <div><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
+            <Card className="w-full" no-hover>
+                <CardHeader>
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group cursor-pointer" onClick={() => removeFromHeroes(item.name)}><UnitCard item={item} isHero /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
-                            <div><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group cursor-pointer" onClick={removeSiegeMachine}><UnitCard item={siegeMachine} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="w-full" no-hover>
-                    <CardHeader>
-                        <CardTitle>Unit Selection</CardTitle>
-                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
-                            <SelectContent>
-                                {selectionCategories.map(cat => (
-                                    <SelectItem key={cat.value} value={cat.value}>
-                                        <div className="flex items-center gap-2">{cat.icon} {cat.label}</div>
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </CardHeader>
-                    <CardContent className="space-y-1">
-                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-3 pb-4">
-                            {(availableUnits[selectedCategory] || []).map((item: any) => (
-                                <div
-                                    key={item.name}
-                                    className="cursor-pointer"
-                                    onClick={() => addUnit(item)}
-                                >
-                                    <UnitCard
-                                        item={item}
-                                        isHero={selectedCategory === 'heroes'}
-                                    />
+                            <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 || !!loadedArmyId} className="shrink-0">
+                                    <Bookmark className="mr-2 h-4 w-4" />
+                                    <span className="hidden sm:inline">Save Army</span>
+                                    <span className="sm:hidden">Save</span>
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Save Army Composition</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Give this army a name to save it to your cookbook for later.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <div className="py-4">
+                                    <Label htmlFor="army-name">Army Name</Label>
+                                    <Input id="army-name" placeholder="e.g., Queen Charge Hybrid" value={armyNameToSave} onChange={(e) => setArmyNameToSave(e.target.value)} />
                                 </div>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleSaveArmy}>Save</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2 rounded-lg border bg-card/50 p-4">
+                            <h4 className="font-headline text-lg flex items-center gap-2"><Settings />Capacity Settings</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <Label htmlFor="troop-space">Troop Space</Label>
+                                <Input id="troop-space" type="number" value={maxTroopSpace} onChange={e => setMaxTroopSpace(parseInt(e.target.value) || 0)} />
+                            </div>
+                            <div>
+                                <Label htmlFor="spell-space">Spell Space</Label>
+                                <Input id="spell-space" type="number" value={maxSpellSpace} onChange={e => setMaxSpellSpace(parseInt(e.target.value) || 0)} />
+                            </div>
+                            </div>
+                    </div>
+
+                    <div><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><Users /> Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{Object.values(army).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromArmy(unit.name)} />))}</div></div>
+                    <div><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group cursor-pointer" onClick={() => removeFromHeroes(item.name)}><UnitCard item={item} isHero /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                        <div><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group cursor-pointer" onClick={removeSiegeMachine}><UnitCard item={siegeMachine} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="w-full" no-hover>
+                <CardHeader>
+                    <CardTitle>Unit Selection</CardTitle>
+                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                        <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+                        <SelectContent>
+                            {selectionCategories.map(cat => (
+                                <SelectItem key={cat.value} value={cat.value}>
+                                    <div className="flex items-center gap-2">{cat.icon} {cat.label}</div>
+                                </SelectItem>
                             ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                        </SelectContent>
+                    </Select>
+                </CardHeader>
+                <CardContent>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-3 pb-4">
+                        {(availableUnits[selectedCategory] || []).map((item: any) => (
+                            <div
+                                key={item.name}
+                                className="cursor-pointer"
+                                onClick={() => addUnit(item)}
+                            >
+                                <UnitCard
+                                    item={item}
+                                    isHero={selectedCategory === 'heroes'}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
 
             <Card>
                 <CardHeader>
@@ -607,5 +599,3 @@ export default function WarCouncilPage() {
         </div>
     );
 }
-
-    

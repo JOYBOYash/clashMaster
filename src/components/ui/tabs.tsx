@@ -33,7 +33,10 @@ const TabsTrigger = React.forwardRef<
       "inline-flex items-center justify-center whitespace-nowrap rounded-none px-4 sm:px-6 py-3 text-sm sm:text-base font-bold uppercase tracking-wider ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
       "bg-muted/40 text-muted-foreground/70",
       "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg",
-      "[clip-path:polygon(0_0,_100%_0,_92%_100%,_8%_100%)]",
+      "first:rounded-l-md first:[clip-path:polygon(0%_0%,_95%_0%,_100%_100%,_0%_100%)]",
+      "last:rounded-r-md last:[clip-path:polygon(0%_0%,_100%_0%,_100%_100%,_5%_100%)]",
+      "[:not(:first-child):not(:last-child)]:[clip-path:polygon(5%_0%,_95%_0%,_100%_100%,_0%_100%)]",
+      "[:not(:first-child)]:-ml-2.5", // Overlap tabs
       className
     )}
     {...props}

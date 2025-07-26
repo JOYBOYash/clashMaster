@@ -37,8 +37,9 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
                         <CardTitle>{composition.name}</CardTitle>
                         <CardDescription>Town Hall {composition.townHallLevel}</CardDescription>
                     </div>
-                     <Button variant="outline" size="sm" onClick={handleLoadArmy}>
-                        <UploadCloud className="mr-2 h-4 w-4" /> Load
+                     <Button variant="outline" size="sm" onClick={handleLoadArmy} className="shrink-0">
+                        <UploadCloud className="mr-2 h-4 w-4" />
+                        <span className="hidden sm:inline">Load</span>
                     </Button>
                 </div>
             </CardHeader>

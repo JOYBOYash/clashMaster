@@ -108,18 +108,16 @@ const StrategyStep = ({ step }: { step: any }) => {
 
 export default function WarCouncilPage() {
     const { user } = useAuth();
-    const [player, setPlayer] = useState<any | null>(null);
-    const [loading, setLoading] = useState(true);
     const { toast } = useToast();
     const { addNotification } = useNotifications();
-
-
+    
+    const [player, setPlayer] = useState<any | null>(null);
+    const [loading, setLoading] = useState(true);
     const [maxTroopSpace, setMaxTroopSpace] = useState(300);
     const [maxSpellSpace, setMaxSpellSpace] = useState(11);
     const [armyNameToSave, setArmyNameToSave] = useState('');
     const [loadedArmyId, setLoadedArmyId] = useState<string | null>(null);
     const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
 
     const [availableUnits, setAvailableUnits] = useState<any>({
         heroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], siegeMachines: [], elixirSpells: [], darkElixirSpells: []
@@ -215,7 +213,7 @@ export default function WarCouncilPage() {
         setAvailableUnits({
             heroes: homeHeroes.map((u: any) => ({...u, category: 'hero'})),
             elixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)).map((u: any) => ({...u, category: 'troop'})),
-            darkElixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !superTroopNames.includes(t.name)).map((u: any) => ({...u, category: 'troop'})),
+            darkElixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)).map((u: any) => ({...u, category: 'troop'})),
             superTroops: allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0).map((u: any) => ({...u, category: 'superTroop'})),
             siegeMachines: allHomeTroops.filter((t: any) => siegeMachineNames.includes(t.name)).map((u: any) => ({...u, category: 'siegeMachine'})),
             elixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Elixir').map((u: any) => ({...u, category: 'spell'})),
@@ -454,14 +452,6 @@ export default function WarCouncilPage() {
         }
     };
 
-    if (loading) return <LoadingSpinner show={true} />;
-    if (!player) return (
-        <Alert variant="destructive">
-          <AlertTitle>Player Data Not Found</AlertTitle>
-          <AlertDescription>Please visit the survey page to sync your player data first. <Button asChild className="ml-4"><a href="/survey">Go to Survey</a></Button></AlertDescription>
-        </Alert>
-    );
-
     const selectionCategories = [
         { value: 'heroes', label: 'Heroes', icon: <Sparkles className="text-amber-400"/> },
         { value: 'elixirTroops', label: 'Elixir Troops', icon: <Droplets className="text-pink-400"/> },
@@ -473,13 +463,23 @@ export default function WarCouncilPage() {
     ];
     
     const currentSelection = useMemo(() => {
+        if (!player) return [];
         const selectedHeroes = heroes.map(h => h.name);
         const selectedSiege = siegeMachine ? [siegeMachine.name] : [];
         const allSelected = [...selectedHeroes, ...selectedSiege];
 
         return (availableUnits[selectedCategory] || []).filter((item: any) => !allSelected.includes(item.name))
 
-    }, [availableUnits, selectedCategory, heroes, siegeMachine]);
+    }, [availableUnits, selectedCategory, heroes, siegeMachine, player]);
+
+
+    if (loading) return <LoadingSpinner show={true} />;
+    if (!player) return (
+        <Alert variant="destructive">
+          <AlertTitle>Player Data Not Found</AlertTitle>
+          <AlertDescription>Please visit the survey page to sync your player data first. <Button asChild className="ml-4"><a href="/survey">Go to Survey</a></Button></AlertDescription>
+        </Alert>
+    );
 
 
     return (
@@ -565,11 +565,7 @@ export default function WarCouncilPage() {
                                 <div
                                     key={item.name}
                                     className="cursor-pointer"
-                                    onMouseDown={() => handleMouseDown(item)}
-                                    onMouseUp={clearPressTimer}
-                                    onMouseLeave={clearPressTimer}
-                                    onTouchStart={() => handleMouseDown(item)}
-                                    onTouchEnd={clearPressTimer}
+                                    onClick={() => addUnit(item)}
                                 >
                                     <UnitCard
                                         item={item}

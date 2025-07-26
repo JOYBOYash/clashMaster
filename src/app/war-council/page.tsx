@@ -362,7 +362,6 @@ export default function WarCouncilPage() {
         addAndRepeat();
     };
 
-
     const handleDrop = (e: React.DragEvent, dropZoneType: string) => {
         e.preventDefault();
         const itemData = JSON.parse(e.dataTransfer.getData('item'));
@@ -370,13 +369,10 @@ export default function WarCouncilPage() {
         
         setLoadedArmyId(null);
 
-        // This is a simple implementation. For a full 'remove' functionality via drag,
-        // you might want a dedicated drop zone for removal.
         if (dropZoneType === 'selection') {
             if (origin === 'composition') {
                  if (isUnitType(itemData, 'hero')) removeFromHeroes(name);
                  else if (isUnitType(itemData, 'siege')) removeSiegeMachine();
-                 // Removing stacked units via drag is complex; click-to-remove is better.
             }
             return;
         }
@@ -517,7 +513,6 @@ export default function WarCouncilPage() {
             <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="flex flex-col gap-8 items-start">
-                {/* Army Composition Workbench */}
                 <Card className="w-full" no-hover>
                     <CardHeader>
                          <div className="flex justify-between items-center">
@@ -574,7 +569,6 @@ export default function WarCouncilPage() {
                     </CardContent>
                 </Card>
 
-                 {/* Unit Selection Toolbox */}
                 <Card className="w-full" onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver} no-hover>
                     <CardHeader>
                         <CardTitle>Unit Selection</CardTitle>
@@ -595,6 +589,7 @@ export default function WarCouncilPage() {
                                 <div
                                     key={item.name}
                                     className="cursor-pointer"
+                                    onClick={() => addUnit(item)}
                                     onMouseDown={() => handleMouseDown(item)}
                                     onMouseUp={handleMouseUp}
                                     onMouseLeave={handleMouseUp}
@@ -614,7 +609,6 @@ export default function WarCouncilPage() {
                 </Card>
             </div>
 
-            {/* AI Strategy Section */}
             <Card>
                 <CardHeader>
                     <div className="flex justify-between items-center">
@@ -671,3 +665,5 @@ export default function WarCouncilPage() {
         </div>
     );
 }
+
+    

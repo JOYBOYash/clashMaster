@@ -12,7 +12,14 @@ import { UnitNotificationHub } from "./unit-notification-hub";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const isSignInPage = usePathname() === '/sign-in';
+  const pathname = usePathname();
+  const isSignInPage = pathname === '/sign-in';
+  const isNotFoundPage = pathname === '/not-found'; // Next.js doesn't route to /not-found, but we can check if a page component indicates it's a 404. Let's make the logic simpler.
+  
+  // Pages that should NOT have the main header
+  const noHeaderPages = ['/sign-in'];
+
+  const showHeader = user && !noHeaderPages.includes(pathname);
 
   useEffect(() => {
     const refreshPlayerData = async () => {
@@ -39,7 +46,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
-      {user && <MainHeader />}
+      {showHeader && <MainHeader />}
       <main className={cn(
         "flex-grow flex flex-col items-stretch",
         isSignInPage && 'items-center justify-center'

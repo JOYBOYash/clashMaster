@@ -28,10 +28,10 @@ const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: bool
     return (
         <div
             className={cn(
-                "group relative w-full max-w-[120px] mx-auto overflow-hidden rounded-lg transition-all duration-300",
+                "group relative w-full mx-auto overflow-hidden rounded-lg transition-all duration-300",
                 "bg-[hsl(var(--hero-card-bg))] border-2 border-transparent cursor-grab active:cursor-grabbing",
                 "hover:scale-105 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/50",
-                isHero ? "aspect-[3/5] max-w-[150px]" : "aspect-[4/5]"
+                isHero ? "aspect-[3/5] max-w-[120px]" : "aspect-[4/5] max-w-[100px]"
             )}
             {...props}
         >
@@ -54,8 +54,8 @@ const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: bool
                     <Image src={getImagePath(item.name)} alt={item.name} fill className="object-contain drop-shadow-lg" unoptimized />
                 </div>
                 <div className="text-center">
-                    <h3 className="font-headline text-base text-foreground/90 text-shadow-custom truncate">{item.name}</h3>
-                    {!isHero && <p className="font-bold text-sm text-primary leading-tight">Lvl {item.level}</p>}
+                    <h3 className="font-headline text-sm md:text-base text-foreground/90 text-shadow-custom truncate">{item.name}</h3>
+                    {!isHero && <p className="font-bold text-xs md:text-sm text-primary leading-tight">Lvl {item.level}</p>}
                     <Progress value={(item.level / item.maxLevel) * 100} className="mt-1 h-0.5 bg-black/20" />
                 </div>
             </div>
@@ -525,7 +525,7 @@ export default function WarCouncilPage() {
                              <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 || !!loadedArmyId}>
-                                        <Bookmark className="mr-2 h-4 p-4 w-4" /> Save Army
+                                        <Bookmark className="mr-2 h-4 w-4" /> Save Army
                                     </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
@@ -563,8 +563,8 @@ export default function WarCouncilPage() {
                              </div>
                         </div>
 
-                        <div onDrop={(e) => handleDrop(e, 'troop')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><Users /> Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{Object.values(army).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromArmy(unit.name)} />))}</div></div>
-                        <div onDrop={(e) => handleDrop(e, 'spell')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
+                        <div onDrop={(e) => handleDrop(e, 'troop')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><Users /> Troops</h4><span className="font-mono text-sm">{currentTroopSpace}/{maxTroopSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2 p-2 rounded-lg bg-muted/50 min-h-[8rem] border-2 border-dashed">{Object.values(army).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromArmy(unit.name)} />))}</div></div>
+                        <div onDrop={(e) => handleDrop(e, 'spell')} onDragOver={handleDragOver}><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div onDrop={(e) => handleDrop(e, 'hero')} onDragOver={handleDragOver}><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group"><UnitCard item={item} isHero draggable onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'composition', 'heroes')} /><button onClick={() => removeFromHeroes(item.name)} className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
@@ -669,3 +669,5 @@ export default function WarCouncilPage() {
         </div>
     );
 }
+
+    

@@ -314,7 +314,7 @@ export default function WarCouncilPage() {
 
     const addUnit = useCallback((itemData: any) => {
         setLoadedArmyId(null);
-        const { name } = itemData;
+        const { name } = itemData;aaaa
 
         if (isUnitType(itemData, 'troop')) {
             if (currentTroopSpace + itemData.housingSpace > maxTroopSpace) {
@@ -525,7 +525,7 @@ export default function WarCouncilPage() {
                              <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 || !!loadedArmyId}>
-                                        <Bookmark className="mr-2 h-4 w-4" /> Save Army
+                                        <Bookmark className="mr-2 h-4 p-4 w-4" /> Save Army
                                     </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>

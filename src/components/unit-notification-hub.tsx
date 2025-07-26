@@ -6,8 +6,19 @@ import { AnimatePresence } from 'framer-motion';
 import { UnitNotificationItem } from './unit-notification-item';
 
 export function UnitNotificationHub() {
-  // This component's logic has been moved to NotificationProvider to simplify the tree.
-  // The provider now directly renders the list of notifications.
-  // This hub component is kept to avoid breaking imports but can be fully removed later.
-  return null;
+  const { notifications, removeNotification } = useNotifications();
+
+  return (
+    <div className="fixed bottom-4 left-4 z-[100] flex flex-col gap-2 pointer-events-none">
+      <AnimatePresence>
+        {notifications.map(notification => (
+          <UnitNotificationItem
+            key={notification.id}
+            notification={notification}
+            onDismiss={removeNotification}
+          />
+        ))}
+      </AnimatePresence>
+    </div>
+  );
 }

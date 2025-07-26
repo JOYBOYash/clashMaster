@@ -2,8 +2,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { UnitNotificationItem } from '@/components/unit-notification-item';
 
 interface Notification {
   id: number;
@@ -12,7 +10,9 @@ interface Notification {
 }
 
 interface NotificationContextType {
+  notifications: Notification[];
   addNotification: (notification: Omit<Notification, 'id'>) => void;
+  removeNotification: (id: number) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -37,20 +37,15 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setNotifications(current => current.filter(n => n.id !== id));
   }, []);
 
+  const value = {
+      notifications,
+      addNotification,
+      removeNotification
+  }
+
   return (
-    <NotificationContext.Provider value={{ addNotification }}>
+    <NotificationContext.Provider value={value}>
       {children}
-      <div className="fixed bottom-4 left-4 z-[100] flex flex-col gap-2 pointer-events-none">
-        <AnimatePresence>
-          {notifications.map(notification => (
-            <UnitNotificationItem
-              key={notification.id}
-              notification={notification}
-              onDismiss={removeNotification}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
     </NotificationContext.Provider>
   );
 }

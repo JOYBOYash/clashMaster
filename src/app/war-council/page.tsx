@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle, Bookmark } from 'lucide-react';
@@ -22,7 +22,8 @@ import { useAuth } from '@/context/auth-context';
 import { saveArmyComposition, saveAIStrategy } from '@/lib/firebase-service';
 import { useNotifications } from '@/context/notification-context';
 
-const UnitCard = ({ item, isHero = false, ...props }: { item: any; isHero?: boolean;[key: string]: any }) => {
+const UnitCard = ({ item, ...props }: { item: any;[key: string]: any }) => {
+    const isHero = item.category === 'hero';
     const isSuper = superTroopNames.includes(item.name);
     const isSiege = siegeMachineNames.includes(item.name);
     
@@ -117,6 +118,8 @@ export default function WarCouncilPage() {
     const [maxSpellSpace, setMaxSpellSpace] = useState(11);
     const [armyNameToSave, setArmyNameToSave] = useState('');
     const [loadedArmyId, setLoadedArmyId] = useState<string | null>(null);
+    const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
     const [availableUnits, setAvailableUnits] = useState<any>({
         heroes: [], elixirTroops: [], darkElixirTroops: [], superTroops: [], siegeMachines: [], elixirSpells: [], darkElixirSpells: []
@@ -132,14 +135,16 @@ export default function WarCouncilPage() {
     const [aiResult, setAiResult] = useState<SuggestWarArmyOutput | null>(null);
 
     const loadComposition = useCallback((composition: any) => {
-        if (!composition || !availableUnits || availableUnits.heroes.length === 0) return;
+        if (!composition || !player) return;
 
         setLoadedArmyId(composition.id || null);
         
         const allPlayerUnits = [
-            ...availableUnits.heroes, ...availableUnits.elixirTroops, ...availableUnits.darkElixirTroops,
-            ...availableUnits.superTroops, ...availableUnits.siegeMachines, ...availableUnits.elixirSpells,
-            ...availableUnits.darkElixirSpells
+            ...(player.heroes || []).map((u: any) => ({ ...u, category: 'hero' })),
+            ...(player.troops || []).filter((t: any) => t.village === 'home' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)).map((u: any) => ({ ...u, category: 'troop' })),
+            ...(player.troops || []).filter((t: any) => superTroopNames.includes(t.name)).map((u: any) => ({ ...u, category: 'superTroop' })),
+            ...(player.troops || []).filter((t: any) => siegeMachineNames.includes(t.name)).map((u: any) => ({ ...u, category: 'siegeMachine' })),
+            ...(player.spells || []).map((u: any) => ({ ...u, category: 'spell' })),
         ];
 
         const newArmy: Record<string, { unit: any, quantity: number }> = {};
@@ -156,34 +161,23 @@ export default function WarCouncilPage() {
         });
         setSpells(newSpells);
         
-        let availableHeroes = [...availableUnits.heroes];
         const newHeroes: any[] = [];
         composition.heroes?.forEach((hero: any) => {
-            const heroIndex = availableHeroes.findIndex(h => h.name === hero.name);
-            if (heroIndex !== -1) {
-                newHeroes.push(availableHeroes.splice(heroIndex, 1)[0]);
-            }
+            const unitData = allPlayerUnits.find(u => u.name === hero.name && u.category === 'hero');
+            if (unitData) newHeroes.push(unitData);
         });
         setHeroes(newHeroes);
 
-        const availableSiegeMachines = [...availableUnits.siegeMachines];
-        if (siegeMachine) {
-            availableSiegeMachines.push(siegeMachine);
-        }
-
         if (composition.siegeMachine) {
-            const smIndex = availableSiegeMachines.findIndex((s:any) => s.name === composition.siegeMachine.name);
-            if (smIndex !== -1) {
-                setSiegeMachine(availableSiegeMachines.splice(smIndex, 1)[0]);
-            }
+            const smData = allPlayerUnits.find(u => u.name === composition.siegeMachine.name && u.category === 'siegeMachine');
+            if (smData) setSiegeMachine(smData);
         } else {
             setSiegeMachine(null);
         }
         
-        setAvailableUnits((prev: any) => ({ ...prev, heroes: availableHeroes, siegeMachines: availableSiegeMachines.filter(s => s.name !== composition.siegeMachine?.name) }));
         toast({ title: "Army Loaded", description: `"${composition.name}" is ready.` });
 
-    }, [availableUnits, siegeMachine, toast]);
+    }, [player, toast]);
 
     useEffect(() => {
         const playerData = localStorage.getItem('playerData');
@@ -219,19 +213,19 @@ export default function WarCouncilPage() {
         const homeSpells = (player.spells || []).filter((s: any) => s.village === 'home' && s.level > 0);
 
         setAvailableUnits({
-            heroes: homeHeroes,
-            elixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)),
-            darkElixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !superTroopNames.includes(t.name)),
-            superTroops: allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0),
-            siegeMachines: allHomeTroops.filter((t: any) => siegeMachineNames.includes(t.name)),
-            elixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Elixir'),
-            darkElixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir'),
+            heroes: homeHeroes.map((u: any) => ({...u, category: 'hero'})),
+            elixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Elixir' && !superTroopNames.includes(t.name) && !siegeMachineNames.includes(t.name)).map((u: any) => ({...u, category: 'troop'})),
+            darkElixirTroops: allHomeTroops.filter((t: any) => t.upgradeResource === 'Dark Elixir' && !superTroopNames.includes(t.name)).map((u: any) => ({...u, category: 'troop'})),
+            superTroops: allHomeTroops.filter((t: any) => superTroopNames.includes(t.name) && t.level > 0).map((u: any) => ({...u, category: 'superTroop'})),
+            siegeMachines: allHomeTroops.filter((t: any) => siegeMachineNames.includes(t.name)).map((u: any) => ({...u, category: 'siegeMachine'})),
+            elixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Elixir').map((u: any) => ({...u, category: 'spell'})),
+            darkElixirSpells: homeSpells.filter((s: any) => s.upgradeResource === 'Dark Elixir').map((u: any) => ({...u, category: 'spell'})),
         });
     }, [player]);
 
     useEffect(() => {
         const compositionToLoad = localStorage.getItem('loadArmyComposition');
-        if (compositionToLoad && availableUnits.heroes.length > 0) {
+        if (compositionToLoad && player) {
             try {
                 const parsedComp = JSON.parse(compositionToLoad);
                 loadComposition(parsedComp);
@@ -241,7 +235,7 @@ export default function WarCouncilPage() {
                 localStorage.removeItem('loadArmyComposition');
             }
         }
-    }, [availableUnits, loadComposition]);
+    }, [player, loadComposition]);
 
 
     const currentTroopSpace = useMemo(() => {
@@ -254,32 +248,25 @@ export default function WarCouncilPage() {
         return Object.values(spells).reduce((acc, { unit, quantity }) => acc + (unit.housingSpace * quantity), 0);
     }, [spells]);
     
-    const isHero = (item: any) => (availableUnits.heroes || []).some((h: any) => h.name === item.name);
-    const isSiegeMachine = (item: any) => (availableUnits.siegeMachines || []).some((s: any) => s.name === item.name);
-    const isSpell = (item: any) => (availableUnits.elixirSpells || []).concat(availableUnits.darkElixirSpells || []).some((s: any) => s.name === item.name);
-
     const addUnit = useCallback((itemData: any) => {
         setLoadedArmyId(null);
-        const { name } = itemData;
+        const { name, category } = itemData;
 
         let added = false;
 
-        if (isHero(itemData)) {
+        if (category === 'hero') {
             if (heroes.length < 4 && !heroes.find(h => h.name === name)) {
                 setHeroes(prev => [...prev, itemData]);
-                setAvailableUnits((prev: any) => ({...prev, heroes: prev.heroes.filter((h:any) => h.name !== name)}));
                 added = true;
             } else {
                 toast({ variant: 'destructive', title: 'Hero already added or slots are full.' });
             }
-        } else if (isSiegeMachine(itemData)) {
-            if (siegeMachine) {
-                 setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine].sort((a,b) => a.name.localeCompare(b.name))}));
+        } else if (category === 'siegeMachine') {
+            if (!siegeMachine || siegeMachine.name !== name) {
+                setSiegeMachine(itemData);
+                added = true;
             }
-            setSiegeMachine(itemData);
-            setAvailableUnits((prev: any) => ({...prev, siegeMachines: prev.siegeMachines.filter((s:any) => s.name !== name)}));
-            added = true;
-        } else if (isSpell(itemData)) {
+        } else if (category === 'spell') {
              if (currentSpellSpace + itemData.housingSpace <= maxSpellSpace) {
                 setSpells(prev => {
                     const newSpells = { ...prev };
@@ -294,7 +281,7 @@ export default function WarCouncilPage() {
             } else {
                 toast({ variant: 'destructive', title: 'Spell space full!' });
             }
-        } else { // It's a troop
+        } else { // It's a troop or superTroop
             if (currentTroopSpace + itemData.housingSpace <= maxTroopSpace) {
                 setArmy(prev => {
                     const newArmy = { ...prev };
@@ -314,6 +301,7 @@ export default function WarCouncilPage() {
         if (added) {
             addNotification({ name: itemData.name, image: getImagePath(itemData.name) });
         }
+        return added;
 
     }, [currentTroopSpace, currentSpellSpace, maxTroopSpace, maxSpellSpace, toast, heroes, siegeMachine, addNotification]);
     
@@ -347,20 +335,41 @@ export default function WarCouncilPage() {
     
     const removeFromHeroes = useCallback((name: string) => {
         setLoadedArmyId(null);
-        const heroToRemove = heroes.find(h => h.name === name);
-        if (heroToRemove) {
-            setHeroes(prev => prev.filter(h => h.name !== name));
-            setAvailableUnits((prev:any) => ({ ...prev, heroes: [...prev.heroes, heroToRemove].sort((a,b) => a.name.localeCompare(b.name)) }));
-        }
-    }, [heroes]);
+        setHeroes(prev => prev.filter(h => h.name !== name));
+    }, []);
     
     const removeSiegeMachine = useCallback(() => {
         setLoadedArmyId(null);
-        if(siegeMachine) {
-            setAvailableUnits((prev:any) => ({...prev, siegeMachines: [...prev.siegeMachines, siegeMachine].sort((a,b) => a.name.localeCompare(b.name))}));
-            setSiegeMachine(null);
+        setSiegeMachine(null);
+    }, []);
+
+    const handleMouseDown = (unit: any) => {
+        const added = addUnit(unit);
+        if (!added) return;
+
+        pressTimer.current = setTimeout(() => {
+            pressTimer.current = setInterval(() => {
+                const successfullyAdded = addUnit(unit);
+                if(!successfullyAdded) {
+                     if (pressTimer.current) clearInterval(pressTimer.current);
+                     pressTimer.current = null;
+                }
+            }, 150);
+        }, 500);
+    };
+
+    const clearPressTimer = () => {
+        if (pressTimer.current) {
+            clearInterval(pressTimer.current);
+            pressTimer.current = null;
         }
-    }, [siegeMachine]);
+    };
+    
+    useEffect(() => {
+        return () => {
+            clearPressTimer(); // Cleanup on unmount
+        };
+    }, []);
     
     const handleGeneratePlan = async () => {
         if (Object.keys(army).length === 0 && heroes.length === 0) {
@@ -382,7 +391,7 @@ export default function WarCouncilPage() {
                 level: unit.level,
                 quantity: quantity,
             })),
-            heroes: heroes.map(h => ({ name: h.name, level: h.level })),
+            heroes: heroes.map(h => ({ name: h.name, level: h.level, quantity: 1 })),
             siegeMachine: siegeMachine?.name,
         };
 
@@ -463,6 +472,16 @@ export default function WarCouncilPage() {
         { value: 'darkElixirSpells', label: 'Dark Elixir Spells', icon: <SpellCheck className="text-indigo-400"/> },
     ];
     
+    const currentSelection = useMemo(() => {
+        const selectedHeroes = heroes.map(h => h.name);
+        const selectedSiege = siegeMachine ? [siegeMachine.name] : [];
+        const allSelected = [...selectedHeroes, ...selectedSiege];
+
+        return (availableUnits[selectedCategory] || []).filter((item: any) => !allSelected.includes(item.name))
+
+    }, [availableUnits, selectedCategory, heroes, siegeMachine]);
+
+
     return (
         <div className="flex flex-col gap-8">
             <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
@@ -475,7 +494,7 @@ export default function WarCouncilPage() {
                             
                                 <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 || !!loadedArmyId} className="shrink-0">
+                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 && heroes.length === 0} className="shrink-0">
                                         <Bookmark className="mr-2 h-4 w-4" />
                                         <span className="hidden sm:inline">Save Army</span>
                                         <span className="sm:hidden">Save</span>
@@ -494,7 +513,7 @@ export default function WarCouncilPage() {
                                     </div>
                                     <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={handleSaveArmy}>Save</AlertDialogAction>
+                                    <AlertDialogAction onClick={handleSaveArmy} disabled={!armyNameToSave}>Save</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -520,7 +539,7 @@ export default function WarCouncilPage() {
                         <div><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group cursor-pointer" onClick={() => removeFromHeroes(item.name)}><UnitCard item={item} isHero /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                            <div><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group cursor-pointer" onClick={() => removeFromHeroes(item.name)}><UnitCard item={item} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
                             <div><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group cursor-pointer" onClick={removeSiegeMachine}><UnitCard item={siegeMachine} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
                         </div>
                     </CardContent>
@@ -542,15 +561,18 @@ export default function WarCouncilPage() {
                     </CardHeader>
                     <CardContent>
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-3 pb-4">
-                            {(availableUnits[selectedCategory] || []).map((item: any) => (
+                            {currentSelection.map((item: any) => (
                                 <div
                                     key={item.name}
                                     className="cursor-pointer"
-                                    onClick={() => addUnit(item)}
+                                    onMouseDown={() => handleMouseDown(item)}
+                                    onMouseUp={clearPressTimer}
+                                    onMouseLeave={clearPressTimer}
+                                    onTouchStart={() => handleMouseDown(item)}
+                                    onTouchEnd={clearPressTimer}
                                 >
                                     <UnitCard
                                         item={item}
-                                        isHero={selectedCategory === 'heroes'}
                                     />
                                 </div>
                             ))}

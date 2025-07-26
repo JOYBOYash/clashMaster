@@ -516,8 +516,8 @@ export default function WarCouncilPage() {
         <div className="space-y-8">
             <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <Card className="sticky top-20" no-hover>
+            <div className="flex flex-col gap-8 items-start">
+                <Card className="w-full" no-hover>
                     <CardHeader>
                          <div className="flex justify-between items-center">
                             <CardTitle className="flex items-center gap-2"><Swords className="w-6 h-6 text-primary" /><span>Army Composition</span></CardTitle>
@@ -573,44 +573,42 @@ export default function WarCouncilPage() {
                     </CardContent>
                 </Card>
 
-                <div className="space-y-4">
-                     <Card onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver} no-hover>
-                        <CardHeader>
-                            <CardTitle>Unit Selection</CardTitle>
-                            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                                <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
-                                <SelectContent>
-                                    {selectionCategories.map(cat => (
-                                        <SelectItem key={cat.value} value={cat.value}>
-                                            <div className="flex items-center gap-2">{cat.icon} {cat.label}</div>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </CardHeader>
-                        <CardContent className="space-y-1">
-                             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pb-4 max-h-[50vh] overflow-y-auto">
-                                {availableUnits[selectedCategory]?.map((item: any) => (
-                                    <div
-                                        key={item.name}
-                                        onMouseDown={() => handleMouseDown(item)}
-                                        onMouseUp={handleMouseUp}
-                                        onMouseLeave={handleMouseUp}
-                                        onTouchStart={() => handleMouseDown(item)}
-                                        onTouchEnd={handleMouseUp}
-                                    >
-                                        <UnitCard
-                                            item={item}
-                                            isHero={selectedCategory === 'heroes'}
-                                            draggable
-                                            onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'selection', selectedCategory)}
-                                        />
-                                    </div>
+                <Card className="w-full" onDrop={(e) => handleDrop(e, 'selection')} onDragOver={handleDragOver} no-hover>
+                    <CardHeader>
+                        <CardTitle>Unit Selection</CardTitle>
+                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                            <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
+                            <SelectContent>
+                                {selectionCategories.map(cat => (
+                                    <SelectItem key={cat.value} value={cat.value}>
+                                        <div className="flex items-center gap-2">{cat.icon} {cat.label}</div>
+                                    </SelectItem>
                                 ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                            </SelectContent>
+                        </Select>
+                    </CardHeader>
+                    <CardContent className="space-y-1">
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-8 gap-2 pb-4">
+                            {availableUnits[selectedCategory]?.map((item: any) => (
+                                <div
+                                    key={item.name}
+                                    onMouseDown={() => handleMouseDown(item)}
+                                    onMouseUp={handleMouseUp}
+                                    onMouseLeave={handleMouseUp}
+                                    onTouchStart={() => handleMouseDown(item)}
+                                    onTouchEnd={handleMouseUp}
+                                >
+                                    <UnitCard
+                                        item={item}
+                                        isHero={selectedCategory === 'heroes'}
+                                        draggable
+                                        onDragStart={(e: React.DragEvent) => handleDragStart(e, item, 'selection', selectedCategory)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
 
             <Card>
@@ -669,5 +667,7 @@ export default function WarCouncilPage() {
         </div>
     );
 }
+
+    
 
     

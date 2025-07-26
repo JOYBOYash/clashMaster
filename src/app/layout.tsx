@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { cn } from '@/lib/utils';
 import { AuthProvider } from '@/context/auth-context';
 import { AppWrapper } from '@/components/app-wrapper';
+import { NotificationProvider } from '@/context/notification-context';
 
 export const metadata: Metadata = {
   title: 'ProBuilder',
@@ -19,9 +20,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn("antialiased font-body font-headline")}>
         <AuthProvider>
-          <AppWrapper>
-            {children}
-          </AppWrapper>
+          <NotificationProvider>
+            <AppWrapper>
+              {children}
+            </AppWrapper>
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

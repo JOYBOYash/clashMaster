@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
@@ -12,8 +12,9 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { deleteUserData } from '@/lib/firebase-service';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Moon, Sun, Trash2, RefreshCcw, Loader2 } from 'lucide-react';
+import { Moon, Sun, Trash2, RefreshCcw, Loader2, Save } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -21,14 +22,45 @@ export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [playerJson, setPlayerJson] = useState('');
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('playerData');
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        setPlayerJson(JSON.stringify(parsedData, null, 2));
+      } catch {
+        setPlayerJson(storedData);
+      }
+    }
+  }, []);
 
   const handleClearLocalData = () => {
     localStorage.removeItem('playerData');
+    setPlayerJson('');
     toast({
       title: 'Local Data Cleared',
       description: 'Your local village data has been cleared. Please use the survey to re-sync.',
     });
     router.push('/survey');
+  };
+
+  const handleSavePlayerData = () => {
+    try {
+      JSON.parse(playerJson); // Validate JSON
+      localStorage.setItem('playerData', playerJson);
+      toast({
+        title: 'Player Data Saved',
+        description: 'Your local village data has been updated.',
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid JSON',
+        description: 'The data you entered is not valid JSON. Please correct it and try again.',
+      });
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -92,19 +124,27 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Data Management</CardTitle>
-          <CardDescription>Manage your locally stored and remote account data.</CardDescription>
+          <CardDescription>Manage your locally stored village data. Use the Survey page to fetch new data.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                    <Label className="text-base">Clear Local Data</Label>
-                    <p className="text-sm text-muted-foreground">
-                        Removes cached village data from this browser and forces a re-sync.
-                    </p>
-                </div>
+            <div className="space-y-2">
+                <Label htmlFor="player-json">Player Data JSON</Label>
+                <Textarea 
+                    id="player-json"
+                    value={playerJson}
+                    onChange={(e) => setPlayerJson(e.target.value)}
+                    rows={10}
+                    placeholder="Player JSON data will appear here after syncing from the Survey page."
+                />
+            </div>
+            <div className="flex justify-between items-center">
                 <Button variant="outline" onClick={handleClearLocalData}>
                     <RefreshCcw className="mr-2 h-4 w-4" />
                     Clear & Re-sync
+                </Button>
+                 <Button onClick={handleSavePlayerData}>
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Changes
                 </Button>
             </div>
         </CardContent>
@@ -113,14 +153,14 @@ export default function SettingsPage() {
       <Card className="border-destructive/50">
         <CardHeader>
           <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>These actions are permanent and cannot be undone.</CardDescription>
+          <CardDescription>This action is permanent and cannot be undone.</CardDescription>
         </CardHeader>
         <CardContent>
             <div className="flex items-center justify-between rounded-lg border border-destructive/20 bg-destructive/5 p-4">
                 <div className="space-y-0.5">
                     <Label className="text-base text-destructive">Delete Account Data</Label>
                     <p className="text-sm text-muted-foreground">
-                        Permanently delete all your saved armies and strategies from our servers.
+                        Permanently delete all your saved armies and strategies from our servers. This does not affect local data.
                     </p>
                 </div>
                  <AlertDialog>

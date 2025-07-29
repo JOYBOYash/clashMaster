@@ -23,6 +23,11 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [playerJson, setPlayerJson] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const storedData = localStorage.getItem('playerData');
@@ -84,6 +89,10 @@ export default function SettingsPage() {
       setIsDeleting(false);
     }
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="space-y-8 max-w-2xl mx-auto">

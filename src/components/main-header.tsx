@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { CircleUser, LogOut, Menu } from 'lucide-react';
+import { CircleUser, LogOut, Menu, Settings } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from './ui/button';
 import { MainNav } from '../app/main-nav';
@@ -20,9 +20,11 @@ import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
+  const router = useRouter();
   const homeHref = '/';
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -68,6 +70,7 @@ export function MainHeader() {
                   {!hasPlayerData && (
                     <Link href="/survey" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Survey</Link>
                   )}
+                  <Link href="/settings" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Settings</Link>
                </div>
             </SheetContent>
           </Sheet>
@@ -104,6 +107,10 @@ export function MainHeader() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                 <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer font-headline">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut} className="cursor-pointer font-headline">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>

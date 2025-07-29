@@ -1,6 +1,6 @@
 
 import { db } from './firebase';
-import { collection, addDoc, getDocs, doc, setDoc, query, where, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, setDoc, query, where, Timestamp, writeBatch, deleteDoc } from 'firebase/firestore';
 import type { SuggestWarArmyOutput } from '@/ai/flows/suggest-war-army';
 
 // Type for the army composition data
@@ -82,5 +82,41 @@ export async function getSavedStrategies(userId: string): Promise<any[]> {
     } catch (error) {
         console.error("Error fetching AI strategies from Firestore:", error);
         throw new Error("Failed to fetch saved strategies.");
+    }
+}
+
+
+// === USER DATA DELETION ===
+
+/**
+ * Deletes all data for a specific user, including subcollections.
+ * @param userId - The UID of the user whose data should be deleted.
+ */
+export async function deleteUserData(userId: string): Promise<void> {
+    const userDocRef = doc(db, 'users', userId);
+
+    try {
+        const batch = writeBatch(db);
+
+        // Delete documents in 'armyCompositions' subcollection
+        const armyCompositionsRef = collection(userDocRef, 'armyCompositions');
+        const armyCompositionsSnapshot = await getDocs(armyCompositionsRef);
+        armyCompositionsSnapshot.forEach(doc => batch.delete(doc.ref));
+        
+        // Delete documents in 'aiStrategies' subcollection
+        const aiStrategiesRef = collection(userDocRef, 'aiStrategies');
+        const aiStrategiesSnapshot = await getDocs(aiStrategiesRef);
+        aiStrategiesSnapshot.forEach(doc => batch.delete(doc.ref));
+
+        // After deleting subcollections, commit the batch
+        await batch.commit();
+
+        // Finally, delete the main user document itself
+        await deleteDoc(userDocRef);
+
+        console.log(`Successfully deleted all data for user ${userId}`);
+    } catch (error) {
+        console.error(`Error deleting user data for ${userId}:`, error);
+        throw new Error("Failed to delete user data.");
     }
 }

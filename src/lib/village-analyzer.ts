@@ -61,10 +61,10 @@ function getStaticDataById(id: number) {
 }
 
 function getUpgradeTime(entityData: any, level: number): number {
-    if (!entityData || !entityData.levels) return 0;
+    if (!entityData || !entityData.levels || level <= 0) return 0;
     // The upgrade time for level N is stored in the data for level N-1.
     const levelData = entityData.levels.find((l: any) => l.level === level - 1);
-    return levelData?.upgrade?.time || 0;
+    return levelData?.upgrade_time || 0;
 }
 
 export function analyzeVillage(data: VillageExport): VillageAnalysis {

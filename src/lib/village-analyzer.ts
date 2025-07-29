@@ -47,8 +47,6 @@ export interface VillageAnalysis {
     ongoingUpgrades: OngoingUpgrade[];
 }
 
-const SECONDS_IN_DAY = 86400;
-
 const buildingIdMap = new Map<number, any>(staticData.buildings.map(b => [b._id, b]));
 // Spells are troops with specific production buildings. Filter them out from the main troop list.
 const troopIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building !== 'Spell Factory' && t.production_building !== 'Dark Spell Factory').map(t => [t._id, t]));
@@ -64,12 +62,10 @@ function getStaticDataById(id: number) {
 
 function getUpgradeTime(entityData: any, level: number): number {
     if (!entityData || !entityData.levels) return 0;
-    // Find the data for the *previous* level to get the cost/time to upgrade *to* the current level.
-    const levelData = entityData.levels.find((l: any) => l.level === level -1);
-    // The upgrade time is nested inside the 'upgrade' object of the previous level's data
+    // The upgrade time for level N is stored in the data for level N-1.
+    const levelData = entityData.levels.find((l: any) => l.level === level - 1);
     return levelData?.upgrade?.time || 0;
 }
-
 
 export function analyzeVillage(data: VillageExport): VillageAnalysis {
     const analysis: VillageAnalysis = {

@@ -21,6 +21,7 @@ export function MainNav({
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
+     { href: '/upgrades', label: 'Upgrades' },
      { href: '/war-council', label: 'Council' },
      { href: '/cookbook', label: 'Cookbook' },
   ];

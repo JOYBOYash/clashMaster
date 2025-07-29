@@ -50,6 +50,7 @@ export interface VillageAnalysis {
 const SECONDS_IN_DAY = 86400;
 
 const buildingIdMap = new Map<number, any>(staticData.buildings.map(b => [b._id, b]));
+// Spells are troops with specific production buildings. Filter them out from the main troop list.
 const troopIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building !== 'Spell Factory' && t.production_building !== 'Dark Spell Factory').map(t => [t._id, t]));
 const spellIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building === 'Spell Factory' || t.production_building === 'Dark Spell Factory').map(s => [s._id, s]));
 const heroIdMap = new Map<number, any>(staticData.heroes.map(h => [h._id, h]));
@@ -63,8 +64,10 @@ function getStaticDataById(id: number) {
 
 function getUpgradeTime(entityData: any, level: number): number {
     if (!entityData || !entityData.levels) return 0;
-    const levelData = entityData.levels.find((l: any) => l.level === level);
-    return levelData?.upgrade_time || 0;
+    // Find the data for the *previous* level to get the cost/time to upgrade *to* the current level.
+    const levelData = entityData.levels.find((l: any) => l.level === level -1);
+    // The upgrade time is nested inside the 'upgrade' object of the previous level's data
+    return levelData?.upgrade?.time || 0;
 }
 
 

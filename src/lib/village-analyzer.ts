@@ -50,13 +50,13 @@ export interface VillageAnalysis {
 const SECONDS_IN_DAY = 86400;
 
 const buildingIdMap = new Map<number, any>(staticData.buildings.map(b => [b._id, b]));
-const unitIdMap = new Map<number, any>(staticData.troops.map(t => [t._id, t]));
-const spellIdMap = new Map<number, any>(staticData.spells.map(s => [s._id, s]));
+const troopIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building !== 'Spell Factory' && t.production_building !== 'Dark Spell Factory').map(t => [t._id, t]));
+const spellIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building === 'Spell Factory' || t.production_building === 'Dark Spell Factory').map(s => [s._id, s]));
 const heroIdMap = new Map<number, any>(staticData.heroes.map(h => [h._id, h]));
 
 function getStaticDataById(id: number) {
     return buildingIdMap.get(id) 
-        || unitIdMap.get(id) 
+        || troopIdMap.get(id) 
         || spellIdMap.get(id) 
         || heroIdMap.get(id);
 }
@@ -131,7 +131,7 @@ export function analyzeVillage(data: VillageExport): VillageAnalysis {
 
     // Process units (troops)
     data.units.forEach(u => {
-        const staticUnit = getStaticDataById(u.data);
+        const staticUnit = troopIdMap.get(u.data); // Use troopIdMap specifically
         if (staticUnit) {
             analysis.units[staticUnit.name] = u.lvl;
         }
@@ -139,7 +139,7 @@ export function analyzeVillage(data: VillageExport): VillageAnalysis {
 
     // Process spells
     data.spells.forEach(s => {
-        const staticSpell = getStaticDataById(s.data);
+        const staticSpell = spellIdMap.get(s.data); // Use spellIdMap specifically
         if (staticSpell) {
             analysis.spells[staticSpell.name] = s.lvl;
         }

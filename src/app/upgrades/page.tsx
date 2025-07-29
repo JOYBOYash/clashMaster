@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, BrainCircuit, Wrench, Clock } from 'lucide-react';
 import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
-import { suggestUpgrades, type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/flows/suggest-upgrades';
+import { suggestUpgrades } from '@/ai/flows/suggest-upgrades';
+import { type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/schemas';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 

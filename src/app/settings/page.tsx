@@ -13,8 +13,8 @@ import { useToast } from '@/hooks/use-toast';
 import { deleteUserData } from '@/lib/firebase-service';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Moon, Sun, Trash2, RefreshCcw, Loader2, Save } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -30,40 +30,45 @@ export default function SettingsPage() {
   }, []);
 
   useEffect(() => {
-    const storedData = localStorage.getItem('playerData');
+    const storedData = localStorage.getItem('villageExportData');
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);
         setPlayerJson(JSON.stringify(parsedData, null, 2));
       } catch {
+        // If it's not valid JSON, just show the raw string
         setPlayerJson(storedData);
       }
     }
   }, []);
 
   const handleClearLocalData = () => {
-    localStorage.removeItem('playerData');
+    localStorage.removeItem('villageExportData');
     setPlayerJson('');
     toast({
-      title: 'Local Data Cleared',
-      description: 'Your local village data has been cleared. Please use the survey to re-sync.',
+      title: 'Local Village Data Cleared',
+      description: 'Your manual village export data has been cleared.',
     });
-    router.push('/survey');
   };
 
   const handleSavePlayerData = () => {
     try {
-      JSON.parse(playerJson); // Validate JSON
-      localStorage.setItem('playerData', playerJson);
+      // Validate that the input is valid JSON
+      const parsedData = JSON.parse(playerJson);
+      if (!parsedData.tag || !parsedData.buildings) {
+          throw new Error("JSON is missing required 'tag' or 'buildings' properties.");
+      }
+      localStorage.setItem('villageExportData', playerJson);
       toast({
-        title: 'Player Data Saved',
-        description: 'Your local village data has been updated.',
+        title: 'Village Data Saved',
+        description: 'Your village export data has been saved locally.',
       });
-    } catch (error) {
+      router.push('/upgrades');
+    } catch (error: any) {
       toast({
         variant: 'destructive',
         title: 'Invalid JSON',
-        description: 'The data you entered is not valid JSON. Please correct it and try again.',
+        description: error.message || 'The data you entered is not valid JSON. Please correct it and try again.',
       });
     }
   };
@@ -132,28 +137,31 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Data Management</CardTitle>
-          <CardDescription>Manage your locally stored village data. Use the Survey page to fetch new data.</CardDescription>
+          <CardTitle>Village Data Management</CardTitle>
+          <CardDescription>
+            Manually manage your village data using the game's JSON export. This data is used by the Upgrades page. 
+            Alternatively, you can fetch live data from the <Button variant="link" className="p-0 h-auto" asChild><Link href="/survey">Survey</Link></Button> page.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="player-json">Player Data JSON</Label>
+                <Label htmlFor="player-json">Village Export JSON</Label>
                 <Textarea 
                     id="player-json"
                     value={playerJson}
                     onChange={(e) => setPlayerJson(e.target.value)}
                     rows={10}
-                    placeholder="Player JSON data will appear here after syncing from the Survey page."
+                    placeholder='Paste your village export JSON here. You can get this from the in-game settings under "More Settings" -> "Export Village".'
                 />
             </div>
             <div className="flex justify-between items-center">
                 <Button variant="outline" onClick={handleClearLocalData}>
                     <RefreshCcw className="mr-2 h-4 w-4" />
-                    Clear & Re-sync
+                    Clear Data
                 </Button>
                  <Button onClick={handleSavePlayerData}>
                     <Save className="mr-2 h-4 w-4" />
-                    Save Changes
+                    Save and Analyze
                 </Button>
             </div>
         </CardContent>
@@ -169,7 +177,7 @@ export default function SettingsPage() {
                 <div className="space-y-0.5">
                     <Label className="text-base text-destructive">Delete Account Data</Label>
                     <p className="text-sm text-muted-foreground">
-                        Permanently delete all your saved armies and strategies from our servers. This does not affect local data.
+                        Permanently delete all your saved armies and strategies from our servers.
                     </p>
                 </div>
                  <AlertDialog>

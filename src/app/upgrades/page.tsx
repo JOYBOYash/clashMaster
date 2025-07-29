@@ -12,141 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
-
-// --- Start of logic moved from village-analyzer.ts ---
-
-interface OngoingUpgrade {
-    name: string;
-    level: number;
-    secondsRemaining: number;
-    totalDurationInSeconds: number;
-}
-
-interface VillageAnalysis {
-    player: {
-        name: string;
-        tag: string;
-        townHallLevel: number;
-    };
-    buildings: Record<string, number[]>; // Building name -> list of levels
-    heroes: Record<string, number>; // Hero name -> level
-    units: Record<string, number>;
-    spells: Record<string, number>;
-    ongoingUpgrades: OngoingUpgrade[];
-}
-
-function calculateSecondsRemaining(timerEnd: string | undefined): number {
-    if (!timerEnd) return 0;
-    try {
-        const endTime = new Date(timerEnd).getTime();
-        const now = new Date().getTime();
-        const diff = (endTime - now) / 1000;
-        return Math.max(0, diff);
-    } catch (e) {
-        return 0;
-    }
-}
-
-function analyzeVillage(playerData: any): VillageAnalysis {
-    const analysis: VillageAnalysis = {
-        player: {
-            name: playerData.name,
-            tag: playerData.tag,
-            townHallLevel: playerData.townHallLevel || 0
-        },
-        buildings: {},
-        heroes: {},
-        units: {},
-        spells: {},
-        ongoingUpgrades: []
-    };
-
-    // Process buildings and ongoing upgrades
-    if (playerData.buildings) {
-        playerData.buildings.forEach((b: any) => {
-            if (!b.name) return;
-
-            if (!analysis.buildings[b.name]) {
-                analysis.buildings[b.name] = [];
-            }
-            analysis.buildings[b.name].push(b.level);
-
-            if (b.timerEnd) {
-                // This logic is simplified as we don't have total duration easily available
-                // We will display remaining time only.
-                const secondsRemaining = calculateSecondsRemaining(b.timerEnd);
-                if (secondsRemaining > 0) {
-                     analysis.ongoingUpgrades.push({
-                        name: b.name,
-                        level: b.level + 1,
-                        secondsRemaining: secondsRemaining,
-                        totalDurationInSeconds: 0, // Cannot be reliably determined from API
-                    });
-                }
-            }
-        });
-    }
-
-    // Process heroes and ongoing upgrades
-    if (playerData.heroes) {
-        playerData.heroes.forEach((h: any) => {
-            if (!h.name) return;
-            analysis.heroes[h.name] = h.level;
-
-            if (h.timerEnd) {
-                 const secondsRemaining = calculateSecondsRemaining(h.timerEnd);
-                 if (secondsRemaining > 0) {
-                    analysis.ongoingUpgrades.push({
-                        name: h.name,
-                        level: h.level + 1,
-                        secondsRemaining: secondsRemaining,
-                        totalDurationInSeconds: 0, 
-                    });
-                 }
-            }
-        });
-    }
-
-    // Process units (troops)
-    if (playerData.troops) {
-        playerData.troops.forEach((u: any) => {
-            if (u.name && u.village === 'home') {
-                 analysis.units[u.name] = u.level;
-            }
-        });
-    }
-
-    // Process spells
-    if (playerData.spells) {
-        playerData.spells.forEach((s: any) => {
-            if (s.name && s.village === 'home') {
-                analysis.spells[s.name] = s.level;
-            }
-        });
-    }
-
-    // Find research in progress (assumes only one research at a time in the lab)
-    const lab = playerData.buildings?.find((b: any) => b.name === 'Laboratory');
-    if (lab && lab.timerEnd) {
-        const secondsRemaining = calculateSecondsRemaining(lab.timerEnd);
-        if (secondsRemaining > 0) {
-            analysis.ongoingUpgrades.push({
-                name: "Laboratory Research",
-                level: 0, // We don't know the level or what's upgrading
-                secondsRemaining: secondsRemaining,
-                totalDurationInSeconds: 0
-            });
-        }
-    }
-    
-    // Sort upgrades by time remaining
-    analysis.ongoingUpgrades.sort((a, b) => a.secondsRemaining - b.secondsRemaining);
-
-    return analysis;
-}
-
-// --- End of logic from village-analyzer.ts ---
-
+import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
 
 function formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Completed';
@@ -158,7 +24,7 @@ function formatDuration(seconds: number): string {
     const parts: string[] = [];
     if (d > 0) parts.push(`${d}d`);
     if (h > 0) parts.push(`${h}h`);
-    if (m > 0 && d === 0) parts.push(`${m}m`); // Only show minutes if days are not shown
+    if (m > 0 && d === 0) parts.push(`${m}m`); 
     
     return parts.length > 0 ? parts.join(' ') : '< 1m';
 }
@@ -174,17 +40,17 @@ const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
     return () => clearInterval(interval);
   }, [timeLeft]);
 
-  // Since total duration is not available, we can't show a meaningful progress bar.
-  // We'll just show the timer. If you want progress, you'd need the start time or total duration.
+  const progress = upgrade.totalDurationInSeconds > 0
+    ? ((upgrade.totalDurationInSeconds - timeLeft) / upgrade.totalDurationInSeconds) * 100
+    : 0;
 
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-baseline">
-        <span className="font-bold">{upgrade.name} {upgrade.level > 0 ? `(Level ${upgrade.level})` : ''}</span>
+        <span className="font-bold">{upgrade.name} {upgrade.level > 0 ? `(to Level ${upgrade.level})` : ''}</span>
         <span className="font-mono text-sm text-primary">{formatDuration(timeLeft)}</span>
       </div>
-      {/* The progress bar is disabled as we cannot calculate it reliably */}
-      {/* <Progress value={progress} /> */}
+      {upgrade.totalDurationInSeconds > 0 && <Progress value={progress} />}
     </div>
   );
 };
@@ -223,15 +89,15 @@ export default function UpgradesPage() {
       setLoading(true);
       setError(null);
       
-      const playerData = localStorage.getItem('playerData');
-      if (!playerData) {
-        setError('No player data found. Please sync your village via the Survey page first.');
+      const villageExportJson = localStorage.getItem('villageExportData');
+      if (!villageExportJson) {
+        setError('No village data found. Please paste your village export JSON in the Settings page first.');
         setLoading(false);
         return;
       }
 
       try {
-        const villageData = JSON.parse(playerData);
+        const villageData = JSON.parse(villageExportJson);
         const villageAnalysis = analyzeVillage(villageData);
         setAnalysis(villageAnalysis);
 
@@ -247,8 +113,8 @@ export default function UpgradesPage() {
 
       } catch (error: any) {
         console.error("Analysis failed:", error);
-        toast({ variant: 'destructive', title: 'Analysis Failed', description: error.message || 'Could not parse or analyze your village data.' });
-        setError('Failed to analyze your village data. Please try re-syncing from the Survey page.');
+        toast({ variant: 'destructive', title: 'Analysis Failed', description: error.message || 'Could not parse or analyze your village data. Check the format in Settings.' });
+        setError('Failed to analyze your village data. Please check the JSON in the Settings page or re-paste it.');
       } finally {
         setLoading(false);
       }
@@ -282,7 +148,7 @@ export default function UpgradesPage() {
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
                 {error}
-                 <Button asChild variant="link" className="p-0 h-auto ml-2"><Link href="/survey">Go to Survey</Link></Button>
+                 <Button asChild variant="link" className="p-0 h-auto ml-2"><Link href="/settings">Go to Settings</Link></Button>
             </AlertDescription>
         </Alert>
       )}

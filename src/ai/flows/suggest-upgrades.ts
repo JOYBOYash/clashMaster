@@ -15,7 +15,8 @@ export async function suggestUpgrades(input: SuggestUpgradesInput): Promise<Sugg
   return suggestUpgradesFlow(input);
 }
 
-const formatObject = (obj: Record<string, any>) => {
+const formatObject = (obj: Record<string, any> | undefined) => {
+    if (!obj) return 'N/A';
     return Object.entries(obj).map(([key, value]) => `- ${key}: Level ${Array.isArray(value) ? value.join('/') : value}`).join('\n');
 }
 
@@ -49,7 +50,7 @@ Priorities should be:
 - Low: Good to have, but not as urgent.
 
 Example Output Suggestion:
-- title: "Upgrade Cannons"
+- title: "Upgrade Cannons to Level 16"
 - description: "Your cannons are behind for TH13. Upgrading them is crucial for defending against ground attacks like Hybrid and Pekka Smash, which are common at this level."
 - priority: "High"
   `,
@@ -65,7 +66,7 @@ const suggestUpgradesFlow = ai.defineFlow(
     
     // Format the complex objects into readable strings for the prompt
     const promptInput = {
-        ...input,
+        player: input.player,
         buildingsFormatted: formatObject(input.buildings),
         heroesFormatted: formatObject(input.heroes),
         unitsFormatted: formatObject(input.units),

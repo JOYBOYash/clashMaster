@@ -73,10 +73,29 @@ const suggestUpgradesFlow = ai.defineFlow(
         spellsFormatted: formatObject(input.spells)
     };
     
-    const { output } = await prompt(promptInput);
-    if (!output) {
-      throw new Error("The AI failed to provide suggestions.");
+    let result;
+    let lastError: any;
+    const maxRetries = 3;
+
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            result = await prompt(promptInput);
+            if (result.output) {
+                return result.output;
+            }
+        } catch (e: any) {
+            lastError = e;
+            console.log(`Attempt ${i + 1} failed, retrying...`);
+            // Wait for a second before retrying
+            await new Promise(resolve => setTimeout(resolve, 1000)); 
+        }
     }
-    return output;
+    
+    if (!result?.output) {
+        console.error("AI failed to provide suggestions after multiple retries.", lastError);
+        throw new Error("The AI failed to provide suggestions. The service might be temporarily unavailable. Please try again later.");
+    }
+    
+    return result.output;
   }
 );

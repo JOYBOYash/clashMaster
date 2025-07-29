@@ -3,8 +3,8 @@ import staticData from './static_data.json';
 
 // Create lookup maps for efficient data retrieval
 const buildingIdMap = new Map<number, any>(staticData.buildings.map(b => [b._id, b]));
-const unitIdMap = new Map<number, any>(static_data.troops.map(t => [t._id, t]));
-const spellIdMap = new Map<number, any>(static_data.troops.filter(t => t.production_building.includes("Spell")).map(s => [s._id, s]));
+const unitIdMap = new Map<number, any>(staticData.troops.map(t => [t._id, t]));
+const spellIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building.includes("Spell")).map(s => [s._id, s]));
 const heroIdMap = new Map<number, any>(staticData.heroes.map(h => [h._id, h]));
 const equipmentIdMap = new Map<number, any>(staticData.equipment.map(e => [e._id, e]));
 
@@ -16,11 +16,15 @@ function getUpgradeTime(staticItem: any, targetLevel: number): number {
     if (!staticItem || !staticItem.levels || targetLevel > staticItem.levels.length) {
         return 0;
     }
-    // Find the level data for the target upgrade level
     const levelData = staticItem.levels.find((l: any) => l.level === targetLevel);
-    // The upgrade time is nested inside the 'upgrade' object
-    return levelData?.upgrade?.time || 0;
+    // The upgrade time for buildings is in a nested 'upgrade' object
+    if (levelData?.upgrade?.time) {
+        return levelData.upgrade.time;
+    }
+    // For other items like troops/spells, it might be at the top level of the level object
+    return levelData?.upgrade_time || 0;
 }
+
 
 export interface OngoingUpgrade {
     name: string;
@@ -61,7 +65,7 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
 
     const analysis: VillageAnalysis = {
         player: {
-            name: "Player", // Name is not in this export, default it
+            name: villageExport.name || "Player", // Name is not always in this export, default it
             tag: villageExport.tag,
             townHallLevel: townHallLevel
         },

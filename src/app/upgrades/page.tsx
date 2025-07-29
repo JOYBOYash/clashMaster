@@ -3,15 +3,16 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, BrainCircuit, Wrench, Clock } from 'lucide-react';
+import { Loader2, BrainCircuit, Wrench, Clock, AlertTriangle } from 'lucide-react';
 import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
 import { suggestUpgrades } from '@/ai/flows/suggest-upgrades';
 import { type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/schemas';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import Link from 'next/link';
 
 function formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Completed';
@@ -76,40 +77,46 @@ const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
 }
 
 export default function UpgradesPage() {
-  const [jsonInput, setJsonInput] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [analysis, setAnalysis] = useState<VillageAnalysis | null>(null);
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleAnalyze = async () => {
-    if (!jsonInput) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Please paste your village JSON data.' });
-      return;
-    }
-
-    setIsAnalyzing(true);
-    setAnalysis(null);
-    setSuggestions(null);
-
-    try {
-      const villageData = JSON.parse(jsonInput);
-      const villageAnalysis = analyzeVillage(villageData);
-      setAnalysis(villageAnalysis);
-
-      toast({ title: 'Analysis Complete!', description: `Found ${villageAnalysis.ongoingUpgrades.length} ongoing upgrades for ${villageAnalysis.player.name}.` });
+  useEffect(() => {
+    async function loadAndAnalyze() {
+      setLoading(true);
+      setError(null);
       
-      // Now get AI suggestions
-      const aiSuggestions = await suggestUpgrades(villageAnalysis);
-      setSuggestions(aiSuggestions);
+      const playerData = localStorage.getItem('playerData');
+      if (!playerData) {
+        setError('No player data found. Please sync your village via the Survey page first.');
+        setLoading(false);
+        return;
+      }
 
-    } catch (error: any) {
-      console.error("Analysis failed:", error);
-      toast({ variant: 'destructive', title: 'Analysis Failed', description: error.message || 'Could not parse or analyze the provided JSON.' });
-    } finally {
-      setIsAnalyzing(false);
+      try {
+        const villageData = JSON.parse(playerData);
+        const villageAnalysis = analyzeVillage(villageData);
+        setAnalysis(villageAnalysis);
+
+        toast({ title: 'Analysis Complete!', description: `Found ${villageAnalysis.ongoingUpgrades.length} ongoing upgrades for ${villageAnalysis.player.name}.` });
+        
+        // Now get AI suggestions
+        const aiSuggestions = await suggestUpgrades(villageAnalysis);
+        setSuggestions(aiSuggestions);
+
+      } catch (error: any) {
+        console.error("Analysis failed:", error);
+        toast({ variant: 'destructive', title: 'Analysis Failed', description: error.message || 'Could not parse or analyze your village data.' });
+        setError('Failed to analyze your village data. Please try re-syncing from the Survey page.');
+      } finally {
+        setLoading(false);
+      }
     }
-  };
+    
+    loadAndAnalyze();
+  }, [toast]);
 
   return (
     <div className="space-y-8">
@@ -117,25 +124,31 @@ export default function UpgradesPage() {
         <CardHeader>
           <CardTitle>Village Upgrade Planner</CardTitle>
           <CardDescription>
-            Paste your village's export JSON below to see your ongoing upgrades and get AI-powered suggestions for what to build next.
+            Analyzing your village to see your ongoing upgrades and get AI-powered suggestions for what to build next.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            placeholder="Paste your game export JSON here..."
-            value={jsonInput}
-            onChange={(e) => setJsonInput(e.target.value)}
-            rows={8}
-            className="font-mono text-xs"
-          />
-          <Button onClick={handleAnalyze} disabled={isAnalyzing} className="w-full">
-            {isAnalyzing ? <Loader2 className="mr-2 animate-spin" /> : <BrainCircuit className="mr-2" />}
-            Analyze My Village
-          </Button>
-        </CardContent>
+        {loading && (
+            <CardContent>
+                <div className="flex items-center justify-center p-8">
+                    <Loader2 className="mr-2 animate-spin" />
+                    <p>Analyzing your village...</p>
+                </div>
+            </CardContent>
+        )}
       </Card>
 
-      {analysis && (
+      {error && (
+        <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+                {error}
+                 <Button asChild variant="link" className="p-0 h-auto ml-2"><Link href="/survey">Go to Survey</Link></Button>
+            </AlertDescription>
+        </Alert>
+      )}
+
+      {!loading && !error && analysis && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card>
                 <CardHeader>
@@ -154,13 +167,10 @@ export default function UpgradesPage() {
                     <CardTitle className="flex items-center gap-2"><Wrench /> AI Upgrade Suggestions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {isAnalyzing && !suggestions && (
-                         <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-primary" /> <p className="ml-2 text-muted-foreground">AI is thinking...</p></div>
-                    )}
                     {suggestions ? (
                         suggestions.suggestions.map((sug, index) => <SuggestionCard key={index} suggestion={sug} />)
                     ) : (
-                        !isAnalyzing && <p className="text-muted-foreground text-center">AI suggestions will appear here after analysis.</p>
+                        <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-primary" /> <p className="ml-2 text-muted-foreground">AI is thinking...</p></div>
                     )}
                 </CardContent>
             </Card>

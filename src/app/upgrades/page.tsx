@@ -13,6 +13,9 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
+import Image from 'next/image';
+import { getImagePath } from '@/lib/image-paths';
+import { cn } from '@/lib/utils';
 
 function formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Completed';
@@ -20,54 +23,74 @@ function formatDuration(seconds: number): string {
     const d = Math.floor(seconds / (3600 * 24));
     const h = Math.floor((seconds % (3600 * 24)) / 3600);
     const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
 
     const parts: string[] = [];
     if (d > 0) parts.push(`${d}d`);
     if (h > 0) parts.push(`${h}h`);
     if (m > 0 && d === 0) parts.push(`${m}m`); 
+    if (s > 0 && d === 0 && h === 0) parts.push(`${s}s`);
     
     return parts.length > 0 ? parts.join(' ') : '< 1m';
 }
 
 const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
-  const [timeLeft, setTimeLeft] = useState(upgrade.secondsRemaining);
+    const [timeLeft, setTimeLeft] = useState(upgrade.secondsRemaining);
+    const imagePath = getImagePath(upgrade.name.replace(/ Research$/, ''));
 
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const interval = setInterval(() => {
-      setTimeLeft(prev => Math.max(0, prev - 1));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [timeLeft]);
+    useEffect(() => {
+        if (timeLeft <= 0) return;
+        const interval = setInterval(() => {
+            setTimeLeft(prev => Math.max(0, prev - 1));
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [timeLeft]);
 
-  const progress = upgrade.totalDurationInSeconds > 0
-    ? ((upgrade.totalDurationInSeconds - timeLeft) / upgrade.totalDurationInSeconds) * 100
-    : 0;
+    const progress = upgrade.totalDurationInSeconds > 0
+        ? ((upgrade.totalDurationInSeconds - timeLeft) / upgrade.totalDurationInSeconds) * 100
+        : 0;
 
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-baseline">
-        <span className="font-bold">{upgrade.name} {upgrade.level > 0 ? `(to Level ${upgrade.level})` : ''}</span>
-        <span className="font-mono text-sm text-primary">{formatDuration(timeLeft)}</span>
-      </div>
-      {upgrade.totalDurationInSeconds > 0 && <Progress value={progress} />}
-    </div>
-  );
+    return (
+        <Card className="overflow-hidden bg-muted/50 border-primary/20">
+            <div className="flex items-center gap-4 p-4">
+                <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
+                    <Image 
+                        src={imagePath} 
+                        alt={upgrade.name} 
+                        fill 
+                        className="object-contain" 
+                        unoptimized 
+                    />
+                </div>
+                <div className="flex-grow space-y-1.5">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                        <span className="font-bold font-headline text-lg truncate pr-2">{upgrade.name} {upgrade.level > 0 ? `(to Lvl ${upgrade.level})` : ''}</span>
+                        <span className="font-mono text-base text-primary/90">{formatDuration(timeLeft)}</span>
+                    </div>
+                    {upgrade.totalDurationInSeconds > 0 && (
+                        <div className="relative h-2.5 w-full bg-black/20 rounded-full overflow-hidden border border-primary/20">
+                            <Progress value={progress} className="absolute h-full w-full left-0 top-0"/>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </Card>
+    );
 };
 
 
 const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
     const priorityColor = {
-        High: 'bg-red-500/20 text-red-300 border-red-500/30',
-        Medium: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-        Low: 'bg-green-500/20 text-green-300 border-green-500/30',
+        High: 'bg-red-900/30 text-red-300 border-red-500/30 hover:border-red-500/60',
+        Medium: 'bg-yellow-800/20 text-yellow-300 border-yellow-500/30 hover:border-yellow-500/60',
+        Low: 'bg-green-900/30 text-green-400 border-green-500/30 hover:border-green-500/60',
     };
     return (
-        <Card className={priorityColor[suggestion.priority]}>
+        <Card className={cn("transition-all",priorityColor[suggestion.priority])}>
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <CardTitle className="text-lg">{suggestion.title}</CardTitle>
-                    <Badge variant="outline">{suggestion.priority}</Badge>
+                    <Badge variant="outline" className={cn("border-current")}>{suggestion.priority}</Badge>
                 </div>
             </CardHeader>
             <CardContent>
@@ -107,7 +130,6 @@ export default function UpgradesPage() {
              toast({ title: 'Analysis Complete!', description: `No ongoing upgrades found. Time to get building!` });
         }
         
-        // Now get AI suggestions
         const aiSuggestions = await suggestUpgrades(villageAnalysis);
         setSuggestions(aiSuggestions);
 
@@ -132,7 +154,7 @@ export default function UpgradesPage() {
             Analyzing your village to see your ongoing upgrades and get AI-powered suggestions for what to build next.
           </CardDescription>
         </CardHeader>
-        {loading && (
+        {loading && !error && (
             <CardContent>
                 <div className="flex items-center justify-center p-8">
                     <Loader2 className="mr-2 animate-spin" />
@@ -154,33 +176,41 @@ export default function UpgradesPage() {
       )}
 
       {!loading && !error && analysis && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Clock /> Ongoing Upgrades</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {analysis.ongoingUpgrades.length > 0 ? (
-                        analysis.ongoingUpgrades.map((upg, index) => <UpgradeTimer key={index} upgrade={upg} />)
-                    ) : (
-                        <p className="text-muted-foreground text-center">No ongoing upgrades detected.</p>
-                    )}
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Wrench /> AI Upgrade Suggestions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {suggestions ? (
-                        suggestions.suggestions.map((sug, index) => <SuggestionCard key={index} suggestion={sug} />)
-                    ) : (
-                        <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin text-primary" /> <p className="ml-2 text-muted-foreground">AI is thinking...</p></div>
-                    )}
-                </CardContent>
-            </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="flex flex-col gap-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Clock /> Ongoing Upgrades</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {analysis.ongoingUpgrades.length > 0 ? (
+                            analysis.ongoingUpgrades.map((upg, index) => <UpgradeTimer key={index} upgrade={upg} />)
+                        ) : (
+                            <p className="text-muted-foreground text-center py-4">No ongoing upgrades detected.</p>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+            <div className="flex flex-col gap-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Wrench /> AI Upgrade Suggestions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {suggestions ? (
+                            suggestions.suggestions.map((sug, index) => <SuggestionCard key={index} suggestion={sug} />)
+                        ) : (
+                            <div className="flex justify-center items-center h-full min-h-[20rem]">
+                                <Loader2 className="animate-spin text-primary w-8 h-8" />
+                                <p className="ml-3 text-muted-foreground">AI is thinking...</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
         </div>
       )}
     </div>
   );
 }
+

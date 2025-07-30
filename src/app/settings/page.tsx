@@ -30,17 +30,17 @@ export default function SettingsPage() {
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
     const storedData = localStorage.getItem('villageExportData');
     if (storedData) {
       try {
         const parsedData = JSON.parse(storedData);
         setPlayerJson(JSON.stringify(parsedData, null, 2));
       } catch {
-        // If it's not valid JSON, just show the raw string
         setPlayerJson(storedData);
       }
     }
-  }, []);
+  }, [mounted]);
 
   const handleClearLocalData = () => {
     localStorage.removeItem('villageExportData');
@@ -53,10 +53,9 @@ export default function SettingsPage() {
 
   const handleSavePlayerData = () => {
     try {
-      // Validate that the input is valid JSON
       const parsedData = JSON.parse(playerJson);
-      if (!parsedData.tag || !parsedData.buildings) {
-          throw new Error("JSON is missing required 'tag' or 'buildings' properties.");
+       if (!parsedData.tag) {
+          throw new Error("JSON is missing required 'tag' property.");
       }
       localStorage.setItem('villageExportData', playerJson);
       toast({
@@ -85,7 +84,7 @@ export default function SettingsPage() {
         title: 'Account Data Deleted',
         description: 'All your stored data has been successfully deleted.',
       });
-      await signOut(); // Sign out after deleting data
+      await signOut();
       router.push('/');
     } catch (error) {
       console.error("Failed to delete user data:", error);
@@ -100,17 +99,17 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-2xl mx-auto">
+    <div className="space-y-8 max-w-4xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Settings</CardTitle>
+          <CardTitle className="text-2xl sm:text-3xl">Settings</CardTitle>
           <CardDescription>Manage your application and account settings.</CardDescription>
         </CardHeader>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Appearance</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">Appearance</CardTitle>
           <CardDescription>Customize the look and feel of the app.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -137,10 +136,9 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Village Data Management</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">Village Data Management</CardTitle>
           <CardDescription>
-            Manually manage your village data using the game's JSON export. This data is used by the Upgrades page. 
-            Alternatively, you can fetch live data from the <Button variant="link" className="p-0 h-auto" asChild><Link href="/survey">Survey</Link></Button> page.
+            Manually manage your village data using the game's JSON export. This is used by the <Button variant="link" className="p-0 h-auto text-base" asChild><Link href="/upgrades">Upgrades</Link></Button> page.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -152,14 +150,15 @@ export default function SettingsPage() {
                     onChange={(e) => setPlayerJson(e.target.value)}
                     rows={10}
                     placeholder='Paste your village export JSON here. You can get this from the in-game settings under "More Settings" -> "Export Village".'
+                    className="text-xs"
                 />
             </div>
-            <div className="flex justify-between items-center">
-                <Button variant="outline" onClick={handleClearLocalData}>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <Button variant="outline" onClick={handleClearLocalData} className="w-full sm:w-auto">
                     <RefreshCcw className="mr-2 h-4 w-4" />
                     Clear Data
                 </Button>
-                 <Button onClick={handleSavePlayerData}>
+                 <Button onClick={handleSavePlayerData} className="w-full sm:w-auto">
                     <Save className="mr-2 h-4 w-4" />
                     Save and Analyze
                 </Button>
@@ -169,11 +168,11 @@ export default function SettingsPage() {
 
       <Card className="border-destructive/50">
         <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>This action is permanent and cannot be undone.</CardDescription>
+          <CardTitle className="text-destructive text-xl sm:text-2xl">Danger Zone</CardTitle>
+          <CardDescription>These actions are permanent and cannot be undone.</CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="flex items-center justify-between rounded-lg border border-destructive/20 bg-destructive/5 p-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-destructive/20 bg-destructive/5 p-4 gap-4">
                 <div className="space-y-0.5">
                     <Label className="text-base text-destructive">Delete Account Data</Label>
                     <p className="text-sm text-muted-foreground">
@@ -182,7 +181,7 @@ export default function SettingsPage() {
                 </div>
                  <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button variant="destructive">
+                        <Button variant="destructive" className="w-full sm:w-auto shrink-0">
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete Account
                         </Button>
@@ -209,3 +208,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

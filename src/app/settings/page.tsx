@@ -172,10 +172,10 @@ export default function SettingsPage() {
           <CardDescription>These actions are permanent and cannot be undone.</CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-destructive/20 bg-destructive/5 p-4 gap-4">
-                <div className="space-y-0.5">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between rounded-lg border border-destructive/20 bg-destructive/5 p-4 gap-4">
+                <div className="space-y-1.5 flex-grow">
                     <Label className="text-base text-destructive">Delete Account Data</Label>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground pr-4">
                         Permanently delete all your saved armies and strategies from our servers.
                     </p>
                 </div>
@@ -208,4 +208,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-

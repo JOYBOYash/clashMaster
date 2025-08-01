@@ -14,11 +14,11 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
 import Image from 'next/image';
-import { getImagePath } from '@/lib/image-paths';
+import { getImagePath, timeBadge } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
 
 function formatDuration(seconds: number): string {
-    if (seconds <= 0) return 'Completed';
+    if (seconds <= 0) return 'Done';
 
     const d = Math.floor(seconds / (3600 * 24));
     const h = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -27,9 +27,10 @@ function formatDuration(seconds: number): string {
     const parts: string[] = [];
     if (d > 0) parts.push(`${d}d`);
     if (h > 0) parts.push(`${h}h`);
-    if (m > 0 && d < 1) parts.push(`${m}m`); 
+    if (m > 0 && d === 0) parts.push(`${m}m`); 
     
-    if (parts.length === 0 && seconds > 0) return '< 1m';
+    if (parts.length === 0 && seconds > 0) return '<1m';
+    if (parts.length === 0) return 'Done';
     return parts.join(' ');
 }
 
@@ -54,11 +55,11 @@ const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
 
     const progress = upgrade.totalDurationInSeconds > 0
         ? ((upgrade.totalDurationInSeconds - timeLeft) / upgrade.totalDurationInSeconds) * 100
-        : 0;
+        : 100;
 
     return (
-        <div className="flex items-center gap-3 p-3 bg-card hover:bg-muted/50 transition-colors">
-            <div className="relative shrink-0 w-12 h-12 bg-black/20 rounded-md p-1 border border-border">
+        <div className="flex items-center gap-4 p-3 bg-card hover:bg-muted/50 transition-colors">
+            <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
                 <Image 
                     src={imagePath} 
                     alt={upgrade.name} 
@@ -67,14 +68,15 @@ const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
                     unoptimized 
                 />
             </div>
-            <div className="flex-grow space-y-1">
-                <div className="flex justify-between items-center">
-                    <span className="font-bold text-base truncate pr-2">{upgrade.name} {upgrade.level > 0 ? `(Lvl ${upgrade.level})` : ''}</span>
-                    <span className="font-mono text-sm text-primary/90">{formatDuration(timeLeft)}</span>
+            <div className="flex-grow space-y-2">
+                <p className="font-bold text-base truncate pr-2">{upgrade.name} to Lvl {upgrade.level}</p>
+                <Progress value={progress} className="h-2"/>
+            </div>
+            <div className="relative w-24 h-10 shrink-0">
+                 <Image src={timeBadge} layout="fill" objectFit="contain" alt="Time" unoptimized />
+                 <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white text-shadow-custom-sm">
+                    {formatDuration(timeLeft)}
                 </div>
-                {upgrade.totalDurationInSeconds > 0 && (
-                     <Progress value={progress} className="h-1.5"/>
-                )}
             </div>
         </div>
     );
@@ -145,10 +147,12 @@ export default function UpgradesPage() {
   const { homeUpgrades, builderUpgrades } = useMemo(() => {
     const home: OngoingUpgrade[] = [];
     const builder: OngoingUpgrade[] = [];
-    analysis?.ongoingUpgrades.forEach(upg => {
-        if(upg.village === 'home') home.push(upg);
-        else builder.push(upg);
-    });
+    if (analysis?.ongoingUpgrades) {
+        analysis.ongoingUpgrades.forEach(upg => {
+            if(upg.village === 'home') home.push(upg);
+            else builder.push(upg);
+        });
+    }
     return { homeUpgrades: home, builderUpgrades: builder };
   }, [analysis]);
 
@@ -158,7 +162,7 @@ export default function UpgradesPage() {
         <CardHeader>
           <CardTitle>Village Upgrade Planner</CardTitle>
           <CardDescription>
-            AI-powered suggestions for what to build next and a real-time view of your ongoing upgrades. Data is loaded automatically from your saved settings.
+            AI-powered suggestions for what to build next and a real-time view of your ongoing upgrades. Data is loaded from your saved settings.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -207,7 +211,7 @@ export default function UpgradesPage() {
                 {homeUpgrades.length > 0 && (
                     <Card no-hover className="overflow-hidden">
                         <UpgradeSectionHeader title="Home Village" icon={Home} />
-                        <div className="divide-y">
+                        <div className="divide-y divide-border">
                             {homeUpgrades.map((upg, index) => <UpgradeTimer key={`home-${index}`} upgrade={upg} />)}
                         </div>
                     </Card>
@@ -216,7 +220,7 @@ export default function UpgradesPage() {
                 {builderUpgrades.length > 0 && (
                      <Card no-hover className="overflow-hidden">
                         <UpgradeSectionHeader title="Builder Base" icon={Hammer} />
-                        <div className="divide-y">
+                         <div className="divide-y divide-border">
                             {builderUpgrades.map((upg, index) => <UpgradeTimer key={`builder-${index}`} upgrade={upg} />)}
                         </div>
                     </Card>

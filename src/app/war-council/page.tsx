@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle, Bookmark } from 'lucide-react';
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { getImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
+import { getImagePath, superTroopNames, siegeMachineNames, challengeBadge } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
@@ -484,7 +484,7 @@ export default function WarCouncilPage() {
 
     return (
         <div className="flex flex-col gap-8">
-            <Card><CardHeader><CardTitle>Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
+            <Card><CardHeader><CardTitle>War Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="flex flex-col gap-8">
                 <Card className="w-full" no-hover>
@@ -494,11 +494,12 @@ export default function WarCouncilPage() {
                             
                                 <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm" disabled={Object.keys(army).length === 0 && heroes.length === 0} className="shrink-0">
-                                        <Bookmark className="mr-2 h-4 w-4" />
-                                        <span className="hidden sm:inline">Save Army</span>
-                                        <span className="sm:hidden">Save</span>
-                                    </Button>
+                                    <button disabled={Object.keys(army).length === 0 && heroes.length === 0} className="relative w-28 h-12 shrink-0 group transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50">
+                                        <Image src={challengeBadge} layout="fill" objectFit="contain" alt="Save Army" unoptimized />
+                                        <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white text-shadow-custom-sm">
+                                            <Bookmark className="mr-1 h-4 w-4" /> Save
+                                        </div>
+                                    </button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>

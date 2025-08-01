@@ -9,7 +9,7 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
-import { getImagePath } from '@/lib/image-paths';
+import { getImagePath, challengeBadge } from '@/lib/image-paths';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BookOpen, ShieldQuestion, UploadCloud, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -37,11 +37,12 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
                         <CardTitle>{composition.name}</CardTitle>
                         <CardDescription>Town Hall {composition.townHallLevel}</CardDescription>
                     </div>
-                     <Button variant="outline" size="sm" onClick={handleLoadArmy} className="shrink-0">
-                        <UploadCloud className="mr-2 h-4 w-4" />
-                        <span className="hidden sm:inline">Load</span>
-                         <span className="inline sm:hidden">Load</span>
-                    </Button>
+                     <button onClick={handleLoadArmy} className="relative w-24 h-10 shrink-0 group transition-transform hover:scale-105 active:scale-95">
+                        <Image src={challengeBadge} layout="fill" objectFit="contain" alt="Load Army" unoptimized />
+                         <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white text-shadow-custom-sm">
+                            <UploadCloud className="mr-1 h-4 w-4" /> Load
+                        </div>
+                    </button>
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">

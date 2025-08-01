@@ -112,7 +112,24 @@ export default {
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
         'shine': 'shine 1.5s ease-in-out infinite'
       },
+      textShadow: {
+        'custom-sm': '1px 1px 2px hsl(var(--primary) / 0.5)',
+        'custom': '1px 1px 3px hsl(var(--primary) / 0.3)',
+      }
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+      require('tailwindcss-animate'),
+      function ({ addUtilities, theme }: { addUtilities: any, theme: any }) {
+        const newUtilities = {
+            '.text-shadow-custom-sm': {
+                textShadow: theme('textShadow.custom-sm'),
+            },
+             '.text-shadow-custom': {
+                textShadow: theme('textShadow.custom'),
+            },
+        }
+        addUtilities(newUtilities, ['responsive', 'hover'])
+    }
+  ],
 } satisfies Config;

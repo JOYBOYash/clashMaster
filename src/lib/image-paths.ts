@@ -15,6 +15,8 @@ export const heroAvatarAssets = [
 
 export const appLogoPath = '/assets/pb2.png';
 export const separator = '/assets/separator.png';
+export const timeBadge = '/assets/timer-badge.png';
+export const challengeBadge = '/assets/challenge-badge.png';
 export const probuilderAvatar = '/assets/pb.png';
 
 

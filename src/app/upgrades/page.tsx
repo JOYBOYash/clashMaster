@@ -16,7 +16,6 @@ import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib
 import Image from 'next/image';
 import { getImagePath, timeBadge } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
-import { getPlayer } from '@/lib/coc-api';
 
 function formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Done';
@@ -120,46 +119,16 @@ export default function UpgradesPage() {
     setSuggestions(null);
     setAnalysis(null);
 
-    let villageData: any;
-    let dataSource = 'unknown';
-
     try {
-      // 1. Prioritize fetching from API via player tag
-      const playerDataString = localStorage.getItem('playerData');
-      if (playerDataString) {
-        const playerData = JSON.parse(playerDataString);
-        if (playerData.tag) {
-          try {
-            console.log(`Fetching live data for player: ${playerData.tag}`);
-            villageData = await getPlayer(playerData.tag);
-            dataSource = `live API for ${playerData.tag}`;
-          } catch (apiError: any) {
-            console.warn(`Live API fetch failed, falling back to local JSON. Error: ${apiError.message}`);
-            toast({
-              variant: 'destructive',
-              title: 'Live Data Fetch Failed',
-              description: 'Could not fetch live data. Falling back to data from Settings.',
-            });
-          }
-        }
-      }
-
-      // 2. Fallback to villageExportData if API fetch failed or was not possible
-      if (!villageData) {
-        const villageExportJson = localStorage.getItem('villageExportData');
-        if (villageExportJson) {
-          villageData = JSON.parse(villageExportJson);
-          dataSource = 'local data from Settings';
-        }
-      }
-
-      if (!villageData) {
-        setError('No player data found. Please sync your player on the Survey page or add your village JSON in Settings.');
+      const villageExportJson = localStorage.getItem('villageExportData');
+      if (!villageExportJson) {
+        setError('No village data found. Please add your village JSON in Settings.');
         setLoading(false);
         return;
       }
 
-      console.log(`Analyzing village data from: ${dataSource}`);
+      console.log(`Analyzing village data from local data from Settings`);
+      const villageData = JSON.parse(villageExportJson);
       const villageAnalysis = analyzeVillage(villageData);
       setAnalysis(villageAnalysis);
       
@@ -170,7 +139,7 @@ export default function UpgradesPage() {
       console.error("Analysis failed:", err);
       const errorMessage = err.message || 'Could not parse or analyze your village data. Check the format in Settings.';
       toast({ variant: 'destructive', title: 'Analysis Failed', description: errorMessage });
-      setError(`Failed to analyze your village data from ${dataSource}. Please check your data in the Settings page or re-sync from the Survey page.`);
+      setError(`Failed to analyze your village data. Please check your data in the Settings page.`);
     } finally {
       setLoading(false);
     }
@@ -198,7 +167,7 @@ export default function UpgradesPage() {
         <CardHeader>
           <CardTitle>Village Upgrade Planner</CardTitle>
           <CardDescription>
-            AI-powered suggestions for what to build next and a real-time view of your ongoing upgrades. Data is loaded automatically from your synced player tag.
+            AI-powered suggestions for what to build next and a real-time view of your ongoing upgrades. Data is loaded from your manually entered JSON in Settings.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -217,7 +186,6 @@ export default function UpgradesPage() {
             <AlertDescription>
                 {error}
                  <Button asChild variant="link" className="p-0 h-auto ml-2"><Link href="/settings">Go to Settings</Link></Button>
-                 <Button asChild variant="link" className="p-0 h-auto ml-2"><Link href="/survey">Or Re-Sync</Link></Button>
             </AlertDescription>
         </Alert>
       )}

@@ -68,10 +68,14 @@ export interface VillageAnalysis {
 
 /**
  * Analyzes the player's village data from the game's JSON export.
- * @param villageExport - The parsed JSON object from the game export.
+ * @param rawExport - The parsed JSON object from the game export or API.
  * @returns A structured analysis of the village.
  */
-export function analyzeVillage(villageExport: any): VillageAnalysis {
+export function analyzeVillage(rawExport: any): VillageAnalysis {
+    // The live API nests the data inside a `player` object, while the export doesn't.
+    // This handles both cases.
+    const villageExport = rawExport.tag ? rawExport : rawExport.player;
+
     if (!villageExport || !villageExport.tag) {
         throw new Error("Invalid or empty village export data provided.");
     }
@@ -95,7 +99,7 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
         ongoingUpgrades: []
     };
 
-    const serverTimeAtExport = villageExport.timestamp;
+    const serverTimeAtExport = villageExport.timestamp || Math.floor(Date.now() / 1000);
 
     const processUpgradableItems = (items: any[], village: 'home' | 'builderBase') => {
         if (!items) return;

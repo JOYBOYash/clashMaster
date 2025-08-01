@@ -72,11 +72,11 @@ const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
                 <p className="font-bold text-base truncate pr-2">{upgrade.name} to Lvl {upgrade.level}</p>
                 <Progress value={progress} className="h-2"/>
             </div>
-            <div className="relative w-24 h-10 shrink-0">
-                 <Image src={timeBadge} layout="fill" objectFit="contain" alt="Time" unoptimized />
-                 <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white text-shadow-custom-sm">
+             <div className="flex items-center gap-2 shrink-0">
+                 <Image src={timeBadge} width={24} height={24} alt="Time" unoptimized />
+                 <span className="font-bold text-sm text-foreground/80 min-w-[50px] text-right">
                     {formatDuration(timeLeft)}
-                </div>
+                </span>
             </div>
         </div>
     );

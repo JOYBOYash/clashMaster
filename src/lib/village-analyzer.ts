@@ -1,29 +1,44 @@
 
 import staticData from './static_data.json';
 
-// Create lookup maps for efficient data retrieval
-const buildingIdMap = new Map<number, any>(staticData.buildings.map(b => [b._id, b]));
-const unitIdMap = new Map<number, any>(staticData.troops.map(t => [t._id, t]));
-const spellIdMap = new Map<number, any>(staticData.troops.filter(t => t.production_building?.includes("Spell")).map(s => [s._id, s]));
-const heroIdMap = new Map<number, any>(staticData.heroes.map(h => [h._id, h]));
-const equipmentIdMap = new Map<number, any>(staticData.equipment.map(e => [e._id, e]));
-const trapIdMap = new Map<number, any>(staticData.traps.map(t => [t._id, t]));
-
-function getStaticDataById(id: number) {
-    return buildingIdMap.get(id) || unitIdMap.get(id) || spellIdMap.get(id) || heroIdMap.get(id) || equipmentIdMap.get(id) || trapIdMap.get(id);
+// Define the types based on the provided JSON structure
+interface LevelData {
+    level: number;
+    upgrade_time?: number;
+    upgrade?: { time?: number };
+    [key: string]: any;
 }
 
-function getUpgradeTime(staticItem: any, targetLevel: number): number {
+interface StaticItem {
+    _id: number;
+    name: string;
+    levels: LevelData[];
+    [key: string]: any;
+}
+
+// Create a lookup map for efficient data retrieval from static_data.json
+const idToStaticDataMap = new Map<number, StaticItem>(
+    [...staticData.buildings, ...staticData.troops, ...staticData.heroes, ...staticData.equipment, ...staticData.traps].map(item => [item._id, item])
+);
+
+function getStaticDataById(id: number): StaticItem | undefined {
+    return idToStaticDataMap.get(id);
+}
+
+function getUpgradeTime(staticItem: StaticItem | undefined, targetLevel: number): number {
     if (!staticItem || !staticItem.levels || targetLevel > staticItem.levels.length) {
         return 0;
     }
+    // Find the data for the level *being upgraded to*
     const levelData = staticItem.levels.find((l: any) => l.level === targetLevel);
+    if (!levelData) return 0;
+
     // The upgrade time for buildings is in a nested 'upgrade' object
-    if (levelData?.upgrade?.time) {
+    if (levelData.upgrade && typeof levelData.upgrade.time === 'number') {
         return levelData.upgrade.time;
     }
     // For other items like troops/spells, it might be at the top level of the level object
-    return levelData?.upgrade_time || 0;
+    return levelData.upgrade_time || 0;
 }
 
 
@@ -81,18 +96,28 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
     const clientTimeAtAnalysis = Math.floor(Date.now() / 1000);
     const timeDifference = clientTimeAtAnalysis - serverTimeAtExport;
 
-    const processItems = (items: any[], village: 'home' | 'builderBase') => {
+    const processUpgradableItems = (items: any[], village: 'home' | 'builderBase') => {
         if (!items) return;
         items.forEach((item: any) => {
-            if (item.timer) {
+            if (item.timer && item.timer > 0) {
                  const secondsRemaining = Math.max(0, item.timer - timeDifference);
                  if (secondsRemaining > 0) {
                      const staticItem = getStaticDataById(item.data);
                      if (staticItem) {
                         const targetLevel = item.lvl + 1;
                         const totalDuration = getUpgradeTime(staticItem, targetLevel);
+                         let name = staticItem.name;
+                         if(item.data === 26000000) { // Lightning spell is an outlier
+                             name += " Spell"
+                         } else if (name.endsWith("Spell") && name !== "Spell Factory") {
+                             // No change needed
+                         } else if (staticItem.production_building?.includes("Spell")) {
+                            name += " Spell"
+                         }
+
+
                         analysis.ongoingUpgrades.push({
-                            name: staticItem.name,
+                            name,
                             level: targetLevel,
                             secondsRemaining,
                             totalDurationInSeconds: totalDuration,
@@ -104,16 +129,14 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
         });
     };
 
-    // Process Home Village buildings, heroes, spells, and traps with timers
-    processItems(villageExport.buildings, 'home');
-    processItems(villageExport.heroes, 'home');
-    processItems(villageExport.spells, 'home');
-    processItems(villageExport.traps, 'home');
+    // Process Home Village items
+    processUpgradableItems(villageExport.buildings, 'home');
+    processUpgradableItems(villageExport.heroes, 'home');
+    processUpgradableItems(villageExport.spells, 'home');
 
-    // Process Builder Base buildings, heroes, and traps with timers
-    processItems(villageExport.buildings2, 'builderBase');
-    processItems(villageExport.heroes2, 'builderBase');
-    processItems(villageExport.traps2, 'builderBase');
+    // Process Builder Base items
+    processUpgradableItems(villageExport.buildings2, 'builderBase');
+    processUpgradableItems(villageExport.heroes2, 'builderBase');
 
 
     // Process all buildings for level mapping
@@ -141,7 +164,18 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
     // Process all spells
     villageExport.spells?.forEach((s: any) => {
         const staticSpell = getStaticDataById(s.data);
-        if (staticSpell) analysis.spells[staticSpell.name] = s.lvl;
+        let name = staticSpell?.name;
+        if (!name) return;
+        
+        if (s.data === 26000000) { // Lightning spell is an outlier
+            name += " Spell"
+        } else if (name.endsWith("Spell")) {
+            // no change
+        } else if (staticSpell.production_building?.includes("Spell")) {
+            name += " Spell"
+        }
+        
+        if (staticSpell) analysis.spells[name] = s.lvl;
     });
 
     analysis.ongoingUpgrades.sort((a, b) => a.secondsRemaining - b.secondsRemaining);

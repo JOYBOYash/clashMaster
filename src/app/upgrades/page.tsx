@@ -23,11 +23,13 @@ function formatDuration(seconds: number): string {
     const d = Math.floor(seconds / (3600 * 24));
     const h = Math.floor((seconds % (3600 * 24)) / 3600);
     const m = Math.floor((seconds % 3600) / 60);
+    const s = Math.floor(seconds % 60);
 
     const parts: string[] = [];
     if (d > 0) parts.push(`${d}d`);
     if (h > 0) parts.push(`${h}h`);
-    if (m > 0 && d === 0) parts.push(`${m}m`); 
+    if (m > 0) parts.push(`${m}m`); 
+    if (s > 0 && d === 0 && h === 0) parts.push(`${s}s`);
     
     if (parts.length === 0 && seconds > 0) return '<1m';
     if (parts.length === 0) return 'Done';
@@ -74,7 +76,7 @@ const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
             </div>
              <div className="flex items-center gap-2 shrink-0">
                  <Image src={timeBadge} width={24} height={24} alt="Time" unoptimized />
-                 <span className="font-bold text-sm text-foreground/80 min-w-[50px] text-right">
+                 <span className="font-bold text-sm text-foreground/80 min-w-[60px] text-right">
                     {formatDuration(timeLeft)}
                 </span>
             </div>
@@ -194,7 +196,7 @@ export default function UpgradesPage() {
                 <CardContent>
                     {suggestions ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {suggestions.suggestions.map((sug, index) => <SuggestionCard key={index} suggestion={sug} />)}
+                            {suggestions.suggestions.slice(0, 5).map((sug, index) => <SuggestionCard key={index} suggestion={sug} />)}
                         </div>
                     ) : (
                         <div className="flex justify-center items-center h-full min-h-[10rem]">

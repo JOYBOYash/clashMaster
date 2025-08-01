@@ -13,13 +13,16 @@ interface StaticItem {
     _id: number;
     name: string;
     levels: LevelData[];
+    production_building?: string;
     [key: string]: any;
 }
 
-// Create a lookup map for efficient data retrieval from static_data.json
-const idToStaticDataMap = new Map<number, StaticItem>(
-    [...staticData.buildings, ...staticData.troops, ...staticData.heroes, ...staticData.equipment, ...staticData.traps].map(item => [item._id, item])
-);
+// Create lookup maps for efficient data retrieval
+const idToStaticDataMap = new Map<number, any>();
+[...staticData.buildings, ...staticData.troops, ...staticData.heroes, ...staticData.equipment, ...staticData.traps].forEach(item => {
+    idToStaticDataMap.set(item._id, item);
+});
+
 
 function getStaticDataById(id: number): StaticItem | undefined {
     return idToStaticDataMap.get(id);
@@ -93,20 +96,23 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
     };
 
     const serverTimeAtExport = villageExport.timestamp;
-    const clientTimeAtAnalysis = Math.floor(Date.now() / 1000);
-    const timeDifference = clientTimeAtAnalysis - serverTimeAtExport;
 
     const processUpgradableItems = (items: any[], village: 'home' | 'builderBase') => {
         if (!items) return;
         items.forEach((item: any) => {
+            // A 'timer' property indicates an ongoing upgrade.
             if (item.timer && item.timer > 0) {
-                 const secondsRemaining = Math.max(0, item.timer - timeDifference);
+                 const upgradeEndTime = serverTimeAtExport + item.timer;
+                 const secondsRemaining = Math.max(0, upgradeEndTime - Math.floor(Date.now() / 1000));
+                 
                  if (secondsRemaining > 0) {
                      const staticItem = getStaticDataById(item.data);
                      if (staticItem) {
                         const targetLevel = item.lvl + 1;
                         const totalDuration = getUpgradeTime(staticItem, targetLevel);
                          let name = staticItem.name;
+                         
+                         // Handle specific naming cases like spells
                          if(item.data === 26000000) { // Lightning spell is an outlier
                              name += " Spell"
                          } else if (name.endsWith("Spell") && name !== "Spell Factory") {
@@ -114,7 +120,6 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
                          } else if (staticItem.production_building?.includes("Spell")) {
                             name += " Spell"
                          }
-
 
                         analysis.ongoingUpgrades.push({
                             name,
@@ -129,14 +134,14 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
         });
     };
 
-    // Process Home Village items
+    // Process all potential sources of upgrades
     processUpgradableItems(villageExport.buildings, 'home');
     processUpgradableItems(villageExport.heroes, 'home');
     processUpgradableItems(villageExport.spells, 'home');
-
-    // Process Builder Base items
+    processUpgradableItems(villageExport.traps, 'home');
     processUpgradableItems(villageExport.buildings2, 'builderBase');
     processUpgradableItems(villageExport.heroes2, 'builderBase');
+    processUpgradableItems(villageExport.traps2, 'builderBase');
 
 
     // Process all buildings for level mapping
@@ -165,17 +170,15 @@ export function analyzeVillage(villageExport: any): VillageAnalysis {
     villageExport.spells?.forEach((s: any) => {
         const staticSpell = getStaticDataById(s.data);
         let name = staticSpell?.name;
-        if (!name) return;
+        if (!name || !staticSpell) return;
         
         if (s.data === 26000000) { // Lightning spell is an outlier
             name += " Spell"
-        } else if (name.endsWith("Spell")) {
-            // no change
-        } else if (staticSpell.production_building?.includes("Spell")) {
+        } else if (!name.endsWith("Spell") && staticSpell.production_building?.includes("Spell")) {
             name += " Spell"
         }
         
-        if (staticSpell) analysis.spells[name] = s.lvl;
+        analysis.spells[name] = s.lvl;
     });
 
     analysis.ongoingUpgrades.sort((a, b) => a.secondsRemaining - b.secondsRemaining);

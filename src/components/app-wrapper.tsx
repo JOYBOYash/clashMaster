@@ -14,12 +14,13 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const pathname = usePathname();
   const isSignInPage = pathname === '/sign-in';
-  const isNotFoundPage = pathname === '/not-found'; // Next.js doesn't route to /not-found, but we can check if a page component indicates it's a 404. Let's make the logic simpler.
   
-  // Pages that should NOT have the main header
+  // Pages that should NOT have the main header or the background pattern
   const noHeaderPages = ['/sign-in'];
+  const noBgPatternPages = ['/upgrades'];
 
   const showHeader = user && !noHeaderPages.includes(pathname);
+  const showBgPattern = !noBgPatternPages.includes(pathname);
 
   useEffect(() => {
     const refreshPlayerData = async () => {
@@ -45,7 +46,10 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
+    <div className={cn(
+      "flex flex-col min-h-screen bg-background text-foreground font-body relative",
+      showBgPattern && "bg-pattern"
+    )}>
       {showHeader && <MainHeader />}
       <main className={cn(
         "flex-grow flex flex-col items-stretch",

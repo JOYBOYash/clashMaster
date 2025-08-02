@@ -9,9 +9,9 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Image from 'next/image';
-import { getImagePath, challengeBadge } from '@/lib/image-paths';
+import { getImagePath } from '@/lib/image-paths';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BookOpen, ShieldQuestion, UploadCloud, CheckCircle } from 'lucide-react';
+import { BookOpen, ShieldQuestion, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -26,7 +26,7 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
             title: "Army Loaded",
             description: `"${composition.name}" is ready in the Council.`,
         });
-        router.push('/war-council');
+        router.push('/army');
     };
 
     return (
@@ -37,12 +37,9 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
                         <CardTitle>{composition.name}</CardTitle>
                         <CardDescription>Town Hall {composition.townHallLevel}</CardDescription>
                     </div>
-                     <button onClick={handleLoadArmy} className="relative w-24 h-10 shrink-0 group transition-transform hover:scale-105 active:scale-95">
-                        <Image src={challengeBadge} layout="fill" objectFit="contain" alt="Load Army" unoptimized />
-                         <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white text-shadow-custom-sm">
-                            <UploadCloud className="mr-1 h-4 w-4" /> Load
-                        </div>
-                    </button>
+                     <Button onClick={handleLoadArmy} size="sm">
+                        <UploadCloud className="mr-2 h-4 w-4" /> Load
+                    </Button>
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -99,31 +96,6 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
     )
 }
 
-const StrategyStep = ({ step }: { step: any }) => {
-    const hasImage = step.unitName && step.unitName !== 'General';
-    const imagePath = hasImage ? getImagePath(step.unitName) : '';
-
-    return (
-        <div className="flex items-start gap-4 py-3">
-            {hasImage && (
-                 <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
-                    <Image src={imagePath} alt={step.unitName} fill className="object-contain" unoptimized />
-                </div>
-            )}
-             {!hasImage && (
-                 <div className="shrink-0 w-16 h-16 flex items-center justify-center bg-black/20 rounded-md border border-border">
-                    <CheckCircle className="w-8 h-8 text-primary/50" />
-                 </div>
-            )}
-            <div className="flex-grow">
-                <h5 className="font-bold font-headline">{step.title}</h5>
-                <p className="text-sm text-muted-foreground">{step.description}</p>
-            </div>
-        </div>
-    )
-}
-
-
 const StrategyCard = ({ strategy }: { strategy: any }) => {
     return (
         <Card>
@@ -143,7 +115,17 @@ const StrategyCard = ({ strategy }: { strategy: any }) => {
                                         <AccordionContent>
                                             <div className="divide-y divide-border">
                                                 {phase.steps.map((step: any, stepIndex: number) => (
-                                                    <StrategyStep key={stepIndex} step={step} />
+                                                     <div className="flex items-start gap-4 py-3" key={stepIndex}>
+                                                        {step.unitName && step.unitName !== 'General' && (
+                                                            <div className="relative shrink-0 w-16 h-16 bg-black/20 rounded-md p-1 border border-border">
+                                                                <Image src={getImagePath(step.unitName)} alt={step.unitName} fill className="object-contain" unoptimized />
+                                                            </div>
+                                                        )}
+                                                        <div className="flex-grow">
+                                                            <h5 className="font-bold font-headline">{step.title}</h5>
+                                                            <p className="text-sm text-muted-foreground">{step.description}</p>
+                                                        </div>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </AccordionContent>

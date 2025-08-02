@@ -15,12 +15,12 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isSignInPage = pathname === '/sign-in';
   
-  // Pages that should NOT have the main header or the background pattern
+  // Pages that should NOT have the main header
   const noHeaderPages = ['/sign-in'];
-  const noBgPatternPages = ['/upgrades'];
+  // The upgrades page will have its own pattern handled on the page itself
+  const showBgPattern = !['/upgrades'].includes(pathname);
 
   const showHeader = user && !noHeaderPages.includes(pathname);
-  const showBgPattern = !noBgPatternPages.includes(pathname);
 
   useEffect(() => {
     const refreshPlayerData = async () => {
@@ -48,7 +48,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className={cn(
       "flex flex-col min-h-screen bg-background text-foreground font-body relative",
-      showBgPattern && "bg-pattern"
+       showBgPattern && "bg-pattern"
     )}>
       {showHeader && <MainHeader />}
       <main className={cn(

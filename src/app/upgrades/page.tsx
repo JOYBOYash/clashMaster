@@ -163,7 +163,7 @@ export default function UpgradesPage() {
   }, [analysis]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 bg-upgrades-pattern">
       <Card>
         <CardHeader>
           <CardTitle>Village Upgrade Planner</CardTitle>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -164,8 +165,30 @@
         url('/assets/challenge-badge.png');
   }
 
-  .no-bg-pattern::before {
-    display: none;
+  .bg-upgrades-pattern::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 200vh;
+    transform: rotate(-15deg) translate(-25%, -25%);
+    background-image: 
+        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
+        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
+        url('/assets/timer-badge.png');
+    background-size: 200px 200px, 200px 200px, 100px 100px;
+    background-position: 50px 50px, 50px 50px, 0 0;
+    opacity: 0.1;
+    z-index: -1;
+  }
+  
+  .dark .bg-upgrades-pattern::before {
+     opacity: 0.04;
+     background-image: 
+        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
+        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
+        url('/assets/timer-badge.png');
   }
 }
 

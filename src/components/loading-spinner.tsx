@@ -3,8 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from './ui/button';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from './ui/progress';
 import { heroAvatarAssets } from '@/lib/image-paths';
@@ -33,11 +34,6 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
   const [isVisible, setIsVisible] = useState(show);
 
   useEffect(() => {
-    setCurrentTriviaIndex(Math.floor(Math.random() * trivia.length));
-    setCurrentAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
-  }, []);
-
-  useEffect(() => {
     if (!show) {
       const timer = setTimeout(() => setIsVisible(false), 500);
       return () => clearTimeout(timer);
@@ -47,9 +43,17 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
   }, [show]);
 
   const nextTrivia = () => {
-    setCurrentTriviaIndex((prevIndex) => (prevIndex + 1) % trivia.length);
-    setCurrentAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
+    setCurrentTriviaIndex((prevIndex) => {
+      const newIndex = (prevIndex + 1) % trivia.length;
+      setCurrentAvatar(heroAvatarAssets[Math.floor(Math.random() * heroAvatarAssets.length)]);
+      return newIndex;
+    });
   };
+
+  useEffect(() => {
+    const triviaInterval = setInterval(nextTrivia, 5000); // Rotate every 5 seconds
+    return () => clearInterval(triviaInterval);
+  }, []);
   
   if (!isVisible) {
     return null;
@@ -119,10 +123,18 @@ export function LoadingSpinner({ show, progress, total }: { show: boolean, progr
             </div>
           )}
 
-          <Button variant="outline" size="sm" onClick={nextTrivia}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Next Tip
-          </Button>
+          <div className="flex items-center gap-2">
+             <Button variant="outline" size="sm" onClick={nextTrivia}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Next Tip
+             </Button>
+             <Button asChild variant="ghost" size="sm">
+                <Link href="/">
+                    <Home className="mr-2 h-4 w-4"/>
+                    Back to Home
+                </Link>
+             </Button>
+          </div>
         </div>
       </div>
     </div>

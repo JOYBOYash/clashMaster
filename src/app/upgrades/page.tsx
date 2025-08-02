@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer } from 'lucide-react';
+import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, HelpCircle } from 'lucide-react';
 import { suggestUpgrades } from '@/ai/flows/suggest-upgrades';
 import { type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/schemas';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,7 @@ import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib
 import Image from 'next/image';
 import { getImagePath, timeBadge } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 function formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Done';
@@ -211,7 +212,33 @@ export default function UpgradesPage() {
             </Card>
 
             <div className="space-y-6">
-                <h2 className="text-2xl font-headline flex items-center gap-3"><Clock /> Ongoing Upgrades</h2>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h2 className="text-2xl font-headline flex items-center gap-3"><Clock /> Ongoing Upgrades</h2>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>Data not live?</span>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-5 w-5"><HelpCircle className="h-4 w-4"/></Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                <DialogTitle>How to Refresh Your Upgrade Data</DialogTitle>
+                                <DialogDescription>
+                                    This app uses a manual data export from the game to see your progress. To get the latest data, follow these steps:
+                                </DialogDescription>
+                                </DialogHeader>
+                                <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                                    <li>Open Clash of Clans on your device.</li>
+                                    <li>Go to **Settings** (the gear icon).</li>
+                                    <li>Tap on **More Settings**.</li>
+                                    <li>Scroll down and tap the **Export Village** button. This copies your village data.</li>
+                                    <li>Come back here, go to the **<Link href="/settings" className='text-primary underline'>Settings</Link>** page.</li>
+                                    <li>Paste the data into the "Village Export JSON" box and click **Save and Analyze**.</li>
+                                </ol>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
                 
                 {homeUpgrades.length > 0 && (
                     <Card no-hover className="overflow-hidden">

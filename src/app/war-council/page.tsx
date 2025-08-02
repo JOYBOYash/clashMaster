@@ -494,12 +494,9 @@ export default function WarCouncilPage() {
                             
                                 <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <button disabled={Object.keys(army).length === 0 && heroes.length === 0} className="relative w-28 h-12 shrink-0 group transition-transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50">
-                                        <Image src={challengeBadge} layout="fill" objectFit="contain" alt="Save Army" unoptimized />
-                                        <div className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white text-shadow-custom-sm">
-                                            <Bookmark className="mr-1 h-4 w-4" /> Save
-                                        </div>
-                                    </button>
+                                     <Button size="sm" disabled={Object.keys(army).length === 0 && heroes.length === 0}>
+                                        <Bookmark className="mr-1 h-4 w-4" /> Save
+                                    </Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>

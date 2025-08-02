@@ -13,7 +13,7 @@ import { UnitNotificationHub } from "./unit-notification-hub";
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const pathname = usePathname();
-  const isSignInPage = pathname === '/sign-in';
+  const isSignInPage = pathname === '/';
   
   // Pages that should NOT have the main header
   const noHeaderPages = ['/sign-in'];

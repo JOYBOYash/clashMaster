@@ -37,7 +37,7 @@ const ArmyCompositionCard = ({ composition }: { composition: any }) => {
                         <CardTitle>{composition.name}</CardTitle>
                         <CardDescription>Town Hall {composition.townHallLevel}</CardDescription>
                     </div>
-                     <Button onClick={handleLoadArmy} size="sm">
+                     <Button onClick={handleLoadArmy} size="sm" className="px-2 sm:px-3 text-xs sm:text-sm">
                         <UploadCloud className="mr-2 h-4 w-4" /> Load
                     </Button>
                 </div>

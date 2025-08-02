@@ -12,8 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { deleteUserData } from '@/lib/firebase-service';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Moon, Sun, Trash2, RefreshCcw, Loader2, Save } from 'lucide-react';
-import { Textarea } from '@/components/ui/textarea';
+import { Moon, Sun, Trash2, RefreshCcw, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SettingsPage() {
@@ -22,55 +21,12 @@ export default function SettingsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [playerJson, setPlayerJson] = useState('');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const storedData = localStorage.getItem('villageExportData');
-    if (storedData) {
-      try {
-        const parsedData = JSON.parse(storedData);
-        setPlayerJson(JSON.stringify(parsedData, null, 2));
-      } catch {
-        setPlayerJson(storedData);
-      }
-    }
-  }, [mounted]);
-
-  const handleClearLocalData = () => {
-    localStorage.removeItem('villageExportData');
-    setPlayerJson('');
-    toast({
-      title: 'Local Village Data Cleared',
-      description: 'Your manual village export data has been cleared.',
-    });
-  };
-
-  const handleSavePlayerData = () => {
-    try {
-      const parsedData = JSON.parse(playerJson);
-       if (!parsedData.tag) {
-          throw new Error("JSON is missing required 'tag' property.");
-      }
-      localStorage.setItem('villageExportData', playerJson);
-      toast({
-        title: 'Village Data Saved',
-        description: 'Your village export data has been saved locally.',
-      });
-      router.push('/upgrades');
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid JSON',
-        description: error.message || 'The data you entered is not valid JSON. Please correct it and try again.',
-      });
-    }
-  };
 
   const handleDeleteAccount = async () => {
     if (!user) {
@@ -80,12 +36,20 @@ export default function SettingsPage() {
     setIsDeleting(true);
     try {
       await deleteUserData(user.uid);
+      // Also clear local data on account deletion
+      localStorage.removeItem('playerData');
+      localStorage.removeItem('villageExportData');
+      localStorage.removeItem('maxTroopSpace');
+      localStorage.removeItem('maxSpellSpace');
+      localStorage.removeItem('clanTag');
+      
       toast({
         title: 'Account Data Deleted',
         description: 'All your stored data has been successfully deleted.',
       });
-      await signOut();
-      router.push('/');
+      
+      await signOut(); // This will redirect to home
+      
     } catch (error) {
       console.error("Failed to delete user data:", error);
       toast({ variant: 'destructive', title: 'Deletion Failed', description: 'Could not delete your account data.' });
@@ -134,38 +98,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl sm:text-2xl">Village Data Management</CardTitle>
-          <CardDescription>
-            Manually manage your village data using the game's JSON export. This is used by the <Button variant="link" className="p-0 h-auto text-base" asChild><Link href="/upgrades">Upgrades</Link></Button> page.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-            <div className="space-y-2">
-                <Label htmlFor="player-json">Village Export JSON</Label>
-                <Textarea 
-                    id="player-json"
-                    value={playerJson}
-                    onChange={(e) => setPlayerJson(e.target.value)}
-                    rows={10}
-                    placeholder='Paste your village export JSON here. You can get this from the in-game settings under "More Settings" -> "Export Village".'
-                    className="text-xs"
-                />
-            </div>
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <Button variant="outline" onClick={handleClearLocalData} className="w-full sm:w-auto">
-                    <RefreshCcw className="mr-2 h-4 w-4" />
-                    Clear Data
-                </Button>
-                 <Button onClick={handleSavePlayerData} className="w-full sm:w-auto">
-                    <Save className="mr-2 h-4 w-4" />
-                    Save and Analyze
-                </Button>
-            </div>
-        </CardContent>
-      </Card>
-
       <Card className="border-destructive/50">
         <CardHeader>
           <CardTitle className="text-destructive text-xl sm:text-2xl">Danger Zone</CardTitle>
@@ -176,7 +108,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5 flex-grow">
                     <Label className="text-base text-destructive">Delete Account Data</Label>
                     <p className="text-sm text-muted-foreground pr-4">
-                        Permanently delete all your saved armies and strategies from our servers.
+                        Permanently delete all your saved armies, strategies, and local settings from our servers and your browser.
                     </p>
                 </div>
                  <AlertDialog>
@@ -190,7 +122,7 @@ export default function SettingsPage() {
                         <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action is irreversible. All of your saved army compositions and AI strategies will be permanently deleted. Your user authentication will remain, but all associated data will be gone.
+                            This action is irreversible. All of your saved army compositions and AI strategies will be permanently deleted from our database. Your local player data and settings will also be cleared from this browser. Your authentication account will remain, but all associated application data will be gone.
                         </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

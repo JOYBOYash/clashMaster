@@ -1,14 +1,12 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, HelpCircle } from 'lucide-react';
+import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, HelpCircle, Check, Settings } from 'lucide-react';
 import { suggestUpgrades } from '@/ai/flows/suggest-upgrades';
 import { type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/schemas';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
@@ -44,17 +42,20 @@ const UpgradeSectionHeader = ({ title, icon: Icon }: { title: string, icon: Reac
     </div>
 );
 
-const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
+const UpgradeTimer = ({ upgrade, onComplete }: { upgrade: OngoingUpgrade, onComplete: (upgrade: OngoingUpgrade) => void }) => {
     const [timeLeft, setTimeLeft] = useState(upgrade.secondsRemaining);
     const imagePath = getImagePath(upgrade.name.replace(/ Research$/, ''));
 
     useEffect(() => {
-        if (timeLeft <= 0) return;
+        if (timeLeft <= 0) {
+            onComplete(upgrade);
+            return;
+        };
         const interval = setInterval(() => {
             setTimeLeft(prev => Math.max(0, prev - 1));
         }, 1000);
         return () => clearInterval(interval);
-    }, [timeLeft]);
+    }, [timeLeft, onComplete, upgrade]);
 
     const progress = upgrade.totalDurationInSeconds > 0
         ? ((upgrade.totalDurationInSeconds - timeLeft) / upgrade.totalDurationInSeconds) * 100
@@ -85,25 +86,40 @@ const UpgradeTimer = ({ upgrade }: { upgrade: OngoingUpgrade }) => {
     );
 };
 
+const CompletedUpgradeItem = ({ item }: { item: OngoingUpgrade }) => {
+    const imagePath = getImagePath(item.name.replace(/ Research$/, ''));
+    return (
+         <div className="flex items-center gap-4 p-3 bg-card hover:bg-muted/50 transition-colors rounded-lg border">
+            <div className="relative shrink-0 w-12 h-12 bg-black/20 rounded-md p-1 border border-border">
+                <Image src={imagePath} alt={item.name} fill className="object-contain" unoptimized />
+            </div>
+            <div className="flex-grow">
+                 <p className="font-bold text-sm truncate">{item.name} to Lvl {item.level}</p>
+            </div>
+            <div className="flex items-center gap-2 text-green-400">
+                <Check className="w-5 h-5"/>
+                <span className="font-bold text-sm">Finished</span>
+            </div>
+        </div>
+    )
+}
 
 const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
-    const priorityColor = {
-        High: 'bg-red-900/30 text-red-300 border-red-500/30 hover:border-red-500/60',
-        Medium: 'bg-yellow-800/20 text-yellow-300 border-yellow-500/30 hover:border-yellow-500/60',
-        Low: 'bg-green-900/30 text-green-400 border-green-500/30 hover:border-green-500/60',
-    };
+    const priorityStyles = {
+        High: "bg-[#be123c] border-[#881337] text-shadow-[1px_1px_2px_#881337]",
+        Medium: "bg-[#a16207] border-[#78350f] text-shadow-[1px_1px_2px_#78350f]",
+        Low: "bg-[#166534] border-[#14532d] text-shadow-[1px_1px_2px_#14532d]",
+    }
+
     return (
-        <Card className={cn("transition-all h-full flex flex-col", priorityColor[suggestion.priority])}>
-            <CardHeader>
-                <div className="flex justify-between items-center">
-                    <CardTitle className="text-lg">{suggestion.title}</CardTitle>
-                    <Badge variant="outline" className={cn("border-current")}>{suggestion.priority}</Badge>
-                </div>
-            </CardHeader>
-            <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground">{suggestion.description}</p>
-            </CardContent>
-        </Card>
+        <div className={cn(
+            "relative p-4 rounded-md text-white border-b-4",
+            priorityStyles[suggestion.priority]
+        )}>
+            <div className="absolute -top-2 -left-2 px-2 py-0.5 bg-black/50 text-white text-xs font-bold uppercase rounded">{suggestion.priority} Priority</div>
+            <h4 className="text-lg font-bold font-headline mt-2">{suggestion.title}</h4>
+            <p className="text-sm text-white/80 mt-1">{suggestion.description}</p>
+        </div>
     )
 }
 
@@ -113,12 +129,22 @@ export default function UpgradesPage() {
   const [suggestions, setSuggestions] = useState<SuggestUpgradesOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  
+  const [ongoingUpgrades, setOngoingUpgrades] = useState<OngoingUpgrade[]>([]);
+  const [completedUpgrades, setCompletedUpgrades] = useState<OngoingUpgrade[]>([]);
 
+  const handleUpgradeComplete = useCallback((completedUpgrade: OngoingUpgrade) => {
+    setOngoingUpgrades(prev => prev.filter(upg => upg !== completedUpgrade));
+    setCompletedUpgrades(prev => [completedUpgrade, ...prev].slice(0, 5)); // Keep only the last 5
+  }, []);
+  
   const loadAndAnalyze = useCallback(async () => {
     setLoading(true);
     setError(null);
     setSuggestions(null);
     setAnalysis(null);
+    setOngoingUpgrades([]);
+    setCompletedUpgrades([]);
 
     try {
       const villageExportJson = localStorage.getItem('villageExportData');
@@ -132,6 +158,7 @@ export default function UpgradesPage() {
       const villageData = JSON.parse(villageExportJson);
       const villageAnalysis = analyzeVillage(villageData);
       setAnalysis(villageAnalysis);
+      setOngoingUpgrades(villageAnalysis.ongoingUpgrades);
       
       const aiSuggestions = await suggestUpgrades(villageAnalysis);
       setSuggestions(aiSuggestions);
@@ -153,14 +180,14 @@ export default function UpgradesPage() {
   const { homeUpgrades, builderUpgrades } = useMemo(() => {
     const home: OngoingUpgrade[] = [];
     const builder: OngoingUpgrade[] = [];
-    if (analysis?.ongoingUpgrades) {
-        analysis.ongoingUpgrades.forEach(upg => {
+    if (ongoingUpgrades) {
+        ongoingUpgrades.forEach(upg => {
             if(upg.village === 'home') home.push(upg);
             else builder.push(upg);
         });
     }
     return { homeUpgrades: home, builderUpgrades: builder };
-  }, [analysis]);
+  }, [ongoingUpgrades]);
 
   return (
     <div className="space-y-8 bg-upgrades-pattern">
@@ -244,7 +271,7 @@ export default function UpgradesPage() {
                     <Card no-hover className="overflow-hidden">
                         <UpgradeSectionHeader title="Home Village" icon={Home} />
                         <div className="divide-y divide-border">
-                            {homeUpgrades.map((upg, index) => <UpgradeTimer key={`home-${index}`} upgrade={upg} />)}
+                            {homeUpgrades.map((upg, index) => <UpgradeTimer key={`home-${index}`} upgrade={upg} onComplete={handleUpgradeComplete} />)}
                         </div>
                     </Card>
                 )}
@@ -253,19 +280,40 @@ export default function UpgradesPage() {
                      <Card no-hover className="overflow-hidden">
                         <UpgradeSectionHeader title="Builder Base" icon={Hammer} />
                          <div className="divide-y divide-border">
-                            {builderUpgrades.map((upg, index) => <UpgradeTimer key={`builder-${index}`} upgrade={upg} />)}
+                            {builderUpgrades.map((upg, index) => <UpgradeTimer key={`builder-${index}`} upgrade={upg} onComplete={handleUpgradeComplete}/>)}
                         </div>
                     </Card>
                 )}
                 
-                {analysis.ongoingUpgrades.length === 0 && (
+                {ongoingUpgrades.length === 0 && (
                     <Card>
-                        <CardContent className="p-6">
-                            <p className="text-muted-foreground text-center py-4">No ongoing upgrades detected in either village.</p>
+                        <CardContent className="p-6 text-center space-y-4">
+                           <div className='p-4 rounded-full bg-green-500/20 inline-block'>
+                             <Check className="w-10 h-10 text-green-400" />
+                           </div>
+                           <h4 className='text-xl font-headline'>All Builders Free!</h4>
+                            <p className="text-muted-foreground max-w-md mx-auto">Your builders and laboratory are waiting for new tasks. Update your village data to get fresh AI recommendations.</p>
+                            <Button asChild>
+                                <Link href="/settings">
+                                    <Settings className="mr-2 h-4 w-4"/>
+                                    Update Data in Settings
+                                </Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 )}
             </div>
+
+            {completedUpgrades.length > 0 && (
+                 <div className="space-y-4">
+                     <h2 className="text-2xl font-headline flex items-center gap-3"><Check /> Recently Completed</h2>
+                     <div className="space-y-2">
+                        {completedUpgrades.map((item, index) => (
+                           <CompletedUpgradeItem key={index} item={item} />
+                        ))}
+                     </div>
+                 </div>
+            )}
         </div>
       )}
     </div>

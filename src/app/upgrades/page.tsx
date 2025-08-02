@@ -1,15 +1,15 @@
+
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, HelpCircle, Check, Settings, Flame } from 'lucide-react';
+import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, Check, Settings, Flame } from 'lucide-react';
 import { suggestUpgrades } from '@/ai/flows/suggest-upgrades';
 import { type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/schemas';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import Link from 'next/link';
 import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
 import Image from 'next/image';
 import { getImagePath, timeBadge } from '@/lib/image-paths';
@@ -24,13 +24,11 @@ function formatDuration(seconds: number): string {
     const d = Math.floor(seconds / (3600 * 24));
     const h = Math.floor((seconds % (3600 * 24)) / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-
+    
     const parts: string[] = [];
     if (d > 0) parts.push(`${d}d`);
     if (h > 0) parts.push(`${h}h`);
     if (m > 0) parts.push(`${m}m`); 
-    if (s > 0 && d === 0 && h === 0) parts.push(`${s}s`);
     
     if (parts.length === 0 && seconds > 0) return '<1m';
     if (parts.length === 0) return 'Done';
@@ -108,28 +106,39 @@ const CompletedUpgradeItem = ({ item }: { item: OngoingUpgrade }) => {
 
 const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
     const priorityStyles = {
-        High: "bg-red-800/80 border-red-600/50 text-shadow-[1px_1px_2px_#500]",
-        Medium: "bg-yellow-700/80 border-yellow-500/50 text-shadow-[1px_1px_2px_#550]",
-        Low: "bg-green-800/80 border-green-600/50 text-shadow-[1px_1px_2px_#050]",
+        High: "bg-gradient-to-br from-red-600/30 to-red-800/30 border-red-500/50 text-shadow-[0_2px_4px_#0005]",
+        Medium: "bg-gradient-to-br from-yellow-500/30 to-yellow-700/30 border-yellow-400/50 text-shadow-[0_2px_4px_#0005]",
+        Low: "bg-gradient-to-br from-green-600/30 to-green-800/30 border-green-500/50 text-shadow-[0_2px_4px_#0005]",
     }
     
     const priorityIcons = {
-        High: <><Flame className="w-4 h-4" /><Flame className="w-4 h-4" /><Flame className="w-4 h-4" /></>,
-        Medium: <><Flame className="w-4 h-4" /><Flame className="w-4 h-4" /></>,
-        Low: <Flame className="w-4 h-4" />,
+        High: <><Flame className="w-4 h-4 text-red-300" /><Flame className="w-4 h-4 text-red-300" /><Flame className="w-4 h-4 text-red-300" /></>,
+        Medium: <><Flame className="w-4 h-4 text-yellow-300" /><Flame className="w-4 h-4 text-yellow-300" /></>,
+        Low: <Flame className="w-4 h-4 text-green-300" />,
     }
 
     return (
-        <div className={cn(
-            "relative p-4 rounded-lg text-white border-2 border-black/20 shadow-lg",
-            priorityStyles[suggestion.priority]
+         <div className={cn(
+            "relative p-4 rounded-lg border-2 text-white shadow-lg overflow-hidden",
+            "border-black/30 dark:border-black/50 bg-card",
+            "transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl"
         )}>
-            <div className="absolute -top-3 left-3 px-2 py-1 bg-black/50 text-primary-foreground text-xs font-bold uppercase rounded-full flex items-center gap-1 border-2 border-black/20 backdrop-blur-sm">
-                {priorityIcons[suggestion.priority]}
-                <span className="hidden sm:inline">{suggestion.priority} Priority</span>
+             <div className={cn("absolute inset-0 z-0 opacity-40", priorityStyles[suggestion.priority])}></div>
+             <div 
+                className="absolute inset-0 z-0 opacity-5"
+                style={{backgroundImage: `url(${timeBadge.src})`, backgroundSize: '20%'}}
+            ></div>
+
+            <div className="relative z-10">
+                <div className="absolute -top-2 -right-2 w-16 h-16">
+                     <div className="absolute inset-0 bg-black/40 rounded-full blur-lg"></div>
+                     <div className="absolute inset-2 bg-black/30 rounded-full flex items-center justify-center p-2 border-2 border-black/20 backdrop-blur-sm">
+                        {priorityIcons[suggestion.priority]}
+                    </div>
+                </div>
+                <h4 className="text-xl font-bold font-headline text-shadow-custom">{suggestion.title}</h4>
+                <p className="text-sm text-white/90 mt-1">{suggestion.description}</p>
             </div>
-            <h4 className="text-xl font-bold font-headline mt-4">{suggestion.title}</h4>
-            <p className="text-sm text-white/90 mt-1">{suggestion.description}</p>
         </div>
     )
 }
@@ -167,7 +176,6 @@ export default function UpgradesPage() {
         setIsModalOpen(false);
 
         try {
-            console.log(`Analyzing village data from local data...`);
             const villageData = JSON.parse(villageExportJson);
             const villageAnalysis = analyzeVillage(villageData);
             setAnalysis(villageAnalysis);
@@ -188,7 +196,12 @@ export default function UpgradesPage() {
     useEffect(() => {
         const storedData = localStorage.getItem('villageExportData');
         setPlayerJson(storedData || '');
-        loadAndAnalyze(storedData);
+        if (storedData) {
+            loadAndAnalyze(storedData);
+        } else {
+            setLoading(false);
+            setError("No village data found. Please use the button above to import your village data.");
+        }
     }, [loadAndAnalyze]);
 
     const handleSaveAndAnalyze = () => {

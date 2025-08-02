@@ -122,15 +122,6 @@
 }
 
 @layer utilities {
-  @keyframes spin-rays {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
   .animate-spin-rays {
     animation: spin-rays 10s linear infinite;
   }
@@ -144,25 +135,15 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 200vw;
-    height: 200vh;
-    transform: rotate(-15deg) translate(-25%, -25%);
+    width: 100vw;
+    height: 100vh;
     background-image: 
-        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
-        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
-        url('/assets/challenge-badge.png');
-    background-size: 200px 200px, 200px 200px, 100px 100px;
-    background-position: 50px 50px, 50px 50px, 0 0;
-    opacity: 0.1;
+        radial-gradient(circle at 25% 25%, hsl(var(--primary) / 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 75% 75%, hsl(var(--secondary) / 0.05) 0%, transparent 40%);
+    background-size: 100% 100%;
+    opacity: 0.5;
     z-index: -1;
-  }
-  
-  .dark .bg-pattern::before {
-    opacity: 0.04;
-    background-image: 
-        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
-        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
-        url('/assets/challenge-badge.png');
+    animation: pulse-bg 15s ease-in-out infinite;
   }
 
   .bg-upgrades-pattern::before {
@@ -170,59 +151,33 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 200vw;
-    height: 200vh;
-    transform: rotate(-15deg) translate(-25%, -25%);
-    background-image: 
-        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
-        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
-        url('/assets/timer-badge.png');
-    background-size: 200px 200px, 200px 200px, 100px 100px;
-    background-position: 50px 50px, 50px 50px, 0 0;
-    opacity: 0.1;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/assets/timer-badge.png');
+    background-size: 80px 80px;
+    opacity: 0.03;
     z-index: -1;
+    animation: pan-bg 60s linear infinite;
   }
-  
-  .dark .bg-upgrades-pattern::before {
-     opacity: 0.04;
-     background-image: 
-        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
-        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
-        url('/assets/timer-badge.png');
+
+  @keyframes spin-rays {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse-bg {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  @keyframes pan-bg {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
   }
 }
-
 
 @layer components {
   .themed-card {
     @apply bg-gradient-to-br from-green-100/40 to-blue-100/30 dark:from-green-900/20 dark:to-blue-900/20 border-green-500/30 rounded-xl shadow-lg;
-  }
-
-  .bg-primary.group::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: linear-gradient(
-      100deg,
-      rgba(255, 255, 255, 0) 10%,
-      rgba(255, 255, 255, 0.4) 50%,
-      rgba(255, 255, 255, 0) 90%
-    );
-    background-size: 200% 100%;
-    background-position-x: 200%;
-    transition: background-position-x 0s ease-in-out;
-  }
-
-  .bg-primary.group:hover::after {
-    animation: shine 1.2s ease-in-out;
-  }
-
-  @keyframes shine {
-    to {
-      background-position-x: -200%;
-    }
   }
 }

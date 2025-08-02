@@ -143,13 +143,25 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: url('/assets/challenge-badge.png');
-    background-repeat: repeat;
-    background-size: 150px;
-    opacity: 0.03;
-    z-index: -1; /* Place it behind everything */
+    width: 200vw;
+    height: 200vh;
+    transform: rotate(-15deg) translate(-25%, -25%);
+    background-image: 
+        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
+        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.05) 49.5%, hsl(var(--primary) / 0.05) 50.5%, transparent 50.5%),
+        url('/assets/challenge-badge.png');
+    background-size: 200px 200px, 200px 200px, 100px 100px;
+    background-position: 50px 50px, 50px 50px, 0 0;
+    opacity: 0.1;
+    z-index: -1;
+  }
+  
+  .dark .bg-pattern::before {
+    opacity: 0.04;
+    background-image: 
+        linear-gradient(45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
+        linear-gradient(-45deg, transparent, transparent 49.5%, hsl(var(--primary) / 0.1) 49.5%, hsl(var(--primary) / 0.1) 50.5%, transparent 50.5%),
+        url('/assets/challenge-badge.png');
   }
 
   .no-bg-pattern::before {

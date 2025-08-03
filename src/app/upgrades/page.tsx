@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -105,43 +105,33 @@ const CompletedUpgradeItem = ({ item }: { item: OngoingUpgrade }) => {
 }
 
 const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
-    const priorityStyles = {
-        High: "bg-gradient-to-br from-red-600/30 to-red-800/30 border-red-500/50 text-shadow-[0_2px_4px_#0005]",
-        Medium: "bg-gradient-to-br from-yellow-500/30 to-yellow-700/30 border-yellow-400/50 text-shadow-[0_2px_4px_#0005]",
-        Low: "bg-gradient-to-br from-green-600/30 to-green-800/30 border-green-500/50 text-shadow-[0_2px_4px_#0005]",
-    }
-    
     const priorityIcons = {
-        High: <><Flame className="w-4 h-4 text-red-300" /><Flame className="w-4 h-4 text-red-300" /><Flame className="w-4 h-4 text-red-300" /></>,
-        Medium: <><Flame className="w-4 h-4 text-yellow-300" /><Flame className="w-4 h-4 text-yellow-300" /></>,
-        Low: <Flame className="w-4 h-4 text-green-300" />,
-    }
+        High: <><Flame className="w-5 h-5" /><Flame className="w-5 h-5" /><Flame className="w-5 h-5" /></>,
+        Medium: <><Flame className="w-5 h-5" /><Flame className="w-5 h-5" /></>,
+        Low: <Flame className="w-5 h-5" />,
+    };
 
     return (
          <div className={cn(
-            "relative p-4 rounded-lg border-2 text-white shadow-lg overflow-hidden",
-            "border-black/30 dark:border-black/50 bg-card",
+            "relative p-4 rounded-lg border-2 shadow-lg overflow-hidden",
+            "bg-primary text-primary-foreground border-primary-foreground/20",
             "transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl"
         )}>
-             <div className={cn("absolute inset-0 z-0 opacity-40", priorityStyles[suggestion.priority])}></div>
              <div 
-                className="absolute inset-0 z-0 opacity-5"
+                className="absolute inset-0 z-0 opacity-10"
                 style={{backgroundImage: `url(${timeBadge.src})`, backgroundSize: '20%'}}
             ></div>
 
             <div className="relative z-10">
-                <div className="absolute -top-2 -right-2 w-16 h-16">
-                     <div className="absolute inset-0 bg-black/40 rounded-full blur-lg"></div>
-                     <div className="absolute inset-2 bg-black/30 rounded-full flex items-center justify-center p-2 border-2 border-black/20 backdrop-blur-sm">
-                        {priorityIcons[suggestion.priority]}
-                    </div>
+                 <div className="absolute top-2 right-2 flex gap-1 text-primary-foreground/80">
+                    {priorityIcons[suggestion.priority]}
                 </div>
                 <h4 className="text-xl font-bold font-headline text-shadow-custom">{suggestion.title}</h4>
-                <p className="text-sm text-white/90 mt-1">{suggestion.description}</p>
+                <p className="text-sm mt-1">{suggestion.description}</p>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default function UpgradesPage() {
     const [loading, setLoading] = useState(true);

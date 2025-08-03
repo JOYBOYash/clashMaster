@@ -18,6 +18,8 @@ export const separator = '/assets/separator.png';
 export const timeBadge = '/assets/timer-badge.png';
 export const challengeBadge = '/assets/challenge-badge.png';
 export const probuilderAvatar = '/assets/pb.png';
+export const done = "/assets/done.png";
+export const lock = "/assets/lock.png";
 
 
 export const carouselImageAssets = [

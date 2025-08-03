@@ -12,7 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { analyzeVillage, type VillageAnalysis, type OngoingUpgrade } from '@/lib/village-analyzer';
 import Image from 'next/image';
-import { getImagePath, timeBadge } from '@/lib/image-paths';
+import { getImagePath, timeBadge, probuilderAvatar, done } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -91,7 +91,7 @@ const CompletedUpgradeItem = ({ item }: { item: OngoingUpgrade }) => {
                  <p className="font-bold text-sm truncate">{item.name} to Lvl {item.level}</p>
             </div>
             <div className="flex items-center gap-2 text-green-400">
-                <Check className="w-5 h-5"/>
+                <Image src={done} alt="Completed" width={20} height={20} unoptimized />
                 <span className="font-bold text-sm">Finished</span>
             </div>
         </div>
@@ -266,9 +266,16 @@ export default function UpgradesPage() {
                                     {suggestions.suggestions.slice(0, 5).map((sug, index) => <SuggestionCard key={index} suggestion={sug} />)}
                                 </div>
                             ) : (
-                                <div className="flex justify-center items-center h-full min-h-[10rem]">
-                                    <Loader2 className="animate-spin text-primary w-8 h-8" />
-                                    <p className="ml-3 text-muted-foreground">AI is thinking...</p>
+                                <div className="flex flex-col items-center justify-center text-center gap-4 p-8 min-h-[20rem]">
+                                    <Image src={probuilderAvatar} alt="ProBuilder AI Assistant" width={100} height={100} unoptimized/>
+                                    <h4 className="text-xl font-headline">Update Data for New Suggestions</h4>
+                                    <p className="text-muted-foreground max-w-md">
+                                        Your builders are free or your village has changed! Paste a new Village Export to get the latest AI recommendations.
+                                    </p>
+                                    <Button onClick={() => setIsModalOpen(true)}>
+                                        <Settings className="mr-2 h-4 w-4"/>
+                                        Update Village Data
+                                    </Button>
                                 </div>
                             )}
                         </CardContent>
@@ -321,7 +328,7 @@ export default function UpgradesPage() {
                              {ongoingUpgrades.length === 0 && homeUpgrades.length === 0 && builderUpgrades.length === 0 ? (
                                 <div className="text-center space-y-4 p-6">
                                    <div className='p-4 rounded-full bg-green-500/20 inline-block'>
-                                     <Check className="w-10 h-10 text-green-400" />
+                                     <Image src={done} alt="Completed" width={40} height={40} unoptimized />
                                    </div>
                                    <h4 className='text-xl font-headline'>All Builders Free!</h4>
                                     <p className="text-muted-foreground max-w-md mx-auto">Your builders and laboratory are waiting for new tasks. Update your village data to get fresh AI recommendations.</p>

@@ -23,6 +23,7 @@ export function MainNav({
      { href: '/dashboard', label: 'Dashboard' },
      { href: '/upgrades', label: 'Upgrades' },
      { href: '/war-council', label: 'Council' },
+     { href: '/wars', label: 'Wars' },
      { href: '/cookbook', label: 'Cookbook' },
   ];
 

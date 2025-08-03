@@ -105,33 +105,38 @@ const CompletedUpgradeItem = ({ item }: { item: OngoingUpgrade }) => {
 }
 
 const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
-    const priorityIcons = {
-        High: <><Flame className="w-5 h-5" /><Flame className="w-5 h-5" /><Flame className="w-5 h-5" /></>,
-        Medium: <><Flame className="w-5 h-5" /><Flame className="w-5 h-5" /></>,
-        Low: <Flame className="w-5 h-5" />,
+    const priorityColors = {
+      High: 'border-red-400/40 hover:shadow-red-400/20',
+      Medium: 'border-amber-400/40 hover:shadow-amber-400/20',
+      Low: 'border-green-400/40 hover:shadow-green-400/20',
     };
-
+  
     return (
-         <div className={cn(
-            "relative p-4 rounded-lg border-2 shadow-lg overflow-hidden",
-            "bg-primary text-primary-foreground border-primary-foreground/20",
-            "transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-2xl"
-        )}>
-             <div 
-                className="absolute inset-0 z-0 opacity-10"
-                style={{backgroundImage: `url(${timeBadge.src})`, backgroundSize: '20%'}}
-            ></div>
-
-            <div className="relative z-10">
-                 <div className="absolute top-2 right-2 flex gap-1 text-primary-foreground/80">
-                    {priorityIcons[suggestion.priority]}
-                </div>
-                <h4 className="text-xl font-bold font-headline text-shadow-custom">{suggestion.title}</h4>
-                <p className="text-sm mt-1">{suggestion.description}</p>
+      <div
+        className={cn(
+          "relative w-full bg-card shadow-lg border-2 overflow-hidden",
+          "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
+           priorityColors[suggestion.priority]
+        )}
+        style={{
+          clipPath: 'polygon(2% 0, 100% 0, 98% 100%, 0 100%)'
+        }}
+      >
+        <div className="absolute top-0 right-0 h-full w-2/3 bg-muted/30 -skew-x-[15deg] translate-x-1/2 -z-0"></div>
+  
+        <div className="relative z-10 p-6 flex flex-col h-full">
+            <div className="absolute top-3 right-4">
+                 <Flame className="w-6 h-6 text-primary opacity-80"/>
+            </div>
+            <h4 className="text-xl font-bold font-headline text-primary/90 pr-8">{suggestion.title}</h4>
+            <p className="text-sm text-muted-foreground mt-2 flex-grow">{suggestion.description}</p>
+            <div className="mt-4 pt-4 border-t border-border/20">
+                <span className="text-xs font-bold uppercase tracking-wider text-primary/80">{suggestion.priority} Priority</span>
             </div>
         </div>
+      </div>
     );
-};
+  };
 
 export default function UpgradesPage() {
     const [loading, setLoading] = useState(true);

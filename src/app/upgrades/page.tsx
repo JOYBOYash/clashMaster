@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, Check, Settings, Flame } from 'lucide-react';
+import { Loader2, Wrench, Clock, AlertTriangle, Home, Hammer, Check, Settings, Flame, HelpCircle } from 'lucide-react';
 import { suggestUpgrades } from '@/ai/flows/suggest-upgrades';
 import { type SuggestUpgradesOutput, type UpgradeSuggestion } from '@/ai/schemas';
 import { Progress } from '@/components/ui/progress';
@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 function formatDuration(seconds: number): string {
     if (seconds <= 0) return 'Done';
@@ -34,13 +35,6 @@ function formatDuration(seconds: number): string {
     if (parts.length === 0) return 'Done';
     return parts.join(' ');
 }
-
-const UpgradeSectionHeader = ({ title, icon: Icon }: { title: string, icon: React.ElementType }) => (
-    <div className="flex items-center gap-3 p-2 bg-muted/80 rounded-t-lg border-b-2 border-primary/50">
-        <Icon className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-headline text-foreground">{title}</h3>
-    </div>
-);
 
 const UpgradeTimer = ({ upgrade, onComplete }: { upgrade: OngoingUpgrade, onComplete: (upgrade: OngoingUpgrade) => void }) => {
     const [timeLeft, setTimeLeft] = useState(upgrade.secondsRemaining);
@@ -231,11 +225,11 @@ export default function UpgradesPage() {
         <div className="space-y-8 bg-upgrades-pattern">
             <Card>
                 <CardHeader>
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
                             <CardTitle>Village Upgrade Planner</CardTitle>
                             <CardDescription>
-                                AI-powered suggestions for what to build next and a real-time view of your ongoing upgrades.
+                                AI-powered suggestions and a real-time view of your ongoing upgrades.
                             </CardDescription>
                         </div>
                     </div>
@@ -280,57 +274,52 @@ export default function UpgradesPage() {
                         </CardContent>
                     </Card>
 
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-headline flex items-center gap-3"><Clock /> Ongoing Upgrades</h2>
-                            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                                <DialogTrigger asChild>
-                                    <Button><Settings className="mr-2 h-4 w-4" /> Update Data</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Update Your Village Data</DialogTitle>
-                                        <DialogDescription>
-                                            To get the latest data, follow these steps in-game: **Settings &gt; More Settings &gt; Export Village**. Then paste the copied data below.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="space-y-2 py-4">
-                                        <Label htmlFor="player-json" className="sr-only">Village Export JSON</Label>
-                                        <Textarea 
-                                            id="player-json"
-                                            value={playerJson}
-                                            onChange={(e) => setPlayerJson(e.target.value)}
-                                            rows={10}
-                                            placeholder='Paste your village export JSON here.'
-                                            className="text-xs font-mono"
-                                        />
-                                    </div>
-                                    <Button onClick={handleSaveAndAnalyze}>Save and Analyze</Button>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-                        
-                        {homeUpgrades.length > 0 && (
-                            <Card no-hover className="overflow-hidden">
-                                <UpgradeSectionHeader title="Home Village" icon={Home} />
-                                <div className="divide-y divide-border">
-                                    {homeUpgrades.map((upg, index) => <UpgradeTimer key={`home-${index}`} upgrade={upg} onComplete={handleUpgradeComplete} />)}
-                                </div>
-                            </Card>
-                        )}
-
-                        {builderUpgrades.length > 0 && (
-                             <Card no-hover className="overflow-hidden">
-                                <UpgradeSectionHeader title="Builder Base" icon={Hammer} />
-                                 <div className="divide-y divide-border">
-                                    {builderUpgrades.map((upg, index) => <UpgradeTimer key={`builder-${index}`} upgrade={upg} onComplete={handleUpgradeComplete}/>)}
-                                </div>
-                            </Card>
-                        )}
-                        
-                        {ongoingUpgrades.length === 0 && (
-                            <Card>
-                                <CardContent className="p-6 text-center space-y-4">
+                    <Card no-hover>
+                        <CardHeader>
+                             <div className="flex items-center gap-4">
+                                <CardTitle className="flex items-center gap-3"><Clock /> Ongoing Upgrades</CardTitle>
+                                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button size="sm"><Settings className="mr-2 h-4 w-4" /> Update Data</Button>
+                                    </DialogTrigger>
+                                     <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>Update Your Village Data</DialogTitle>
+                                            <DialogDescription>
+                                                To get the latest data, follow these steps in-game: **Settings &gt; More Settings &gt; Export Village**. Then paste the copied data below.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="space-y-2 py-4">
+                                            <Label htmlFor="player-json" className="sr-only">Village Export JSON</Label>
+                                            <Textarea 
+                                                id="player-json"
+                                                value={playerJson}
+                                                onChange={(e) => setPlayerJson(e.target.value)}
+                                                rows={10}
+                                                placeholder='Paste your village export JSON here.'
+                                                className="text-xs font-mono"
+                                            />
+                                        </div>
+                                        <Button onClick={handleSaveAndAnalyze}>Save and Analyze</Button>
+                                    </DialogContent>
+                                </Dialog>
+                                 <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                                <HelpCircle className="h-5 w-5" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p className="max-w-xs">The upgrade timer data is a snapshot from your last export. To see live timers, you must regularly update your village data.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                             {ongoingUpgrades.length === 0 && homeUpgrades.length === 0 && builderUpgrades.length === 0 ? (
+                                <div className="text-center space-y-4 p-6">
                                    <div className='p-4 rounded-full bg-green-500/20 inline-block'>
                                      <Check className="w-10 h-10 text-green-400" />
                                    </div>
@@ -340,10 +329,36 @@ export default function UpgradesPage() {
                                         <Settings className="mr-2 h-4 w-4"/>
                                         Update Data Now
                                     </Button>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                     {homeUpgrades.length > 0 && (
+                                        <div className="overflow-hidden rounded-lg border">
+                                            <div className="flex items-center gap-3 p-2 bg-muted/80 rounded-t-lg border-b">
+                                                <Home className="w-5 h-5 text-primary" />
+                                                <h3 className="text-lg font-headline text-foreground">Home Village</h3>
+                                            </div>
+                                            <div className="divide-y divide-border">
+                                                {homeUpgrades.map((upg, index) => <UpgradeTimer key={`home-${index}`} upgrade={upg} onComplete={handleUpgradeComplete} />)}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {builderUpgrades.length > 0 && (
+                                        <div className="overflow-hidden rounded-lg border">
+                                            <div className="flex items-center gap-3 p-2 bg-muted/80 rounded-t-lg border-b">
+                                                <Hammer className="w-5 h-5 text-primary" />
+                                                <h3 className="text-lg font-headline text-foreground">Builder Base</h3>
+                                            </div>
+                                            <div className="divide-y divide-border">
+                                                {builderUpgrades.map((upg, index) => <UpgradeTimer key={`builder-${index}`} upgrade={upg} onComplete={handleUpgradeComplete}/>)}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
 
                     {completedUpgrades.length > 0 && (
                          <div className="space-y-4">

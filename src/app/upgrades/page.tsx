@@ -105,38 +105,34 @@ const CompletedUpgradeItem = ({ item }: { item: OngoingUpgrade }) => {
 }
 
 const SuggestionCard = ({ suggestion }: { suggestion: UpgradeSuggestion }) => {
-    const priorityColors = {
-      High: 'border-red-400/40 hover:shadow-red-400/20',
-      Medium: 'border-amber-400/40 hover:shadow-amber-400/20',
-      Low: 'border-green-400/40 hover:shadow-green-400/20',
-    };
-  
-    return (
-      <div
-        className={cn(
-          "relative w-full bg-card shadow-lg border-2 overflow-hidden",
-          "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-1",
-           priorityColors[suggestion.priority]
-        )}
-        style={{
-          clipPath: 'polygon(2% 0, 100% 0, 98% 100%, 0 100%)'
-        }}
-      >
-        <div className="absolute top-0 right-0 h-full w-2/3 bg-muted/30 -skew-x-[15deg] translate-x-1/2 -z-0"></div>
-  
-        <div className="relative z-10 p-6 flex flex-col h-full">
-            <div className="absolute top-3 right-4">
-                 <Flame className="w-6 h-6 text-primary opacity-80"/>
-            </div>
-            <h4 className="text-xl font-bold font-headline text-primary/90 pr-8">{suggestion.title}</h4>
-            <p className="text-sm text-muted-foreground mt-2 flex-grow">{suggestion.description}</p>
-            <div className="mt-4 pt-4 border-t border-border/20">
-                <span className="text-xs font-bold uppercase tracking-wider text-primary/80">{suggestion.priority} Priority</span>
-            </div>
+  return (
+    <div
+      className={cn(
+        "relative w-full bg-card shadow-2xl border border-border/20 overflow-hidden",
+        "transition-all duration-300 hover:shadow-primary/20 hover:border-primary/40 hover:-translate-y-2",
+        "feature-card opacity-0 [clip-path:polygon(0_0,_100%_0,_100%_100%,_0_100%)]"
+      )}
+      style={{
+        clipPath: 'polygon(2% 0, 100% 0, 98% 100%, 0 100%)'
+      }}
+    >
+      <div className={cn(
+        "absolute top-0 h-full w-2/3 bg-muted/30 -z-0 right-0 -skew-x-[15deg] translate-x-1/2"
+      )}></div>
+      
+      <div className="relative z-10 p-6 flex flex-col h-full">
+        <div className="absolute top-3 right-4">
+          <Flame className="w-6 h-6 text-primary opacity-80"/>
+        </div>
+        <h4 className="text-xl font-bold font-headline text-foreground/90 pr-8">{suggestion.title}</h4>
+        <p className="text-sm text-muted-foreground mt-2 flex-grow">{suggestion.description}</p>
+        <div className="mt-4 pt-4 border-t border-border/20">
+          <span className="text-xs font-bold uppercase tracking-wider text-primary/80">{suggestion.priority} Priority</span>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default function UpgradesPage() {
     const [loading, setLoading] = useState(true);
@@ -242,31 +238,6 @@ export default function UpgradesPage() {
                                 AI-powered suggestions for what to build next and a real-time view of your ongoing upgrades.
                             </CardDescription>
                         </div>
-                         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                            <DialogTrigger asChild>
-                                <Button><Settings className="mr-2 h-4 w-4" /> Update Data</Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Update Your Village Data</DialogTitle>
-                                    <DialogDescription>
-                                        To get the latest data, follow these steps in-game: **Settings &gt; More Settings &gt; Export Village**. Then paste the copied data below.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-2 py-4">
-                                     <Label htmlFor="player-json" className="sr-only">Village Export JSON</Label>
-                                     <Textarea 
-                                        id="player-json"
-                                        value={playerJson}
-                                        onChange={(e) => setPlayerJson(e.target.value)}
-                                        rows={10}
-                                        placeholder='Paste your village export JSON here.'
-                                        className="text-xs font-mono"
-                                    />
-                                </div>
-                                <Button onClick={handleSaveAndAnalyze}>Save and Analyze</Button>
-                            </DialogContent>
-                        </Dialog>
                     </div>
                 </CardHeader>
             </Card>
@@ -310,7 +281,34 @@ export default function UpgradesPage() {
                     </Card>
 
                     <div className="space-y-6">
-                         <h2 className="text-2xl font-headline flex items-center gap-3"><Clock /> Ongoing Upgrades</h2>
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl font-headline flex items-center gap-3"><Clock /> Ongoing Upgrades</h2>
+                            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                                <DialogTrigger asChild>
+                                    <Button><Settings className="mr-2 h-4 w-4" /> Update Data</Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Update Your Village Data</DialogTitle>
+                                        <DialogDescription>
+                                            To get the latest data, follow these steps in-game: **Settings &gt; More Settings &gt; Export Village**. Then paste the copied data below.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-2 py-4">
+                                        <Label htmlFor="player-json" className="sr-only">Village Export JSON</Label>
+                                        <Textarea 
+                                            id="player-json"
+                                            value={playerJson}
+                                            onChange={(e) => setPlayerJson(e.target.value)}
+                                            rows={10}
+                                            placeholder='Paste your village export JSON here.'
+                                            className="text-xs font-mono"
+                                        />
+                                    </div>
+                                    <Button onClick={handleSaveAndAnalyze}>Save and Analyze</Button>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
                         
                         {homeUpgrades.length > 0 && (
                             <Card no-hover className="overflow-hidden">

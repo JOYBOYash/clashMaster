@@ -39,17 +39,14 @@ interface ArmyUnit {
     quantity: number;
 }
 
-const DraggableUnit = ({ armyUnit, onDeploy, onMouseDown, onMouseUp }: { armyUnit: ArmyUnit, onDeploy: () => void, onMouseDown: () => void, onMouseUp: () => void }) => {
+const DraggableUnit = ({ armyUnit, onMouseDown, onMouseUp }: { armyUnit: ArmyUnit, onMouseDown: () => void, onMouseUp: () => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
-    item: () => {
-        onDeploy();
-        return armyUnit.unit;
-    },
+    item: { ...armyUnit.unit },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-  }), [armyUnit, onDeploy]);
+  }), [armyUnit]);
 
   return (
     <div
@@ -119,7 +116,7 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
     )
 }
 
-const DeploymentBar = ({ army, onDeploy, onContinuousDeployStart, onContinuousDeployStop }: { army: ArmyUnit[], onDeploy: (unitName: string) => void, onContinuousDeployStart: (unit: UnitData) => void, onContinuousDeployStop: () => void }) => {
+const DeploymentBar = ({ army, onContinuousDeployStart, onContinuousDeployStop }: { army: ArmyUnit[], onContinuousDeployStart: (unit: UnitData) => void, onContinuousDeployStop: () => void }) => {
     return (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-40 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg max-w-3xl w-full">
             <div className="h-full w-full flex gap-2 overflow-x-auto p-2">
@@ -127,7 +124,6 @@ const DeploymentBar = ({ army, onDeploy, onContinuousDeployStart, onContinuousDe
                     <DraggableUnit 
                         key={armyUnit.unit.name} 
                         armyUnit={armyUnit} 
-                        onDeploy={() => onDeploy(armyUnit.unit.name)}
                         onMouseDown={() => onContinuousDeployStart(armyUnit.unit)}
                         onMouseUp={onContinuousDeployStop}
                     />
@@ -181,13 +177,14 @@ const StrategyBoard = () => {
         };
         fetchArmies();
     }, [user, toast]);
-
+    
     const deployUnit = useCallback((unit: UnitData, dropX: number, dropY: number) => {
         let canDeploy = false;
-        setArmyToDeploy(prev => {
-            const newArmy = [...prev];
+
+        setArmyToDeploy(prevArmy => {
+            const newArmy = [...prevArmy];
             const unitIndex = newArmy.findIndex(u => u.unit.name === unit.name);
-            
+
             if (unitIndex !== -1 && newArmy[unitIndex].quantity > 0) {
                 canDeploy = true;
                 if (newArmy[unitIndex].unit.type === 'hero' || newArmy[unitIndex].quantity === 1) {
@@ -198,25 +195,13 @@ const StrategyBoard = () => {
             }
             return newArmy;
         });
-
-        if(canDeploy) {
-            setPlacedUnits(prevPlaced => [...prevPlaced, { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }]);
+        
+        if (canDeploy) {
+           setPlacedUnits(prevPlaced => [
+                ...prevPlaced,
+                { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }
+            ]);
         }
-    }, []);
-
-    const handleDeploy = useCallback((unitName: string) => {
-        setArmyToDeploy(prev => {
-            const newArmy = [...prev];
-            const unitIndex = newArmy.findIndex(u => u.unit.name === unitName);
-            if (unitIndex !== -1) {
-                 if (newArmy[unitIndex].unit.type === 'hero' || newArmy[unitIndex].quantity === 1) {
-                    newArmy.splice(unitIndex, 1);
-                } else {
-                    newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
-                }
-            }
-            return newArmy;
-        });
     }, []);
 
     const handleMoveUnit = useCallback((id: string, newX: number, newY: number) => {
@@ -225,16 +210,9 @@ const StrategyBoard = () => {
 
     const handleContinuousDeployStart = (unit: UnitData) => {
         if(unit.type === 'hero') return; 
-        
-        pressTimer.current = setTimeout(() => {
-             if (pressTimer.current) clearInterval(pressTimer.current);
-             pressTimer.current = setInterval(() => {
-                // This logic is complex because we don't know the mouse position here.
-                // The main drag-and-drop will handle single placement.
-                // A full solution would involve tracking mouse position over the board.
-                // For simplicity, we stick to single placement on hold.
-             }, 150);
-        }, 500);
+
+        // This requires access to the board's ref and mouse position, which is complex to handle here.
+        // For now, long-press will just trigger a single deploy on drop. A full implementation would need context or event listeners.
     };
     
     const handleContinuousDeployStop = () => {
@@ -310,7 +288,6 @@ const StrategyBoard = () => {
             </motion.div>
             <DeploymentBar 
                 army={armyToDeploy} 
-                onDeploy={handleDeploy}
                 onContinuousDeployStart={handleContinuousDeployStart}
                 onContinuousDeployStop={handleContinuousDeployStop} 
             />
@@ -349,3 +326,4 @@ export default function WarsPage() {
         </DndProvider>
     );
 }
+

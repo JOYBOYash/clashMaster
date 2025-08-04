@@ -1,24 +1,14 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Allow users to read/write their own data in the 'users' collection
+    // Allow users to read/write their own data in their user-specific subcollections
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-
-    // Rules for War Rooms
-    match /warRooms/{roomId} {
-      // Any authenticated user can read a room's data or create a new room.
-      allow read, create: if request.auth != null;
-      
-      // An update is allowed if:
-      // 1. A user is adding themselves to the members list (joining the room).
-      // 2. A user is already a member of the room and is making other changes.
-      allow update: if request.auth != null && 
-                    (request.resource.data.members == resource.data.members.concat([request.auth.uid]) ||
-                     request.auth.uid in resource.data.members);
-    }
+    
+    // War Room rules are removed for now as we build a single-player version first.
   }
 }

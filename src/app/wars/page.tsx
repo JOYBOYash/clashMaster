@@ -6,7 +6,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions } from '@/lib/firebase-service';
@@ -30,7 +30,7 @@ interface UnitData {
 }
 
 interface PlacedUnitData extends UnitData {
-    id: string; // Unique ID for each placed unit
+    id: string; 
     x: number;
     y: number;
 }
@@ -65,12 +65,6 @@ const PlacedUnit = ({ unit, onMove, cellSize }: { unit: PlacedUnitData; onMove: 
     const [{ isDragging }, drag] = useDrag(() => ({
         type: ItemTypes.UNIT,
         item: { ...unit },
-        end: (item, monitor) => {
-             const dropResult = monitor.getDropResult<{x: number, y: number}>();
-             if (item && dropResult) {
-                onMove(item.id, dropResult.x, dropResult.y)
-             }
-        },
         collect: monitor => ({
             isDragging: !!monitor.isDragging(),
         }),
@@ -79,7 +73,7 @@ const PlacedUnit = ({ unit, onMove, cellSize }: { unit: PlacedUnitData; onMove: 
     const isSpell = unit.type === 'spell';
 
     return (
-        <div 
+        <motion.div
             ref={drag}
             className={cn("absolute cursor-grab transition-all", isDragging ? 'opacity-50 z-20' : 'z-10')}
             style={{
@@ -88,6 +82,7 @@ const PlacedUnit = ({ unit, onMove, cellSize }: { unit: PlacedUnitData; onMove: 
                 width: cellSize,
                 height: cellSize,
             }}
+            whileTap={{ cursor: "grabbing", scale: 1.1 }}
         >
              <div className="relative w-full h-full p-0.5 pointer-events-none">
                 <div 
@@ -104,28 +99,27 @@ const PlacedUnit = ({ unit, onMove, cellSize }: { unit: PlacedUnitData; onMove: 
                 />
                 <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg" unoptimized />
             </div>
-        </div>
+        </motion.div>
     )
 }
 
 const StrategyBoard = () => {
     const [placedUnits, setPlacedUnits] = useState<Record<string, PlacedUnitData>>({});
     const boardRef = useRef<HTMLDivElement>(null);
-    const [boardSize, setBoardSize] = useState({ width: 880, height: 880 });
+    const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
 
     const scale = useMotionValue(1);
     const x = useMotionValue(0);
     const y = useMotionValue(0);
-
+    
     const gridSize = 44;
-    const cellSize = Math.min(boardSize.width, boardSize.height) / gridSize;
+    const cellSize = boardSize.width / gridSize;
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver(entries => {
-            if (entries[0]) {
-                const { width, height } = entries[0].contentRect;
-                 const size = Math.min(width, height)
-                setBoardSize({ width: size, height: size });
+            if (entries[0] && boardRef.current) {
+                const { width } = entries[0].contentRect;
+                setBoardSize({ width: width, height: width });
             }
         });
         if (boardRef.current) {
@@ -140,50 +134,53 @@ const StrategyBoard = () => {
             [id]: { ...prev[id], x: newX, y: newY }
         }))
     }, []);
-
-    const [, drop] = useDrop(() => ({
-        accept: ItemTypes.UNIT,
-        drop: (item: UnitData & {id?: string}, monitor) => {
-            if (!boardRef.current) return;
-            const boardRect = boardRef.current.getBoundingClientRect();
-            const clientOffset = monitor.getClientOffset();
-            if (!clientOffset) return;
-            
-            // This is the magic part: adjust for the board's own pan/zoom state.
-            const dropX = (clientOffset.x - boardRect.left - x.get()) / scale.get();
-            const dropY = (clientOffset.y - boardRect.top - y.get()) / scale.get();
-
-            const snappedX = Math.round(dropX / cellSize) * cellSize;
-            const snappedY = Math.round(dropY / cellSize) * cellSize;
-            
-            const newId = item.id || `${Date.now()}-${Math.random()}`;
-            
-            setPlacedUnits(prev => ({
-                ...prev,
-                [newId]: { ...item, id: newId, x: snappedX, y: snappedY },
-            }));
-
-            // For moving existing items
-            if(item.id) {
-                return { x: snappedX, y: snappedY }
-            }
-        },
-    }), [x, y, scale, cellSize]);
     
+     const [, drop] = useDrop(
+        () => ({
+            accept: ItemTypes.UNIT,
+            drop: (item: UnitData & { id?: string }, monitor) => {
+                if (!boardRef.current) return;
+                const boardRect = boardRef.current.getBoundingClientRect();
+                const clientOffset = monitor.getClientOffset();
+                if (!clientOffset) return;
+
+                // Adjust for the board's pan and zoom
+                const dropX = (clientOffset.x - boardRect.left - x.get()) / scale.get();
+                const dropY = (clientOffset.y - boardRect.top - y.get()) / scale.get();
+
+                const newId = item.id || `${Date.now()}-${Math.random()}`;
+
+                setPlacedUnits((prev) => ({
+                    ...prev,
+                    [newId]: {
+                        ...item,
+                        id: newId,
+                        x: dropX - (cellSize / 2),
+                        y: dropY - (cellSize / 2),
+                    },
+                }));
+            },
+        }),
+        [x, y, scale, cellSize]
+    );
+
     return (
-        <div ref={boardRef} className="relative w-full h-full overflow-hidden bg-black/30 rounded-lg cursor-grab active:cursor-grabbing">
-            <motion.div
+        <div ref={drop} className="w-full h-full overflow-hidden bg-black/30 rounded-lg cursor-grab active:cursor-grabbing">
+             <motion.div
+                ref={boardRef}
                 drag
-                dragConstraints={boardRef}
+                dragConstraints={{ left: -(boardSize.width * (scale.get() - 1)), right: 0, top: -(boardSize.height * (scale.get() - 1)), bottom: 0 }}
                 dragElastic={0.1}
                 className="relative"
-                style={{ scale, x, y, width: boardSize.width, height: boardSize.height }}
+                style={{ 
+                    scale, x, y, 
+                    width: boardSize.width, 
+                    height: boardSize.height 
+                }}
                  onWheel={(e) => {
                     e.preventDefault();
-                    const newScale = scale.get() - e.deltaY * 0.001;
-                    if (newScale >= 0.5 && newScale <= 3) {
-                        scale.set(newScale, { duration: 0.1 });
-                    }
+                    const newScale = Math.max(1, Math.min(3, scale.get() - e.deltaY * 0.001));
+                    scale.set(newScale);
                 }}
             >
                 <Image
@@ -193,6 +190,7 @@ const StrategyBoard = () => {
                     layout="fill"
                     className="object-cover pointer-events-none"
                     unoptimized
+                    priority
                 />
                  {Object.values(placedUnits).map((unit) => (
                     <PlacedUnit key={unit.id} unit={unit} onMove={moveUnit} cellSize={cellSize} />
@@ -235,11 +233,11 @@ const SavedArmiesPanel = () => {
             </div>
         );
     }
-
+    
     if (compositions.length === 0) {
         return (
-            <div className="p-4">
-                 <Alert>
+            <div className="p-4 w-full flex justify-center">
+                 <Alert className="max-w-md">
                     <AlertTitle>No Armies Found</AlertTitle>
                     <AlertDescription>
                         You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0 h-auto"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
@@ -251,7 +249,7 @@ const SavedArmiesPanel = () => {
     }
 
     return (
-         <Accordion type="single" collapsible className="w-full">
+         <Accordion type="single" collapsible className="w-full px-4">
             {compositions.map((comp) => (
                 <AccordionItem key={comp.id} value={comp.id} className="border-b-0 mb-2 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm">
                     <AccordionTrigger className="bg-muted/30 hover:bg-muted/50 px-4 py-2">
@@ -304,16 +302,14 @@ export default function WarsPage() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-             <div className="flex flex-col h-[calc(100vh-6rem)] w-full gap-2">
+             <div className="flex flex-col h-[calc(100vh-5rem)] w-full gap-2">
                 <div className="flex-grow relative">
                    <StrategyBoard />
                 </div>
-                <div className="w-full h-48 flex-shrink-0">
-                    <Card className="h-full bg-transparent border-t-2 border-primary/20 rounded-t-lg rounded-b-none">
-                        <CardContent className="h-full overflow-y-auto p-2">
-                           <SavedArmiesPanel />
-                        </CardContent>
-                    </Card>
+                <div className="w-full h-48 flex-shrink-0 bg-black/10 backdrop-blur-md border-t border-border/20">
+                    <div className="h-full overflow-y-auto">
+                       <SavedArmiesPanel />
+                    </div>
                 </div>
             </div>
         </DndProvider>

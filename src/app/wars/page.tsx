@@ -74,11 +74,11 @@ const GridCell = ({ x, y, unit, onDropUnit }: GridCellProps) => {
     const isSpell = unit?.name.toLowerCase().includes('spell');
 
     return (
-        <div ref={drop} className={cn("border border-white/5 relative", isOver && "bg-primary/20")}>
+        <div ref={drop} className={cn("border border-white/10 relative", isOver && "bg-primary/20")}>
            {unit && (
-               <div className="absolute inset-0 flex items-center justify-center">
+               <>
                    {isSpell ? (
-                        <div className="relative w-full h-full flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center justify-center">
                             {/* Circle for spell radius */}
                             <div className="absolute bg-primary/30 rounded-full" style={{ width: '250%', height: '250%' }}></div>
                              {/* Spell icon on top */}
@@ -91,7 +91,7 @@ const GridCell = ({ x, y, unit, onDropUnit }: GridCellProps) => {
                             <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized/>
                         </div>
                    )}
-               </div>
+               </>
            )}
         </div>
     );

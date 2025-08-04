@@ -164,10 +164,10 @@ const StrategyBoard = () => {
                 if (comps.length > 0) {
                     const defaultComp = comps[0];
                     const deployable: ArmyUnit[] = [];
-
-                    defaultComp.heroes?.forEach((h: any) => deployable.push({ unit: { ...h, image: getImagePath(h.name), type: 'hero' }, quantity: 1 }));
-                    defaultComp.troops?.forEach((t: any) => deployable.push({ unit: { ...t, image: getImagePath(t.name), type: 'troop' }, quantity: t.quantity }));
-                    defaultComp.spells?.forEach((s: any) => deployable.push({ unit: { ...s, image: getImagePath(s.name), type: 'spell' }, quantity: s.quantity }));
+                    
+                    (defaultComp.heroes || []).forEach((h: any) => deployable.push({ unit: { ...h, image: getImagePath(h.name), type: 'hero' }, quantity: 1 }));
+                    (defaultComp.troops || []).forEach((t: any) => deployable.push({ unit: { ...t, image: getImagePath(t.name), type: 'troop' }, quantity: t.quantity }));
+                    (defaultComp.spells || []).forEach((s: any) => deployable.push({ unit: { ...s, image: getImagePath(s.name), type: 'spell' }, quantity: s.quantity }));
                     if (defaultComp.siegeMachine) deployable.push({ unit: { ...defaultComp.siegeMachine, image: getImagePath(defaultComp.siegeMachine.name), type: 'siege'}, quantity: 1 });
 
                     setArmyToDeploy(deployable);
@@ -254,8 +254,8 @@ const StrategyBoard = () => {
                 if (!clientOffset) return;
                 
                 // This calculation correctly accounts for the board's pan (x,y) and zoom (scale)
-                const dropX = (clientOffset.x - boardRect.left) / scale.get() + boardRef.current.scrollLeft - x.get() - 24; // 24 is half marker width
-                const dropY = (clientOffset.y - boardRect.top) / scale.get() + boardRef.current.scrollTop - y.get() - 24; // 24 is half marker height
+                const dropX = (clientOffset.x - boardRect.left) / scale.get() - x.get()/scale.get() - 24; // 24 is half marker width
+                const dropY = (clientOffset.y - boardRect.top) / scale.get() - y.get()/scale.get() - 24; // 24 is half marker height
                 
                 if ('id' in item) {
                     // This is an existing unit being moved
@@ -272,6 +272,10 @@ const StrategyBoard = () => {
     const minScale = 1;
     const maxScale = 3;
 
+    if (loadingArmies) {
+      return <LoadingSpinner show={true} />;
+    }
+
     return (
         <div className="w-full h-full overflow-hidden flex flex-col relative">
              <motion.div
@@ -279,12 +283,7 @@ const StrategyBoard = () => {
                 className="relative flex-grow cursor-grab active:cursor-grabbing w-full h-full"
                 style={{ scale, x, y }}
                 drag
-                dragConstraints={{
-                    left: -boardRef.current?.getBoundingClientRect().width * (scale.get() - 1),
-                    right: 0,
-                    top: -boardRef.current?.getBoundingClientRect().height * (scale.get() - 1),
-                    bottom: 0,
-                }}
+                dragConstraints={boardRef}
                 dragElastic={0.1}
                 onWheel={(e) => {
                     e.preventDefault();

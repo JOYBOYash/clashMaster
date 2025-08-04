@@ -39,6 +39,18 @@ export function MainHeader() {
     setIsMobileMenuOpen(false);
   };
 
+  const navLinks = [
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/upgrades", label: "Upgrades" },
+    { href: "/war-council", label: "Council" },
+    { href: "/cookbook", label: "Cookbook" },
+    { href: "/wars", label: "Wars" },
+  ];
+
+  if (!hasPlayerData) {
+    navLinks.push({ href: '/survey', label: 'Survey' });
+  }
+
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -64,13 +76,11 @@ export function MainHeader() {
                     </Link>
                 </SheetHeader>
                <div className="flex flex-col gap-4 py-4">
-                  <Link href="/dashboard" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Dashboard</Link>
-                  <Link href="/war-council" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Council</Link>
-                  <Link href="/wars" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Wars</Link>
-                  <Link href="/cookbook" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Cookbook</Link>
-                  {!hasPlayerData && (
-                    <Link href="/survey" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Survey</Link>
-                  )}
+                {navLinks.map(link => (
+                   <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>
+                    {link.label}
+                   </Link>
+                ))}
                   <Link href="/settings" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Settings</Link>
                </div>
             </SheetContent>

@@ -7,7 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions } from '@/lib/firebase-service';
 import { getImagePath } from '@/lib/image-paths';
@@ -17,22 +17,25 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 
 const ItemTypes = {
   UNIT: 'unit',
 };
 
-interface Unit {
-  id: string; // Unique ID for each placed unit
+interface UnitData {
   name: string;
   image: string;
   type: 'troop' | 'spell' | 'hero' | 'siege';
-  x: number;
-  y: number;
 }
 
-const DraggableUnit = ({ unit, type }: { unit: any, type: Unit['type'] }) => {
+interface PlacedUnitData extends UnitData {
+    id: string; // Unique ID for each placed unit
+    x: number;
+    y: number;
+}
+
+const DraggableUnit = ({ unit, type }: { unit: any, type: UnitData['type'] }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
     item: { name: unit.name, image: getImagePath(unit.name), type },
@@ -45,7 +48,7 @@ const DraggableUnit = ({ unit, type }: { unit: any, type: Unit['type'] }) => {
     <div
       ref={drag}
       className={cn(
-        "flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-opacity",
+        "flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-opacity",
         "bg-black/20 border border-border/50 hover:bg-primary/20",
         isDragging ? "opacity-30" : "opacity-100"
       )}
@@ -58,10 +61,16 @@ const DraggableUnit = ({ unit, type }: { unit: any, type: Unit['type'] }) => {
   );
 };
 
-const PlacedUnit = ({ unit, onMove, cellSize }: { unit: Unit, onMove: (id: string, x: number, y: number) => void, cellSize: number }) => {
+const PlacedUnit = ({ unit, onMove, cellSize }: { unit: PlacedUnitData; onMove: (id: string, x: number, y: number) => void, cellSize: number }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: ItemTypes.UNIT,
         item: { ...unit },
+        end: (item, monitor) => {
+             const dropResult = monitor.getDropResult<{x: number, y: number}>();
+             if (item && dropResult) {
+                onMove(item.id, dropResult.x, dropResult.y)
+             }
+        },
         collect: monitor => ({
             isDragging: !!monitor.isDragging(),
         }),
@@ -80,26 +89,29 @@ const PlacedUnit = ({ unit, onMove, cellSize }: { unit: Unit, onMove: (id: strin
                 height: cellSize,
             }}
         >
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+             <div className="relative w-full h-full p-0.5 pointer-events-none">
                 <div 
                     className={cn(
-                        "absolute rounded-full border-2",
-                        isSpell ? 'bg-purple-500/20 border-purple-400' : 'bg-amber-500/10 border-amber-400/50'
+                        "absolute rounded-full border-2 -translate-x-1/2 -translate-y-1/2",
+                         isSpell ? 'bg-purple-500/20 border-purple-400' : 'bg-amber-500/10 border-amber-400/50'
                     )}
-                    style={{ width: '250%', height: '250%' }}
+                    style={{ 
+                        width: '300%', 
+                        height: '300%', 
+                        top: '50%',
+                        left: '50%',
+                    }}
                 />
-                <div className="relative w-full h-full p-0.5">
-                    <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg" unoptimized />
-                </div>
+                <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg" unoptimized />
             </div>
         </div>
     )
 }
 
 const StrategyBoard = () => {
-    const [placedUnits, setPlacedUnits] = useState<Record<string, Unit>>({});
+    const [placedUnits, setPlacedUnits] = useState<Record<string, PlacedUnitData>>({});
     const boardRef = useRef<HTMLDivElement>(null);
-    const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
+    const [boardSize, setBoardSize] = useState({ width: 880, height: 880 });
 
     const scale = useMotionValue(1);
     const x = useMotionValue(0);
@@ -112,7 +124,8 @@ const StrategyBoard = () => {
         const resizeObserver = new ResizeObserver(entries => {
             if (entries[0]) {
                 const { width, height } = entries[0].contentRect;
-                setBoardSize({ width, height });
+                 const size = Math.min(width, height)
+                setBoardSize({ width: size, height: size });
             }
         });
         if (boardRef.current) {
@@ -121,43 +134,55 @@ const StrategyBoard = () => {
         return () => resizeObserver.disconnect();
     }, []);
 
-    const handleDrop = useCallback((item: any, monitor: any) => {
-        if (!boardRef.current) return;
-
-        const boardRect = boardRef.current.getBoundingClientRect();
-        const clientOffset = monitor.getClientOffset();
-        const dropX = (clientOffset.x - boardRect.left) / scale.get() - x.get() / scale.get();
-        const dropY = (clientOffset.y - boardRect.top) / scale.get() - y.get() / scale.get();
-
-        const gridX = Math.round(dropX / cellSize) * cellSize;
-        const gridY = Math.round(dropY / cellSize) * cellSize;
-        
-        const newId = item.id || `${Date.now()}-${Math.random()}`;
-
+    const moveUnit = useCallback((id: string, newX: number, newY: number) => {
         setPlacedUnits(prev => ({
             ...prev,
-            [newId]: { ...item, id: newId, x: gridX, y: gridY },
-        }));
-    }, [scale, x, y, cellSize]);
-    
-     const [, drop] = useDrop(() => ({
+            [id]: { ...prev[id], x: newX, y: newY }
+        }))
+    }, []);
+
+    const [, drop] = useDrop(() => ({
         accept: ItemTypes.UNIT,
-        drop: handleDrop,
-    }), [handleDrop]);
+        drop: (item: UnitData & {id?: string}, monitor) => {
+            if (!boardRef.current) return;
+            const boardRect = boardRef.current.getBoundingClientRect();
+            const clientOffset = monitor.getClientOffset();
+            if (!clientOffset) return;
+            
+            // This is the magic part: adjust for the board's own pan/zoom state.
+            const dropX = (clientOffset.x - boardRect.left - x.get()) / scale.get();
+            const dropY = (clientOffset.y - boardRect.top - y.get()) / scale.get();
+
+            const snappedX = Math.round(dropX / cellSize) * cellSize;
+            const snappedY = Math.round(dropY / cellSize) * cellSize;
+            
+            const newId = item.id || `${Date.now()}-${Math.random()}`;
+            
+            setPlacedUnits(prev => ({
+                ...prev,
+                [newId]: { ...item, id: newId, x: snappedX, y: snappedY },
+            }));
+
+            // For moving existing items
+            if(item.id) {
+                return { x: snappedX, y: snappedY }
+            }
+        },
+    }), [x, y, scale, cellSize]);
     
     return (
-        <div ref={boardRef} className="relative w-full h-full overflow-hidden bg-black/30 rounded-lg">
+        <div ref={boardRef} className="relative w-full h-full overflow-hidden bg-black/30 rounded-lg cursor-grab active:cursor-grabbing">
             <motion.div
-                ref={drop}
                 drag
                 dragConstraints={boardRef}
-                dragElastic={0}
-                className="relative w-full h-full"
-                style={{ scale, x, y }}
+                dragElastic={0.1}
+                className="relative"
+                style={{ scale, x, y, width: boardSize.width, height: boardSize.height }}
                  onWheel={(e) => {
+                    e.preventDefault();
                     const newScale = scale.get() - e.deltaY * 0.001;
                     if (newScale >= 0.5 && newScale <= 3) {
-                        scale.set(newScale);
+                        scale.set(newScale, { duration: 0.1 });
                     }
                 }}
             >
@@ -170,7 +195,7 @@ const StrategyBoard = () => {
                     unoptimized
                 />
                  {Object.values(placedUnits).map((unit) => (
-                    <PlacedUnit key={unit.id} unit={unit} onMove={() => {}} cellSize={cellSize} />
+                    <PlacedUnit key={unit.id} unit={unit} onMove={moveUnit} cellSize={cellSize} />
                 ))}
             </motion.div>
         </div>
@@ -204,7 +229,7 @@ const SavedArmiesPanel = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-full p-4">
                 <Loader2 className="animate-spin mr-2" />
                 <span>Loading Your Armies...</span>
             </div>
@@ -213,20 +238,23 @@ const SavedArmiesPanel = () => {
 
     if (compositions.length === 0) {
         return (
-            <Alert>
-                <AlertTitle>No Armies Found</AlertTitle>
-                <AlertDescription>
-                    You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
-                </AlertDescription>
-            </Alert>
+            <div className="p-4">
+                 <Alert>
+                    <AlertTitle>No Armies Found</AlertTitle>
+                    <AlertDescription>
+                        You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0 h-auto"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
+                    </AlertDescription>
+                </Alert>
+            </div>
+           
         );
     }
 
     return (
          <Accordion type="single" collapsible className="w-full">
             {compositions.map((comp) => (
-                <AccordionItem key={comp.id} value={comp.id} className="border-b-0">
-                    <AccordionTrigger className="bg-muted/30 hover:bg-muted/50 px-4 py-2 rounded-t-lg">
+                <AccordionItem key={comp.id} value={comp.id} className="border-b-0 mb-2 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm">
+                    <AccordionTrigger className="bg-muted/30 hover:bg-muted/50 px-4 py-2">
                         <span className="font-headline text-lg">{comp.name}</span>
                     </AccordionTrigger>
                     <AccordionContent className="p-2 bg-black/20">
@@ -260,7 +288,7 @@ export default function WarsPage() {
 
     if (!user) {
         return (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center p-4">
                 <Alert variant="destructive" className="max-w-md">
                     <AlertTitle>Access Denied</AlertTitle>
                     <AlertDescription>
@@ -276,16 +304,13 @@ export default function WarsPage() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="flex flex-col-reverse md:flex-row h-[calc(100vh-8rem)] gap-4">
-                <div className="flex-grow p-0 overflow-hidden h-full">
+             <div className="flex flex-col h-[calc(100vh-6rem)] w-full gap-2">
+                <div className="flex-grow relative">
                    <StrategyBoard />
                 </div>
-                <div className="w-full md:w-80 flex-shrink-0 h-full overflow-y-auto">
-                    <Card className="h-full">
-                        <CardHeader>
-                            <CardTitle>Your Armies</CardTitle>
-                        </CardHeader>
-                        <CardContent>
+                <div className="w-full h-48 flex-shrink-0">
+                    <Card className="h-full bg-transparent border-t-2 border-primary/20 rounded-t-lg rounded-b-none">
+                        <CardContent className="h-full overflow-y-auto p-2">
                            <SavedArmiesPanel />
                         </CardContent>
                     </Card>

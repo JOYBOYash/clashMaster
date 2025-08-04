@@ -1,13 +1,13 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Loader2 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Loader2, Trash2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions } from '@/lib/firebase-service';
 import { getImagePath } from '@/lib/image-paths';
@@ -17,25 +17,25 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/loading-spinner';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 const ItemTypes = {
   UNIT: 'unit',
 };
 
 interface Unit {
+  id: string; // Unique ID for each placed unit
   name: string;
   image: string;
-}
-
-interface DraggableUnitProps {
-  unit: Unit;
   type: 'troop' | 'spell' | 'hero' | 'siege';
+  x: number;
+  y: number;
 }
 
-const DraggableUnit = ({ unit, type }: DraggableUnitProps) => {
+const DraggableUnit = ({ unit, type }: { unit: any, type: Unit['type'] }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
-    item: { ...unit, type },
+    item: { name: unit.name, image: getImagePath(unit.name), type },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -51,84 +51,128 @@ const DraggableUnit = ({ unit, type }: DraggableUnitProps) => {
       )}
     >
       <div className="relative w-12 h-12">
-        <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized />
+        <Image src={getImagePath(unit.name)} alt={unit.name} layout="fill" className="object-contain" unoptimized />
       </div>
       <span className="text-foreground/80 truncate w-16 text-center">{unit.name}</span>
     </div>
   );
 };
 
+const PlacedUnit = ({ unit, onMove, cellSize }: { unit: Unit, onMove: (id: string, x: number, y: number) => void, cellSize: number }) => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+        type: ItemTypes.UNIT,
+        item: { ...unit },
+        collect: monitor => ({
+            isDragging: !!monitor.isDragging(),
+        }),
+    }), [unit, onMove, cellSize]);
+    
+    const isSpell = unit.type === 'spell';
 
-interface GridCellProps {
-  x: number;
-  y: number;
-  unit: (Unit & {type: string}) | null;
-  onDropUnit: (x: number, y: number, unit: Unit & {type: string}) => void;
+    return (
+        <div 
+            ref={drag}
+            className={cn("absolute cursor-grab transition-all", isDragging ? 'opacity-50 z-20' : 'z-10')}
+            style={{
+                left: unit.x,
+                top: unit.y,
+                width: cellSize,
+                height: cellSize,
+            }}
+        >
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div 
+                    className={cn(
+                        "absolute rounded-full border-2",
+                        isSpell ? 'bg-purple-500/20 border-purple-400' : 'bg-amber-500/10 border-amber-400/50'
+                    )}
+                    style={{ width: '250%', height: '250%' }}
+                />
+                <div className="relative w-full h-full p-0.5">
+                    <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg" unoptimized />
+                </div>
+            </div>
+        </div>
+    )
 }
 
-const GridCell = ({ x, y, unit, onDropUnit }: GridCellProps) => {
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: ItemTypes.UNIT,
-        drop: (item: Unit & {type: string}) => onDropUnit(x, y, item),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    }), [x, y, onDropUnit]);
-
-    const isSpell = unit?.type === 'spell';
-
-    return (
-        <div ref={drop} className={cn("border border-white/5 relative", isOver && "bg-primary/30")}>
-           {unit && (
-               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                   {/* Circle for radius */}
-                   <div 
-                        className={cn(
-                            "absolute rounded-full",
-                            isSpell ? 'bg-purple-500/20 border-2 border-purple-400' : 'bg-amber-500/10 border border-amber-400/50'
-                        )}
-                        style={{ width: '250%', height: '250%' }}
-                   ></div>
-                    {/* Unit icon on top */}
-                   <div className="relative w-full h-full p-0.5">
-                       <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg" unoptimized/>
-                   </div>
-               </div>
-           )}
-        </div>
-    );
-};
-
-
 const StrategyBoard = () => {
-    const [placedUnits, setPlacedUnits] = useState<Record<string, Unit & {type: string}>>({});
+    const [placedUnits, setPlacedUnits] = useState<Record<string, Unit>>({});
+    const boardRef = useRef<HTMLDivElement>(null);
+    const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
 
-    const handleDropUnit = useCallback((x: number, y: number, unit: Unit & {type: string}) => {
-        const key = `${x}-${y}`;
-        setPlacedUnits(prev => ({ ...prev, [key]: unit }));
+    const scale = useMotionValue(1);
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+
+    const gridSize = 44;
+    const cellSize = Math.min(boardSize.width, boardSize.height) / gridSize;
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(entries => {
+            if (entries[0]) {
+                const { width, height } = entries[0].contentRect;
+                setBoardSize({ width, height });
+            }
+        });
+        if (boardRef.current) {
+            resizeObserver.observe(boardRef.current);
+        }
+        return () => resizeObserver.disconnect();
     }, []);
 
-    const gridCells = Array.from({ length: 44 * 44 });
+    const handleDrop = useCallback((item: any, monitor: any) => {
+        if (!boardRef.current) return;
 
+        const boardRect = boardRef.current.getBoundingClientRect();
+        const clientOffset = monitor.getClientOffset();
+        const dropX = (clientOffset.x - boardRect.left) / scale.get() - x.get() / scale.get();
+        const dropY = (clientOffset.y - boardRect.top) / scale.get() - y.get() / scale.get();
+
+        const gridX = Math.round(dropX / cellSize) * cellSize;
+        const gridY = Math.round(dropY / cellSize) * cellSize;
+        
+        const newId = item.id || `${Date.now()}-${Math.random()}`;
+
+        setPlacedUnits(prev => ({
+            ...prev,
+            [newId]: { ...item, id: newId, x: gridX, y: gridY },
+        }));
+    }, [scale, x, y, cellSize]);
+    
+     const [, drop] = useDrop(() => ({
+        accept: ItemTypes.UNIT,
+        drop: handleDrop,
+    }), [handleDrop]);
+    
     return (
-        <div className="relative w-full aspect-square max-w-5xl mx-auto">
-            <Image
-                src="/assets/scenaries-war.jpg"
-                alt="War Base Layout"
-                data-ai-hint="clash of clans war base"
-                layout="fill"
-                className="object-cover rounded-lg"
-                unoptimized
-            />
-            <div className="absolute inset-0 grid grid-cols-44 grid-rows-44">
-                {gridCells.map((_, index) => {
-                     const x = index % 44;
-                     const y = Math.floor(index / 44);
-                     const key = `${x}-${y}`;
-                     const unit = placedUnits[key] || null;
-                    return <GridCell key={key} x={x} y={y} unit={unit} onDropUnit={handleDropUnit} />;
-                })}
-            </div>
+        <div ref={boardRef} className="relative w-full h-full overflow-hidden bg-black/30 rounded-lg">
+            <motion.div
+                ref={drop}
+                drag
+                dragConstraints={boardRef}
+                dragElastic={0}
+                className="relative w-full h-full"
+                style={{ scale, x, y }}
+                 onWheel={(e) => {
+                    const newScale = scale.get() - e.deltaY * 0.001;
+                    if (newScale >= 0.5 && newScale <= 3) {
+                        scale.set(newScale);
+                    }
+                }}
+            >
+                <Image
+                    src="/assets/scenaries-war.jpg"
+                    alt="War Base Layout"
+                    data-ai-hint="clash of clans war base"
+                    layout="fill"
+                    className="object-cover pointer-events-none"
+                    unoptimized
+                />
+                 {Object.values(placedUnits).map((unit) => (
+                    <PlacedUnit key={unit.id} unit={unit} onMove={() => {}} cellSize={cellSize} />
+                ))}
+            </motion.div>
         </div>
     );
 };
@@ -144,7 +188,6 @@ const SavedArmiesPanel = () => {
             setLoading(false);
             return;
         }
-
         const fetchArmies = async () => {
             try {
                 const comps = await getSavedArmyCompositions(user.uid);
@@ -156,51 +199,49 @@ const SavedArmiesPanel = () => {
                 setLoading(false);
             }
         };
-
         fetchArmies();
-
     }, [user, toast]);
 
     if (loading) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="animate-spin mr-2" />
-          <span>Loading Your Armies...</span>
-        </div>
-      )
+        return (
+            <div className="flex items-center justify-center h-full">
+                <Loader2 className="animate-spin mr-2" />
+                <span>Loading Your Armies...</span>
+            </div>
+        );
     }
 
     if (compositions.length === 0) {
-      return (
-        <Alert>
-          <AlertTitle>No Armies Found</AlertTitle>
-          <AlertDescription>
-            You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
-          </AlertDescription>
-        </Alert>
-      )
+        return (
+            <Alert>
+                <AlertTitle>No Armies Found</AlertTitle>
+                <AlertDescription>
+                    You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
+                </AlertDescription>
+            </Alert>
+        );
     }
 
     return (
          <Accordion type="single" collapsible className="w-full">
             {compositions.map((comp) => (
-                 <AccordionItem key={comp.id} value={comp.id} className="border-b-0">
+                <AccordionItem key={comp.id} value={comp.id} className="border-b-0">
                     <AccordionTrigger className="bg-muted/30 hover:bg-muted/50 px-4 py-2 rounded-t-lg">
-                      <span className="font-headline text-lg">{comp.name}</span>
+                        <span className="font-headline text-lg">{comp.name}</span>
                     </AccordionTrigger>
                     <AccordionContent className="p-2 bg-black/20">
                         <div className="flex gap-2 overflow-x-auto p-2">
-                             {comp.heroes?.map((hero: any, index: number) => (
-                                <DraggableUnit key={`hero-${index}-${hero.name}`} unit={{ name: hero.name, image: getImagePath(hero.name) }} type="hero"/>
+                             {comp.heroes?.map((unit: any, index: number) => (
+                                <DraggableUnit key={`hero-${index}-${unit.name}`} unit={unit} type="hero"/>
                             ))}
-                            {comp.troops?.map((troop: any, index: number) => (
-                                <DraggableUnit key={`troop-${index}-${troop.name}`} unit={{ name: troop.name, image: getImagePath(troop.name) }} type="troop"/>
+                            {comp.troops?.map((unit: any, index: number) => (
+                                <DraggableUnit key={`troop-${index}-${unit.name}`} unit={unit} type="troop"/>
                             ))}
-                            {comp.spells?.map((spell: any, index: number) => (
-                                <DraggableUnit key={`spell-${index}-${spell.name}`} unit={{ name: spell.name, image: getImagePath(spell.name) }} type="spell"/>
+                            {comp.spells?.map((unit: any, index: number) => (
+                                <DraggableUnit key={`spell-${index}-${unit.name}`} unit={unit} type="spell"/>
                             ))}
                             {comp.siegeMachine && (
-                                <DraggableUnit unit={{ name: comp.siegeMachine.name, image: getImagePath(comp.siegeMachine.name) }} type="siege"/>
+                                <DraggableUnit unit={comp.siegeMachine} type="siege"/>
                             )}
                         </div>
                     </AccordionContent>
@@ -209,7 +250,6 @@ const SavedArmiesPanel = () => {
         </Accordion>
     );
 };
-
 
 export default function WarsPage() {
     const { user, loading } = useAuth();
@@ -231,17 +271,24 @@ export default function WarsPage() {
                     </AlertDescription>
                 </Alert>
             </div>
-        )
+        );
     }
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="flex flex-col h-[calc(100vh-8rem)]">
-                <div className="flex-grow p-4 overflow-hidden">
+            <div className="flex flex-col-reverse md:flex-row h-[calc(100vh-8rem)] gap-4">
+                <div className="flex-grow p-0 overflow-hidden h-full">
                    <StrategyBoard />
                 </div>
-                <div className="flex-shrink-0 w-full bg-background/80 backdrop-blur-sm border-t border-border p-2">
-                   <SavedArmiesPanel />
+                <div className="w-full md:w-80 flex-shrink-0 h-full overflow-y-auto">
+                    <Card className="h-full">
+                        <CardHeader>
+                            <CardTitle>Your Armies</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                           <SavedArmiesPanel />
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </DndProvider>

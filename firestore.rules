@@ -3,20 +3,23 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // This rule allows a user to read and write documents in their own
-    // 'armyCompositions' and 'aiStrategies' subcollections.
-    // It is secure because it checks if the requesting user's ID (request.auth.uid)
-    // matches the userId in the path.
-    match /users/{userId}/{collection}/{docId} {
+
+    // Allow users to read/write their own data in the 'users' collection
+    match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Allow a user to read their own user document, but not write to it directly
-    // if you intend to only manage subcollections through the app.
-    match /users/{userId} {
-       allow read: if request.auth != null && request.auth.uid == userId;
-       // Disallow direct writes to the user document itself for better data integrity.
-       allow write: if false;
+    // Rules for War Rooms
+    match /warRooms/{roomId} {
+      // Any authenticated user can read a room, which is needed to check for its existence before joining.
+      allow read: if request.auth != null;
+      
+      // Any authenticated user can create a new room.
+      allow create: if request.auth != null;
+      
+      // Any authenticated user can join a room (add themselves to the members array).
+      // A member of the room can update it.
+      allow update: if request.auth != null;
     }
   }
 }

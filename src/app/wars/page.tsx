@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions } from '@/lib/firebase-service';
 import { getImagePath } from '@/lib/image-paths';
@@ -39,7 +38,7 @@ interface ArmyUnit {
     quantity: number;
 }
 
-const DraggableUnit = ({ armyUnit, onMouseDown, onMouseUp }: { armyUnit: ArmyUnit, onMouseDown: () => void, onMouseUp: () => void }) => {
+const DraggableUnit = ({ armyUnit, onClick }: { armyUnit: ArmyUnit, onClick: () => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
     item: { ...armyUnit.unit },
@@ -51,11 +50,9 @@ const DraggableUnit = ({ armyUnit, onMouseDown, onMouseUp }: { armyUnit: ArmyUni
   return (
     <div
       ref={drag}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp} 
+      onClick={onClick}
       className={cn(
-        "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-all w-20 h-24",
+        "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-pointer transition-all w-20 h-24",
         "bg-black/20 border border-border/50 hover:bg-primary/20",
         isDragging ? "opacity-30" : "opacity-100"
       )}
@@ -118,7 +115,7 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
     )
 }
 
-const DeploymentBar = ({ army, onContinuousDeployStart, onContinuousDeployStop }: { army: ArmyUnit[], onContinuousDeployStart: (unit: UnitData) => void, onContinuousDeployStop: () => void }) => {
+const DeploymentBar = ({ army, onUnitClick }: { army: ArmyUnit[], onUnitClick: (unit: UnitData) => void }) => {
     return (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-auto max-h-64 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg w-[calc(100%-2rem)] max-w-4xl">
             <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
@@ -126,8 +123,7 @@ const DeploymentBar = ({ army, onContinuousDeployStart, onContinuousDeployStop }
                     <DraggableUnit 
                         key={armyUnit.unit.name} 
                         armyUnit={armyUnit} 
-                        onMouseDown={() => onContinuousDeployStart(armyUnit.unit)}
-                        onMouseUp={onContinuousDeployStop}
+                        onClick={() => onUnitClick(armyUnit.unit)}
                     />
                 ))}
             </div>
@@ -142,9 +138,9 @@ const StrategyBoard = () => {
     const [placedUnits, setPlacedUnits] = useState<PlacedUnitData[]>([]);
     const [armyToDeploy, setArmyToDeploy] = useState<ArmyUnit[]>([]);
     const [loadingArmies, setLoadingArmies] = useState(true);
+    const [lastDropPos, setLastDropPos] = useState<{x: number, y: number} | null>(null);
 
     const boardRef = useRef<HTMLDivElement>(null);
-    const pressTimer = useRef<NodeJS.Timeout | null>(null);
 
     const scale = useMotionValue(1);
     const x = useMotionValue(0);
@@ -195,7 +191,6 @@ const StrategyBoard = () => {
                     newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
                 }
             } else if (unitIndex === -1 && unit.type === 'hero') {
-                // This handles moving a hero that's already been removed from the deploy bar
                 canDeploy = true;
             }
 
@@ -210,23 +205,20 @@ const StrategyBoard = () => {
         }
     }, []);
 
+    const handleUnitClick = (unit: UnitData) => {
+        if(lastDropPos) {
+            deployUnit(unit, lastDropPos.x, lastDropPos.y)
+        } else {
+            toast({
+                title: "Drag First!",
+                description: "Drag a unit onto the map first to set a deployment location."
+            })
+        }
+    };
+    
     const handleMoveUnit = useCallback((id: string, newX: number, newY: number) => {
         setPlacedUnits(prev => prev.map(u => u.id === id ? { ...u, x: newX, y: newY } : u));
     }, []);
-
-    const handleContinuousDeployStart = (unit: UnitData) => {
-        if(unit.type === 'hero') return; 
-
-        // This requires access to the board's ref and mouse position, which is complex to handle here.
-        // For now, long-press will just trigger a single deploy on drop. A full implementation would need context or event listeners.
-    };
-    
-    const handleContinuousDeployStop = () => {
-        if (pressTimer.current) {
-            clearInterval(pressTimer.current);
-            pressTimer.current = null;
-        }
-    };
 
     const [, drop] = useDrop(
         () => ({
@@ -243,6 +235,8 @@ const StrategyBoard = () => {
 
                 const dropX = (clientOffset.x - boardRect.left - currentX) / currentScale - 24; 
                 const dropY = (clientOffset.y - boardRect.top - currentY) / currentScale - 24;
+                
+                 setLastDropPos({x: dropX, y: dropY});
                 
                 if ('id' in item) {
                     handleMoveUnit(item.id, dropX, dropY);
@@ -294,8 +288,7 @@ const StrategyBoard = () => {
             </motion.div>
             <DeploymentBar 
                 army={armyToDeploy} 
-                onContinuousDeployStart={handleContinuousDeployStart}
-                onContinuousDeployStop={handleContinuousDeployStop} 
+                onUnitClick={handleUnitClick}
             />
         </div>
     );
@@ -332,3 +325,4 @@ export default function WarsPage() {
         </DndProvider>
     );
 }
+

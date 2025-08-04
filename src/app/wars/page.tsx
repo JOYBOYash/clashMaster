@@ -7,7 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Shield, Swords, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions } from '@/lib/firebase-service';
 import { getImagePath } from '@/lib/image-paths';
@@ -29,12 +29,13 @@ interface Unit {
 
 interface DraggableUnitProps {
   unit: Unit;
+  type: 'troop' | 'spell' | 'hero' | 'siege';
 }
 
-const DraggableUnit = ({ unit }: DraggableUnitProps) => {
+const DraggableUnit = ({ unit, type }: DraggableUnitProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
-    item: unit,
+    item: { ...unit, type },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -44,12 +45,15 @@ const DraggableUnit = ({ unit }: DraggableUnitProps) => {
     <div
       ref={drag}
       className={cn(
-        "flex items-center gap-2 p-1 bg-muted/50 rounded-md text-xs cursor-grab transition-opacity",
-        isDragging ? "opacity-50" : "opacity-100"
+        "flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-opacity",
+        "bg-black/20 border border-border/50 hover:bg-primary/20",
+        isDragging ? "opacity-30" : "opacity-100"
       )}
     >
-      <Image src={unit.image} alt={unit.name} width={24} height={24} unoptimized />
-      <span>{unit.name}</span>
+      <div className="relative w-12 h-12">
+        <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized />
+      </div>
+      <span className="text-foreground/80 truncate w-16 text-center">{unit.name}</span>
     </div>
   );
 };
@@ -58,40 +62,38 @@ const DraggableUnit = ({ unit }: DraggableUnitProps) => {
 interface GridCellProps {
   x: number;
   y: number;
-  unit: Unit | null;
-  onDropUnit: (x: number, y: number, unit: Unit) => void;
+  unit: (Unit & {type: string}) | null;
+  onDropUnit: (x: number, y: number, unit: Unit & {type: string}) => void;
 }
 
 const GridCell = ({ x, y, unit, onDropUnit }: GridCellProps) => {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: ItemTypes.UNIT,
-        drop: (item: Unit) => onDropUnit(x, y, item),
+        drop: (item: Unit & {type: string}) => onDropUnit(x, y, item),
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
     }), [x, y, onDropUnit]);
 
-    const isSpell = unit?.name.toLowerCase().includes('spell');
+    const isSpell = unit?.type === 'spell';
 
     return (
-        <div ref={drop} className={cn("border border-white/10 relative", isOver && "bg-primary/20")}>
+        <div ref={drop} className={cn("border border-white/5 relative", isOver && "bg-primary/30")}>
            {unit && (
-               <>
-                   {isSpell ? (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Circle for spell radius */}
-                            <div className="absolute bg-primary/30 rounded-full" style={{ width: '250%', height: '250%' }}></div>
-                             {/* Spell icon on top */}
-                            <div className="relative w-full h-full p-0.5">
-                                <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized/>
-                            </div>
-                        </div>
-                   ) : (
-                        <div className="relative w-full h-full p-0.5">
-                            <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized/>
-                        </div>
-                   )}
-               </>
+               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                   {/* Circle for radius */}
+                   <div 
+                        className={cn(
+                            "absolute rounded-full",
+                            isSpell ? 'bg-purple-500/20 border-2 border-purple-400' : 'bg-amber-500/10 border border-amber-400/50'
+                        )}
+                        style={{ width: '250%', height: '250%' }}
+                   ></div>
+                    {/* Unit icon on top */}
+                   <div className="relative w-full h-full p-0.5">
+                       <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg" unoptimized/>
+                   </div>
+               </div>
            )}
         </div>
     );
@@ -99,9 +101,9 @@ const GridCell = ({ x, y, unit, onDropUnit }: GridCellProps) => {
 
 
 const StrategyBoard = () => {
-    const [placedUnits, setPlacedUnits] = useState<Record<string, Unit>>({});
+    const [placedUnits, setPlacedUnits] = useState<Record<string, Unit & {type: string}>>({});
 
-    const handleDropUnit = useCallback((x: number, y: number, unit: Unit) => {
+    const handleDropUnit = useCallback((x: number, y: number, unit: Unit & {type: string}) => {
         const key = `${x}-${y}`;
         setPlacedUnits(prev => ({ ...prev, [key]: unit }));
     }, []);
@@ -109,7 +111,7 @@ const StrategyBoard = () => {
     const gridCells = Array.from({ length: 44 * 44 });
 
     return (
-        <div className="relative w-full aspect-square max-w-[800px] mx-auto">
+        <div className="relative w-full aspect-square max-w-5xl mx-auto">
             <Image
                 src="/assets/scenaries-war.jpg"
                 alt="War Base Layout"
@@ -159,75 +161,52 @@ const SavedArmiesPanel = () => {
 
     }, [user, toast]);
 
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="animate-spin mr-2" />
+          <span>Loading Your Armies...</span>
+        </div>
+      )
+    }
+
+    if (compositions.length === 0) {
+      return (
+        <Alert>
+          <AlertTitle>No Armies Found</AlertTitle>
+          <AlertDescription>
+            You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
+          </AlertDescription>
+        </Alert>
+      )
+    }
+
     return (
-        <Card>
-            <CardHeader><CardTitle>Your Armies</CardTitle><CardDescription>Drag units from your saved armies onto the board.</CardDescription></CardHeader>
-            <CardContent>
-                {loading && (
-                    <div className="flex items-center justify-center p-4">
-                        <Loader2 className="animate-spin mr-2" />
-                        <span>Loading Armies...</span>
-                    </div>
-                )}
-                {!loading && compositions.length === 0 && (
-                     <Alert>
-                        <AlertTitle>No Armies Found</AlertTitle>
-                        <AlertDescription>
-                          You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
-                        </AlertDescription>
-                    </Alert>
-                )}
-                {!loading && compositions.length > 0 && (
-                     <Accordion type="multiple" className="w-full">
-                        {compositions.map((comp) => (
-                             <AccordionItem key={comp.id} value={comp.id}>
-                                <AccordionTrigger>{comp.name}</AccordionTrigger>
-                                <AccordionContent>
-                                    <div className="space-y-3">
-                                         {comp.heroes?.length > 0 && (
-                                            <div>
-                                                <h4 className="font-bold text-sm mb-2">Heroes</h4>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {comp.heroes.map((hero: any, index: number) => (
-                                                        <DraggableUnit key={`hero-${index}-${hero.name}`} unit={{ name: hero.name, image: getImagePath(hero.name) }} />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                         )}
-                                        {comp.troops?.length > 0 && (
-                                            <div>
-                                                <h4 className="font-bold text-sm mb-2">Troops</h4>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {comp.troops.map((troop: any, index: number) => (
-                                                        <DraggableUnit key={`troop-${index}-${troop.name}`} unit={{ name: `${troop.quantity}x ${troop.name}`, image: getImagePath(troop.name) }} />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {comp.spells?.length > 0 && (
-                                            <div>
-                                                 <h4 className="font-bold text-sm mt-2">Spells</h4>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {comp.spells.map((spell: any, index: number) => (
-                                                        <DraggableUnit key={`spell-${index}-${spell.name}`} unit={{ name: `${spell.quantity}x ${spell.name}`, image: getImagePath(spell.name) }} />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {comp.siegeMachine && (
-                                            <div>
-                                                <h4 className="font-bold text-sm mt-2">Siege Machine</h4>
-                                                 <DraggableUnit unit={{ name: comp.siegeMachine.name, image: getImagePath(comp.siegeMachine.name) }} />
-                                            </div>
-                                        )}
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
-                    </Accordion>
-                )}
-            </CardContent>
-        </Card>
+         <Accordion type="single" collapsible className="w-full">
+            {compositions.map((comp) => (
+                 <AccordionItem key={comp.id} value={comp.id} className="border-b-0">
+                    <AccordionTrigger className="bg-muted/30 hover:bg-muted/50 px-4 py-2 rounded-t-lg">
+                      <span className="font-headline text-lg">{comp.name}</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="p-2 bg-black/20">
+                        <div className="flex gap-2 overflow-x-auto p-2">
+                             {comp.heroes?.map((hero: any, index: number) => (
+                                <DraggableUnit key={`hero-${index}-${hero.name}`} unit={{ name: hero.name, image: getImagePath(hero.name) }} type="hero"/>
+                            ))}
+                            {comp.troops?.map((troop: any, index: number) => (
+                                <DraggableUnit key={`troop-${index}-${troop.name}`} unit={{ name: troop.name, image: getImagePath(troop.name) }} type="troop"/>
+                            ))}
+                            {comp.spells?.map((spell: any, index: number) => (
+                                <DraggableUnit key={`spell-${index}-${spell.name}`} unit={{ name: spell.name, image: getImagePath(spell.name) }} type="spell"/>
+                            ))}
+                            {comp.siegeMachine && (
+                                <DraggableUnit unit={{ name: comp.siegeMachine.name, image: getImagePath(comp.siegeMachine.name) }} type="siege"/>
+                            )}
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+            ))}
+        </Accordion>
     );
 };
 
@@ -241,35 +220,28 @@ export default function WarsPage() {
 
     if (!user) {
         return (
-            <Alert variant="destructive">
-                <AlertTitle>Access Denied</AlertTitle>
-                <AlertDescription>
-                    You must be signed in to access the Strategy Board.
-                    <Button asChild variant="link" className="p-0"><Link href="/sign-in">Sign In</Link></Button>
-                </AlertDescription>
-            </Alert>
+            <div className="w-full h-full flex items-center justify-center">
+                <Alert variant="destructive" className="max-w-md">
+                    <AlertTitle>Access Denied</AlertTitle>
+                    <AlertDescription>
+                        You must be signed in to access the Strategy Board.
+                        <Button asChild variant="link" className="p-0 h-auto ml-1">
+                            <Link href="/sign-in">Sign In</Link>
+                        </Button>
+                    </AlertDescription>
+                </Alert>
+            </div>
         )
     }
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="space-y-8">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-3 text-3xl">
-                            <Shield className="w-8 h-8 text-primary" />
-                            Strategy Board
-                        </CardTitle>
-                        <CardDescription>Plan your attacks by dragging units from your saved armies onto the board.</CardDescription>
-                    </CardHeader>
-                </Card>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                    <div className="lg:col-span-2">
-                       <StrategyBoard />
-                    </div>
-                    <div className="space-y-4">
-                       <SavedArmiesPanel />
-                    </div>
+            <div className="flex flex-col h-[calc(100vh-8rem)]">
+                <div className="flex-grow p-4 overflow-hidden">
+                   <StrategyBoard />
+                </div>
+                <div className="flex-shrink-0 w-full bg-background/80 backdrop-blur-sm border-t border-border p-2">
+                   <SavedArmiesPanel />
                 </div>
             </div>
         </DndProvider>

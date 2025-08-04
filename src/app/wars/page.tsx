@@ -1,12 +1,10 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { DndProvider, useDrag, useDrop, type XYCoord } from 'react-dnd';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Card } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { getSavedArmyCompositions } from '@/lib/firebase-service';
@@ -27,6 +25,7 @@ interface UnitData {
   name: string;
   image: string;
   type: 'troop' | 'spell' | 'hero' | 'siege';
+  level: number;
 }
 
 interface PlacedUnitData extends UnitData {
@@ -35,28 +34,39 @@ interface PlacedUnitData extends UnitData {
     y: number;
 }
 
-const DraggableUnit = ({ unit, type }: { unit: any, type: UnitData['type'] }) => {
+interface ArmyUnit {
+    unit: UnitData;
+    quantity: number;
+}
+
+const DraggableUnit = ({ armyUnit, onDeploy }: { armyUnit: ArmyUnit, onDeploy: () => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
-    item: { name: unit.name, image: getImagePath(unit.name), type },
+    item: () => {
+        onDeploy();
+        return armyUnit.unit;
+    },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-  }));
+  }), [armyUnit, onDeploy]);
 
   return (
     <div
       ref={drag}
       className={cn(
-        "flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-opacity",
+        "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-all",
         "bg-black/20 border border-border/50 hover:bg-primary/20",
         isDragging ? "opacity-30" : "opacity-100"
       )}
     >
       <div className="relative w-12 h-12">
-        <Image src={getImagePath(unit.name)} alt={unit.name} layout="fill" className="object-contain" unoptimized />
+        <Image src={armyUnit.unit.image} alt={armyUnit.unit.name} layout="fill" className="object-contain" unoptimized />
       </div>
-      <span className="text-foreground/80 truncate w-16 text-center">{unit.name}</span>
+      <span className="text-foreground/80 truncate w-16 text-center">{armyUnit.unit.name}</span>
+      <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-background/50">
+        x{armyUnit.quantity}
+      </div>
     </div>
   );
 };
@@ -64,12 +74,12 @@ const DraggableUnit = ({ unit, type }: { unit: any, type: UnitData['type'] }) =>
 const PlacedUnit = ({ unit }: { unit: PlacedUnitData }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: ItemTypes.UNIT,
-        item: { ...unit },
+        item: { ...unit }, // Pass existing data when dragging an already placed unit
         collect: monitor => ({ isDragging: !!monitor.isDragging() }),
     }), [unit]);
     
     const isSpell = unit.type === 'spell';
-    const markerSize = 48; // A clear, fixed size for the marker
+    const markerSize = 48;
 
     return (
         <motion.div
@@ -86,7 +96,7 @@ const PlacedUnit = ({ unit }: { unit: PlacedUnitData }) => {
              <div className="relative w-full h-full p-1 pointer-events-none flex items-center justify-center">
                 <div 
                     className={cn(
-                        "absolute rounded-full border-2 opacity-50 transition-opacity group-hover:opacity-80",
+                        "absolute rounded-full border-2 opacity-30 transition-opacity group-hover:opacity-60",
                          isSpell ? 'bg-purple-500/20 border-purple-400' : 'bg-amber-500/10 border-amber-400/50'
                     )}
                     style={{ 
@@ -100,14 +110,77 @@ const PlacedUnit = ({ unit }: { unit: PlacedUnitData }) => {
     )
 }
 
+const DeploymentBar = ({ army, onDeploy }: { army: ArmyUnit[], onDeploy: (unitName: string) => void }) => {
+    return (
+        <div className="w-full h-40 flex-shrink-0 bg-black/30 backdrop-blur-md border-t border-border/20 p-2">
+            <div className="h-full w-full flex gap-2 overflow-x-auto p-2">
+                {army.map((armyUnit) => (
+                    <DraggableUnit key={armyUnit.unit.name} armyUnit={armyUnit} onDeploy={() => onDeploy(armyUnit.unit.name)} />
+                ))}
+            </div>
+        </div>
+    )
+};
+
 const StrategyBoard = () => {
-    const [placedUnits, setPlacedUnits] = useState<Record<string, PlacedUnitData>>({});
+    const { user } = useAuth();
+    const { toast } = useToast();
+    
+    const [placedUnits, setPlacedUnits] = useState<PlacedUnitData[]>([]);
+    const [armyToDeploy, setArmyToDeploy] = useState<ArmyUnit[]>([]);
+    const [loadingArmies, setLoadingArmies] = useState(true);
+
     const boardRef = useRef<HTMLDivElement>(null);
     const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
 
     const scale = useMotionValue(1);
     const x = useMotionValue(0);
     const y = useMotionValue(0);
+
+    useEffect(() => {
+        if (!user) {
+            setLoadingArmies(false);
+            return;
+        }
+        const fetchArmies = async () => {
+            setLoadingArmies(true);
+            try {
+                const comps = await getSavedArmyCompositions(user.uid);
+                if (comps.length > 0) {
+                    const defaultComp = comps[0];
+                    const deployable: ArmyUnit[] = [];
+
+                    defaultComp.heroes?.forEach((h: any) => deployable.push({ unit: { ...h, image: getImagePath(h.name), type: 'hero' }, quantity: 1 }));
+                    defaultComp.troops?.forEach((t: any) => deployable.push({ unit: { ...t, image: getImagePath(t.name), type: 'troop' }, quantity: t.quantity }));
+                    defaultComp.spells?.forEach((s: any) => deployable.push({ unit: { ...s, image: getImagePath(s.name), type: 'spell' }, quantity: s.quantity }));
+                    if (defaultComp.siegeMachine) deployable.push({ unit: { ...defaultComp.siegeMachine, image: getImagePath(defaultComp.siegeMachine.name), type: 'siege'}, quantity: 1 });
+
+                    setArmyToDeploy(deployable);
+                }
+            } catch (error) {
+                console.error("Failed to fetch armies:", error);
+                toast({ variant: 'destructive', title: "Error", description: "Could not load your saved armies." });
+            } finally {
+                setLoadingArmies(false);
+            }
+        };
+        fetchArmies();
+    }, [user, toast]);
+
+    const handleDeploy = useCallback((unitName: string) => {
+        setArmyToDeploy(prev => {
+            const newArmy = [...prev];
+            const unitIndex = newArmy.findIndex(u => u.unit.name === unitName);
+            if (unitIndex !== -1) {
+                if (newArmy[unitIndex].quantity > 1) {
+                    newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
+                } else {
+                    newArmy.splice(unitIndex, 1);
+                }
+            }
+            return newArmy;
+        });
+    }, []);
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver(entries => {
@@ -125,29 +198,26 @@ const StrategyBoard = () => {
      const [, drop] = useDrop(
         () => ({
             accept: ItemTypes.UNIT,
-            drop: (item: UnitData & { id?: string }, monitor) => {
+            drop: (item: PlacedUnitData, monitor) => {
                 if (!boardRef.current) return;
                 const boardRect = boardRef.current.getBoundingClientRect();
-                
-                // Get drop position relative to the viewport
                 const clientOffset = monitor.getClientOffset();
                 if (!clientOffset) return;
 
-                // Adjust for the board's own pan and zoom to get the correct coordinates *on the board*
-                const dropX = (clientOffset.x - boardRect.left) / scale.get() - x.get() / scale.get();
-                const dropY = (clientOffset.y - boardRect.top) / scale.get() - y.get() / scale.get();
+                const dropX = (clientOffset.x - boardRect.left) / scale.get() - (x.get() / scale.get());
+                const dropY = (clientOffset.y - boardRect.top) / scale.get() - (y.get() / scale.get());
                 
                 const unitId = item.id || `${Date.now()}-${Math.random()}`;
-
-                setPlacedUnits((prev) => ({
-                    ...prev,
-                    [unitId]: {
-                        ...(item as UnitData),
-                        id: unitId,
-                        x: dropX - 24, // Center the 48px marker on the cursor
-                        y: dropY - 24,
-                    },
-                }));
+                
+                // If item has an ID, it's an existing unit being moved
+                if (item.id) {
+                    setPlacedUnits(prev => prev.map(u => u.id === item.id ? { ...u, x: dropX - 24, y: dropY - 24 } : u));
+                } else {
+                     setPlacedUnits((prev) => ([
+                        ...prev,
+                        { ...(item as UnitData), id: unitId, x: dropX - 24, y: dropY - 24 },
+                    ]));
+                }
             },
         }),
         [x, y, scale]
@@ -157,14 +227,14 @@ const StrategyBoard = () => {
     const maxScale = 3;
 
     return (
-        <div ref={drop} className="w-full h-full overflow-hidden rounded-lg cursor-grab active:cursor-grabbing">
+        <div ref={drop} className="w-full h-full overflow-hidden rounded-lg cursor-grab active:cursor-grabbing flex flex-col">
              <motion.div
                 ref={boardRef}
                 drag
                 dragConstraints={{ left: -(boardSize.width * (scale.get() - 1)), right: 0, top: -(boardSize.height * (scale.get() - 1)), bottom: 0 }}
                 dragElastic={0.1}
-                className="relative"
-                style={{ scale, x, y, width: '100%', height: '100%' }}
+                className="relative flex-grow"
+                style={{ scale, x, y }}
                  onWheel={(e) => {
                     e.preventDefault();
                     const newScale = Math.max(minScale, Math.min(maxScale, scale.get() - e.deltaY * 0.001));
@@ -180,88 +250,12 @@ const StrategyBoard = () => {
                     unoptimized
                     priority
                 />
-                 {Object.values(placedUnits).map((unit) => (
+                 {placedUnits.map((unit) => (
                     <PlacedUnit key={unit.id} unit={unit} />
                 ))}
             </motion.div>
+            <DeploymentBar army={armyToDeploy} onDeploy={handleDeploy} />
         </div>
-    );
-};
-
-const SavedArmiesPanel = () => {
-    const { user } = useAuth();
-    const [compositions, setCompositions] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const { toast } = useToast();
-
-    useEffect(() => {
-        if (!user) {
-            setLoading(false);
-            return;
-        }
-        const fetchArmies = async () => {
-            try {
-                const comps = await getSavedArmyCompositions(user.uid);
-                setCompositions(comps);
-            } catch (error) {
-                console.error("Failed to fetch armies:", error);
-                toast({ variant: 'destructive', title: "Error", description: "Could not load your saved armies." });
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchArmies();
-    }, [user, toast]);
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-full p-4 text-muted-foreground">
-                <Loader2 className="animate-spin mr-2" />
-                <span>Loading Your Armies...</span>
-            </div>
-        );
-    }
-    
-    if (compositions.length === 0) {
-        return (
-            <div className="p-4 w-full flex justify-center">
-                 <Alert className="max-w-md bg-background/80">
-                    <AlertTitle>No Armies Found</AlertTitle>
-                    <AlertDescription>
-                        You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0 h-auto"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
-                    </AlertDescription>
-                </Alert>
-            </div>
-           
-        );
-    }
-
-    return (
-         <Accordion type="single" collapsible className="w-full px-4">
-            {compositions.map((comp) => (
-                <AccordionItem key={comp.id} value={comp.id} className="border-b-0 mb-2 rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm shadow-md">
-                    <AccordionTrigger className="bg-muted/30 hover:bg-muted/50 px-4 py-2 text-foreground/90">
-                        <span className="font-headline text-lg">{comp.name}</span>
-                    </AccordionTrigger>
-                    <AccordionContent className="p-2 bg-black/20">
-                        <div className="flex gap-2 overflow-x-auto p-2">
-                             {comp.heroes?.map((unit: any, index: number) => (
-                                <DraggableUnit key={`hero-${index}-${unit.name}`} unit={unit} type="hero"/>
-                            ))}
-                            {comp.troops?.map((unit: any, index: number) => (
-                                <DraggableUnit key={`troop-${index}-${unit.name}`} unit={unit} type="troop"/>
-                            ))}
-                            {comp.spells?.map((unit: any, index: number) => (
-                                <DraggableUnit key={`spell-${index}-${unit.name}`} unit={unit} type="spell"/>
-                            ))}
-                            {comp.siegeMachine && (
-                                <DraggableUnit unit={comp.siegeMachine} type="siege"/>
-                            )}
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-            ))}
-        </Accordion>
     );
 };
 
@@ -290,18 +284,10 @@ export default function WarsPage() {
 
     return (
         <DndProvider backend={HTML5Backend}>
-             <div className="flex flex-col h-[calc(100vh-5rem-1px)] w-full gap-2 -m-8 mt-[-33px]">
-                <div className="flex-grow relative">
-                   <StrategyBoard />
-                </div>
-                <div className="w-full h-48 flex-shrink-0 bg-black/10 backdrop-blur-md border-t border-border/20">
-                    <div className="h-full overflow-y-auto">
-                       <SavedArmiesPanel />
-                    </div>
-                </div>
+             <div className="flex flex-col h-[calc(100vh-4rem-1px)] w-full gap-0 -m-8">
+                <StrategyBoard />
             </div>
         </DndProvider>
     );
 }
 
-    

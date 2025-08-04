@@ -55,7 +55,7 @@ const DraggableUnit = ({ armyUnit, onMouseDown, onMouseUp }: { armyUnit: ArmyUni
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp} 
       className={cn(
-        "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-all",
+        "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-all w-20 h-24",
         "bg-black/20 border border-border/50 hover:bg-primary/20",
         isDragging ? "opacity-30" : "opacity-100"
       )}
@@ -64,9 +64,11 @@ const DraggableUnit = ({ armyUnit, onMouseDown, onMouseUp }: { armyUnit: ArmyUni
         <Image src={armyUnit.unit.image} alt={armyUnit.unit.name} layout="fill" className="object-contain" unoptimized />
       </div>
       <span className="text-foreground/80 truncate w-16 text-center">{armyUnit.unit.name}</span>
-      <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-background/50">
-        x{armyUnit.quantity}
-      </div>
+      {armyUnit.quantity > 1 && (
+        <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-background/50">
+          x{armyUnit.quantity}
+        </div>
+      )}
     </div>
   );
 };
@@ -118,8 +120,8 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
 
 const DeploymentBar = ({ army, onContinuousDeployStart, onContinuousDeployStop }: { army: ArmyUnit[], onContinuousDeployStart: (unit: UnitData) => void, onContinuousDeployStop: () => void }) => {
     return (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-40 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg max-w-3xl w-full">
-            <div className="h-full w-full flex gap-2 overflow-x-auto p-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-auto max-h-64 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg w-[calc(100%-2rem)] max-w-4xl">
+            <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
                 {army.map((armyUnit) => (
                     <DraggableUnit 
                         key={armyUnit.unit.name} 
@@ -180,7 +182,7 @@ const StrategyBoard = () => {
     
     const deployUnit = useCallback((unit: UnitData, dropX: number, dropY: number) => {
         let canDeploy = false;
-
+        
         setArmyToDeploy(prevArmy => {
             const newArmy = [...prevArmy];
             const unitIndex = newArmy.findIndex(u => u.unit.name === unit.name);
@@ -192,7 +194,11 @@ const StrategyBoard = () => {
                 } else {
                     newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
                 }
+            } else if (unitIndex === -1 && unit.type === 'hero') {
+                // This handles moving a hero that's already been removed from the deploy bar
+                canDeploy = true;
             }
+
             return newArmy;
         });
         
@@ -326,4 +332,3 @@ export default function WarsPage() {
         </DndProvider>
     );
 }
-

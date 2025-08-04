@@ -56,7 +56,7 @@ const DraggableUnit = ({ armyUnit, onDeploy, onMouseDown, onMouseUp }: { armyUni
       ref={drag}
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
-      onMouseLeave={onMouseUp} // Stop continuous deploy if mouse leaves
+      onMouseLeave={onMouseUp} 
       className={cn(
         "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-grab transition-all",
         "bg-black/20 border border-border/50 hover:bg-primary/20",
@@ -109,8 +109,8 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
                          isSpell ? 'bg-purple-500/20 border-purple-400' : 'bg-amber-500/10 border-amber-400/50'
                     )}
                     style={{ 
-                        width: '300%', 
-                        height: '300%',
+                        width: isSpell ? '300%' : '150%', 
+                        height: isSpell ? '300%' : '150%',
                     }}
                 />
                 <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain drop-shadow-lg scale-110" unoptimized />
@@ -121,7 +121,7 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
 
 const DeploymentBar = ({ army, onDeploy, onContinuousDeployStart, onContinuousDeployStop }: { army: ArmyUnit[], onDeploy: (unitName: string) => void, onContinuousDeployStart: (unit: UnitData) => void, onContinuousDeployStop: () => void }) => {
     return (
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-black/30 backdrop-blur-md border-t border-border/20 p-2 z-20">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-40 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg max-w-3xl w-full">
             <div className="h-full w-full flex gap-2 overflow-x-auto p-2">
                 {army.map((armyUnit) => (
                     <DraggableUnit 
@@ -183,25 +183,25 @@ const StrategyBoard = () => {
     }, [user, toast]);
 
     const deployUnit = useCallback((unit: UnitData, dropX: number, dropY: number) => {
+        let canDeploy = false;
         setArmyToDeploy(prev => {
             const newArmy = [...prev];
             const unitIndex = newArmy.findIndex(u => u.unit.name === unit.name);
-            let canDeploy = false;
-            if (unitIndex !== -1) {
-                if (newArmy[unitIndex].quantity > 0) {
-                    canDeploy = true;
-                    if (newArmy[unitIndex].quantity === 1) {
-                        newArmy.splice(unitIndex, 1);
-                    } else {
-                        newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
-                    }
+            
+            if (unitIndex !== -1 && newArmy[unitIndex].quantity > 0) {
+                canDeploy = true;
+                if (newArmy[unitIndex].unit.type === 'hero' || newArmy[unitIndex].quantity === 1) {
+                    newArmy.splice(unitIndex, 1);
+                } else {
+                    newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
                 }
-            }
-            if(canDeploy) {
-                setPlacedUnits(prevPlaced => [...prevPlaced, { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }]);
             }
             return newArmy;
         });
+
+        if(canDeploy) {
+            setPlacedUnits(prevPlaced => [...prevPlaced, { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }]);
+        }
     }, []);
 
     const handleDeploy = useCallback((unitName: string) => {
@@ -209,10 +209,10 @@ const StrategyBoard = () => {
             const newArmy = [...prev];
             const unitIndex = newArmy.findIndex(u => u.unit.name === unitName);
             if (unitIndex !== -1) {
-                if (newArmy[unitIndex].quantity > 1) {
-                    newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
-                } else {
+                 if (newArmy[unitIndex].unit.type === 'hero' || newArmy[unitIndex].quantity === 1) {
                     newArmy.splice(unitIndex, 1);
+                } else {
+                    newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
                 }
             }
             return newArmy;
@@ -224,19 +224,19 @@ const StrategyBoard = () => {
     }, []);
 
     const handleContinuousDeployStart = (unit: UnitData) => {
+        if(unit.type === 'hero') return; 
+        
         pressTimer.current = setTimeout(() => {
-            if (pressTimer.current) {
-                clearInterval(pressTimer.current);
-            }
-            pressTimer.current = setInterval(() => {
-                // This will not work as intended without knowing the drop coordinates.
-                // For now, this logic is disabled for bulk placement.
-                // A better approach would be to track mouse position on the board.
-                // For simplicity, we'll keep single drag-and-drop for now.
-            }, 150);
+             if (pressTimer.current) clearInterval(pressTimer.current);
+             pressTimer.current = setInterval(() => {
+                // This logic is complex because we don't know the mouse position here.
+                // The main drag-and-drop will handle single placement.
+                // A full solution would involve tracking mouse position over the board.
+                // For simplicity, we stick to single placement on hold.
+             }, 150);
         }, 500);
     };
-
+    
     const handleContinuousDeployStop = () => {
         if (pressTimer.current) {
             clearInterval(pressTimer.current);
@@ -253,20 +253,22 @@ const StrategyBoard = () => {
                 const clientOffset = monitor.getClientOffset();
                 if (!clientOffset) return;
                 
-                // This calculation correctly accounts for the board's pan (x,y) and zoom (scale)
-                const dropX = (clientOffset.x - boardRect.left) / scale.get() - x.get()/scale.get() - 24; // 24 is half marker width
-                const dropY = (clientOffset.y - boardRect.top) / scale.get() - y.get()/scale.get() - 24; // 24 is half marker height
+                const currentScale = scale.get();
+                const currentX = x.get();
+                const currentY = y.get();
+
+                const dropX = (clientOffset.x - boardRect.left - currentX) / currentScale - 24; 
+                const dropY = (clientOffset.y - boardRect.top - currentY) / currentScale - 24;
                 
                 if ('id' in item) {
-                    // This is an existing unit being moved
                     handleMoveUnit(item.id, dropX, dropY);
                 } else {
-                    // This is a new unit from the deployment bar
-                    setPlacedUnits((prev) => [...prev, { ...(item as UnitData), id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }]);
+                    deployUnit(item as UnitData, dropX, dropY);
                 }
+                return { x: dropX, y: dropY };
             },
         }),
-        [x, y, scale, handleMoveUnit]
+        [x, y, scale, handleMoveUnit, deployUnit]
     );
 
     const minScale = 1;

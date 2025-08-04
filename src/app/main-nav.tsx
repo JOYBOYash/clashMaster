@@ -22,7 +22,7 @@ export function MainNav({
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
      { href: '/upgrades', label: 'Upgrades' },
-     { href: '/war-council', label: 'Council' },
+     { href: '/army-planner', label: 'Army Planner' },
      { href: '/wars', label: 'Wars' },
      { href: '/cookbook', label: 'Cookbook' },
   ];
@@ -36,7 +36,7 @@ export function MainNav({
       className={cn("hidden mx-4 md:flex items-center mx-4 justify-center h-full", className)}
       {...props}
     >
-      <ul className="flex items-center justify-center gap-2 h-full gap-2">
+      <ul className="flex items-center justify-center gap-2 h-full">
         {routes.map((route) => {
           const isActive = pathname.startsWith(route.href);
 

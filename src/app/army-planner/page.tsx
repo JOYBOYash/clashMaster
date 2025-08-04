@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { BrainCircuit, Dices, Swords, Loader2, Castle, Droplets, FlaskConical, Sparkles, X, Users, SpellCheck, Settings, CheckCircle, Bookmark } from 'lucide-react';
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { getImagePath, superTroopNames, siegeMachineNames, challengeBadge } from '@/lib/image-paths';
+import { getImagePath, superTroopNames, siegeMachineNames } from '@/lib/image-paths';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
@@ -106,7 +106,7 @@ const StrategyStep = ({ step }: { step: any }) => {
 }
 
 
-export default function WarCouncilPage() {
+export default function ArmyPlannerPage() {
     const { user } = useAuth();
     const { toast } = useToast();
     const { addNotification } = useNotifications();
@@ -484,7 +484,7 @@ export default function WarCouncilPage() {
 
     return (
         <div className="flex flex-col gap-8">
-            <Card><CardHeader><CardTitle>War Council</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
+            <Card><CardHeader><CardTitle>Army Planner</CardTitle><CardDescription>Assemble your army, plan your attack, and get AI-powered strategic advice.</CardDescription></CardHeader></Card>
 
             <div className="flex flex-col gap-8">
                 <Card className="w-full" no-hover>
@@ -494,7 +494,7 @@ export default function WarCouncilPage() {
                             
                                 <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                     <Button size="sm" disabled={Object.keys(army).length === 0 && heroes.length === 0}>
+                                    <Button disabled={Object.keys(army).length === 0 && heroes.length === 0}>
                                         <Bookmark className="mr-1 h-4 w-4" /> Save
                                     </Button>
                                 </AlertDialogTrigger>
@@ -563,7 +563,9 @@ export default function WarCouncilPage() {
                                 <div
                                     key={item.name}
                                     className="cursor-pointer"
-                                    onClick={() => addUnit(item)}
+                                    onMouseDown={() => handleMouseDown(item)}
+                                    onMouseUp={clearPressTimer}
+                                    onMouseLeave={clearPressTimer}
                                 >
                                     <UnitCard
                                         item={item}

@@ -38,7 +38,7 @@ interface ArmyUnit {
     quantity: number;
 }
 
-const DraggableUnit = ({ armyUnit, onClick }: { armyUnit: ArmyUnit, onClick: () => void }) => {
+const DraggableUnit = ({ armyUnit, onUnitClick }: { armyUnit: ArmyUnit, onUnitClick: (unit: UnitData) => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
     item: { ...armyUnit.unit },
@@ -47,10 +47,31 @@ const DraggableUnit = ({ armyUnit, onClick }: { armyUnit: ArmyUnit, onClick: () 
     }),
   }), [armyUnit]);
 
+  const pressTimer = useRef<NodeJS.Timeout>();
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    onUnitClick(armyUnit.unit);
+    pressTimer.current = setTimeout(() => {
+        pressTimer.current = setInterval(() => {
+            onUnitClick(armyUnit.unit)
+        }, 150) as unknown as NodeJS.Timeout;
+    }, 500);
+  };
+  
+  const handleMouseUp = () => {
+    if (pressTimer.current) {
+        clearInterval(pressTimer.current);
+        pressTimer.current = undefined;
+    }
+  };
+
+
   return (
     <div
       ref={drag}
-      onClick={onClick}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
       className={cn(
         "relative flex-shrink-0 flex flex-col items-center justify-center gap-1 p-1.5 rounded-md text-xs cursor-pointer transition-all w-20 h-24",
         "bg-black/20 border border-border/50 hover:bg-primary/20",
@@ -118,12 +139,12 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
 const DeploymentBar = ({ army, onUnitClick }: { army: ArmyUnit[], onUnitClick: (unit: UnitData) => void }) => {
     return (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-auto max-h-64 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg w-[calc(100%-2rem)] max-w-4xl">
-            <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
+             <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
                 {army.map((armyUnit) => (
                     <DraggableUnit 
                         key={armyUnit.unit.name} 
                         armyUnit={armyUnit} 
-                        onClick={() => onUnitClick(armyUnit.unit)}
+                        onUnitClick={onUnitClick}
                     />
                 ))}
             </div>
@@ -177,41 +198,47 @@ const StrategyBoard = () => {
     }, [user, toast]);
     
     const deployUnit = useCallback((unit: UnitData, dropX: number, dropY: number) => {
-        let canDeploy = false;
-        
+       const unitIndexInArmy = armyToDeploy.findIndex(u => u.unit.name === unit.name);
+
+        if (unitIndexInArmy === -1 && unit.type !== 'hero') {
+            // This can happen if the unit is already exhausted from the army bar
+            // but is being moved on the board. We shouldn't do anything here for deployment.
+            return;
+        }
+
+        // Add the unit to the board
+        setPlacedUnits(prevPlaced => [
+            ...prevPlaced,
+            { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }
+        ]);
+
+        // Decrement from the deployment bar
         setArmyToDeploy(prevArmy => {
             const newArmy = [...prevArmy];
-            const unitIndex = newArmy.findIndex(u => u.unit.name === unit.name);
-
-            if (unitIndex !== -1 && newArmy[unitIndex].quantity > 0) {
-                canDeploy = true;
-                if (newArmy[unitIndex].unit.type === 'hero' || newArmy[unitIndex].quantity === 1) {
-                    newArmy.splice(unitIndex, 1);
+            if(unitIndexInArmy !== -1) {
+                if (newArmy[unitIndexInArmy].quantity > 1) {
+                    newArmy[unitIndexInArmy] = { ...newArmy[unitIndexInArmy], quantity: newArmy[unitIndexInArmy].quantity - 1 };
                 } else {
-                    newArmy[unitIndex] = { ...newArmy[unitIndex], quantity: newArmy[unitIndex].quantity - 1 };
+                    newArmy.splice(unitIndexInArmy, 1);
                 }
-            } else if (unitIndex === -1 && unit.type === 'hero') {
-                canDeploy = true;
             }
-
             return newArmy;
         });
-        
-        if (canDeploy) {
-           setPlacedUnits(prevPlaced => [
-                ...prevPlaced,
-                { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }
-            ]);
-        }
-    }, []);
+
+    }, [armyToDeploy]);
 
     const handleUnitClick = (unit: UnitData) => {
         if(lastDropPos) {
-            deployUnit(unit, lastDropPos.x, lastDropPos.y)
+            const unitInArmy = armyToDeploy.find(u => u.unit.name === unit.name);
+            if(unitInArmy && unitInArmy.quantity > 0) {
+                 deployUnit(unit, lastDropPos.x, lastDropPos.y);
+            } else {
+                 toast({ title: "No more units", description: `You have placed all your ${unit.name}s.`, variant: 'destructive' });
+            }
         } else {
             toast({
-                title: "Drag First!",
-                description: "Drag a unit onto the map first to set a deployment location."
+                title: "Set a location",
+                description: "Drag a unit onto the map first to set a deployment spot."
             })
         }
     };

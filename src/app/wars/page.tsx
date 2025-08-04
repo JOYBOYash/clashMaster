@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -69,9 +70,28 @@ const GridCell = ({ x, y, unit, onDropUnit }: GridCellProps) => {
         }),
     }), [x, y, onDropUnit]);
 
+    const isSpell = unit?.name.toLowerCase().includes('spell');
+
     return (
-        <div ref={drop} className={cn("border border-white/10 relative", isOver && "bg-primary/20")}>
-           {unit && <div className="absolute inset-0 p-0.5"><Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" /></div>}
+        <div ref={drop} className={cn("border border-white/5 relative", isOver && "bg-primary/20")}>
+           {unit && (
+               <div className="absolute inset-0 flex items-center justify-center">
+                   {isSpell ? (
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            {/* Circle for spell radius */}
+                            <div className="absolute bg-primary/30 rounded-full" style={{ width: '250%', height: '250%' }}></div>
+                             {/* Spell icon on top */}
+                            <div className="relative w-full h-full p-0.5">
+                                <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized/>
+                            </div>
+                        </div>
+                   ) : (
+                        <div className="relative w-full h-full p-0.5">
+                            <Image src={unit.image} alt={unit.name} layout="fill" className="object-contain" unoptimized/>
+                        </div>
+                   )}
+               </div>
+           )}
         </div>
     );
 };
@@ -95,6 +115,7 @@ const StrategyBoard = () => {
                 data-ai-hint="clash of clans war base"
                 layout="fill"
                 className="object-cover rounded-lg"
+                unoptimized
             />
             <div className="absolute inset-0 grid grid-cols-44 grid-rows-44">
                 {gridCells.map((_, index) => {
@@ -148,10 +169,12 @@ const SavedArmiesPanel = () => {
                     </div>
                 )}
                 {!loading && compositions.length === 0 && (
-                    <div className="text-center text-muted-foreground p-4">
-                        <p>No saved armies found.</p>
-                        <Button asChild variant="link"><Link href="/army-council">Create one now!</Link></Button>
-                    </div>
+                     <Alert>
+                        <AlertTitle>No Armies Found</AlertTitle>
+                        <AlertDescription>
+                          You haven't saved any armies yet. Go to the <Button asChild variant="link" className="p-0"><Link href="/war-council">War Council</Link></Button> to build and save your first army!
+                        </AlertDescription>
+                    </Alert>
                 )}
                 {!loading && compositions.length > 0 && (
                      <Accordion type="multiple" className="w-full">
@@ -159,30 +182,42 @@ const SavedArmiesPanel = () => {
                              <AccordionItem key={comp.id} value={comp.id}>
                                 <AccordionTrigger>{comp.name}</AccordionTrigger>
                                 <AccordionContent>
-                                    <div className="space-y-2">
-                                        <h4 className="font-bold text-sm">Troops</h4>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {comp.troops.map((troop: any, index: number) => (
-                                                <DraggableUnit key={`troop-${index}-${troop.name}`} unit={{ name: `${troop.quantity}x ${troop.name}`, image: getImagePath(troop.name) }} />
-                                            ))}
-                                        </div>
-                                         <h4 className="font-bold text-sm mt-2">Spells</h4>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {comp.spells.map((spell: any, index: number) => (
-                                                 <DraggableUnit key={`spell-${index}-${spell.name}`} unit={{ name: `${spell.quantity}x ${spell.name}`, image: getImagePath(spell.name) }} />
-                                            ))}
-                                        </div>
-                                         <h4 className="font-bold text-sm mt-2">Heroes</h4>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {comp.heroes.map((hero: any, index: number) => (
-                                                 <DraggableUnit key={`hero-${index}-${hero.name}`} unit={{ name: hero.name, image: getImagePath(hero.name) }} />
-                                            ))}
-                                        </div>
+                                    <div className="space-y-3">
+                                         {comp.heroes?.length > 0 && (
+                                            <div>
+                                                <h4 className="font-bold text-sm mb-2">Heroes</h4>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {comp.heroes.map((hero: any, index: number) => (
+                                                        <DraggableUnit key={`hero-${index}-${hero.name}`} unit={{ name: hero.name, image: getImagePath(hero.name) }} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                         )}
+                                        {comp.troops?.length > 0 && (
+                                            <div>
+                                                <h4 className="font-bold text-sm mb-2">Troops</h4>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {comp.troops.map((troop: any, index: number) => (
+                                                        <DraggableUnit key={`troop-${index}-${troop.name}`} unit={{ name: `${troop.quantity}x ${troop.name}`, image: getImagePath(troop.name) }} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {comp.spells?.length > 0 && (
+                                            <div>
+                                                 <h4 className="font-bold text-sm mt-2">Spells</h4>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {comp.spells.map((spell: any, index: number) => (
+                                                        <DraggableUnit key={`spell-${index}-${spell.name}`} unit={{ name: `${spell.quantity}x ${spell.name}`, image: getImagePath(spell.name) }} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                         {comp.siegeMachine && (
-                                            <>
+                                            <div>
                                                 <h4 className="font-bold text-sm mt-2">Siege Machine</h4>
                                                  <DraggableUnit unit={{ name: comp.siegeMachine.name, image: getImagePath(comp.siegeMachine.name) }} />
-                                            </>
+                                            </div>
                                         )}
                                     </div>
                                 </AccordionContent>
@@ -200,7 +235,7 @@ export default function WarsPage() {
     const { user, loading } = useAuth();
     
     if (loading) {
-        return <Loader2 className="animate-spin" />;
+        return <LoadingSpinner show={true} />;
     }
 
     if (!user) {
@@ -209,7 +244,7 @@ export default function WarsPage() {
                 <AlertTitle>Access Denied</AlertTitle>
                 <AlertDescription>
                     You must be signed in to access the Strategy Board.
-                    <Button asChild variant="link"><Link href="/sign-in">Sign In</Link></Button>
+                    <Button asChild variant="link" className="p-0"><Link href="/sign-in">Sign In</Link></Button>
                 </AlertDescription>
             </Alert>
         )

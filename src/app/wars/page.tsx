@@ -38,7 +38,7 @@ interface ArmyUnit {
     quantity: number;
 }
 
-const DraggableUnit = ({ armyUnit, onUnitClick }: { armyUnit: ArmyUnit, onUnitClick: (unit: UnitData) => void }) => {
+const DraggableUnit = ({ armyUnit, onUnitClick, onUnitPress }: { armyUnit: ArmyUnit, onUnitClick: (unit: UnitData) => void, onUnitPress: (unit: UnitData) => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
     item: { ...armyUnit.unit },
@@ -53,7 +53,7 @@ const DraggableUnit = ({ armyUnit, onUnitClick }: { armyUnit: ArmyUnit, onUnitCl
     onUnitClick(armyUnit.unit);
     pressTimer.current = setTimeout(() => {
         pressTimer.current = setInterval(() => {
-            onUnitClick(armyUnit.unit)
+            onUnitPress(armyUnit.unit)
         }, 150) as unknown as NodeJS.Timeout;
     }, 500);
   };
@@ -64,7 +64,6 @@ const DraggableUnit = ({ armyUnit, onUnitClick }: { armyUnit: ArmyUnit, onUnitCl
         pressTimer.current = undefined;
     }
   };
-
 
   return (
     <div
@@ -136,7 +135,7 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
     )
 }
 
-const DeploymentBar = ({ army, onUnitClick }: { army: ArmyUnit[], onUnitClick: (unit: UnitData) => void }) => {
+const DeploymentBar = ({ army, onUnitClick, onUnitPress }: { army: ArmyUnit[], onUnitClick: (unit: UnitData) => void, onUnitPress: (unit: UnitData) => void }) => {
     return (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-auto max-h-64 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg w-[calc(100%-2rem)] max-w-4xl">
              <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
@@ -145,6 +144,7 @@ const DeploymentBar = ({ army, onUnitClick }: { army: ArmyUnit[], onUnitClick: (
                         key={armyUnit.unit.name} 
                         armyUnit={armyUnit} 
                         onUnitClick={onUnitClick}
+                        onUnitPress={onUnitPress}
                     />
                 ))}
             </div>
@@ -200,9 +200,8 @@ const StrategyBoard = () => {
     const deployUnit = useCallback((unit: UnitData, dropX: number, dropY: number) => {
        const unitIndexInArmy = armyToDeploy.findIndex(u => u.unit.name === unit.name);
 
-        if (unitIndexInArmy === -1 && unit.type !== 'hero') {
-            // This can happen if the unit is already exhausted from the army bar
-            // but is being moved on the board. We shouldn't do anything here for deployment.
+        if (unitIndexInArmy === -1) {
+            toast({ title: "No more units", description: `You have placed all your ${unit.name}s.`, variant: 'destructive' });
             return;
         }
 
@@ -215,26 +214,19 @@ const StrategyBoard = () => {
         // Decrement from the deployment bar
         setArmyToDeploy(prevArmy => {
             const newArmy = [...prevArmy];
-            if(unitIndexInArmy !== -1) {
-                if (newArmy[unitIndexInArmy].quantity > 1) {
-                    newArmy[unitIndexInArmy] = { ...newArmy[unitIndexInArmy], quantity: newArmy[unitIndexInArmy].quantity - 1 };
-                } else {
-                    newArmy.splice(unitIndexInArmy, 1);
-                }
+            if (newArmy[unitIndexInArmy].quantity > 1) {
+                newArmy[unitIndexInArmy] = { ...newArmy[unitIndexInArmy], quantity: newArmy[unitIndexInArmy].quantity - 1 };
+            } else {
+                newArmy.splice(unitIndexInArmy, 1);
             }
             return newArmy;
         });
 
-    }, [armyToDeploy]);
+    }, [armyToDeploy, toast]);
 
     const handleUnitClick = (unit: UnitData) => {
         if(lastDropPos) {
-            const unitInArmy = armyToDeploy.find(u => u.unit.name === unit.name);
-            if(unitInArmy && unitInArmy.quantity > 0) {
-                 deployUnit(unit, lastDropPos.x, lastDropPos.y);
-            } else {
-                 toast({ title: "No more units", description: `You have placed all your ${unit.name}s.`, variant: 'destructive' });
-            }
+            deployUnit(unit, lastDropPos.x, lastDropPos.y);
         } else {
             toast({
                 title: "Set a location",
@@ -316,6 +308,7 @@ const StrategyBoard = () => {
             <DeploymentBar 
                 army={armyToDeploy} 
                 onUnitClick={handleUnitClick}
+                onUnitPress={handleUnitClick}
             />
         </div>
     );

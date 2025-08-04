@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -11,15 +10,19 @@ service cloud.firestore {
 
     // Rules for War Rooms
     match /warRooms/{roomId} {
-      // Any authenticated user can read a room, which is needed to check for its existence before joining.
+      // Any authenticated user can read a room. This is necessary to check
+      // for a room's existence and to get updates via listeners.
       allow read: if request.auth != null;
       
       // Any authenticated user can create a new room.
       allow create: if request.auth != null;
       
-      // Any authenticated user can join a room (add themselves to the members array).
-      // A member of the room can update it.
-      allow update: if request.auth != null;
+      // Allow a user to update a room ONLY under specific conditions:
+      // 1. To join: The user is adding ONLY themselves to the members list.
+      // 2. To modify: The user is already a member of the room.
+      allow update: if request.auth != null && 
+                    ( (request.resource.data.members == resource.data.members.concat([request.auth.uid])) ||
+                      (request.auth.uid in resource.data.members) );
     }
   }
 }

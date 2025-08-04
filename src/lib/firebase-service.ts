@@ -1,6 +1,6 @@
 
 import { db } from './firebase';
-import { collection, addDoc, getDocs, doc, setDoc, query, where, Timestamp, writeBatch, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, setDoc, query, where, Timestamp, writeBatch, deleteDoc, updateDoc, arrayUnion, onSnapshot, getDoc } from 'firebase/firestore';
 import type { SuggestWarArmyOutput } from '@/ai/flows/suggest-war-army';
 
 // Type for the army composition data
@@ -119,4 +119,60 @@ export async function deleteUserData(userId: string): Promise<void> {
         console.error(`Error deleting user data for ${userId}:`, error);
         throw new Error("Failed to delete user data.");
     }
+}
+
+// === WAR ROOM FUNCTIONS ===
+
+export async function createWarRoom(userId: string, roomName: string): Promise<string> {
+    try {
+        const docRef = await addDoc(collection(db, 'warRooms'), {
+            name: roomName,
+            createdBy: userId,
+            members: [userId],
+            createdAt: Timestamp.now(),
+            baseLayout: {}, // Placeholder for base layout
+            troopPlacements: {}, // Placeholder for troop placements
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error("Error creating war room:", error);
+        throw new Error("Could not create war room.");
+    }
+}
+
+export async function joinWarRoom(userId: string, roomId: string): Promise<void> {
+    const roomRef = doc(db, 'warRooms', roomId);
+    try {
+        const roomSnap = await getDoc(roomRef);
+        if (!roomSnap.exists()) {
+            throw new Error("Room not found. Invalid invite code.");
+        }
+        await updateDoc(roomRef, {
+            members: arrayUnion(userId)
+        });
+    } catch (error) {
+        console.error("Error joining war room:", error);
+        throw error;
+    }
+}
+
+export async function getWarRoom(roomId: string): Promise<any> {
+    const roomRef = doc(db, 'warRooms', roomId);
+    const roomSnap = await getDoc(roomRef);
+    if (roomSnap.exists()) {
+        return { id: roomSnap.id, ...roomSnap.data() };
+    } else {
+        throw new Error("War room not found.");
+    }
+}
+
+export function getWarRoomListener(roomId: string, callback: (data: any) => void) {
+    const roomRef = doc(db, 'warRooms', roomId);
+    return onSnapshot(roomRef, (doc) => {
+        if (doc.exists()) {
+            callback({ id: doc.id, ...doc.data() });
+        } else {
+            callback(null);
+        }
+    });
 }

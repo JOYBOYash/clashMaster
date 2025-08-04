@@ -6,13 +6,52 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Shield, PlusCircle, Users } from 'lucide-react';
+import { Shield, PlusCircle, Users, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { createWarRoom, joinWarRoom } from '@/lib/firebase-service';
 
 export default function WarsPage() {
     const { user } = useAuth();
+    const router = useRouter();
+    const { toast } = useToast();
+    
     const [roomName, setRoomName] = useState('');
+    const [inviteCode, setInviteCode] = useState('');
+    const [isCreating, setIsCreating] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
+
+    const handleCreateRoom = async () => {
+        if (!user || !roomName) return;
+        setIsCreating(true);
+        try {
+            const roomId = await createWarRoom(user.uid, roomName);
+            toast({ title: 'Room Created!', description: 'Redirecting to your new war room...' });
+            router.push(`/wars/${roomId}`);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not create war room.' });
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
+    const handleJoinRoom = async () => {
+        if (!user || !inviteCode) return;
+        setIsJoining(true);
+        try {
+            await joinWarRoom(user.uid, inviteCode);
+            toast({ title: 'Joined Room!', description: 'Redirecting to the war room...' });
+            router.push(`/wars/${inviteCode}`);
+        } catch (error: any) {
+             console.error(error);
+            toast({ variant: 'destructive', title: 'Error Joining Room', description: error.message || 'Please check the code and try again.' });
+        } finally {
+            setIsJoining(false);
+        }
+    };
 
     if (!user) {
         return (
@@ -22,11 +61,6 @@ export default function WarsPage() {
             </Alert>
         );
     }
-
-    const handleCreateRoom = () => {
-        // Placeholder for future functionality
-        alert(`Creating room: "${roomName}"`);
-    };
 
     return (
         <div className="space-y-8">
@@ -60,8 +94,8 @@ export default function WarsPage() {
                                 onChange={(e) => setRoomName(e.target.value)}
                             />
                         </div>
-                        <Button className="w-full" onClick={handleCreateRoom} disabled={!roomName}>
-                            <PlusCircle className="mr-2 h-4 w-4" />
+                        <Button className="w-full" onClick={handleCreateRoom} disabled={!roomName || isCreating}>
+                            {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />}
                             Create Room
                         </Button>
                     </CardContent>
@@ -80,10 +114,12 @@ export default function WarsPage() {
                             <Input
                                 id="invite-code"
                                 placeholder="Enter code..."
+                                value={inviteCode}
+                                onChange={(e) => setInviteCode(e.target.value)}
                             />
                         </div>
-                        <Button variant="secondary" className="w-full">
-                            <Users className="mr-2 h-4 w-4" />
+                        <Button variant="secondary" className="w-full" onClick={handleJoinRoom} disabled={!inviteCode || isJoining}>
+                            {isJoining ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Users className="mr-2 h-4 w-4" />}
                             Join Room
                         </Button>
                     </CardContent>
@@ -99,7 +135,7 @@ export default function WarsPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="text-center text-muted-foreground py-8">
-                        You have no active war rooms.
+                        This feature is coming soon!
                     </div>
                 </CardContent>
             </Card>

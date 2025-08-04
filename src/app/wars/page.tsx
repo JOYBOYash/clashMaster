@@ -145,7 +145,7 @@ const StrategyBoard = () => {
     const [lastDropPos, setLastDropPos] = useState<{x: number, y: number} | null>(null);
 
     const boardRef = useRef<HTMLDivElement>(null);
-    const pressTimer = useRef<NodeJS.Timeout>();
+    const pressTimer = useRef<NodeJS.Timeout | null>(null);
 
     const scale = useMotionValue(1);
     const x = useMotionValue(0);
@@ -186,17 +186,15 @@ const StrategyBoard = () => {
         const dropY = lastDropPos?.y;
         if(dropX === null || dropY === null || dropX === undefined || dropY === undefined) return false;
 
+        let unitAvailable = false;
         setArmyToDeploy(prevArmy => {
             const unitIndexInArmy = prevArmy.findIndex(u => u.unit.name === unit.name);
             if (unitIndexInArmy === -1) {
-                return prevArmy; // Don't change state if unit not available
+                unitAvailable = false;
+                return prevArmy; 
             }
-
-            setPlacedUnits(prevPlaced => [
-                ...prevPlaced,
-                { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }
-            ]);
-
+            
+            unitAvailable = true;
             const newArmy = [...prevArmy];
             if (newArmy[unitIndexInArmy].quantity > 1) {
                 newArmy[unitIndexInArmy] = { ...newArmy[unitIndexInArmy], quantity: newArmy[unitIndexInArmy].quantity - 1 };
@@ -206,27 +204,50 @@ const StrategyBoard = () => {
             return newArmy;
         });
 
-        return true;
-    }, [armyToDeploy, toast, lastDropPos]);
+        if (unitAvailable) {
+            setPlacedUnits(prevPlaced => [
+                ...prevPlaced,
+                { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }
+            ]);
+        }
+        return unitAvailable;
+    }, [lastDropPos]);
 
-    const handleStartPress = (unit: UnitData) => {
+     const handleStartPress = (unit: UnitData) => {
         if (!lastDropPos) {
             toast({ title: "Set a location", description: "Drag a unit onto the map first to set an initial deployment spot." });
             return;
         }
 
+        // Do not start interval for heroes
+        if (unit.type === 'hero') {
+            deployUnit(unit);
+            return;
+        }
+
+        const deploy = () => {
+            const deployed = deployUnit(unit);
+            if (!deployed) {
+                 if (pressTimer.current) {
+                    clearInterval(pressTimer.current);
+                    pressTimer.current = null;
+                }
+            }
+        };
+
+        deploy(); // Deploy one immediately on click
+
         pressTimer.current = setTimeout(() => {
-            pressTimer.current = setInterval(() => {
-                const deployed = deployUnit(unit);
-                if (!deployed) handleEndPress(); // Stop if we can't deploy anymore
-            }, 150) as unknown as NodeJS.Timeout;
+            if (pressTimer.current) { // Ensure it wasn't cleared
+                pressTimer.current = setInterval(deploy, 150) as unknown as NodeJS.Timeout;
+            }
         }, 500);
     };
 
     const handleEndPress = () => {
         if (pressTimer.current) {
             clearInterval(pressTimer.current);
-            pressTimer.current = undefined;
+            pressTimer.current = null;
         }
     };
     
@@ -254,10 +275,9 @@ const StrategyBoard = () => {
                 
                 if (item.id) { // It's an existing unit being moved
                     handleMoveUnit(item.id, dropX, dropY);
-                } else { // It's a new unit from the bar
-                    // The onDeploy in useDrag's end callback handles the initial placement
                 }
-                return { x: dropX, y: dropY };
+                
+                return { name: "StrategyBoard", x: dropX, y: dropY };
             },
         }),
         [x, y, scale, handleMoveUnit]

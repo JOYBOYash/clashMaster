@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Image from 'next/image';
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { motion, useMotionValue } from 'framer-motion';
+import { RefreshCw } from 'lucide-react';
 
 const ItemTypes = {
   UNIT: 'unit',
@@ -54,7 +55,6 @@ const DraggableUnit = ({ armyUnit, onDeploy, onStartPress, onEndPress }: { armyU
   }), [armyUnit, onDeploy]);
   
   const handleMouseDown = () => {
-    // Only trigger press-and-hold for non-hero units
     if (armyUnit.unit.type !== 'hero') {
       onStartPress(armyUnit.unit);
     }
@@ -127,7 +127,7 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
 const DeploymentBar = ({ army, onDeploy, onStartPress, onEndPress }: { army: ArmyUnit[], onDeploy: (unit: UnitData, pos: {x: number, y: number}) => void, onStartPress: (unit: UnitData) => void, onEndPress: () => void }) => {
     return (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-auto max-h-64 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg w-[calc(100%-2rem)] max-w-4xl">
-             <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
+             <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto no-scrollbar">
                 {army.map((armyUnit, index) => (
                     <DraggableUnit 
                         key={`${armyUnit.unit.name}-${index}`}
@@ -147,6 +147,7 @@ const StrategyBoard = () => {
     const { toast } = useToast();
     
     const [placedUnits, setPlacedUnits] = useState<PlacedUnitData[]>([]);
+    const [initialArmy, setInitialArmy] = useState<ArmyUnit[]>([]);
     const [armyToDeploy, setArmyToDeploy] = useState<ArmyUnit[]>([]);
     const [loadingArmies, setLoadingArmies] = useState(true);
 
@@ -157,35 +158,37 @@ const StrategyBoard = () => {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
 
-    useEffect(() => {
+    const fetchAndSetArmies = useCallback(async () => {
         if (!user) {
             setLoadingArmies(false);
             return;
         }
-        const fetchArmies = async () => {
-            setLoadingArmies(true);
-            try {
-                const comps = await getSavedArmyCompositions(user.uid);
-                if (comps.length > 0) {
-                    const defaultComp = comps[0];
-                    const deployable: ArmyUnit[] = [];
-                    
-                    (defaultComp.heroes || []).forEach((h: any) => deployable.push({ unit: { ...h, image: getImagePath(h.name), type: 'hero' }, quantity: 1 }));
-                    (defaultComp.troops || []).forEach((t: any) => deployable.push({ unit: { ...t, image: getImagePath(t.name), type: 'troop' }, quantity: t.quantity }));
-                    (defaultComp.spells || []).forEach((s: any) => deployable.push({ unit: { ...s, image: getImagePath(s.name), type: 'spell' }, quantity: s.quantity }));
-                    if (defaultComp.siegeMachine) deployable.push({ unit: { ...defaultComp.siegeMachine, image: getImagePath(defaultComp.siegeMachine.name), type: 'siege'}, quantity: 1 });
+        setLoadingArmies(true);
+        try {
+            const comps = await getSavedArmyCompositions(user.uid);
+            if (comps.length > 0) {
+                const defaultComp = comps[0];
+                const deployable: ArmyUnit[] = [];
+                
+                (defaultComp.heroes || []).forEach((h: any) => deployable.push({ unit: { ...h, image: getImagePath(h.name), type: 'hero' }, quantity: 1 }));
+                (defaultComp.troops || []).forEach((t: any) => deployable.push({ unit: { ...t, image: getImagePath(t.name), type: 'troop' }, quantity: t.quantity }));
+                (defaultComp.spells || []).forEach((s: any) => deployable.push({ unit: { ...s, image: getImagePath(s.name), type: 'spell' }, quantity: s.quantity }));
+                if (defaultComp.siegeMachine) deployable.push({ unit: { ...defaultComp.siegeMachine, image: getImagePath(defaultComp.siegeMachine.name), type: 'siege'}, quantity: 1 });
 
-                    setArmyToDeploy(deployable);
-                }
-            } catch (error) {
-                console.error("Failed to fetch armies:", error);
-                toast({ variant: 'destructive', title: "Error", description: "Could not load your saved armies." });
-            } finally {
-                setLoadingArmies(false);
+                setArmyToDeploy(deployable);
+                setInitialArmy(deployable); // Store the initial state
             }
-        };
-        fetchArmies();
+        } catch (error) {
+            console.error("Failed to fetch armies:", error);
+            toast({ variant: 'destructive', title: "Error", description: "Could not load your saved armies." });
+        } finally {
+            setLoadingArmies(false);
+        }
     }, [user, toast]);
+
+    useEffect(() => {
+        fetchAndSetArmies();
+    }, [fetchAndSetArmies]);
     
     const deployUnit = useCallback((unit: UnitData, pos: {x: number, y: number} | null) => {
         if(pos === null || pos.x === null || pos.y === null || pos.x === undefined || pos.y === undefined) return false;
@@ -221,14 +224,12 @@ const StrategyBoard = () => {
      const handleStartPress = (unit: UnitData) => {
         const deploy = () => {
             if (!boardRef.current) return;
-            const lastPlaced = placedUnits[placedUnits.length - 1];
-            if (!lastPlaced) {
-                 toast({ title: "Set a location", description: "Drag a unit onto the map first to set an initial deployment spot." });
-                 handleEndPress();
-                 return;
-            }
+            // Get the last known cursor position during a drag, or center of view if none
+            const boardRect = boardRef.current.getBoundingClientRect();
+            const lastX = boardRect.width / 2;
+            const lastY = boardRect.height / 2;
             
-            const deployed = deployUnit(unit, {x: lastPlaced.x, y: lastPlaced.y});
+            const deployed = deployUnit(unit, { x: lastX, y: lastY });
             if (!deployed) {
                  handleEndPress();
             }
@@ -280,6 +281,12 @@ const StrategyBoard = () => {
         [x, y, scale, handleMoveUnit]
     );
 
+    const handleReset = () => {
+        setPlacedUnits([]);
+        setArmyToDeploy(initialArmy);
+        toast({ title: "Board Reset", description: "Your strategy board has been cleared." });
+    }
+
     const minScale = 1;
     const maxScale = 3;
 
@@ -289,6 +296,10 @@ const StrategyBoard = () => {
 
     return (
         <div className="w-full h-full overflow-hidden flex flex-col relative">
+             <Button onClick={handleReset} variant="outline" className="absolute top-4 right-4 z-30">
+                <RefreshCw className="mr-2 h-4 w-4" /> Reset
+             </Button>
+
              <motion.div
                 ref={boardRef}
                 className="relative flex-grow cursor-grab active:cursor-grabbing w-full h-full"

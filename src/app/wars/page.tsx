@@ -38,25 +38,32 @@ interface ArmyUnit {
     quantity: number;
 }
 
-const DraggableUnit = ({ armyUnit, onDeploy, onStartPress, onEndPress }: { armyUnit: ArmyUnit, onDeploy: (unit: UnitData) => void, onStartPress: (unit: UnitData) => void, onEndPress: () => void }) => {
+const DraggableUnit = ({ armyUnit, onDeploy, onStartPress, onEndPress }: { armyUnit: ArmyUnit, onDeploy: (unit: UnitData, pos: {x: number, y: number}) => void, onStartPress: (unit: UnitData) => void, onEndPress: () => void }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ItemTypes.UNIT,
     item: { ...armyUnit.unit },
     end: (item, monitor) => {
-        const dropResult = monitor.getDropResult();
+        const dropResult = monitor.getDropResult<{x: number, y: number}>();
         if (item && dropResult) {
-            onDeploy(armyUnit.unit);
+             onDeploy(armyUnit.unit, { x: dropResult.x, y: dropResult.y });
         }
     },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
   }), [armyUnit, onDeploy]);
+  
+  const handleMouseDown = () => {
+    // Only trigger press-and-hold for non-hero units
+    if (armyUnit.unit.type !== 'hero') {
+      onStartPress(armyUnit.unit);
+    }
+  };
 
   return (
     <div
       ref={drag}
-      onMouseDown={() => onStartPress(armyUnit.unit)}
+      onMouseDown={handleMouseDown}
       onMouseUp={onEndPress}
       onMouseLeave={onEndPress}
       className={cn(
@@ -117,13 +124,13 @@ const PlacedUnit = ({ unit, onMove }: { unit: PlacedUnitData, onMove: (id: strin
     )
 }
 
-const DeploymentBar = ({ army, onDeploy, onStartPress, onEndPress }: { army: ArmyUnit[], onDeploy: (unit: UnitData) => void, onStartPress: (unit: UnitData) => void, onEndPress: () => void }) => {
+const DeploymentBar = ({ army, onDeploy, onStartPress, onEndPress }: { army: ArmyUnit[], onDeploy: (unit: UnitData, pos: {x: number, y: number}) => void, onStartPress: (unit: UnitData) => void, onEndPress: () => void }) => {
     return (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-auto max-h-64 bg-black/30 backdrop-blur-md border border-border/20 p-2 z-20 rounded-lg w-[calc(100%-2rem)] max-w-4xl">
              <div className="h-full w-full flex flex-wrap justify-center gap-2 p-2 overflow-y-auto">
-                {army.map((armyUnit) => (
+                {army.map((armyUnit, index) => (
                     <DraggableUnit 
-                        key={armyUnit.unit.name} 
+                        key={`${armyUnit.unit.name}-${index}`}
                         armyUnit={armyUnit} 
                         onDeploy={onDeploy}
                         onStartPress={onStartPress}
@@ -142,7 +149,6 @@ const StrategyBoard = () => {
     const [placedUnits, setPlacedUnits] = useState<PlacedUnitData[]>([]);
     const [armyToDeploy, setArmyToDeploy] = useState<ArmyUnit[]>([]);
     const [loadingArmies, setLoadingArmies] = useState(true);
-    const [lastDropPos, setLastDropPos] = useState<{x: number, y: number} | null>(null);
 
     const boardRef = useRef<HTMLDivElement>(null);
     const pressTimer = useRef<NodeJS.Timeout | null>(null);
@@ -181,12 +187,11 @@ const StrategyBoard = () => {
         fetchArmies();
     }, [user, toast]);
     
-    const deployUnit = useCallback((unit: UnitData) => {
-        const dropX = lastDropPos?.x;
-        const dropY = lastDropPos?.y;
-        if(dropX === null || dropY === null || dropX === undefined || dropY === undefined) return false;
+    const deployUnit = useCallback((unit: UnitData, pos: {x: number, y: number} | null) => {
+        if(pos === null || pos.x === null || pos.y === null || pos.x === undefined || pos.y === undefined) return false;
 
         let unitAvailable = false;
+        
         setArmyToDeploy(prevArmy => {
             const unitIndexInArmy = prevArmy.findIndex(u => u.unit.name === unit.name);
             if (unitIndexInArmy === -1) {
@@ -207,38 +212,32 @@ const StrategyBoard = () => {
         if (unitAvailable) {
             setPlacedUnits(prevPlaced => [
                 ...prevPlaced,
-                { ...unit, id: `${Date.now()}-${Math.random()}`, x: dropX, y: dropY }
+                { ...unit, id: `${Date.now()}-${Math.random()}`, x: pos.x, y: pos.y }
             ]);
         }
         return unitAvailable;
-    }, [lastDropPos]);
+    }, []);
 
      const handleStartPress = (unit: UnitData) => {
-        if (!lastDropPos) {
-            toast({ title: "Set a location", description: "Drag a unit onto the map first to set an initial deployment spot." });
-            return;
-        }
-
-        // Do not start interval for heroes
-        if (unit.type === 'hero') {
-            deployUnit(unit);
-            return;
-        }
-
         const deploy = () => {
-            const deployed = deployUnit(unit);
+            if (!boardRef.current) return;
+            const lastPlaced = placedUnits[placedUnits.length - 1];
+            if (!lastPlaced) {
+                 toast({ title: "Set a location", description: "Drag a unit onto the map first to set an initial deployment spot." });
+                 handleEndPress();
+                 return;
+            }
+            
+            const deployed = deployUnit(unit, {x: lastPlaced.x, y: lastPlaced.y});
             if (!deployed) {
-                 if (pressTimer.current) {
-                    clearInterval(pressTimer.current);
-                    pressTimer.current = null;
-                }
+                 handleEndPress();
             }
         };
 
         deploy(); // Deploy one immediately on click
 
         pressTimer.current = setTimeout(() => {
-            if (pressTimer.current) { // Ensure it wasn't cleared
+            if (pressTimer.current) {
                 pressTimer.current = setInterval(deploy, 150) as unknown as NodeJS.Timeout;
             }
         }, 500);
@@ -259,10 +258,10 @@ const StrategyBoard = () => {
         () => ({
             accept: ItemTypes.UNIT,
             drop: (item: PlacedUnitData, monitor) => {
-                if (!boardRef.current) return;
+                if (!boardRef.current) return { name: "StrategyBoard" };
                 const boardRect = boardRef.current.getBoundingClientRect();
                 const clientOffset = monitor.getClientOffset();
-                if (!clientOffset) return;
+                if (!clientOffset) return { name: "StrategyBoard" };
                 
                 const currentScale = scale.get();
                 const currentX = x.get();
@@ -270,8 +269,6 @@ const StrategyBoard = () => {
 
                 const dropX = (clientOffset.x - boardRect.left - currentX) / currentScale - 24; 
                 const dropY = (clientOffset.y - boardRect.top - currentY) / currentScale - 24;
-                
-                setLastDropPos({x: dropX, y: dropY});
                 
                 if (item.id) { // It's an existing unit being moved
                     handleMoveUnit(item.id, dropX, dropY);

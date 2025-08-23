@@ -342,6 +342,12 @@ export default function ArmyPlannerPage() {
     }, []);
 
     const handleMouseDown = (unit: any) => {
+        // For heroes, a single click is enough. No press-and-hold.
+        if (unit.category === 'hero') {
+            addUnit(unit);
+            return;
+        }
+
         const added = addUnit(unit);
         if (!added) return;
 
@@ -537,7 +543,7 @@ export default function ArmyPlannerPage() {
                         <div><div className="flex justify-between items-center mb-2"><h4 className="font-headline text-lg flex items-center gap-2"><SpellCheck /> Spells</h4><span className="font-mono text-sm">{currentSpellSpace}/{maxSpellSpace}</span></div><div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{Object.values(spells).map(({unit, quantity}) => (<CompositionUnitCard key={unit.name} item={unit} count={quantity} onRemove={() => removeFromSpells(unit.name)} />))}</div></div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item) => (<div key={item.name} className="relative group cursor-pointer" onClick={() => removeFromHeroes(item.name)}><UnitCard item={item} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
+                            <div><h4 className="font-headline text-lg mb-2">Heroes ({heroes.length}/4)</h4><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed">{heroes.map((item, index) => (<div key={item.name + '-' + index} className="relative group cursor-pointer" onClick={() => removeFromHeroes(item.name)}><UnitCard item={item} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>))}</div></div>
                             <div><h4 className="font-headline text-lg mb-2">Siege Machine ({siegeMachine ? 1 : 0}/1)</h4><div className="p-2 rounded-lg bg-muted/50 min-h-[5rem] border-2 border-dashed flex justify-center items-center">{siegeMachine && (<div className="relative group cursor-pointer" onClick={removeSiegeMachine}><UnitCard item={siegeMachine} /><button className="absolute -top-1 -right-1 z-10 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button></div>)}</div></div>
                         </div>
                     </CardContent>

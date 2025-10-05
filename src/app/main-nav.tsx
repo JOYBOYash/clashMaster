@@ -21,43 +21,25 @@ export function MainNav({
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
-     { href: '/upgrades', label: 'Upgrades' },
-     { href: '/army-planner', label: 'Army Planner' },
-     { href: '/wars', label: 'Wars' },
-     { href: '/cookbook', label: 'Cookbook' },
   ];
-
-  if (!hasPlayerData) {
-      routes.push({ href: '/survey', label: 'Survey' });
-  }
 
   return (
     <nav
       className={cn("hidden mx-4 md:flex items-center mx-4 justify-center h-full", className)}
       {...props}
     >
-      <ul className="flex items-center justify-center gap-2 h-full">
-        {routes.map((route) => {
-          const isActive = pathname.startsWith(route.href);
-
-          return (
-             <li key={route.href} className="h-full flex items-center">
-                <Link
-                  href={route.href}
-                  className={cn(
-                    "relative h-full flex items-center justify-center px-4 text-sm font-bold tracking-wider uppercase transition-colors duration-300 ease-in-out text-primary/70 hover:text-primary",
-                    isActive && "text-primary"
-                  )}
-                >
-                  {route.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary shadow-[0_0_10px_hsl(var(--primary))]"></span>
-                  )}
-                </Link>
-             </li>
-          );
-        })}
-      </ul>
+      {routes.map((route) => (
+        <Link
+          key={route.href}
+          href={route.href}
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            pathname.startsWith(route.href) ? "text-primary" : "text-muted-foreground"
+          )}
+        >
+          {route.label}
+        </Link>
+      ))}
     </nav>
   );
 }

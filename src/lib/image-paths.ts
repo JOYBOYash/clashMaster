@@ -186,7 +186,6 @@ const itemImageMap: Record<string, string> = {
 'Spirit Fox': '/assets/_hero_pets/s-fox.png',
 'Sneezy': '/assets/_hero_pets/sneezy.png',
 'Unicorn': '/assets/_hero_pets/unicorn.png',
-
 'Default': '/assets/buildings/default.png',
 };
 

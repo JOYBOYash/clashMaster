@@ -43,6 +43,7 @@ export const siegeMachineNames = [
 
 
 const itemImageMap: Record<string, string> = {
+
 // Heroes
 'Barbarian King': '/assets/_hero/barbarian-king.png',
 'Archer Queen': '/assets/_hero/archer-queen.png',
@@ -133,6 +134,7 @@ const itemImageMap: Record<string, string> = {
 'Super Miner': '/assets/_troops/super/super-miner.png',
 'Super Yeti': '/assets/_troops/super/super-yeti.png',
 'Super Wizard': '/assets/_troops/super/super-wizard.png',
+
 // Elixir Spells
 'Lightning Spell': '/assets/_spells/elixer/lightning_spell.png',
 'Healing Spell': '/assets/_spells/elixer/heal_spell.png',
@@ -174,7 +176,6 @@ const itemImageMap: Record<string, string> = {
 'Battle Drill': '/assets/_siege_machines/battle-drill.png',
 
 // Pets
-
 'Diggy': '/assets/_hero_pets/diggy.png',
 'Electro Owl': '/assets/_hero_pets/e-owl.png',
 'Frosty': '/assets/_hero_pets/frosty.png',

@@ -82,6 +82,7 @@ const itemImageMap: Record<string, string> = {
 'Haste Vial': '/assets/_hero_equipment/rc/haste-vial.png',
 'Electro Boots': '/assets/_hero_equipment/rc/electro-boots.png',
 'Rocket Spear': '/assets/_hero_equipment/rc/rocket-spear.png',
+'Heroic Torch': '/assets/_hero_equipment/gw/torch.png',
 
 // Elixir Troops
 'Barbarian': '/assets/_troops/elixer/barbarian.png',
@@ -172,6 +173,18 @@ const itemImageMap: Record<string, string> = {
 'Flame Flinger': '/assets/_siege_machines/flane-flinger.png',
 'Battle Drill': '/assets/_siege_machines/battle-drill.png',
 
+// Pets
+
+'Diggy': '/assets/_hero_pets/diggy.png',
+'Electro Owl': '/assets/_hero_pets/e-owl.png',
+'Frosty': '/assets/_hero_pets/frosty.png',
+'L.A.S.S.I': '/assets/_hero_pets/lassi.png',
+'Mighty Yak': '/assets/_hero_pets/m-yak.png',
+'Poison Lizard': '/assets/_hero_pets/p-lizard.png',
+'Phoenix': '/assets/_hero_pets/phoenix.png',
+'Spirit Fox': '/assets/_hero_pets/s-fox.png',
+'Sneezy': '/assets/_hero_pets/sneezy.png',
+'Unicorn': '/assets/_hero_pets/unicorn.png',
 
 'Default': '/assets/buildings/default.png',
 };

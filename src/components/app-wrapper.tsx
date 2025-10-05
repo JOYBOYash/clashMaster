@@ -6,6 +6,9 @@ import { MainHeader } from "./main-header";
 import { Toaster } from "./ui/toaster";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
+import { useEffect } from "react";
+import { getPlayer } from "@/lib/coc-api";
+import { UnitNotificationHub } from "./unit-notification-hub";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -32,6 +35,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
         </div>
       </main>
       <Toaster />
+      <UnitNotificationHub />
     </div>
   );
 }

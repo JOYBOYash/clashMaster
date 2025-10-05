@@ -5,12 +5,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
+  const [hasPlayerData, setHasPlayerData] = useState(false);
+
+  useEffect(() => {
+    const data = localStorage.getItem('playerData');
+    setHasPlayerData(!!data);
+  }, [pathname]); // Re-check when route changes
 
   const routes = [
      { href: '/dashboard', label: 'Dashboard' },
@@ -18,7 +25,7 @@ export function MainNav({
 
   return (
     <nav
-      className={cn("hidden items-center space-x-4 md:flex lg:space-x-6", className)}
+      className={cn("hidden mx-4 md:flex items-center mx-4 justify-center h-full", className)}
       {...props}
     >
       {routes.map((route) => (

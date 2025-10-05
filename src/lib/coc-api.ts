@@ -4,14 +4,9 @@
  */
 
 export async function getPlayer(playerTag: string) {
-  // The player tag from the game includes a '#', but it needs to be URL-encoded for the API URL.
-  const encodedPlayerTag = encodeURIComponent(playerTag);
-  
-  // NOTE: The /api/coc-proxy path here is a special Next.js convention.
-  // We are proxying the request through our own Next.js server to avoid CORS issues
-  // and to hide the API token from the client's network requests.
-  const url = `/api/coc-proxy/players/${encodedPlayerTag}`;
-  
+  // The player tag is encoded to ensure '#' and other special characters are handled correctly in the URL path.
+  const url = `/api/coc-proxy/players/${encodeURIComponent(playerTag)}`;
+
   try {
     const response = await fetch(url);
 
@@ -26,12 +21,17 @@ export async function getPlayer(playerTag: string) {
         errorDetails = response.statusText;
       }
 
+      if (response.status === 400) {
+        throw new Error(`API request failed with status ${response.status}: Bad Request: ${errorDetails}`);
+      }
+
       if (response.status === 403) {
-         if (errorDetails.includes('invalidIp')) {
+        if (errorDetails.includes('invalidIp')) {
           throw new Error(`IP Address Not Allowed by API. FIX: Go to developer.clashofclans.com, select your key, and add this server's IP to the allowed list. For cloud hosting, use 0.0.0.0/0 to allow all IPs.`);
         }
         throw new Error(`API request forbidden: ${errorDetails}. Please check that your API token in the .env file is correct.`);
       }
+
       if (response.status === 404) {
         throw new Error(`Player with tag "${playerTag}" not found. Please check the tag and try again.`);
       }

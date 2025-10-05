@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { CircleUser, LogOut } from 'lucide-react';
+import { CircleUser, LogOut, Menu, Settings } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from './ui/button';
 import { MainNav } from '../app/main-nav';
@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
@@ -29,7 +32,48 @@ export function MainHeader() {
           <span className="sr-only">ProBuilder Home</span>
         </Link>
         
-        <MainNav />
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                  <SheetDescription className="sr-only">Navigate through the main sections of the app.</SheetDescription>
+                   <Link href={homeHref} className="flex items-center space-x-2" onClick={handleLinkClick}>
+                      <Image src={appLogoPath} alt="ProBuilder Logo" width={28} height={28} unoptimized />
+                      <h1 className={cn("text-xl font-bold text-primary font-headline")}>
+                        ProBuilder
+                      </h1>
+                    </Link>
+                </SheetHeader>
+               <div className="flex flex-col gap-4 py-4">
+                {navLinks.map(link => (
+                   <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>
+                    {link.label}
+                   </Link>
+                ))}
+                  <Link href="/settings" className="text-muted-foreground hover:text-foreground" onClick={handleLinkClick}>Settings</Link>
+               </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        {/* Desktop Logo and Nav */}
+        <div className="hidden md:flex flex-1 items-center gap-6">
+          <Link href={homeHref} className="flex items-center  mx-4 p-2 space-x-2">
+            <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
+            <h1 className={cn("text-2xl font-bold text-primary font-headline")}>
+              ProBuilder
+            </h1>
+          </Link>
+          <div className="h-8 w-px bg-primary/30"></div>
+          <MainNav />
+        </div>
         
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user ? (
@@ -50,6 +94,10 @@ export function MainHeader() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                 <DropdownMenuItem onClick={() => router.push('/settings')} className="cursor-pointer font-headline">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={signOut} className="cursor-pointer font-headline">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
@@ -63,6 +111,7 @@ export function MainHeader() {
           )}
         </div>
       </div>
+       <div className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
     </header>
   );
 }

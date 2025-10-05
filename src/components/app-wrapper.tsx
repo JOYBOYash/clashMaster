@@ -13,43 +13,13 @@ import { UnitNotificationHub } from "./unit-notification-hub";
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const pathname = usePathname();
-  const isSignInPage = pathname === '/';
-  
-  // Pages that should NOT have the main header
-  const noHeaderPages = ['/sign-in'];
-  // The upgrades page will have its own pattern handled on the page itself
-  const showBgPattern = !['/upgrades'].includes(pathname);
+  const isSignInPage = pathname === '/sign-in';
 
-  const showHeader = user && !noHeaderPages.includes(pathname);
-
-  useEffect(() => {
-    const refreshPlayerData = async () => {
-      const storedData = localStorage.getItem('playerData');
-      if (storedData) {
-        try {
-          const player = JSON.parse(storedData);
-          if (player.tag) {
-            console.log(`Refreshing data for ${player.tag}...`);
-            const updatedPlayer = await getPlayer(player.tag);
-            localStorage.setItem('playerData', JSON.stringify(updatedPlayer));
-            console.log('Player data refreshed.');
-          }
-        } catch (error) {
-          console.error("Failed to refresh player data:", error);
-        }
-      }
-    };
-    if (user) {
-      refreshPlayerData();
-    }
-  }, [user]);
-
+  // Show the header for any logged-in user, unless they are on the sign-in page.
+  const showHeader = user && !isSignInPage;
 
   return (
-    <div className={cn(
-      "flex flex-col min-h-screen bg-background text-foreground font-body relative",
-       showBgPattern && "bg-pattern"
-    )}>
+    <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
       {showHeader && <MainHeader />}
       <main className={cn(
         "flex-grow flex flex-col items-stretch",
@@ -57,8 +27,9 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
       )}>
         <div className={cn(
           "w-full h-full",
-          // The landing page should be full-width, other pages can have a container
-          !isSignInPage && user && "container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+          // The landing page and sign-in page are full-width.
+          // The dashboard gets a container.
+          !isSignInPage && user && pathname === '/dashboard' && "container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         )}>
             {children}
         </div>

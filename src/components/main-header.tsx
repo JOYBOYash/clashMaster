@@ -14,8 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { appLogoPath } from "@/lib/image-paths";
 import { useState, useEffect } from "react";
@@ -24,37 +22,15 @@ import { useRouter } from 'next/navigation';
 
 export function MainHeader() {
   const { user, signOut } = useAuth();
-  const router = useRouter();
-  const homeHref = '/';
-  const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [hasPlayerData, setHasPlayerData] = useState(false);
-
-  useEffect(() => {
-    const data = localStorage.getItem('playerData');
-    setHasPlayerData(!!data);
-  }, [pathname]);
-
-  const handleLinkClick = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  const navLinks = [
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/upgrades", label: "Upgrades" },
-    { href: "/war-council", label: "Council" },
-    { href: "/cookbook", label: "Cookbook" },
-    { href: "/wars", label: "Wars" },
-  ];
-
-  if (!hasPlayerData) {
-    navLinks.push({ href: '/survey', label: 'Survey' });
-  }
-
+  const homeHref = user ? '/' : '/'; // Always go to landing page
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center">
+        <Link href={homeHref} className="mr-8 flex items-center">
+          <Image src={appLogoPath} alt="ProBuilder Logo" width={32} height={32} unoptimized />
+          <span className="sr-only">ProBuilder Home</span>
+        </Link>
         
         {/* Mobile Menu */}
         <div className="md:hidden">
@@ -103,7 +79,7 @@ export function MainHeader() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="icon" className="rounded-full">
+                <Button variant="outline" size="icon" className="rounded-full">
                   <CircleUser className="h-5 w-5" />
                   <span className="sr-only">Toggle user menu</span>
                 </Button>
